@@ -9,6 +9,7 @@ const GeneralContractForm = lazy(() => import("@/components/GeneralContractForm"
 const IndependentContractorForm = lazy(() => import("@/components/IndependentContractorForm"));
 const LivingWillForm = lazy(() => import("@/components/LivingWillForm"));
 const SharePurchaseAgreementForm = lazy(() => import("@/components/SharePurchaseAgreementForm"));
+const CohabitationAgreementForm = lazy(() => import("@/components/SharePurchaseAgreementForm"));
 const LoanAgreementForm = lazy(() => import("@/components/LoanAgreementForm"));
 const GiftAffidavitForm = lazy(() => import("@/components/GiftAffidavitForm"));
 const FinancialSupportAffidavitForm = lazy(() => import("@/components/FinancialSupportAffidavitForm"));
@@ -203,6 +204,13 @@ const Documents = () => {
       description: 'Create a comprehensive loan agreement for personal or business lending arrangements',
       icon: DollarSign,
       component: LoanAgreementForm
+    },
+     {
+      id: 'Cohabitation-AgreementForm',
+      title: 'Cohabitation Agreement',
+      description: 'Create a comprehensive Cohabitation Agreement for personal or business lending arrangements',
+      icon: DollarSign,
+      component: CohabitationAgreementForm
     },
     {
       id: 'copyright-assignment',
