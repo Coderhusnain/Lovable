@@ -2,7 +2,17 @@ import React, { useState, lazy, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
+
 // Convert all large components to lazy imports to fix deployment chunk issues
+const Confidentialityagreement = lazy(() => import("@/components/Confidentialityagreement"));
+const Employeehandbook = lazy(() => import("@/components/Employeehandbook"));
+const Employeeretirement = lazy(() => import("@/components/Employeeretirement"));
+const EmploymentAgreement = lazy(() => import("@/components/EmploymentAgreement"));
+const lastwill = lazy(() => import("@/components/lastwill"));
+const Offerofemployment  = lazy(() => import("@/components/Offerofemployment "));
+const Severance  = lazy(() => import("@/components/Severance"));
+const Softwarelicense = lazy(() => import("@/components/Softwarelicense"));
+const workfromhome = lazy(() => import("@/components/workfromhome"));
 const ConditionalForm = lazy(() => import("@/components/ConditionalForm"));
 const ChildCareAuthForm = lazy(() => import("@/components/ChildCareAuthForm"));
 const GeneralContractForm = lazy(() => import("@/components/GeneralContractForm"));
@@ -65,7 +75,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel, Phone, Search } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search } from "lucide-react";
 
 const Documents = () => {
   const { id } = useParams();
@@ -286,8 +296,72 @@ const Documents = () => {
       id: 'royalty-agreement',
       title: 'Royalty Agreement',
       description: 'Create a professional royalty agreement for intellectual property licensing and compensation',
-      icon: TrendingUp,
+      icon: DollarSign,
       component: RoyaltyAgreementForm
+    },
+      {
+      id: 'Confidentialityagreement',
+      title: ' Confidentiality agreement ',
+      description: 'Create a professional Employee Confidentiality agreement  for intellectual property licensing and compensation',
+      icon: Lock ,
+      component: Confidentialityagreement
+    },
+     {
+      id: 'Employeehandbook',
+      title: 'Employee handbook',
+      description: 'Create a professional Employee handbook agreement  for intellectual property licensing and compensation',
+      icon: Users,
+      component: Employeehandbook
+    },
+      {
+      id: 'employeeretirementt',
+      title: ' Employee retirement agreement ',
+      description: 'Create a professional Employee retirement agreement  for intellectual property licensing and compensation',
+      icon: Briefcase,
+      component: Employeeretirement
+    }, 
+      {
+      id: 'EmploymentAgreement',
+      title: 'Employment Agreement',
+      description: 'Create a professional Employment Agreement   for intellectual property licensing and compensation',
+      icon: TrendingUp,
+      component: EmploymentAgreement
+    }, 
+     {
+      id: 'lastwill',
+      title: ' Last will and Testament  ',
+      description: 'Create a professional  last will and testament agreement   for intellectual property licensing and compensation',
+      icon: Home,
+      component: lastwill
+    }, 
+    {
+      id: 'Home-Agreement',
+      title: 'Work  from home agreement ',
+      description: 'Create a professional Work from home  agreement for intellectual property licensing and compensation',
+      icon: Home,
+      component: workfromhome
+    }, 
+     {
+      id: 'employment',
+      title: ' Offer of employment letter',
+      description: 'Create a professional Offer of employment letter  for intellectual property licensing and compensation',
+      icon: Users,
+      component:Offerofemployment 
+    },
+    {
+      id: 'Severance',
+      title: 'Severance agreement ',
+      description: 'Create a professional  Severance agreement   for intellectual property licensing and compensation',
+      icon: DollarSign,
+      component:Severance 
+     
+    },
+     {
+      id: 'software',
+      title: ' Software license agreement ',
+      description: 'Create a professional  Software license agreement  for intellectual property licensing and compensation',
+      icon: FileText,
+      component: Softwarelicense
     },
     {
       id: 'license-agreement',
