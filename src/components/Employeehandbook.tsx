@@ -1,82 +1,53 @@
 import React, { useState } from "react";
+import { jsPDF } from "jspdf";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
-
 interface FormData {
-  agreementDate: string;
   companyName: string;
   companyAddress: string;
-  employeeName: string;
-  employeeAddress: string;
-  positionTitle: string;
-  startDate: string;
-  severancePaymentAmount: string;
-  severancePaymentDays: string;
-  releaseOfClaims: string;
-  reviewPeriodDays: string;
-  confidentiality: string;
-  nonSolicitation: string;
-  nonCompete: string;
-  governingLawState: string;
+  effectiveDate: string;
   employeeSignature: string;
-  employerSignature: string;
 }
 
-const EmployeeHandbookForm: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
+const EmployeeHandbookGenerator: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    agreementDate: "",
     companyName: "",
     companyAddress: "",
-    employeeName: "",
-    employeeAddress: "",
-    positionTitle: "",
-    startDate: "",
-    severancePaymentAmount: "",
-    severancePaymentDays: "",
-    releaseOfClaims: "",
-    reviewPeriodDays: "",
-    confidentiality: "",
-    nonSolicitation: "",
-    nonCompete: "",
-    governingLawState: "",
+    effectiveDate: "",
     employeeSignature: "",
-    employerSignature: "",
   });
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const nextStep = () => setCurrentStep((p) => Math.min(p + 1, 14));
-  const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 1));
 
   const generatePDF = async () => {
     try {
-      const doc = new jsPDF();
+      const doc = new jsPDF({ unit: "pt", format: "letter" });
       const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const lineHeight = 7;
+      const margin = 40;
+      const lineHeight = 16;
       let currentY = margin;
 
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
+      const addText = (
+        text: string,
+        fontSize = 11,
+        isBold = false,
+        isCenter = false
+      ) => {
         doc.setFontSize(fontSize);
-        doc.setFont(undefined, isBold ? "bold" : "normal");
+        doc.setFont("times", isBold ? "bold" : "normal");
         const textWidth = pageWidth - margin * 2;
         const lines = doc.splitTextToSize(text, textWidth);
         lines.forEach((line: string) => {
-          if (currentY > 270) {
+          if (currentY > 720) {
             doc.addPage();
             currentY = margin;
           }
           if (isCenter) {
-            const tw = doc.getStringUnitWidth(line) * fontSize / doc.internal.scaleFactor;
+            const tw =
+              (doc.getStringUnitWidth(line) * fontSize) /
+              doc.internal.scaleFactor;
             const tx = (pageWidth - tw) / 2;
             doc.text(line, tx, currentY);
           } else {
@@ -88,63 +59,112 @@ const EmployeeHandbookForm: React.FC = () => {
 
       // Title
       addText("EMPLOYEE HANDBOOK", 16, true, true);
-      currentY += 6;
-
-      addText(
-        `This Employee Handbook (“Handbook”) is made and entered into as of ${formData.agreementDate || "[Insert Date]"}, by and between ${formData.companyName || "[Company Name]"}, having its principal place of business at ${formData.companyAddress || "[Company Address]"} (“Company”), and ${formData.employeeName || "[Employee Name]"}, residing at ${formData.employeeAddress || "[Employee Address]"} (“Employee”).`
-      );
-      currentY += 4;
-
-      // Sections
-      const sections: { title: string; content: string }[] = [
-        {
-          title: "1. INTRODUCTION",
-          content: `Welcome to ${formData.companyName || "[Company Name]"}...`,
-        },
-        {
-          title: "2. EMPLOYMENT POLICIES",
-          content: `Employee Classifications:\n- Exempt Employees: [Description]...`,
-        },
-        {
-          title: "3. HOURS OF WORK AND PAYROLL PRACTICES",
-          content: `Pay Periods & Paydays: [Description]...`,
-        },
-        {
-          title: "4. STANDARDS OF CONDUCT AND EMPLOYEE PERFORMANCE",
-          content: `Anti-Harassment & Discrimination: Strictly prohibited...`,
-        },
-        {
-          title: "5. BENEFITS AND SERVICES",
-          content: `Workers' Compensation: [Description]...`,
-        },
-        {
-          title: "6. LEAVES OF ABSENCE AND TIME OFF",
-          content: `Family & Medical Leave: [Description]...`,
-        },
-        {
-          title: "7. EMPLOYEE ACKNOWLEDGEMENT",
-          content: `I acknowledge that I have received and read the Employee Handbook, understand its provisions, and agree to comply with all policies contained herein.`,
-        },
-      ];
-
-      for (const section of sections) {
-        addText(section.title, 12, true);
-        addText(section.content);
-        currentY += 3;
-      }
-
-      // Signatures
-      addText("EMPLOYEE:", 12, true);
-      addText(`Signature: ${formData.employeeSignature || "_________________________"}`);
-      addText("Date: ___________________");
       currentY += 10;
 
-      addText("EMPLOYER:", 12, true);
-      addText(`Signature: ${formData.employerSignature || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 12;
+      addText(formData.companyName || "[Company Name]", 12, true, true);
+      addText(formData.companyAddress || "[Company Address]", 12, true, true);
+      addText(
+        `Effective Date: ${formData.effectiveDate || "[Insert Date]"}`,
+        12,
+        true,
+        true
+      );
+      currentY += 20;
 
-      // Save the PDF
+      // Full Handbook text (pixel-to-pixel, placeholders dynamic)
+      const handbookText = `
+Section 1 – Introduction
+Welcome
+Welcome to ${formData.companyName || "[Company Name]"} (“the Company”). We are pleased to have you join our team and contribute to our shared mission and values. This Handbook is intended to provide you with important information regarding the Company’s policies, procedures, benefits, and expectations.
+
+Purpose of the Handbook
+This Employee Handbook (“Handbook”) serves as a general guide to the Company’s workplace rules, policies, and employee benefits. It applies to all employees of the Company, regardless of position, unless otherwise stated. Compliance with the policies set forth herein is a condition of continued employment.
+This Handbook supersedes and replaces all prior oral or written policies, procedures, rules, or benefits previously communicated to employees, whether formal or informal, express or implied.
+The Company reserves the sole and absolute discretion to amend, modify, rescind, delete, or supplement any provision of this Handbook at any time, with or without notice, except for the policy of employment-at-will, which may only be modified in a written agreement signed by both the employee and an authorized representative of the Company.
+This Handbook is not an express or implied contract of employment. Nothing contained herein shall alter the at-will employment relationship or create any contractual rights to continued employment.
+
+Changes in Policy
+Due to the evolving nature of our business, the Company expressly reserves the right to revise, modify, or eliminate any policies, procedures, work rules, or benefits described in this Handbook. Only the Chief Executive Officer or an authorized executive officer may approve changes to the at-will employment status, and such changes must be documented in a signed written agreement.
+
+Employment-At-Will
+Employment with the Company is on an at-will basis unless otherwise expressly provided in a duly executed written employment agreement. This means that either the employee or the Company may terminate the employment relationship at any time, with or without cause, and with or without notice, subject only to applicable federal, state, and local laws.
+
+Section 2 – Employment Policies
+Employee Classifications
+For purposes of compensation, benefits, and compliance with wage and hour laws, employees are classified as follows:
+Exempt Employees – Those whose positions meet the requirements of the Fair Labor Standards Act (FLSA) and applicable state law for exemption from overtime.
+Non-Exempt Employees – Those whose positions do not meet exemption criteria and who are therefore entitled to overtime pay in accordance with applicable law.
+Full-Time Employees – Employees regularly scheduled to work [number] or more hours per week.
+Part-Time Employees – Employees regularly scheduled to work fewer than [number] hours per week.
+Temporary Employees – Employees engaged for a fixed term or specific project with no guarantee of continued employment.
+Independent Contractors/Consultants – Individuals retained under contract to perform services and who are not employees of the Company.
+
+Equal Employment Opportunity (EEO) and ADA Compliance
+The Company is committed to providing equal employment opportunities to all qualified individuals and prohibits discrimination based on race, color, religion, sex, sexual orientation, gender identity or expression, age, national origin, disability, veteran status, or any other protected category under federal, state, or local law.
+The Company will provide reasonable accommodations to qualified individuals with disabilities in accordance with the Americans with Disabilities Act (ADA) and applicable state law, unless such accommodations would impose an undue hardship on the Company.
+
+Confidentiality
+Employees may be entrusted with confidential, proprietary, or trade secret information belonging to the Company. Employees are prohibited from using or disclosing such information except as required in the performance of their duties or as authorized in writing by the Company. This obligation continues after employment ends.
+
+Employment of Minors
+The Company complies with all applicable child labor laws, including those under the FLSA, and will not employ individuals under the legal minimum working age.
+
+Employment of Relatives
+The Company may restrict or prohibit the employment of immediate family members in circumstances where it may present a conflict of interest, create supervisory/subordinate relationships, or otherwise disrupt business operations.
+
+Introductory Period
+The first [number] days of employment constitute an introductory or probationary period, during which performance and suitability for continued employment will be evaluated.
+
+Personnel Records and Employee References
+Personnel files are the property of the Company. Employees may review their own records in accordance with applicable law. Only authorized personnel may provide employment references.
+
+Privacy
+While the Company respects employee privacy, employees should have no expectation of privacy in any Company property, including offices, desks, lockers, vehicles, or electronic systems.
+
+Immigration Law Compliance
+In accordance with the Immigration Reform and Control Act, all employees must complete the Form I-9 and provide documentation verifying their eligibility to work in the United States.
+
+Political Neutrality
+Employees may engage in lawful political activities outside of work but may not use Company resources, time, or branding for political purposes.
+
+Section 3 – Hours of Work and Payroll Practices
+Pay Periods & Paydays – Employees are paid on a bi-weekly schedule unless otherwise specified.
+Overtime – Non-exempt employees are entitled to overtime pay for hours worked over 40 in a workweek, or as otherwise provided by state law.
+Rest & Meal Periods – Provided in accordance with applicable federal and state law.
+Timekeeping – Accurate recording of hours worked is mandatory. Falsifying time records is grounds for immediate termination.
+Payroll Deductions – Deductions will be made for taxes, insurance premiums, retirement contributions, and other authorized purposes.
+Wage Garnishment – The Company will comply with court-ordered wage garnishments.
+Direct Deposit – Direct deposit is encouraged but optional, unless otherwise required by law.
+
+Section 4 – Standards of Conduct and Employee Performance
+Anti-Harassment & Discrimination – Strictly prohibited; employees must report violations promptly.
+Attendance – Reliable attendance is essential; excessive absenteeism may result in discipline.
+Dress Code – Employees must dress appropriately for their position, with consideration for safety and professionalism.
+Pet Policy – Only registered service animals are permitted; advance notice to a supervisor is required.
+Safety – Compliance with OSHA and other safety regulations is mandatory.
+Substance Abuse – Possession or use of illegal drugs on Company property is prohibited. Alcohol permitted only at approved events.
+Workplace Searches – The Company reserves the right to search any property on its premises.
+Internet, Email, and Computer Use – Company technology is for business use only; personal use is restricted.
+Cell Phone Use – Personal calls should be limited to break times; must not interfere with work.
+
+Section 5 – Benefits and Services
+Workers’ Compensation – Provided in accordance with law.
+Social Security (FICA) – Employer and employee contributions as required.
+Unemployment Insurance – Provided as required by law.
+
+Section 6 – Leaves of Absence and Time Off
+Family & Medical Leave – Granted as required by applicable law; the Company may voluntarily approve unpaid leave requests.
+Workers’ Compensation Leave – Available in cases of job-related injury.
+Jury Duty – Paid or unpaid leave as required by law; employees must notify management immediately upon receipt of a summons.
+
+Acknowledgement
+I acknowledge that I have received and read the Employee Handbook, understand its provisions, and agree to comply with all policies contained herein.
+Employee Signature: ${formData.employeeSignature || "_________________"}
+Date: ${formData.effectiveDate || "___________________"}
+`;
+
+      addText(handbookText, 11, false, false);
+
       doc.save("employee-handbook.pdf");
       toast.success("Employee Handbook PDF generated successfully!");
     } catch (error) {
@@ -154,346 +174,88 @@ const EmployeeHandbookForm: React.FC = () => {
   };
 
  const renderStep = () => {
-  switch (currentStep) {
-    case 1:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Parties & Agreement Date</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="agreementDate">Agreement Date</Label>
-            <Input
-              id="agreementDate"
-              type="date"
-              value={formData.agreementDate}
-              onChange={(e) => handleInputChange("agreementDate", e.target.value)}
-            />
-            <Label htmlFor="employeeName">Employee Name</Label>
-            <Input
-              id="employeeName"
-              value={formData.employeeName}
-              onChange={(e) => handleInputChange("employeeName", e.target.value)}
-            />
-            <Label htmlFor="employeeAddress">Employee Address</Label>
-            <Textarea
-              id="employeeAddress"
-              value={formData.employeeAddress}
-              onChange={(e) => handleInputChange("employeeAddress", e.target.value)}
-            />
-          
-          </CardContent>
-        </Card>
-      );
-    case 2:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Position & Compensation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="positionTitle">Position Title</Label>
-            <Input
-              id="positionTitle"
-              value={formData.positionTitle}
-              onChange={(e) => handleInputChange("positionTitle", e.target.value)}
-            />
-            <Label htmlFor="baseSalary">Base Salary</Label>
-            <Input
-              id="baseSalary"
-              value={formData.baseSalary}
-              onChange={(e) => handleInputChange("baseSalary", e.target.value)}
-            />
-            <Label htmlFor="commissionPercentage">Commission Percentage</Label>
-            <Input
-              id="commissionPercentage"
-              value={formData.commissionPercentage}
-              onChange={(e) => handleInputChange("commissionPercentage", e.target.value)}
-            />
-            <Label htmlFor="commissionBasis">Commission Basis</Label>
-            <Input
-              id="commissionBasis"
-              value={formData.commissionBasis}
-              onChange={(e) => handleInputChange("commissionBasis", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 3:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Leave & Benefits</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="vacationDays">Vacation Days</Label>
-            <Input
-              id="vacationDays"
-              value={formData.vacationDays}
-              onChange={(e) => handleInputChange("vacationDays", e.target.value)}
-            />
-            <Label htmlFor="sickLeaveDays">Sick Leave Days</Label>
-            <Input
-              id="sickLeaveDays"
-              value={formData.sickLeaveDays}
-              onChange={(e) => handleInputChange("sickLeaveDays", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 4:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Non-Compete & Non-Solicitation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="nonCompeteTime">Non-Compete Time</Label>
-            <Input
-              id="nonCompeteTime"
-              value={formData.nonCompeteTime}
-              onChange={(e) => handleInputChange("nonCompeteTime", e.target.value)}
-            />
-            <Label htmlFor="nonCompeteArea">Non-Compete Area</Label>
-            <Input
-              id="nonCompeteArea"
-              value={formData.nonCompeteArea}
-              onChange={(e) => handleInputChange("nonCompeteArea", e.target.value)}
-            />
-            <Label htmlFor="nonSolicitationTime">Non-Solicitation Time</Label>
-            <Input
-              id="nonSolicitationTime"
-              value={formData.nonSolicitationTime}
-              onChange={(e) => handleInputChange("nonSolicitationTime", e.target.value)}
-            />
-            <Label htmlFor="nonSolicitationArea">Non-Solicitation Area</Label>
-            <Input
-              id="nonSolicitationArea"
-              value={formData.nonSolicitationArea}
-              onChange={(e) => handleInputChange("nonSolicitationArea", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 5:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Employment Relationship & Confidentiality</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="employmentRelationship">Employment Relationship</Label>
-            <Textarea
-              id="employmentRelationship"
-              value={formData.employmentRelationship}
-              onChange={(e) => handleInputChange("employmentRelationship", e.target.value)}
-            />
-            <Label htmlFor="confidentiality">Confidentiality</Label>
-            <Textarea
-              id="confidentiality"
-              value={formData.confidentiality}
-              onChange={(e) => handleInputChange("confidentiality", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 6:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Termination & Notices</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="terminationNotice">Termination Notice Period</Label>
-            <Input
-              id="terminationNotice"
-              value={formData.terminationNotice}
-              onChange={(e) => handleInputChange("terminationNotice", e.target.value)}
-            />
-            <Label htmlFor="notices">Notices</Label>
-            <Textarea
-              id="notices"
-              value={formData.notices}
-              onChange={(e) => handleInputChange("notices", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 7:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Governing Law</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="state">State</Label>
-            <Input
-              id="state"
-              value={formData.state}
-              onChange={(e) => handleInputChange("state", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 8:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Signatures</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="employeeSignature">Employee Signature</Label>
-            <Input
-              id="employeeSignature"
-              value={formData.employeeSignature}
-              onChange={(e) => handleInputChange("employeeSignature", e.target.value)}
-            />
-            <Label htmlFor="employerSignature">Employer Signature</Label>
-            <Input
-              id="employerSignature"
-              value={formData.employerSignature}
-              onChange={(e) => handleInputChange("employerSignature", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 9:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Employee Acknowledgement</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="employeeAcknowledgement">Employee Acknowledgement</Label>
-            <Textarea
-              id="employeeAcknowledgement"
-              value={formData.employeeAcknowledgement}
-              onChange={(e) => handleInputChange("employeeAcknowledgement", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 10:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Employment Benefits</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="benefits">Benefits</Label>
-            <Textarea
-              id="benefits"
-              value={formData.benefits}
-              onChange={(e) => handleInputChange("benefits", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 11:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>General Provisions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="generalProvisions">General Provisions</Label>
-            <Textarea
-              id="generalProvisions"
-              value={formData.generalProvisions}
-              onChange={(e) => handleInputChange("generalProvisions", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 12:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Final Review</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="finalReview">Final Review</Label>
-            <Textarea
-              id="finalReview"
-              value={formData.finalReview}
-              onChange={(e) => handleInputChange("finalReview", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 13:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Terms of Agreement</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="termsAgreement">Terms of Agreement</Label>
-            <Textarea
-              id="termsAgreement"
-              value={formData.termsAgreement}
-              onChange={(e) => handleInputChange("termsAgreement", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 14:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Complete</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Review all the sections and click to generate the PDF document.</p>
-          </CardContent>
-        </Card>
-      );
-    default:
-      return null;
-  }
-};
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Employee Handbook</h1>
-        <p className="text-gray-600">Create an Employee Handbook and export as a PDF.</p>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+         
+        </CardTitle>
+      </CardHeader>
 
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">Step {currentStep} of 14</div>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 14) * 100}%` }}
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="companyName">Company Name</Label>
+          <Input
+            id="companyName"
+            value={formData.companyName}
+            onChange={(e) =>
+              setFormData({ ...formData, companyName: e.target.value })
+            }
+            placeholder="Enter company name"
           />
         </div>
-      </div>
 
-      {renderStep()}
-
-      <div className="flex justify-between mt-8">
-        <Button variant="outline" onClick={prevStep} disabled={currentStep === 1} className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </Button>
-
-        <div className="flex gap-2">
-          {currentStep < 14 ? (
-            <Button onClick={nextStep} className="flex items-center gap-2">
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          )}
+        <div className="space-y-2">
+          <Label htmlFor="companyAddress">Company Address</Label>
+          <Input
+            id="companyAddress"
+            value={formData.companyAddress}
+            onChange={(e) =>
+              setFormData({ ...formData, companyAddress: e.target.value })
+            }
+            placeholder="Enter company address"
+          />
         </div>
-      </div>
-    </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="effectiveDate">Effective Date</Label>
+          <Input
+            id="effectiveDate"
+            type="date"
+            value={formData.effectiveDate}
+            onChange={(e) =>
+              setFormData({ ...formData, effectiveDate: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="employeeSignature">Employee Signature</Label>
+          <Input
+            id="employeeSignature"
+            value={formData.employeeSignature}
+            onChange={(e) =>
+              setFormData({ ...formData, employeeSignature: e.target.value })
+            }
+            placeholder="Type full name as signature"
+          />
+        </div>
+
+        <div className="flex justify-end pt-4">
+          <Button onClick={generatePDF} className="flex items-center gap-2">
+            Generate PDF
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
-export default EmployeeHandbookForm;
+return (
+  <div className="max-w-3xl mx-auto p-6 bg-gray-50">
+    <div className="mb-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        Employee Handbook
+      </h1>
+      <p className="text-gray-600">
+        Fill in the details below and generate a handbook PDF.
+      </p>
+    </div>
+
+    {renderStep()}
+  </div>
+);
+
+};
+
+export default EmployeeHandbookGenerator;

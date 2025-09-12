@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 
 interface FormData {
@@ -14,184 +12,223 @@ interface FormData {
   ownerAddress: string;
   recipientName: string;
   recipientAddress: string;
-  confidentialInfo: string;
-  obligationsRecipient: string;
-  returnDestructionInfo: string;
-  relationshipParties: string;
-  noWarranty: string;
-  noLicense: string;
-  termSurvival: string;
+  ownerBusinessDescription: string;
+  recipientBusinessDescription: string;
+  termYears: string;
   governingLawState: string;
   signatureOwner: string;
   signatureRecipient: string;
 }
 
-const ConfidentialityAgreementForm: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
+export default function ConfidentialityAgreementForm() {
   const [formData, setFormData] = useState<FormData>({
     agreementDate: "",
     ownerName: "",
     ownerAddress: "",
     recipientName: "",
     recipientAddress: "",
-    confidentialInfo: "",
-    obligationsRecipient: "",
-    returnDestructionInfo: "",
-    relationshipParties: "",
-    noWarranty: "",
-    noLicense: "",
-    termSurvival: "",
+    ownerBusinessDescription: "",
+    recipientBusinessDescription: "",
+    termYears: "",
     governingLawState: "",
     signatureOwner: "",
     signatureRecipient: "",
   });
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [step, setStep] = useState(1);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const nextStep = () => setCurrentStep((p) => Math.min(p + 1, 14));
-  const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 1));
+  const generatePDF = () => {
+    const doc = new jsPDF("p", "pt", "a4");
+    const margin = 50;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const lineHeight = 18;
+    let currentY = margin;
 
-  const generatePDF = async () => {
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const lineHeight = 7;
-      let currentY = margin;
+    const addText = (
+      text: string,
+      fontSize = 11,
+      isBold = false,
+      isCenter = false
+    ) => {
+      doc.setFontSize(fontSize);
+      doc.setFont("times", isBold ? "bold" : "normal");
+      const textWidth = pageWidth - margin * 2;
+      const lines = doc.splitTextToSize(text, textWidth);
+      lines.forEach((line: string) => {
+        if (currentY > 720) {
+          doc.addPage();
+          currentY = margin;
+        }
+        if (isCenter) {
+          const tw =
+            (doc.getStringUnitWidth(line) * fontSize) /
+            doc.internal.scaleFactor;
+          const tx = (pageWidth - tw) / 2;
+          doc.text(line, tx, currentY);
+        } else {
+          doc.text(line, margin, currentY);
+        }
+        currentY += lineHeight;
+      });
+    };
 
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont(undefined, isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 270) {
-            doc.addPage();
-            currentY = margin;
-          }
-          if (isCenter) {
-            const tw = doc.getStringUnitWidth(line) * fontSize / doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
+    // Build agreement
+    addText("CONFIDENTIALITY AGREEMENT", 14, true, true);
+    addText(
+      `This Confidentiality Agreement (“Agreement”) is made and entered into as of ${formData.agreementDate} (“Effective Date”) by and between:`
+    );
+    addText(
+      `${formData.ownerName}, of ${formData.ownerAddress} (“Owner” or “Disclosing Party”); and`
+    );
+    addText(
+      `${formData.recipientName}, of ${formData.recipientAddress} (“Recipient” or “Receiving Party”).`
+    );
 
-      // Title
-      addText("CONFIDENTIALITY AGREEMENT", 16, true, true);
-      currentY += 6;
+    addText("RECITALS", 12, true);
+    addText(
+      `WHEREAS, the Owner is engaged in the business of ${formData.ownerBusinessDescription};`
+    );
+    addText(
+      `WHEREAS, the Recipient is engaged in the business of ${formData.recipientBusinessDescription};`
+    );
+    addText(
+      "WHEREAS, the Owner possesses certain confidential, proprietary, and trade secret information of substantial commercial value and has agreed to disclose certain of such information to the Recipient solely for the limited purposes contemplated under this Agreement;"
+    );
+    addText(
+      "WHEREAS, the Recipient agrees to receive such information in strict confidence and to use it only in accordance with the terms of this Agreement;"
+    );
+    addText(
+      "NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, and intending to be legally bound, the parties agree as follows:"
+    );
 
-      addText(
-        `This Confidentiality Agreement (“Agreement”) is made and entered into as of ${formData.agreementDate || "[Insert Date]"}, by and between ${formData.ownerName || "[Owner Name]"}, of ${formData.ownerAddress || "[Owner Address]"} (“Owner” or “Disclosing Party”), and ${formData.recipientName || "[Recipient Name]"}, of ${formData.recipientAddress || "[Recipient Address]"} (“Recipient” or “Receiving Party”).`
-      );
-      currentY += 4;
+    addText("1. DEFINITION OF CONFIDENTIAL INFORMATION", 12, true);
+    addText("1.1 Meaning");
+    addText(
+      "“Confidential Information” means any and all non-public, proprietary, or confidential data, information, and material, whether in written, oral, electronic, graphic, or other tangible or intangible form, disclosed or made available by the Owner to the Recipient, whether before, on, or after the Effective Date, including without limitation: Business records, operational data, and strategic plans; Financial statements, projections, and budgets; Product designs, specifications, prototypes, and technical data; Software, source code, and algorithms; Customer lists, supplier details, pricing information, and marketing plans; Trade secrets and know-how; Any analyses, compilations, or other documents prepared by the Recipient containing or reflecting such information."
+    );
+    addText("1.2 Exclusions");
+    addText(
+      "Confidential Information shall not include information which: (a) is or becomes publicly available through no breach of this Agreement; (b) is lawfully received by the Recipient from a third party without restriction on disclosure; (c) is independently developed by the Recipient without use of or reference to the Owner’s Confidential Information; (d) is disclosed pursuant to a valid court order, subpoena, or governmental authority, provided that the Recipient promptly notifies the Owner and cooperates in any effort to limit such disclosure; (e) is approved for release in writing by the Owner; or (f) both parties agree in writing is not confidential."
+    );
 
-      // Sections
-      const sections: { title: string; content: string }[] = [
-        {
-          title: "1. DEFINITION OF CONFIDENTIAL INFORMATION",
-          content: `Confidential Information includes, without limitation: ${formData.confidentialInfo || "[Insert Description]"}...`,
-        },
-        {
-          title: "2. OBLIGATIONS OF THE RECIPIENT",
-          content: `${formData.obligationsRecipient || "[Insert Obligations Description]"}...`,
-        },
-        {
-          title: "3. RETURN OR DESTRUCTION OF CONFIDENTIAL INFORMATION",
-          content: `${formData.returnDestructionInfo || "[Insert Return/Destruction Info Description]"}...`,
-        },
-        {
-          title: "4. RELATIONSHIP OF THE PARTIES",
-          content: `${formData.relationshipParties || "[Insert Relationship Info]"}...`,
-        },
-        {
-          title: "5. NO WARRANTY",
-          content: `${formData.noWarranty || "[Insert No Warranty Info]"}...`,
-        },
-        {
-          title: "6. NO LICENSE",
-          content: `${formData.noLicense || "[Insert No License Info]"}...`,
-        },
-        {
-          title: "7. TERM AND SURVIVAL",
-          content: `${formData.termSurvival || "[Insert Term/Survival Info]"}...`,
-        },
-        {
-          title: "8. MISCELLANEOUS",
-          content: `Miscellaneous provisions...`,
-        },
-      ];
+    addText("2. OBLIGATIONS OF THE RECIPIENT", 12, true);
+    addText("2.1 Non-Disclosure and Non-Use");
+    addText(
+      "The Recipient shall hold all Confidential Information in the strictest confidence, using at least the same degree of care it uses to protect its own confidential information, but in no event less than a reasonable degree of care. The Recipient shall not disclose, publish, or otherwise disseminate Confidential Information to any third party without the prior written consent of the Owner, and shall not use Confidential Information for any purpose other than the limited purpose authorized in writing by the Owner."
+    );
+    addText("2.2 No Copying or Modification");
+    addText(
+      "The Recipient shall not copy, reproduce, summarize, or otherwise duplicate the Confidential Information, in whole or in part, without the prior written approval of the Owner, except as strictly necessary for the permitted purpose."
+    );
+    addText("2.3 Disclosure to Employees/Agents");
+    addText(
+      "Disclosure of Confidential Information shall be limited to employees, contractors, or agents of the Recipient who have a legitimate need to know such information in connection with the permitted purpose, and who are bound by written confidentiality obligations no less restrictive than those contained herein."
+    );
+    addText("2.4 Injunctive Relief");
+    addText(
+      "The Recipient acknowledges that any unauthorized disclosure or use of Confidential Information will cause immediate and irreparable harm to the Owner for which monetary damages may be inadequate. Accordingly, the Owner shall be entitled to seek injunctive relief, without the necessity of posting bond, in addition to any other remedies available at law or in equity."
+    );
 
-      for (const section of sections) {
-        addText(section.title, 12, true);
-        addText(section.content);
-        currentY += 3;
-      }
+    addText("3. RETURN OR DESTRUCTION OF CONFIDENTIAL INFORMATION", 12, true);
+    addText(
+      "Upon the Owner’s written request, the Recipient shall, within five (5) business days: (a) return all documents and tangible materials containing or representing Confidential Information; (b) permanently delete or destroy all electronic copies; and (c) provide a written certification, signed by an authorized representative, confirming compliance with this Section."
+    );
 
-      // Signatures
-      addText("OWNER (DISCLOSING PARTY):", 12, true);
-      addText(`Signature: ${formData.signatureOwner || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 10;
+    addText("4. RELATIONSHIP OF THE PARTIES", 12, true);
+    addText(
+      "Nothing in this Agreement shall be construed as obligating either party to enter into any business relationship or transaction. This Agreement shall not create any agency, partnership, joint venture, employment, or fiduciary relationship between the parties."
+    );
 
-      addText("RECIPIENT (RECEIVING PARTY):", 12, true);
-      addText(`Signature: ${formData.signatureRecipient || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 12;
+    addText("5. NO WARRANTY", 12, true);
+    addText(
+      "The Owner makes no representations or warranties, express or implied, regarding the accuracy or completeness of the Confidential Information, and expressly disclaims any implied warranties of merchantability or fitness for a particular purpose. The Owner shall not be liable for any damages resulting from the Recipient’s use of the Confidential Information."
+    );
 
-      // Save the PDF
-      doc.save("confidentiality-agreement.pdf");
-      toast.success("Confidentiality Agreement PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Confidentiality Agreement PDF");
-    }
+    addText("6. NO LICENSE", 12, true);
+    addText(
+      "Except for the limited right to use the Confidential Information for the permitted purpose, no license, ownership interest, or other rights to intellectual property are granted under this Agreement, whether by implication, estoppel, or otherwise. All rights, title, and interest in and to the Confidential Information shall remain vested solely in the Owner."
+    );
+
+    addText("7. TERM AND SURVIVAL", 12, true);
+    addText(
+      `This Agreement shall commence on the Effective Date and continue until terminated by mutual written agreement. The obligations of confidentiality and non-use shall survive for a period of ${formData.termYears} years following the date of disclosure of the Confidential Information, or for such longer period as the information remains confidential and proprietary.`
+    );
+
+    addText("8. MISCELLANEOUS", 12, true);
+    addText(
+      `8.1 Entire Agreement – This Agreement constitutes the entire understanding between the parties regarding the subject matter and supersedes all prior discussions and agreements, whether oral or written.
+8.2 Amendment – This Agreement may only be amended in writing signed by both parties.
+8.3 Assignment – Neither party may assign its rights or delegate its duties under this Agreement without the prior written consent of the other party.
+8.4 Governing Law – This Agreement shall be governed by and construed in accordance with the laws of the State of ${formData.governingLawState}, without regard to conflict of law principles.
+8.5 Severability – If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall remain in full force and effect.
+8.6 Waiver – Failure to enforce any provision of this Agreement shall not constitute a waiver of any rights hereunder.`
+    );
+
+    addText("IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective Date.", 11, false, true);
+
+    addText("Owner (Disclosing Party):", 11, true);
+    addText(`Name: ${formData.ownerName}`);
+    addText(`Signature: ${formData.signatureOwner}`);
+    addText(`Date: ${formData.agreementDate}`);
+
+    addText("Recipient (Receiving Party):", 11, true);
+    addText(`Name: ${formData.recipientName}`);
+    addText(`Signature: ${formData.signatureRecipient}`);
+    addText(`Date: ${formData.agreementDate}`);
+
+    doc.save("Confidentiality_Agreement.pdf");
   };
 
   const renderStep = () => {
-    switch (currentStep) {
+    switch (step) {
       case 1:
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Parties & Agreement Date</CardTitle>
+              <CardTitle>Step 1: Agreement & Parties</CardTitle>
             </CardHeader>
             <CardContent>
-              <Label htmlFor="agreementDate">Agreement Date</Label>
+              <Label>Agreement Date</Label>
               <Input
-                id="agreementDate"
                 type="date"
+                name="agreementDate"
                 value={formData.agreementDate}
-                onChange={(e) => handleInputChange("agreementDate", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
-              <Label htmlFor="ownerName">Owner Name</Label>
+              <Label>Owner (Disclosing Party) Name</Label>
               <Input
-                id="ownerName"
+                name="ownerName"
                 value={formData.ownerName}
-                onChange={(e) => handleInputChange("ownerName", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
-              <Label htmlFor="ownerAddress">Owner Address</Label>
+              <Label>Owner Address</Label>
               <Textarea
-                id="ownerAddress"
+                name="ownerAddress"
                 value={formData.ownerAddress}
-                onChange={(e) => handleInputChange("ownerAddress", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
-              <Label htmlFor="recipientName">Recipient Name</Label>
+              <Label>Recipient (Receiving Party) Name</Label>
               <Input
-                id="recipientName"
+                name="recipientName"
                 value={formData.recipientName}
-                onChange={(e) => handleInputChange("recipientName", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
-              <Label htmlFor="recipientAddress">Recipient Address</Label>
+              <Label>Recipient Address</Label>
               <Textarea
-                id="recipientAddress"
+                name="recipientAddress"
                 value={formData.recipientAddress}
-                onChange={(e) => handleInputChange("recipientAddress", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
             </CardContent>
           </Card>
@@ -200,14 +237,22 @@ const ConfidentialityAgreementForm: React.FC = () => {
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Definition of Confidential Information</CardTitle>
+              <CardTitle>Step 2: Business Descriptions</CardTitle>
             </CardHeader>
             <CardContent>
-              <Label htmlFor="confidentialInfo">Confidential Information</Label>
+              <Label>Owner Business Description</Label>
               <Textarea
-                id="confidentialInfo"
-                value={formData.confidentialInfo}
-                onChange={(e) => handleInputChange("confidentialInfo", e.target.value)}
+                name="ownerBusinessDescription"
+                value={formData.ownerBusinessDescription}
+                onChange={handleChange}
+                className="mb-2"
+              />
+              <Label>Recipient Business Description</Label>
+              <Textarea
+                name="recipientBusinessDescription"
+                value={formData.recipientBusinessDescription}
+                onChange={handleChange}
+                className="mb-2"
               />
             </CardContent>
           </Card>
@@ -216,14 +261,23 @@ const ConfidentialityAgreementForm: React.FC = () => {
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Obligations of the Recipient</CardTitle>
+              <CardTitle>Step 3: Terms & Governing Law</CardTitle>
             </CardHeader>
             <CardContent>
-              <Label htmlFor="obligationsRecipient">Obligations</Label>
-              <Textarea
-                id="obligationsRecipient"
-                value={formData.obligationsRecipient}
-                onChange={(e) => handleInputChange("obligationsRecipient", e.target.value)}
+              <Label>Term (Years)</Label>
+              <Input
+                type="number"
+                name="termYears"
+                value={formData.termYears}
+                onChange={handleChange}
+                className="mb-2"
+              />
+              <Label>Governing Law State</Label>
+              <Input
+                name="governingLawState"
+                value={formData.governingLawState}
+                onChange={handleChange}
+                className="mb-2"
               />
             </CardContent>
           </Card>
@@ -232,116 +286,22 @@ const ConfidentialityAgreementForm: React.FC = () => {
         return (
           <Card>
             <CardHeader>
-              <CardTitle>Return or Destruction of Confidential Information</CardTitle>
+              <CardTitle>Step 4: Signatures</CardTitle>
             </CardHeader>
             <CardContent>
-              <Label htmlFor="returnDestructionInfo">Return or Destruction</Label>
-              <Textarea
-                id="returnDestructionInfo"
-                value={formData.returnDestructionInfo}
-                onChange={(e) => handleInputChange("returnDestructionInfo", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Relationship of the Parties</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="relationshipParties">Relationship</Label>
-              <Textarea
-                id="relationshipParties"
-                value={formData.relationshipParties}
-                onChange={(e) => handleInputChange("relationshipParties", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>No Warranty</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="noWarranty">No Warranty</Label>
-              <Textarea
-                id="noWarranty"
-                value={formData.noWarranty}
-                onChange={(e) => handleInputChange("noWarranty", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 7:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>No License</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="noLicense">No License</Label>
-              <Textarea
-                id="noLicense"
-                value={formData.noLicense}
-                onChange={(e) => handleInputChange("noLicense", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 8:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Term and Survival</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="termSurvival">Term and Survival</Label>
-              <Textarea
-                id="termSurvival"
-                value={formData.termSurvival}
-                onChange={(e) => handleInputChange("termSurvival", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 9:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Miscellaneous</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Textarea
-                id="miscellaneous"
-                value={formData.miscellaneous}
-                onChange={(e) => handleInputChange("miscellaneous", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
-      case 10:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Signatures</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="signatureOwner">Owner Signature</Label>
+              <Label>Owner Signature</Label>
               <Input
-                id="signatureOwner"
+                name="signatureOwner"
                 value={formData.signatureOwner}
-                onChange={(e) => handleInputChange("signatureOwner", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
-              <Label htmlFor="signatureRecipient">Recipient Signature</Label>
+              <Label>Recipient Signature</Label>
               <Input
-                id="signatureRecipient"
+                name="signatureRecipient"
                 value={formData.signatureRecipient}
-                onChange={(e) => handleInputChange("signatureRecipient", e.target.value)}
+                onChange={handleChange}
+                className="mb-2"
               />
             </CardContent>
           </Card>
@@ -352,46 +312,20 @@ const ConfidentialityAgreementForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Confidentiality Agreement</h1>
-        <p className="text-gray-600">Create a Confidentiality Agreement and export as a PDF.</p>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">Step {currentStep} of 14</div>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 14) * 100}%` }}
-          />
-        </div>
-      </div>
-
+    <div className="max-w-3xl mx-auto p-6 space-y-4">
       {renderStep()}
-
-      <div className="flex justify-between mt-8">
-        <Button variant="outline" onClick={prevStep} disabled={currentStep === 1} className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </Button>
-
-        <div className="flex gap-2">
-          {currentStep < 14 ? (
-            <Button onClick={nextStep} className="flex items-center gap-2">
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          )}
-        </div>
+      <div className="flex justify-between mt-4">
+        {step > 1 && (
+          <Button variant="outline" onClick={() => setStep(step - 1)}>
+            Previous
+          </Button>
+        )}
+        {step < 4 ? (
+          <Button onClick={() => setStep(step + 1)}>Next</Button>
+        ) : (
+          <Button onClick={generatePDF}>Generate PDF</Button>
+        )}
       </div>
     </div>
   );
-};
-
-export default ConfidentialityAgreementForm;
+}
