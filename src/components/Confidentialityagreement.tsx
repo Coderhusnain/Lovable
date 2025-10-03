@@ -13,7 +13,7 @@ interface FormData {
   ownerName: string;
   ownerAddress: string;
   recipientName: string;
-  recipientAddress: string;
+  recipientAddress: string;x
   confidentialInfo: string;
   obligationsRecipient: string;
   returnDestructionInfo: string;
@@ -308,22 +308,7 @@ const ConfidentialityAgreementForm: React.FC = () => {
             </CardContent>
           </Card>
         );
-      case 9:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Miscellaneous</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label htmlFor="miscellaneous">Miscellaneous</Label>
-              <Textarea
-                id="miscellaneous"
-                value={formData.miscellaneous}
-                onChange={(e) => handleInputChange("miscellaneous", e.target.value)}
-              />
-            </CardContent>
-          </Card>
-        );
+     
       case 10:
         return (
           <Card>

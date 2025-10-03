@@ -4,6 +4,12 @@ import Layout from "@/components/layout/Layout";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 
 // Convert all large components to lazy imports to fix deployment chunk issues
+const ArbitrationAgreement = lazy(() => import("@/components/ArbitrationAgreement"));
+const MEDIATIONAGREEMENT = lazy(() => import("@/components/MEDIATION AGREEMENT"));
+const MUTUALRELEASEAGREEMENT = lazy(() => import("@/components/MUTUALRELEASEAGREEMENT"));
+const MUTUALRESCISSION = lazy(() => import("@/components/MUTUALRESCISSION"));
+const releaseagreement = lazy(() => import("@/components/releaseagreement"));
+
 const Confidentialityagreement = lazy(() => import("@/components/Confidentialityagreement"));
 const Employeehandbook = lazy(() => import("@/components/Employeehandbook"));
 const Employeeretirement = lazy(() => import("@/components/Employeeretirement"));
@@ -85,13 +91,14 @@ const Documents = () => {
 
   // Family Protection documents
   const familyProtectionDocs = [
-    {
+     {
       id: 'living-will',
       title: 'Living Will',
       description: 'Create a Living Will to specify your health care directives and agent appointments',
       icon: Heart,
       component: LivingWillForm
     },
+   
     {
       id: 'child-care-auth',
       title: 'Child Care Authorization Agreement',
@@ -145,6 +152,13 @@ const Documents = () => {
 
   // Business Security documents
   const businessSecurityDocs = [
+     {
+      id: 'MUTUAL RELEASE AGREEMENT',
+      title: 'Mutual release agreement',
+      description: 'Create a comprehensive MUTUAL RELEASE AGREEMENT between two parties for joint ventures and partnerships',
+      icon: Briefcase,
+      component: MUTUALRELEASEAGREEMENT
+    },
     {
       id: 'business-agreement',
       title: 'Business Agreement',
@@ -152,12 +166,40 @@ const Documents = () => {
       icon: Briefcase,
       component: BusinessAgreementForm
     },
-    {
+     {
+      id: 'MUTUAL RESCISSION AND RELEASE AGREEMENT',
+      title: 'Mutual rescission and release agreement',
+      description: 'Create a comprehensive Mutual rescission and release agreement between two parties for joint ventures and partnerships',
+      icon: Briefcase,
+      component: MUTUALRESCISSION
+    },
+     {
+      id: 'MEDIATION AGREEMENT',
+      title: ' Mediation Agreement ',
+      description: 'Create a MEDIATION AGREEMENT  to specify your health care directives and agent appointments',
+      icon: Heart,
+      component: MEDIATIONAGREEMENT
+    },
+     {
+      id: 'ArbitrationAgreement',
+      title: 'Arbitration Agreement',
+      description: 'Create a comprehensive Arbitration Agreement between two parties for joint ventures and partnerships',
+      icon: Shield,
+      component: ArbitrationAgreement
+     },
+       {
       id: 'services-contract',
       title: 'Services Contract',
       description: 'Create a comprehensive services contract for professional service arrangements and staff augmentation',
       icon: Briefcase,
       component: ServicesContractForm
+    },
+    {
+      id: 'SETTLEMENT AND RELEASE AGREEMENT',
+      title: 'Settlement and release agreement ',
+      description: 'Create a comprehensive Settlement and release agreement  for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component:releaseagreement
     },
     {
       id: 'independent-contractor',
