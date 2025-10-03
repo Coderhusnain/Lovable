@@ -223,6 +223,10 @@ const AskLegalAdvice = () => {
 
   return (
     <Layout>
+      <div 
+    className="min-h-screen bg-cover bg-center relative"
+    style={{ backgroundImage: "url('/lovable-uploads/0f2430fd-a1bc-47ab-a2f7-2d0459002225.png')" }}
+  >
       <div className="container mx-auto px-4 pt-24 pb-12 max-w-3xl">
         <h1 className="text-4xl font-bold mb-8 text-center">Ask Legal Advice</h1>
         
@@ -246,6 +250,7 @@ const AskLegalAdvice = () => {
         <div className="bg-white rounded-xl shadow-lg p-8">
           {currentStep === 1 ? renderStep1() : renderStep2()}
         </div>
+      </div>
       </div>
     </Layout>
   );

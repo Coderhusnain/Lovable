@@ -9,53 +9,144 @@ import { toast } from "sonner";
 import jsPDF from "jspdf";
 
 interface FormData {
+  // General
   agreementDate: string;
-  employeeName: string;
-  employeeAddress: string;
-  employerName: string;
-  employerAddress: string;
-  positionTitle: string;
-  startDate: string;
-  supervisorName: string;
-  baseSalary: string;
-  commissionPercentage: string;
-  commissionBasis: string;
-  vacationDays: string;
-  sickLeaveDays: string;
-  nonCompeteTime: string;
-  nonCompeteArea: string;
-  nonSolicitationTime: string;
-  nonSolicitationArea: string;
+  testatorName: string;
+  testatorAddress: string;
+
+  // Article I – Family
+  spouseName: string;
+  childrenNames: string;
+
+  // Article II – Debts
+  debts: string;
+
+  // Article III – Property
+  specificBequests: string;
+  digitalAssets: string;
+  tangiblePersonalProperty: string;
+  residuaryEstate: string;
   state: string;
-  employeeSignature: string;
-  employerSignature: string;
+
+  // Article IV – Pet Care
+  petNames: string;
+  petCaretaker1: string;
+  petCaretaker1Address: string;
+  petCaretaker2: string;
+  petCaretaker2Address: string;
+  petCareFunds: string;
+
+  // Article V – Executor
+  executorName: string;
+  executorAddress: string;
+  successorExecutorName: string;
+  successorExecutorAddress: string;
+
+  // Article VI – Digital Executor
+  digitalExecutorName: string;
+  digitalExecutorAddress: string;
+  successorDigitalExecutorName: string;
+  successorDigitalExecutorAddress: string;
+
+  // Article VII – Guardian
+  guardianName: string;
+  guardianAddress: string;
+  successorGuardianName: string;
+  successorGuardianAddress: string;
+
+  // Article VIII – Executor Powers
+  executorPowers: string;
+
+  // Article IX – Digital Executor Powers
+  digitalExecutorPowers: string;
+
+  // Article X – Special Directives
+  specialDirectives: string;
+
+  // Article XI – Miscellaneous
+  miscellaneous: string;
+
+  // Witnesses
+  witness1Name: string;
+  witness1Address: string;
+  witness1CityState: string;
+  witness2Name: string;
+  witness2Address: string;
+  witness2CityState: string;
 }
+
+
+
 
 const LastWillAndTestamentForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: "",
-    employeeName: "",
-    employeeAddress: "",
-    employerName: "",
-    employerAddress: "",
-    positionTitle: "",
-    startDate: "",
-    supervisorName: "",
-    baseSalary: "",
-    commissionPercentage: "",
-    commissionBasis: "",
-    vacationDays: "",
-    sickLeaveDays: "",
-    nonCompeteTime: "",
-    nonCompeteArea: "",
-    nonSolicitationTime: "",
-    nonSolicitationArea: "",
-    state: "",
-    employeeSignature: "",
-    employerSignature: "",
-  });
 
+const [formData, setFormData] = useState<FormData>({
+  // General
+  agreementDate: "",
+  testatorName: "",
+  testatorAddress: "",
+
+  // Article I – Family
+  spouseName: "",
+  childrenNames: "",
+
+  // Article II – Debts
+  debts: "",
+
+  // Article III – Property
+  specificBequests: "",
+  digitalAssets: "",
+  tangiblePersonalProperty: "",
+  residuaryEstate: "",
+  state: "",
+
+  // Article IV – Pet Care
+  petNames: "",
+  petCaretaker1: "",
+  petCaretaker1Address: "",
+  petCaretaker2: "",
+  petCaretaker2Address: "",
+  petCareFunds: "",
+
+  // Article V – Executor
+  executorName: "",
+  executorAddress: "",
+  successorExecutorName: "",
+  successorExecutorAddress: "",
+
+  // Article VI – Digital Executor
+  digitalExecutorName: "",
+  digitalExecutorAddress: "",
+  successorDigitalExecutorName: "",
+  successorDigitalExecutorAddress: "",
+
+  // Article VII – Guardian
+  guardianName: "",
+  guardianAddress: "",
+  successorGuardianName: "",
+  successorGuardianAddress: "",
+
+  // Article VIII – Executor Powers
+  executorPowers: "",
+
+  // Article IX – Digital Executor Powers
+  digitalExecutorPowers: "",
+
+  // Article X – Special Directives
+  specialDirectives: "",
+
+  // Article XI – Miscellaneous
+  miscellaneous: "",
+
+  // Witnesses
+  witness1Name: "",
+  witness1Address: "",
+  witness1CityState: "",
+  witness2Name: "",
+  witness2Address: "",
+  witness2CityState: "",
+});
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -64,161 +155,243 @@ const LastWillAndTestamentForm: React.FC = () => {
   const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 1));
 
   const generatePDF = async () => {
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const lineHeight = 7;
-      let currentY = margin;
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    const lineHeight = 7;
+    let currentY = margin;
 
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont(undefined, isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 270) {
-            doc.addPage();
-            currentY = margin;
-          }
-          if (isCenter) {
-            const tw = doc.getStringUnitWidth(line) * fontSize / doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
+    const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, isBold ? "bold" : "normal");
+      const textWidth = pageWidth - margin * 2;
+      const lines = doc.splitTextToSize(text, textWidth);
+      lines.forEach((line: string) => {
+        if (currentY > 270) {
+          doc.addPage();
+          currentY = margin;
+        }
+        if (isCenter) {
+          const tw = (doc.getStringUnitWidth(line) * fontSize) / doc.internal.scaleFactor;
+          const tx = (pageWidth - tw) / 2;
+          doc.text(line, tx, currentY);
+        } else {
+          doc.text(line, margin, currentY);
+        }
+        currentY += lineHeight;
+      });
+    };
 
-      // Title
-      addText("LAST WILL AND TESTAMENT", 16, true, true);
-      currentY += 6;
+    // Title
+    addText("LAST WILL AND TESTAMENT", 16, true, true);
+    currentY += 6;
 
-      addText(
-        `This Last Will and Testament (“Agreement”) is made and entered into as of ${formData.agreementDate || "[Insert Date]"}, by and between ${formData.employeeName || "[Employee’s Full Legal Name]"}, residing at ${formData.employeeAddress || "[Employee’s Address]"} (“Testator”), and ${formData.employerName || "[Employer’s Full Legal Name]"}, with its principal place of business at ${formData.employerAddress || "[Employer’s Address]"} (“Employer”).`
-      );
+    addText(
+      `I, ${formData.testatorName || "__________________"}, residing at ${
+        formData.testatorAddress || "__________________"
+      }, hereby revoke all prior Wills and Codicils heretofore made by me and declare this instrument to be my Last Will and Testament (\u201cWill\u201d).`
+    );
+    currentY += 6;
+
+    const sections: { title: string; content: string }[] = [
+      {
+        title: "ARTICLE I – Identification of Family",
+        content: `I am lawfully married to ${formData.spouseName || "__________________"}, and all references in this Will to \u201cmy spouse\u201d shall mean and refer to said ${formData.spouseName || "__________________"}.
+The names of my children are ${formData.childrenNames || "__________________"}. All references in this Will to \u201cmy children\u201d shall include the above-named children and any other child or children hereafter born to or adopted by me after the execution of this Will.`,
+      },
+      {
+        title: "ARTICLE II – Payment of Debts and Expenses",
+        content: `I direct that all of my just debts, including but not limited to funeral expenses and expenses of my last illness, be first paid from my estate as soon as practicable after my death.`,
+      },
+      {
+        title: "ARTICLE III – Disposition of Property",
+        content: `A. Specific Bequests
+I direct that the following specific bequests be made from my estate: ${formData.specificBequests || "__________________"}.
+
+B. Digital Assets
+All of my digital assets shall be distributed in accordance with Schedule \u201cA\u201d attached to and incorporated into this Will.
+For purposes of this Will, \u201cdigital assets\u201d shall mean any and all electronic, online, or virtual property owned or controlled by me at the time of my death, including, but not limited to, accounts and content on social networking sites, cloud storage, email, financial accounts, domain names, virtual currencies, websites, blogs, and any other online content or data.
+A Letter of Instructions containing associated usernames, passwords, and any necessary access information is incorporated by reference into this Will and shall be delivered exclusively to my appointed Digital Executor.
+
+C. Tangible Personal Property
+All remaining tangible personal property not otherwise specifically bequeathed herein shall be distributed to ${formData.tangiblePersonalProperty || "__________________"}. Should this beneficiary fail to survive me, such property shall be distributed as part of my residuary estate.
+
+D. Residuary Estate
+I direct that the remainder of my estate, real, personal, or mixed, and wherever situated, be distributed to my spouse, ${formData.spouseName || "__________________"}.
+If my spouse does not survive me, I direct that my residuary estate be distributed equally among my surviving children, and if any child is deceased, such child\u2019s share shall be distributed to their descendants by right of representation.
+If neither my spouse, children, nor descendants survive me, I direct that my residuary estate be distributed to ${formData.residuaryEstate || "__________________"}.
+Should such beneficiary fail to survive me, the remainder of my estate shall pass to my heirs-at-law in accordance with the laws of the State of ${formData.state || "__________________"}.`,
+      },
+      {
+        title: "ARTICLE IV – Pet Care Directives",
+        content: `A. Appointment of Pet Caretaker
+I give my pets, namely ${formData.petNames || "__________________"}, together with any other companion animals I may own at my death, to ${formData.petCaretaker1 || "__________________"}, of ${formData.petCaretaker1Address || "__________________"}, requesting (but not directing) that they provide proper care and companionship.
+If such person is unable or unwilling to accept custody, I give said animals to ${formData.petCaretaker2 || "__________________"}, of ${formData.petCaretaker2Address || "__________________"}.
+If neither of the above-named persons accepts custody, my Executor shall select an appropriate caretaker.
+
+B. Funds for Pet Care
+I direct my Executor to deliver the sum of ${formData.petCareFunds || "------"} from my estate to the person who accepts custody of my animals, with the request (but without creating a legally binding obligation) that such funds be used solely for their care.`,
+      },
+      {
+        title: "ARTICLE V – Nomination of Independent Executor",
+        content: `I nominate ${formData.executorName || "__________________"}, of ${formData.executorAddress || "__________________"}, to serve as my Independent Executor.
+If such person or entity is unable or unwilling to serve, I nominate ${formData.successorExecutorName || "__________________"}, of ${formData.successorExecutorAddress || "__________________"}, as successor Independent Executor.`,
+      },
+      {
+        title: "ARTICLE VI – Nomination of Digital Executor",
+        content: `I nominate ${formData.digitalExecutorName || "__________________"}, of ${formData.digitalExecutorAddress || "__________________"}, to serve as my Digital Executor for the purposes of administering my digital assets after my death.
+If such person or entity is unable or unwilling to serve, I nominate ${formData.successorDigitalExecutorName || "__________________"}, of ${formData.successorDigitalExecutorAddress || "__________________"}, as successor Digital Executor.`,
+      },
+      {
+        title: "ARTICLE VII – Nomination of Guardian",
+        content: `If at the time of my death it becomes necessary to appoint a guardian for my minor children, I nominate ${formData.guardianName || "__________________"}, of ${formData.guardianAddress || "__________________"}, as Guardian of their persons and estates.
+If such person is unable or unwilling to serve, I nominate ${formData.successorGuardianName || "__________________"}, of ${formData.successorGuardianAddress || "__________________"}, as successor Guardian.
+I direct that no bond or other security shall be required for the faithful performance of the Guardian\u2019s duties.`,
+      },
+      {
+        title: "ARTICLE VIII – Executor Powers",
+        content: `A. Power to Administer Estate
+I grant my Independent Executor full power and authority, without necessity of court order or approval, to:
+Take possession of, collect, and manage all assets of my estate;
+Pay, compromise, or settle claims and debts;
+File and pay all applicable taxes;
+Sell, lease, or mortgage any real or personal property;
+Invest, reinvest, and manage estate assets;
+Redirect mail, cancel services, and close accounts;
+Establish or fund any trusts created under this Will; and
+Perform all acts necessary or advisable for proper administration.
+
+B. Independent Administration
+My Executor shall administer my estate through independent or unsupervised probate to the fullest extent permitted by law.`,
+      },
+      {
+        title: "ARTICLE IX – Digital Executor Powers",
+        content: `A. Authority
+My Digital Executor shall have full power and authority to manage, access, distribute, transfer, archive, or delete my digital assets, including but not limited to:
+Accessing and backing up files and accounts;
+Converting file formats;
+Managing or disposing of devices;
+Terminating accounts; and
+Ensuring the permanent and secure disposition of digital assets.
+
+B. Standard of Care
+The Digital Executor shall act with prudence, discretion, and sound judgment, always prioritizing the security and intended use of my digital assets.
+
+C. Employment of Professionals
+The Digital Executor may employ attorneys, accountants, IT specialists, or other professionals as reasonably necessary, and may delegate authority when in the estate\u2019s best interest.
+
+D. Compensation
+The Digital Executor shall be entitled to reasonable compensation and reimbursement for all expenses properly incurred.
+
+E. Duration of Powers
+The powers of the Digital Executor shall continue until all digital assets are fully administered.`,
+      },
+      {
+        title: "ARTICLE X – Special Directives",
+        content: `${formData.specialDirectives || "__________________"}`,
+      },
+      {
+        title: "ARTICLE XI – Miscellaneous Provisions",
+        content: `A. Paragraph Titles and Gender
+Titles are for convenience only and shall not affect interpretation. Words of any gender include all genders; singular includes plural, and vice versa.
+
+B. Thirty-Day Survival Requirement
+A beneficiary must survive me by at least thirty (30) days to inherit under this Will.
+
+C. Common Disaster
+If my spouse and I die under circumstances in which the order of death cannot be determined, I shall be deemed to have predeceased my spouse for purposes of distribution.
+
+D. Liability of Fiduciary
+No fiduciary shall be liable for acts or omissions made in good faith and without fraud or bad faith. My estate shall indemnify and hold harmless each fiduciary against any claims or expenses, except for acts involving willful misconduct.
+
+E. Compensation
+Each fiduciary named herein shall be entitled to reasonable compensation and reimbursement for properly incurred expenses.
+
+F. Beneficiary Disputes
+If a bequest is to be divided among multiple beneficiaries and they cannot agree, my Independent Executor shall have full discretion to divide the property in such manner as deemed fair and equitable.`,
+      },
+    ];
+
+    for (const section of sections) {
+      addText(section.title, 12, true);
+      addText(section.content);
       currentY += 4;
-
-      // Sections (e.g., POSITION OFFER, COMMENCEMENT OF EMPLOYMENT, etc.)
-      const sections: { title: string; content: string }[] = [
-        {
-          title: "1. POSITION OFFER",
-          content: `We are pleased to extend to you an offer of employment for the position of ${formData.positionTitle || "[Position Title]"} with ${formData.employerName || "[Employer’s Name]"} (“Employer”)...`,
-        },
-        {
-          title: "2. COMMENCEMENT OF EMPLOYMENT",
-          content: `Your anticipated start date will be ${formData.startDate || "[Start Date]"}...`,
-        },
-        {
-          title: "3. JOB RESPONSIBILITIES",
-          content: `You will perform all duties customarily associated with the position of ${formData.positionTitle || "[Position Title]"}...`,
-        },
-        {
-          title: "4. COMPENSATION",
-          content: `4.1 Base Salary – You will receive a monthly salary of $${formData.baseSalary || "[Amount]"}... \n4.2 Commission – You will be entitled to commissions calculated at ${formData.commissionPercentage || "[Percentage]"}% of ${formData.commissionBasis || "[Basis for Commission Calculation]"}...`,
-        },
-        {
-          title: "5. EXPENSE REIMBURSEMENT",
-          content: `You will be reimbursed for reasonable, pre-approved out-of-pocket business expenses...`,
-        },
-        {
-          title: "6. BENEFITS AND LEAVE",
-          content: `6.1 Benefits – You will be eligible to participate in health, retirement, and other benefit programs as offered... \n6.2 Vacation Leave – You will be entitled to ${formData.vacationDays || "[Number]"} days of paid vacation per calendar year...`,
-        },
-        {
-          title: "7. EMPLOYMENT RELATIONSHIP",
-          content: `Your employment will be at-will, meaning that either you or the Employer may terminate the relationship at any time...`,
-        },
-        {
-          title: "8. CONFIDENTIALITY AND INTELLECTUAL PROPERTY",
-          content: `8.1 Confidentiality – You agree to maintain the confidentiality of all proprietary information... \n8.2 Intellectual Property – Any inventions created by you during your employment shall be the exclusive property of the Employer...`,
-        },
-        {
-          title: "9. NON-COMPETE AND NON-SOLICITATION",
-          content: `9.1 Non-Compete – During your employment and for a period of ${formData.nonCompeteTime || "[Time Period]"} following termination, you shall not compete with the Employer within ${formData.nonCompeteArea || "[Geographic Area]"}... \n9.2 Non-Solicitation – During your employment and for a period of ${formData.nonSolicitationTime || "[Time Period]"} following termination...`,
-        },
-        {
-          title: "10. CONDITIONS OF OFFER",
-          content: `This offer is contingent upon your written acceptance of this letter...`,
-        },
-        {
-          title: "11. NON-CONTRACTUAL NATURE",
-          content: `This letter is not intended to create a guarantee of continued employment...`,
-        },
-        {
-          title: "12. GOVERNING LAW",
-          content: `This letter shall be governed by the laws of the State of ${formData.state || "[State]"}...`,
-        },
-        {
-          title: "13. ACCEPTANCE OF OFFER",
-          content: `If you accept this offer, please sign and return a copy of this letter by [Deadline Date]...`,
-        },
-      ];
-
-      for (const section of sections) {
-        addText(section.title, 12, true);
-        addText(section.content);
-        currentY += 3;
-      }
-
-      // Employer & Employee Signatures
-      addText("EMPLOYER:", 12, true);
-      addText(`Signature: ${formData.employerSignature || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 10;
-
-      addText("EMPLOYEE:", 12, true);
-      addText(`Signature: ${formData.employeeSignature || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 12;
-
-      // Save the PDF
-      doc.save("offer-of-employment-letter.pdf");
-      toast.success("Offer of Employment Letter PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Offer of Employment Letter PDF");
     }
-  };
 
-  const renderStep = () => {
+    // Signature & Witness
+    addText("IN WITNESS WHEREOF, I have hereunto subscribed my name this ___ day of ________, ---.", 11);
+    currentY += 10;
+
+    addText(`Testator: ${formData.testatorName || "_________________________"}`);
+    currentY += 12;
+
+    addText("Witness Certification", 12, true);
+    addText(
+      `We certify that the foregoing instrument, consisting of ____ pages, was signed by ${
+        formData.testatorName || "__________________"
+      } (the Testator) in our presence, who declared it to be their Last Will and Testament, and we have signed as witnesses in the presence of the Testator and each other.`
+    );
+    currentY += 6;
+
+    addText(`Name: ${formData.witness1Name || "_____________________________"}`);
+    addText(`Address: ${formData.witness1Address || "___________________________"}`);
+    addText(`City/State: ${formData.witness1CityState || "_________________________"}`);
+    currentY += 8;
+
+    addText(`Name: ${formData.witness2Name || "_____________________________"}`);
+    addText(`Address: ${formData.witness2Address || "___________________________"}`);
+    addText(`City/State: ${formData.witness2CityState || "_________________________"}`);
+
+    // Save
+    doc.save("last-will-and-testament.pdf");
+    toast.success("Last Will and Testament PDF generated successfully!");
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast.error("Failed to generate Last Will and Testament PDF");
+  }
+};
+
+
+ const renderStep = () => {
   switch (currentStep) {
     case 1:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Testator Information</CardTitle>
+            <CardTitle>General Information</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="agreementDate">Agreement Date</Label>
             <Input
-              id="agreementDate"
               type="date"
+              id="agreementDate"
               value={formData.agreementDate}
               onChange={(e) => handleInputChange("agreementDate", e.target.value)}
             />
-            <Label htmlFor="employeeName">Testator Name</Label>
+
+            <Label htmlFor="testatorName">Testator Name</Label>
             <Input
-              id="employeeName"
-              value={formData.employeeName}
-              onChange={(e) => handleInputChange("employeeName", e.target.value)}
+              id="testatorName"
+              value={formData.testatorName}
+              onChange={(e) => handleInputChange("testatorName", e.target.value)}
             />
-            <Label htmlFor="employeeAddress">Testator Address</Label>
+
+            <Label htmlFor="testatorAddress">Testator Address</Label>
             <Textarea
-              id="employeeAddress"
-              value={formData.employeeAddress}
-              onChange={(e) => handleInputChange("employeeAddress", e.target.value)}
+              id="testatorAddress"
+              value={formData.testatorAddress}
+              onChange={(e) => handleInputChange("testatorAddress", e.target.value)}
             />
           </CardContent>
         </Card>
       );
+
     case 2:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Spouse & Children</CardTitle>
+            <CardTitle>Article I – Family Identification</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="spouseName">Spouse Name</Label>
@@ -227,6 +400,7 @@ const LastWillAndTestamentForm: React.FC = () => {
               value={formData.spouseName}
               onChange={(e) => handleInputChange("spouseName", e.target.value)}
             />
+
             <Label htmlFor="childrenNames">Children Names</Label>
             <Input
               id="childrenNames"
@@ -236,14 +410,15 @@ const LastWillAndTestamentForm: React.FC = () => {
           </CardContent>
         </Card>
       );
+
     case 3:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Payment of Debts</CardTitle>
+            <CardTitle>Article II – Debts and Expenses</CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="debts">Payment of Debts and Expenses</Label>
+            <Label htmlFor="debts">Debts & Expenses</Label>
             <Textarea
               id="debts"
               value={formData.debts}
@@ -252,11 +427,12 @@ const LastWillAndTestamentForm: React.FC = () => {
           </CardContent>
         </Card>
       );
+
     case 4:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Specific Bequests</CardTitle>
+            <CardTitle>Article III – Disposition of Property</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="specificBequests">Specific Bequests</Label>
@@ -265,48 +441,21 @@ const LastWillAndTestamentForm: React.FC = () => {
               value={formData.specificBequests}
               onChange={(e) => handleInputChange("specificBequests", e.target.value)}
             />
-          </CardContent>
-        </Card>
-      );
-    case 5:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Digital Assets</CardTitle>
-          </CardHeader>
-          <CardContent>
+
             <Label htmlFor="digitalAssets">Digital Assets</Label>
             <Textarea
               id="digitalAssets"
               value={formData.digitalAssets}
               onChange={(e) => handleInputChange("digitalAssets", e.target.value)}
             />
-          </CardContent>
-        </Card>
-      );
-    case 6:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Tangible Personal Property</CardTitle>
-          </CardHeader>
-          <CardContent>
+
             <Label htmlFor="tangiblePersonalProperty">Tangible Personal Property</Label>
             <Textarea
               id="tangiblePersonalProperty"
               value={formData.tangiblePersonalProperty}
               onChange={(e) => handleInputChange("tangiblePersonalProperty", e.target.value)}
             />
-          </CardContent>
-        </Card>
-      );
-    case 7:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Residuary Estate</CardTitle>
-          </CardHeader>
-          <CardContent>
+
             <Label htmlFor="residuaryEstate">Residuary Estate</Label>
             <Textarea
               id="residuaryEstate"
@@ -316,27 +465,50 @@ const LastWillAndTestamentForm: React.FC = () => {
           </CardContent>
         </Card>
       );
-    case 8:
+
+    case 5:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Pet Care Directives</CardTitle>
+            <CardTitle>Article IV – Pet Care Directives</CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="petCare">Pet Care Directives</Label>
-            <Textarea
-              id="petCare"
-              value={formData.petCare}
-              onChange={(e) => handleInputChange("petCare", e.target.value)}
+            <Label htmlFor="petNames">Pet Names</Label>
+            <Input
+              id="petNames"
+              value={formData.petNames}
+              onChange={(e) => handleInputChange("petNames", e.target.value)}
+            />
+
+            <Label htmlFor="petCaretaker">Primary Pet Caretaker</Label>
+            <Input
+              id="petCaretaker"
+              value={formData.petCaretaker1}
+              onChange={(e) => handleInputChange("petCaretaker1", e.target.value)}
+            />
+
+            <Label htmlFor="alternatePetCaretaker">Alternate Pet Caretaker</Label>
+            <Input
+              id="alternatePetCaretaker"
+              value={formData.petCaretaker2}
+              onChange={(e) => handleInputChange("petCaretaker2", e.target.value)}
+            />
+
+            <Label htmlFor="petFunds">Funds for Pet Care</Label>
+            <Input
+              id="petFunds"
+              value={formData.petCareFunds}
+              onChange={(e) => handleInputChange("petCareFunds", e.target.value)}
             />
           </CardContent>
         </Card>
       );
-    case 9:
+
+    case 6:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Executor Appointment</CardTitle>
+            <CardTitle>Article V – Executor Appointment</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="executorName">Executor Name</Label>
@@ -345,20 +517,50 @@ const LastWillAndTestamentForm: React.FC = () => {
               value={formData.executorName}
               onChange={(e) => handleInputChange("executorName", e.target.value)}
             />
+
             <Label htmlFor="executorAddress">Executor Address</Label>
             <Textarea
               id="executorAddress"
               value={formData.executorAddress}
               onChange={(e) => handleInputChange("executorAddress", e.target.value)}
             />
+
+            
           </CardContent>
         </Card>
       );
-    case 10:
+
+    case 7:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Guardian Appointment</CardTitle>
+            <CardTitle>Article VI – Digital Executor Appointment</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label htmlFor="digitalExecutorName">Digital Executor Name</Label>
+            <Input
+              id="digitalExecutorName"
+              value={formData.digitalExecutorName}
+              onChange={(e) => handleInputChange("digitalExecutorName", e.target.value)}
+            />
+
+            <Label htmlFor="digitalExecutorAddress">Digital Executor Address</Label>
+            <Textarea
+              id="digitalExecutorAddress"
+              value={formData.digitalExecutorAddress}
+              onChange={(e) => handleInputChange("digitalExecutorAddress", e.target.value)}
+            />
+
+           
+          </CardContent>
+        </Card>
+      );
+
+    case 8:
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle>Article VII – Guardian Appointment</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="guardianName">Guardian Name</Label>
@@ -367,20 +569,24 @@ const LastWillAndTestamentForm: React.FC = () => {
               value={formData.guardianName}
               onChange={(e) => handleInputChange("guardianName", e.target.value)}
             />
+
             <Label htmlFor="guardianAddress">Guardian Address</Label>
             <Textarea
               id="guardianAddress"
               value={formData.guardianAddress}
               onChange={(e) => handleInputChange("guardianAddress", e.target.value)}
             />
+
+           
           </CardContent>
         </Card>
       );
-    case 11:
+
+    case 9:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Executor Powers</CardTitle>
+            <CardTitle>Article VIII – Executor Powers</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="executorPowers">Executor Powers</Label>
@@ -392,33 +598,63 @@ const LastWillAndTestamentForm: React.FC = () => {
           </CardContent>
         </Card>
       );
-    case 12:
+
+    case 10:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Digital Executor Appointment</CardTitle>
+            <CardTitle>Article IX – Digital Executor Powers</CardTitle>
           </CardHeader>
           <CardContent>
-            <Label htmlFor="digitalExecutorName">Digital Executor Name</Label>
-            <Input
-              id="digitalExecutorName"
-              value={formData.digitalExecutorName}
-              onChange={(e) => handleInputChange("digitalExecutorName", e.target.value)}
-            />
-            <Label htmlFor="digitalExecutorAddress">Digital Executor Address</Label>
+            <Label htmlFor="digitalExecutorPowers">Digital Executor Powers</Label>
             <Textarea
-              id="digitalExecutorAddress"
-              value={formData.digitalExecutorAddress}
-              onChange={(e) => handleInputChange("digitalExecutorAddress", e.target.value)}
+              id="digitalExecutorPowers"
+              value={formData.digitalExecutorPowers}
+              onChange={(e) => handleInputChange("digitalExecutorPowers", e.target.value)}
             />
           </CardContent>
         </Card>
       );
+
+    case 11:
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle>Article X – Special Directives</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label htmlFor="specialDirectives">Special Directives</Label>
+            <Textarea
+              id="specialDirectives"
+              value={formData.specialDirectives}
+              onChange={(e) => handleInputChange("specialDirectives", e.target.value)}
+            />
+          </CardContent>
+        </Card>
+      );
+
+    case 12:
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle>Article XI – Miscellaneous Provisions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label htmlFor="miscellaneous">Miscellaneous Provisions</Label>
+            <Textarea
+              id="miscellaneous"
+              value={formData.miscellaneous}
+              onChange={(e) => handleInputChange("miscellaneous", e.target.value)}
+            />
+          </CardContent>
+        </Card>
+      );
+
     case 13:
       return (
         <Card>
           <CardHeader>
-            <CardTitle>Witnesses</CardTitle>
+            <CardTitle>Witness Information</CardTitle>
           </CardHeader>
           <CardContent>
             <Label htmlFor="witness1Name">Witness #1 Name</Label>
@@ -427,25 +663,57 @@ const LastWillAndTestamentForm: React.FC = () => {
               value={formData.witness1Name}
               onChange={(e) => handleInputChange("witness1Name", e.target.value)}
             />
+
+            <Label htmlFor="witness1Address">Witness #1 Address</Label>
+            <Textarea
+              id="witness1Address"
+              value={formData.witness1Address}
+              onChange={(e) => handleInputChange("witness1Address", e.target.value)}
+            />
+
+            <Label htmlFor="witness1CityState">Witness #1 City/State</Label>
+            <Input
+              id="witness1CityState"
+              value={formData.witness1CityState}
+              onChange={(e) => handleInputChange("witness1CityState", e.target.value)}
+            />
+
             <Label htmlFor="witness2Name">Witness #2 Name</Label>
             <Input
               id="witness2Name"
               value={formData.witness2Name}
               onChange={(e) => handleInputChange("witness2Name", e.target.value)}
             />
+
+            <Label htmlFor="witness2Address">Witness #2 Address</Label>
+            <Textarea
+              id="witness2Address"
+              value={formData.witness2Address}
+              onChange={(e) => handleInputChange("witness2Address", e.target.value)}
+            />
+
+            <Label htmlFor="witness2CityState">Witness #2 City/State</Label>
+            <Input
+              id="witness2CityState"
+              value={formData.witness2CityState}
+              onChange={(e) => handleInputChange("witness2CityState", e.target.value)}
+            />
           </CardContent>
         </Card>
       );
+
     default:
       return null;
   }
 };
 
+
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Offer of Employment Letter</h1>
-        <p className="text-gray-600">Create an Offer of Employment Letter and export as a PDF.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Last Will and Testament</h1>
+        <p className="text-gray-600">Create a Last Will and Testament and export as a PDF.</p>
       </div>
 
       <div className="mb-6">

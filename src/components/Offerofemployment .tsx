@@ -1,408 +1,583 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
 import jsPDF from "jspdf";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-interface FormData {
-  agreementDate: string;
-  employeeName: string;
-  employeeAddress: string;
-  employerName: string;
-  employerAddress: string;
-  positionTitle: string;
-  startDate: string;
-  supervisorName: string;
-  baseSalary: string;
-  commissionPercentage: string;
-  commissionBasis: string;
-  vacationDays: string;
-  sickLeaveDays: string;
-  nonCompeteTime: string;
-  nonCompeteArea: string;
-  nonSolicitationTime: string;
-  nonSolicitationArea: string;
-  state: string;
-  employeeSignature: string;
-  employerSignature: string;
-}
+export default function OfferOfEmploymentLetterForm() {
+  const [formData, setFormData] = useState({
+    // General
+    date: "",
+    deadlineDate: "",
+    state: "",
 
-const OfferOfEmploymentForm: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: "",
-    employeeName: "",
+    // Employee details
+    employeeFullName: "",
     employeeAddress: "",
-    employerName: "",
+    employeeCityStateZip: "",
+
+    // Employer details
+    employerFullName: "",
     employerAddress: "",
+    employerCityStateZip: "",
+
+    // Job details
     positionTitle: "",
-    startDate: "",
-    supervisorName: "",
+    meetingDate: "",
+    supervisorNameTitle: "",
+
+    // Compensation
     baseSalary: "",
     commissionPercentage: "",
     commissionBasis: "",
+
+    // Benefits & Leave
     vacationDays: "",
     sickLeaveDays: "",
-    nonCompeteTime: "",
-    nonCompeteArea: "",
-    nonSolicitationTime: "",
-    nonSolicitationArea: "",
-    state: "",
-    employeeSignature: "",
-    employerSignature: "",
+
+    // Non-compete
+    nonCompetePeriod: "",
+    nonCompeteGeographicArea: "",
+    nonSolicitPeriod: "",
+
+    // Employer signature
+    employerTitle: "",
+    employerSignatureDate: "",
+
+    // Employee signature
+    employeeSignatureDate: "",
   });
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 7));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-  const nextStep = () => setCurrentStep((p) => Math.min(p + 1, 13));
-  const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 1));
 
-  const generatePDF = async () => {
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const lineHeight = 7;
-      let currentY = margin;
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let currentY = 20;
+    const lineHeight = 8;
 
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont(undefined, isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 270) {
-            doc.addPage();
-            currentY = margin;
-          }
-          if (isCenter) {
-            const tw = doc.getStringUnitWidth(line) * fontSize / doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
+    const addText = (text, fontSize = 11, isBold = false, isCenter = false) => {
+      doc.setFontSize(fontSize);
+      doc.setFont("times", isBold ? "bold" : "normal");
+      const textWidth = pageWidth - margin * 2;
+      const lines = doc.splitTextToSize(text, textWidth);
+      lines.forEach((line) => {
+        if (currentY > 280) {
+          doc.addPage();
+          currentY = margin;
+        }
+        if (isCenter) {
+          const tw =
+            (doc.getStringUnitWidth(line) * fontSize) /
+            doc.internal.scaleFactor;
+          const tx = (pageWidth - tw) / 2;
+          doc.text(line, tx, currentY);
+        } else {
+          doc.text(line, margin, currentY);
+        }
+        currentY += lineHeight;
+      });
+    };
 
-      // Title
-      addText("OFFER OF EMPLOYMENT LETTER", 16, true, true);
-      currentY += 6;
+    // ----- Start PDF Content -----
+    addText("OFFER OF EMPLOYMENT LETTER", 13, true, true);
+    currentY += 5;
 
-      addText(
-        `Date: ${formData.agreementDate || "[Insert Date]"}\n\nTo:\n${formData.employeeName || "[Employee’s Full Legal Name]"}\n${formData.employeeAddress || "[Employee’s Address]"}\n\nFrom:\n${formData.employerName || "[Employer’s Full Legal Name]"}\n${formData.employerAddress || "[Employer’s Address]"}`
-      );
-      currentY += 4;
+    addText(`Date: ${formData.date}`);
+    currentY += 5;
 
-      // Sections (e.g., POSITION OFFER, COMMENCEMENT OF EMPLOYMENT, etc.)
-      const sections: { title: string; content: string }[] = [
-        {
-          title: "1. POSITION OFFER",
-          content: `We are pleased to extend to you an offer of employment for the position of ${formData.positionTitle || "[Position Title]"} with ${formData.employerName || "[Employer’s Name]"} (“Employer”)...`,
-        },
-        {
-          title: "2. COMMENCEMENT OF EMPLOYMENT",
-          content: `Your anticipated start date will be ${formData.startDate || "[Start Date]"}...`,
-        },
-        {
-          title: "3. JOB RESPONSIBILITIES",
-          content: `You will perform all duties customarily associated with the position of ${formData.positionTitle || "[Position Title]"}...`,
-        },
-        {
-          title: "4. COMPENSATION",
-          content: `4.1 Base Salary – You will receive a monthly salary of $${formData.baseSalary || "[Amount]"}... \n4.2 Commission – You will be entitled to commissions calculated at ${formData.commissionPercentage || "[Percentage]"}% of ${formData.commissionBasis || "[Basis for Commission Calculation]"}...`,
-        },
-        {
-          title: "5. EXPENSE REIMBURSEMENT",
-          content: `You will be reimbursed for reasonable, pre-approved out-of-pocket business expenses...`,
-        },
-        {
-          title: "6. BENEFITS AND LEAVE",
-          content: `6.1 Benefits – You will be eligible to participate in health, retirement, and other benefit programs as offered... \n6.2 Vacation Leave – You will be entitled to ${formData.vacationDays || "[Number]"} days of paid vacation per calendar year...`,
-        },
-        {
-          title: "7. EMPLOYMENT RELATIONSHIP",
-          content: `Your employment will be at-will, meaning that either you or the Employer may terminate the relationship at any time...`,
-        },
-        {
-          title: "8. CONFIDENTIALITY AND INTELLECTUAL PROPERTY",
-          content: `8.1 Confidentiality – You agree to maintain the confidentiality of all proprietary information... \n8.2 Intellectual Property – Any inventions created by you during your employment shall be the exclusive property of the Employer...`,
-        },
-        {
-          title: "9. NON-COMPETE AND NON-SOLICITATION",
-          content: `9.1 Non-Compete – During your employment and for a period of ${formData.nonCompeteTime || "[Time Period]"} following termination, you shall not compete with the Employer within ${formData.nonCompeteArea || "[Geographic Area]"}... \n9.2 Non-Solicitation – During your employment and for a period of ${formData.nonSolicitationTime || "[Time Period]"} following termination...`,
-        },
-        {
-          title: "10. CONDITIONS OF OFFER",
-          content: `This offer is contingent upon your written acceptance of this letter...`,
-        },
-        {
-          title: "11. NON-CONTRACTUAL NATURE",
-          content: `This letter is not intended to create a guarantee of continued employment...`,
-        },
-        {
-          title: "12. GOVERNING LAW",
-          content: `This letter shall be governed by the laws of the State of ${formData.state || "[State]"}...`,
-        },
-        {
-          title: "13. ACCEPTANCE OF OFFER",
-          content: `If you accept this offer, please sign and return a copy of this letter by [Deadline Date]...`,
-        },
-      ];
+    addText("To:");
+    addText(formData.employeeFullName);
+    addText(formData.employeeAddress);
+    addText(formData.employeeCityStateZip);
+    currentY += 5;
 
-      for (const section of sections) {
-        addText(section.title, 12, true);
-        addText(section.content);
-        currentY += 3;
-      }
+    addText("From:");
+    addText(formData.employerFullName);
+    addText(formData.employerAddress);
+    addText(formData.employerCityStateZip);
+    currentY += 5;
 
-      // Employer & Employee Signatures
-      addText("EMPLOYER:", 12, true);
-      addText(`Signature: ${formData.employerSignature || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 10;
+    addText("1. POSITION OFFER", 12, true);
+    addText(
+      `We are pleased to extend to you an offer of employment for the position of ${formData.positionTitle} with ${formData.employerFullName} (“Employer”), as discussed during our meeting on ${formData.meetingDate}.`
+    );
+    addText(
+      "Your acceptance of this offer constitutes your agreement to the terms, conditions, and obligations set forth in this letter, which shall remain binding until superseded by a formal written Employment Agreement."
+    );
 
-      addText("EMPLOYEE:", 12, true);
-      addText(`Signature: ${formData.employeeSignature || "_________________________"}`);
-      addText("Date: ___________________");
-      currentY += 12;
+    addText("2. COMMENCEMENT OF EMPLOYMENT", 12, true);
+    addText(
+      `Your anticipated start date will be ${formData.date}, or such other date as mutually agreed in writing. You will report directly to ${formData.supervisorNameTitle}, or such other supervisor as the Employer may designate.`
+    );
 
-      // Save the PDF
-      doc.save("offer-of-employment-letter.pdf");
-      toast.success("Offer of Employment Letter PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Offer of Employment Letter PDF");
+    addText("3. JOB RESPONSIBILITIES", 12, true);
+    addText(
+      `You will perform all duties customarily associated with the position of ${formData.positionTitle}, along with such additional tasks as may reasonably be assigned from time to time. You are expected to discharge your responsibilities with diligence, integrity, and full compliance with all company policies, applicable laws, and professional standards.`
+    );
+
+    addText("4. COMPENSATION", 12, true);
+    addText(
+      `4.1 Base Salary – You will receive monthly salary of $${formData.baseSalary}, payable in accordance with the Employer’s standard payroll schedule and subject to all applicable withholdings and deductions.`
+    );
+    addText(
+      `4.2 Commission – In addition to your base salary, you will be entitled to commissions calculated at ${formData.commissionPercentage}% of ${formData.commissionBasis}, subject to adjustment in accordance with company policy.`
+    );
+
+    addText("5. EXPENSE REIMBURSEMENT", 12, true);
+    addText(
+      "You will be reimbursed for reasonable, pre-approved out-of-pocket business expenses incurred in the course of performing your duties, provided that proper documentation is submitted in accordance with the Employer’s expense reimbursement policy."
+    );
+
+    addText("6. BENEFITS AND LEAVE", 12, true);
+    addText(
+      `6.1 Benefits – You will be eligible to participate in such health, retirement, and other benefit programs as the Employer may offer from time to time, subject to the applicable terms and eligibility requirements.`
+    );
+    addText(
+      `6.2 Vacation Leave – You will be entitled to ${formData.vacationDays} days of paid vacation per calendar year.`
+    );
+    addText(
+      `6.3 Sick/Personal Leave – You will be entitled to ${formData.sickLeaveDays} days of paid sick or personal leave per calendar year, subject to applicable law and company policy.`
+    );
+
+    addText("7. EMPLOYMENT RELATIONSHIP", 12, true);
+    addText(
+      "Your employment will be at-will, meaning that either you or the Employer may terminate the relationship at any time, with or without cause, and with or without notice, subject to applicable law."
+    );
+
+    addText("8. CONFIDENTIALITY AND INTELLECTUAL PROPERTY", 12, true);
+    addText(
+      "8.1 Confidentiality – You agree to maintain the confidentiality of all proprietary, trade secret, or confidential information belonging to the Employer, whether obtained before, during, or after your employment, and not to use or disclose such information except as authorized in writing by the Employer."
+    );
+    addText(
+      "8.2 Intellectual Property – Any inventions, designs, works of authorship, processes, or other intellectual property created by you in the scope of your employment, or using the Employer’s resources, shall be the sole and exclusive property of the Employer. You agree to execute any documents necessary to vest such rights in the Employer."
+    );
+
+    addText("9. NON-COMPETE AND NON-SOLICITATION", 12, true);
+    addText(
+      `9.1 Non-Compete – During your employment and for a period of ${formData.nonCompetePeriod} following termination, you shall not, within ${formData.nonCompeteGeographicArea}, engage in or provide services to any business that is in direct competition with the Employer’s business as conducted during your employment.`
+    );
+    addText(
+      `9.2 Non-Solicitation – During your employment and for a period of ${formData.nonSolicitPeriod} following termination, you shall not solicit, divert, or attempt to induce any employee, contractor, or client of the Employer to terminate or alter their relationship with the Employer.`
+    );
+
+    addText("10. CONDITIONS OF OFFER", 12, true);
+    addText("This offer is contingent upon:");
+    addText("Your written acceptance of this letter.", 11, false);
+    addText(
+      "Completion of all pre-employment requirements, including any background checks, reference verifications, or drug screening as may be required by the Employer.",
+      11,
+      false
+    );
+
+    addText("11. NON-CONTRACTUAL NATURE", 12, true);
+    addText(
+      "This letter is not intended to create a guarantee of continued employment for any specific duration, and the at-will nature of your employment shall remain in effect unless expressly modified by a subsequent written agreement signed by both parties."
+    );
+
+    addText("12. GOVERNING LAW", 12, true);
+    addText(
+      `This letter shall be governed by and construed in accordance with the laws of the State of ${formData.state}, without regard to its conflict of laws principles.`
+    );
+
+    addText("13. ACCEPTANCE OF OFFER", 12, true);
+    addText(
+      `If you accept this offer, please sign and return a copy of this letter by ${formData.deadlineDate}.`
+    );
+    addText(
+      "We look forward to working with you and are confident that your skills and dedication will be valuable assets to our team."
+    );
+
+    addText("Sincerely,");
+    addText(formData.employerFullName);
+    addText(formData.employerTitle);
+    addText("Signature: _______________________");
+    addText(`Date: ${formData.employerSignatureDate}`);
+    currentY += 5;
+
+    addText("Acknowledgement and Acceptance:");
+    addText(
+      `I, ${formData.employeeFullName}, acknowledge that I have read and understood the terms of this Offer of Employment and agree to be bound by them.`
+    );
+    addText("Employee Signature: _________________________");
+    addText(`Date: ${formData.employeeSignatureDate}`);
+
+    // Save PDF
+    doc.save("OfferOfEmploymentLetter.pdf");
+  };
+
+   const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>General Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="date">Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => handleInputChange("date", e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="deadlineDate">Deadline Date</Label>
+                <Input
+                  id="deadlineDate"
+                  type="date"
+                  value={formData.deadlineDate}
+                  onChange={(e) =>
+                    handleInputChange("deadlineDate", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="state">Governing State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={(e) => handleInputChange("state", e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 2:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Employee Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="employeeFullName">Full Name</Label>
+                <Input
+                  id="employeeFullName"
+                  value={formData.employeeFullName}
+                  onChange={(e) =>
+                    handleInputChange("employeeFullName", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employeeAddress">Address</Label>
+                <Textarea
+                  id="employeeAddress"
+                  value={formData.employeeAddress}
+                  onChange={(e) =>
+                    handleInputChange("employeeAddress", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employeeCityStateZip">City, State, ZIP</Label>
+                <Input
+                  id="employeeCityStateZip"
+                  value={formData.employeeCityStateZip}
+                  onChange={(e) =>
+                    handleInputChange("employeeCityStateZip", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 3:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Employer Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="employerFullName">Full Name</Label>
+                <Input
+                  id="employerFullName"
+                  value={formData.employerFullName}
+                  onChange={(e) =>
+                    handleInputChange("employerFullName", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employerAddress">Address</Label>
+                <Textarea
+                  id="employerAddress"
+                  value={formData.employerAddress}
+                  onChange={(e) =>
+                    handleInputChange("employerAddress", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employerCityStateZip">City, State, ZIP</Label>
+                <Input
+                  id="employerCityStateZip"
+                  value={formData.employerCityStateZip}
+                  onChange={(e) =>
+                    handleInputChange("employerCityStateZip", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 4:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Job Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="positionTitle">Position Title</Label>
+                <Input
+                  id="positionTitle"
+                  value={formData.positionTitle}
+                  onChange={(e) =>
+                    handleInputChange("positionTitle", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="meetingDate">Meeting Date</Label>
+                <Input
+                  id="meetingDate"
+                  type="date"
+                  value={formData.meetingDate}
+                  onChange={(e) =>
+                    handleInputChange("meetingDate", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="supervisorNameTitle">
+                  Supervisor Name & Title
+                </Label>
+                <Input
+                  id="supervisorNameTitle"
+                  value={formData.supervisorNameTitle}
+                  onChange={(e) =>
+                    handleInputChange("supervisorNameTitle", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 5:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Compensation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="baseSalary">Base Salary (annual)</Label>
+                <Input
+                  id="baseSalary"
+                  value={formData.baseSalary}
+                  onChange={(e) =>
+                    handleInputChange("baseSalary", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="commissionPercentage">Commission %</Label>
+                <Input
+                  id="commissionPercentage"
+                  value={formData.commissionPercentage}
+                  onChange={(e) =>
+                    handleInputChange("commissionPercentage", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="commissionBasis">Commission Basis</Label>
+                <Input
+                  id="commissionBasis"
+                  value={formData.commissionBasis}
+                  onChange={(e) =>
+                    handleInputChange("commissionBasis", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 6:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Leave & Restrictions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="vacationDays">Vacation Days</Label>
+                <Input
+                  id="vacationDays"
+                  value={formData.vacationDays}
+                  onChange={(e) =>
+                    handleInputChange("vacationDays", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="sickLeaveDays">Sick Leave Days</Label>
+                <Input
+                  id="sickLeaveDays"
+                  value={formData.sickLeaveDays}
+                  onChange={(e) =>
+                    handleInputChange("sickLeaveDays", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="nonCompetePeriod">Non-Compete Period</Label>
+                <Input
+                  id="nonCompetePeriod"
+                  value={formData.nonCompetePeriod}
+                  onChange={(e) =>
+                    handleInputChange("nonCompetePeriod", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="nonCompeteGeographicArea">
+                  Non-Compete Geographic Area
+                </Label>
+                <Input
+                  id="nonCompeteGeographicArea"
+                  value={formData.nonCompeteGeographicArea}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "nonCompeteGeographicArea",
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="nonSolicitPeriod">Non-Solicitation Period</Label>
+                <Input
+                  id="nonSolicitPeriod"
+                  value={formData.nonSolicitPeriod}
+                  onChange={(e) =>
+                    handleInputChange("nonSolicitPeriod", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      case 7:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Signatures</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="employerTitle">Employer Title</Label>
+                <Input
+                  id="employerTitle"
+                  value={formData.employerTitle}
+                  onChange={(e) =>
+                    handleInputChange("employerTitle", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employerSignatureDate">
+                  Employer Signature Date
+                </Label>
+                <Input
+                  id="employerSignatureDate"
+                  type="date"
+                  value={formData.employerSignatureDate}
+                  onChange={(e) =>
+                    handleInputChange("employerSignatureDate", e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="employeeSignatureDate">
+                  Employee Signature Date
+                </Label>
+                <Input
+                  id="employeeSignatureDate"
+                  type="date"
+                  value={formData.employeeSignatureDate}
+                  onChange={(e) =>
+                    handleInputChange("employeeSignatureDate", e.target.value)
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        );
+      default:
+        return null;
     }
   };
 
- const renderStep = () => {
-  switch (currentStep) {
-    case 1:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Parties & Agreement Date</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="agreementDate">Agreement Date</Label>
-            <Input
-              id="agreementDate"
-              type="date"
-              value={formData.agreementDate}
-              onChange={(e) => handleInputChange("agreementDate", e.target.value)}
-            />
-            <Label htmlFor="employeeName">Employee Name</Label>
-            <Input
-              id="employeeName"
-              value={formData.employeeName}
-              onChange={(e) => handleInputChange("employeeName", e.target.value)}
-            />
-            <Label htmlFor="employeeAddress">Employee Address</Label>
-            <Textarea
-              id="employeeAddress"
-              value={formData.employeeAddress}
-              onChange={(e) => handleInputChange("employeeAddress", e.target.value)}
-            />
-            <Label htmlFor="employerName">Employer Name</Label>
-            <Input
-              id="employerName"
-              value={formData.employerName}
-              onChange={(e) => handleInputChange("employerName", e.target.value)}
-            />
-            <Label htmlFor="employerAddress">Employer Address</Label>
-            <Textarea
-              id="employerAddress"
-              value={formData.employerAddress}
-              onChange={(e) => handleInputChange("employerAddress", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 2:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Position & Compensation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="positionTitle">Position Title</Label>
-            <Input
-              id="positionTitle"
-              value={formData.positionTitle}
-              onChange={(e) => handleInputChange("positionTitle", e.target.value)}
-            />
-            <Label htmlFor="baseSalary">Base Salary</Label> 
-            <Input
-              id="baseSalary"
-              value={formData.baseSalary}
-              onChange={(e) => handleInputChange("baseSalary", e.target.value)}
-            />
-            <Label htmlFor="commissionPercentage">Commission Percentage</Label>
-            <Input
-              id="commissionPercentage"
-              value={formData.commissionPercentage}
-              onChange={(e) => handleInputChange("commissionPercentage", e.target.value)}
-            />
-            <Label htmlFor="commissionBasis">Commission Basis</Label>
-            <Input
-              id="commissionBasis"
-              value={formData.commissionBasis}
-              onChange={(e) => handleInputChange("commissionBasis", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 3:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Vacation & Sick Leave</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="vacationDays">Vacation Days</Label>
-            <Input
-              id="vacationDays"
-              value={formData.vacationDays}
-              onChange={(e) => handleInputChange("vacationDays", e.target.value)}
-            />
-            <Label htmlFor="sickLeaveDays">Sick Leave Days</Label>
-            <Input
-              id="sickLeaveDays"
-              value={formData.sickLeaveDays}
-              onChange={(e) => handleInputChange("sickLeaveDays", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 4:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Non-Compete & Non-Solicitation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="nonCompeteTime">Non-Compete Time</Label>
-            <Input
-              id="nonCompeteTime"
-              value={formData.nonCompeteTime}
-              onChange={(e) => handleInputChange("nonCompeteTime", e.target.value)}
-            />
-            <Label htmlFor="nonCompeteArea">Non-Compete Area</Label>
-            <Input
-              id="nonCompeteArea"
-              value={formData.nonCompeteArea}
-              onChange={(e) => handleInputChange("nonCompeteArea", e.target.value)}
-            />
-            <Label htmlFor="nonSolicitationTime">Non-Solicitation Time</Label>
-            <Input
-              id="nonSolicitationTime"
-              value={formData.nonSolicitationTime}
-              onChange={(e) => handleInputChange("nonSolicitationTime", e.target.value)}
-            />
-            <Label htmlFor="nonSolicitationArea">Non-Solicitation Area</Label>
-            <Input
-              id="nonSolicitationArea"
-              value={formData.nonSolicitationArea}
-              onChange={(e) => handleInputChange("nonSolicitationArea", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 5:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>State & Governing Law</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="state">State</Label>
-            <Input
-              id="state"
-              value={formData.state}
-              onChange={(e) => handleInputChange("state", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 6:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Employee Signature</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="employeeSignature">Employee Signature</Label>
-            <Input
-              id="employeeSignature"
-              value={formData.employeeSignature}
-              onChange={(e) => handleInputChange("employeeSignature", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-    case 7:
-      return (
-        <Card>
-          <CardHeader>
-            <CardTitle>Employer Signature</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Label htmlFor="employerSignature">Employer Signature</Label>
-            <Input
-              id="employerSignature"
-              value={formData.employerSignature}
-              onChange={(e) => handleInputChange("employerSignature", e.target.value)}
-            />
-          </CardContent>
-        </Card>
-      );
-  
- 
-
-    default:
-      return null;
-  }
-};
-
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50">
+    <div className="max-w-3xl mx-auto p-6 bg-gray-50">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Offer of Employment Letter</h1>
-        <p className="text-gray-600">Create an Offer of Employment Letter and export as a PDF.</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Offer of Employment Letter
+        </h1>
+        <p className="text-gray-600">
+          Fill in the details and export the offer letter as a PDF.
+        </p>
       </div>
 
+      {/* Progress bar */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">Step {currentStep} of 13</div>
+          <div className="text-sm font-medium text-gray-700">
+            Step {currentStep} of 7
+          </div>
         </div>
-
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 13) * 100}%` }}
+            style={{ width: `${(currentStep / 7) * 100}%` }}
           />
         </div>
       </div>
 
       {renderStep()}
 
+      {/* Navigation */}
       <div className="flex justify-between mt-8">
-        <Button variant="outline" onClick={prevStep} disabled={currentStep === 1} className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          onClick={prevStep}
+          disabled={currentStep === 1}
+          className="flex items-center gap-2"
+        >
           <ArrowLeft className="w-4 h-4" />
           Previous
         </Button>
 
         <div className="flex gap-2">
-          {currentStep < 13 ? (
+          {currentStep < 7 ? (
             <Button onClick={nextStep} className="flex items-center gap-2">
               Next
               <ArrowRight className="w-4 h-4" />
@@ -414,6 +589,4 @@ const OfferOfEmploymentForm: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default OfferOfEmploymentForm;
+}
