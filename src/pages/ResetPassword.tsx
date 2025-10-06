@@ -23,6 +23,7 @@ const ResetPassword = () => {
 
   useEffect(() => {
     const processRecoveryToken = async () => {
+      alert("alert");
       // Check if the URL contains a hash which includes the access_token
       const hasRecoveryHash = window.location.hash && window.location.hash.includes('access_token');
       console.log("URL hash check:", { hash: window.location.hash, hasToken: hasRecoveryHash });
