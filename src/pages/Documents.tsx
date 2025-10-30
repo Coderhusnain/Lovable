@@ -4,6 +4,11 @@ import Layout from "@/components/layout/Layout";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 
 // Convert all large components to lazy imports to fix deployment chunk issues
+const GuaranteeAgreementForm = lazy(() => import("@/components/GuaranteeAgreementForm"));
+const PaymentAgreement = lazy(() => import("@/components/PaymentAgreement"));
+const DEBTSETTLEMENTAGREEMENT = lazy(() => import("@/components/DEBTSETTLEMENTAGREEMENT"));
+const SECURITYAGREEMENT = lazy(() => import("@/components/SECURITYAGREEMENT"));
+const PROMISSORYNOTEAGREEMENT = lazy(() => import("@/components/PROMISSORYNOTEAGREEMENT"));
 const Confidentialityagreement = lazy(() => import("@/components/Confidentialityagreement"));
 const Employeehandbook = lazy(() => import("@/components/Employeehandbook"));
 const Employeeretirement = lazy(() => import("@/components/Employeeretirement"));
@@ -152,12 +157,51 @@ const Documents = () => {
       icon: Briefcase,
       component: BusinessAgreementForm
     },
+    
+    {
+      id: 'DEBTSETTLEMENTAGREEMENT',
+      title: 'DEBT SETTLEMENT AGREEMENT',
+      description: 'Create a comprehensive debt settlement agreement contract for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component: DEBTSETTLEMENTAGREEMENT
+    },
+    
+    {
+      id: 'GuaranteeAgreementForm',
+      title: 'Guarantee Agreement Form',
+      description: 'Create a comprehensive guarantee agreement form for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component: GuaranteeAgreementForm
+    },
     {
       id: 'services-contract',
       title: 'Services Contract',
       description: 'Create a comprehensive services contract for professional service arrangements and staff augmentation',
       icon: Briefcase,
       component: ServicesContractForm
+    },
+    {
+      id: 'payment-agreement',
+      title: 'Payment Agreement',
+      description: 'Create a comprehensive payment agreement contract for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component: PaymentAgreement
+    },
+    {
+      id: 'SECURITYAGREEMENT',
+      title: 'SECURITY AGREEMENT',
+      description: 'Create a comprehensive security agreement contract for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component: SECURITYAGREEMENT
+    },
+    
+    
+     {
+      id: 'PROMISSORYNOTEAGREEMENT',
+      title: 'PROMISSORY NOT EAGREEMENT',
+      description: 'Create a comprehensive promissory not agreement contract for professional service arrangements and staff augmentation',
+      icon: Briefcase,
+      component: PROMISSORYNOTEAGREEMENT
     },
     {
       id: 'independent-contractor',

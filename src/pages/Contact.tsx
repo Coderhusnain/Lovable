@@ -46,14 +46,20 @@ const Contact = () => {
 
   return (
     <Layout>
-      <div className="bg-rocket-blue-500 py-12">
+      <div  className="min-h-screen bg-cover bg-center relative"
+    style={{ backgroundImage: "url('/lovable-uploads/0f2430fd-a1bc-47ab-a2f7-2d0459002225.png')" }} >
+
+     <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-6 md:p-8">
+
+     </div>
+      {/* <div className="bg-rocket-blue-500 py-12 mt-10 ">
         <div className="container-custom">
           <h1 className="heading-md text-black mb-4">Contact Us</h1>
           <p className="text-black max-w-2xl">
             Have questions or need assistance? Our team is here to help. Fill out the form below, and we'll get back to you as soon as possible.
           </p>
         </div>
-      </div>
+      </div> */}
 
       <div className="container-custom section-padding">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -76,7 +82,12 @@ const Contact = () => {
               </div>
             ) : (
               <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-6 md:p-8">
-                <h2 className="text-xl font-bold mb-6 text-black">Get In Touch</h2>
+                          <h1 className="heading-md text-black mb-2">Contact Us</h1>
+                          <p className="text-black max-w-2xl">
+            Have questions or need assistance? Our team is here to help. Fill out the form below, and we'll get back to you as soon as possible.
+          </p>
+
+                <h2 className="text-xl font-bold mb-6 mt-8 text-black ">Get In Touch</h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
@@ -147,7 +158,7 @@ const Contact = () => {
 
           <div>
             <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-6 md:p-8 mb-6">
-              <h2 className="text-xl font-bold mb-6 text-black dark:text-white">Contact Information</h2>
+              <h2 className="text-xl font-bold mb-6 text-black ">Contact Information</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -190,7 +201,7 @@ const Contact = () => {
               </div>
             </div>
             
-            <div className="bg-rocket-blue-50 dark:bg-rocket-gray-800 rounded-lg p-6">
+            <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-8">
               <h3 className="font-semibold mb-3 text-black">Office Hours</h3>
               <ul className="space-y-2 text-black">
                 <li className="flex justify-between">
@@ -210,6 +221,7 @@ const Contact = () => {
           </div>
         </div>
       </div>
+       </div>
     </Layout>
   );
 };
