@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin,Linkedin, Facebook, Instagram, MessageCircle  } from "lucide-react";
 import { memo } from "react";
 
 // Memoized footer link component
@@ -70,7 +70,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
           <div>
             <h5 className="font-semibold text-lg mb-4">Legal</h5>
             <ul className="space-y-2">
@@ -103,10 +102,26 @@ const Footer = () => {
                 <span className="text-rocket-gray-200">+1 (555) 123-4567</span>
               </ContactItem>
               <ContactItem icon={Mail}>
-                <a href="mailto:info@legalgram.com" className="text-rocket-gray-200 hover:text-white transition-colors">
+                <a href="mailto:info@legalgram.com" className="text-rocket-gray-200  transition-all duration-200 transform hover:scale-105">
                   info@legalgram.com
                 </a>
               </ContactItem>
+              <li>
+                <div className="flex items-center space-x-4 mt-3">
+                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
+                    <Linkedin size={20} />
+                  </a>
+                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
+                    <Facebook size={20} />
+                  </a>
+                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
+                    <Instagram size={20} />
+                  </a>
+                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
+                    <MessageCircle size={20} /> 
+                  </a>
+                </div>
+              </li>
             </ul>
           </div>
         </div>

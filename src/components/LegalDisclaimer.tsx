@@ -10,11 +10,11 @@ interface LegalDisclaimerProps {
 const LegalDisclaimer: React.FC<LegalDisclaimerProps> = ({ className = "" }) => {
   return (
     <Alert className={`border-blue-200 bg-blue-50 ${className}`}>
-      <Phone className="h-4 w-4" />
+      <Phone className="h-4 w-4 mt-2 ml-2" />
       <AlertDescription className="text-sm">
-        <strong>For Review of Legal Document or Tailored Drafting By Specialized Lawyer At Affordable Rate</strong>{" "}
-        <Button variant="link" className="p-0 h-auto text-blue-600 font-semibold" asChild>
-          <a href="/contact">Contact Us</a>
+        <strong>For Review of Legal Document or Tailored Drafting By Specialized Lawyer At Affordable Rate</strong>
+        <Button variant="link" style={{marginLeft:"-8px"}} asChild>
+          <a href="/contact"><strong  className="p-0 h-auto text-blue-600 font-bold">Contact Us</strong></a>
         </Button>
         {" "}for professional legal assistance with your documents.
       </AlertDescription>

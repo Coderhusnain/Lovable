@@ -48,7 +48,6 @@ const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategoryS
         We provide comprehensive legal solutions for your most important concerns
         </p>
         
-        {/* Professional Legal Services Disclaimer */}
         <div className="max-w-4xl mx-auto mb-8">
         <LegalDisclaimer />
         </div>
