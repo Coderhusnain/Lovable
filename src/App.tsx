@@ -74,7 +74,7 @@ const AskLegalAdvice = lazy(() => import("./pages/AskLegalAdvice"));
 const AskALawyer = lazy(() => import("./pages/AskALawyer"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-
+const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
 // Loading component for suspense fallback
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
@@ -120,6 +120,7 @@ const App = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<LandingPage />} />
                 <Route path="/documents" element={<Documents />} />
+                <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
                 <Route path="/documents/:id" element={<Documents />} />
                 <Route path="/contact-lawyer" element={<ContactLawyer />} />
                 <Route path="/login" element={<Login />} />

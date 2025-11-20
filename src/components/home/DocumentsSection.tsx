@@ -6,7 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const DocumentsSection = () => {
   const popularDocuments = useMemo(() => [
-    { link: "/documents", text: "Residential Lease Agreement" }
+    { link: "/most-freq-documents", text: "Bid Proposal" },
+    { link: "/most-freq-documents", text: "Trucking Contract" },
+    { link: "/most-freq-documents", text: "Production Contract" },
   ], []);
 
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const DocumentsSection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 gap-6 mb-12">
+        <div className="grid grid-cols-3 gap-6 mb-12">
           {popularDocuments.map(({ link, text }) => (
             <Link 
               to={link} 
@@ -45,19 +47,22 @@ const DocumentsSection = () => {
                 <FileText className="h-8 w-8 text-[#F18F01]" />
               </div>
               <span className="font-medium text-black">{text}</span>
-            </Link>
-          ))}
-        </div>
-        
-        <div className="text-center">
+              <div className="text-center">
           <button
             type="button"
-            className="inline-flex items-center justify-center bg-bright-orange-500 text-white font-medium rounded-lg shadow-md px-8 py-6 h-auto text-lg hover:bg-[#D17701] transition-colors"
+            className="inline-flex items-center justify-center bg-bright-orange-500 text-white font-medium rounded-lg shadow-md px-3 py-3 mt-3 h-auto text-md hover:bg-[#D17701] transition-colors"
             onClick={handleProtectedNavigation}
           >
-            Create Lease Agreement <ArrowRight className="ml-2 h-5 w-5" />
+            Create Agreement <ArrowRight className="ml-2 h-5 w-5" />
           </button>
         </div>
+            </Link>
+            
+          ))}
+          
+        </div>
+        
+        
       </div>
     </section>
   );
