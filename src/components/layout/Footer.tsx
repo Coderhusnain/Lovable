@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin,Linkedin, Facebook, Instagram, MessageCircle  } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram  } from "lucide-react";
 import { memo } from "react";
 
 // Memoized footer link component
@@ -108,18 +108,41 @@ const Footer = () => {
               </ContactItem>
               <li>
                 <div className="flex items-center space-x-4 mt-3">
-                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
-                    <Linkedin size={20} />
-                  </a>
-                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
-                    <Facebook size={20} />
-                  </a>
-                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
-                    <Instagram size={20} />
-                  </a>
-                  <a href="#" className="text-yellow-400 transition-all duration-200 transform hover:scale-125">
-                    <MessageCircle size={20} /> 
-                  </a>
+                  
+                  <a
+          href="https://www.tiktok.com/@legal.gram?lang=en-GB"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-300 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 256 256"
+            className="w-6 h-6 fill-current"
+          >
+            <path d="M240 81.3c-22.1 0-40-17.9-40-40h-40v138.7c0 22.1-17.9 40-40 40s-40-17.9-40-40 17.9-40 40-40v-40c-44.2 0-80 35.8-80 80s35.8 80 80 80 80-35.8 80-80V94.6c11.8 8.3 26.1 12.8 40 12.7v-26z"/>
+          </svg>
+        </a>
+                   <a
+          href="https://www.instagram.com/legalgram.co?igsh=Y3kzMHN1djE4dzQ2&utm_source=qr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-gray-300 transition"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24"
+            className="w-6 h-6 fill-current"
+          >
+            <path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 
+            0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 
+            3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 
+            1.346-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 
+            2a3 3 0 110 6 3 3 0 010-6zm4.5-.75a1.25 1.25 0 11-.001 
+            2.501A1.25 1.25 0 0116.5 8.25z"/>
+          </svg>
+        </a>
+                 
                 </div>
               </li>
             </ul>
