@@ -75,12 +75,17 @@ const SecurityDepositReturnLetter = lazy(() => import("@/components/SecurityDepo
 const LeaseTerminationLetter = lazy(() => import("@/components/LeaseTerminationLetter"));
 const LateRentPaymentAgreement = lazy(() => import("@/components/LateRentPaymentAgreement"));
 const NonDisturbanceAgreement = lazy(() => import("@/components/NonDisturbanceAgreement"));
+import BidProposalForm from "@/components/BidProposalForm";
+import TruckingContractForm from "@/components/TruckingContractForm";
+import ProductionContractForm from "@/components/ProductionContractForm";
+import MovingContractForm from "@/components/MovingContractForm";
+import FulfillmentServicesContractForm from "@/components/FulfillmentAgreementForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature  } from "lucide-react";
 
 const Documents = () => {
   const { id } = useParams();
@@ -150,6 +155,41 @@ const Documents = () => {
 
   // Business Security documents
   const businessSecurityDocs = [
+    {
+      id: 'production-agreement',
+      title: 'Production Agreement',
+      description: 'Create a comprehensive production agreement between two parties for joint ventures and partnerships',
+      icon: Factory,
+      component: ProductionContractForm
+    },
+      {
+      id: 'trucking-agreement',
+      title: 'Trucking Agreement',
+      description: 'Create a comprehensive trucking agreement between two parties for joint ventures and partnerships',
+      icon: Truck,
+      component: TruckingContractForm
+    },
+    {
+      id: 'bidproposal-agreement',
+      title: 'Bid Proposal Agreement',
+      description: 'Create a comprehensive bid proposal agreement between two parties for joint ventures and partnerships',
+      icon: FileSignature,
+      component: BidProposalForm
+    },
+     {
+      id: 'Moving-agreement',
+      title: 'Moving Agreement',
+      description: 'Create a comprehensive Moving agreement between two parties for joint ventures and partnerships',
+      icon: Package,
+      component: MovingContractForm
+    },
+     {
+      id: 'Fulfillment-agreement',
+      title: 'Fulfillment Agreement',
+      description: 'Create a comprehensive fulfillment agreement between two parties for joint ventures and partnerships',
+      icon: Boxes,
+      component: FulfillmentServicesContractForm
+    },
     {
       id: 'business-agreement',
       title: 'Business Agreement',

@@ -6,9 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const DocumentsSection = () => {
   const popularDocuments = useMemo(() => [
-    { link: "/most-freq-documents", text: "Bid Proposal" },
-    { link: "/most-freq-documents", text: "Trucking Contract" },
-    { link: "/most-freq-documents", text: "Production Contract" },
+    { link: "/documents", text: "Bid Proposal" },
+    { link: "/documents", text: "Trucking Contract" },
+    { link: "/documents", text: "Production Contract" },
   ], []);
 
   const navigate = useNavigate();

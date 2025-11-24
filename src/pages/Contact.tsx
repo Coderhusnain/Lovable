@@ -169,7 +169,7 @@ const Contact = () => {
               <h2 className="text-xl font-bold mb-6 text-black ">Contact Information</h2>
               
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
+                {/* <div className="flex items-start gap-4">
                   <div className="bg-rocket-blue-50 dark:bg-rocket-blue-900 p-3 rounded-lg">
                     <Phone className="h-5 w-5 text-rocket-blue-500 dark:text-rocket-blue-300" />
                   </div>
@@ -177,7 +177,7 @@ const Contact = () => {
                     <h3 className="font-medium text-black">Phone</h3>
                     <p className="text-black mt-1">+1 (555) 123-4567</p>
                   </div>
-                </div>
+                </div> */}
                 
                 <div className="flex items-start gap-4">
                   <div className="bg-rocket-blue-50 dark:bg-rocket-blue-900 p-3 rounded-lg">
