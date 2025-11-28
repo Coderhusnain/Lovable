@@ -319,7 +319,7 @@ export default function BidProposalForm() {
         </Button>
 
         {step < 4 ? (
-          <Button onClick={() => setStep((s) => Math.min(5, s + 1))}>Next</Button>
+          <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>Next</Button>
         ) : (
           <div className="space-x-2">
             <Button onClick={generatePDF}>Generate PDF</Button>
@@ -329,10 +329,10 @@ export default function BidProposalForm() {
       </div>
 
       {/* Success state */}
-      {step === 6 && (
+      {step === 5 && (
         <Card>
           <CardContent>
-            <div className="text-green-600 font-semibold">Agreement Created Successfully</div>
+            <div className="text-green-600 font-semibold pt-5">Agreement Created Successfully</div>
            
           </CardContent>
         </Card>
