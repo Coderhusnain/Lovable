@@ -81,6 +81,12 @@ const ArchitecturalServicesAgreementForm = lazy(() => import("@/components/Archi
 const BrokerAgreementForm = lazy(() => import("@/components/BrokerAgreementForm"));
 const BillOfSaleForm = lazy(() => import("@/components/BillOfSaleForm"));
 const CarpentryContractForm = lazy(() => import("@/components/CarpentryContractForm"));
+const CateringAgreementForm = lazy(() => import("@/components/CateringAgreementForm"));
+const CollaborationAgreementForm = lazy(() => import("@/components/CollaborationAgreementForm"));
+const CoMarketingAgreementForm = lazy(() => import("@/components/CoMarketingAgreementForm"));
+const ConsignmentAgreementForm = lazy(() => import("@/components/ConsignmentAgreementForm"));
+const ConstructionContractForm = lazy(() => import("@/components/ConstructionContractForm"));
+const ConstructionManagementAgreementForm = lazy(() => import("@/components/ConstructionManagementAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 import TruckingContractForm from "@/components/TruckingContractForm";
 import ProductionContractForm from "@/components/ProductionContractForm";
@@ -91,7 +97,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer  } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone } from "lucide-react";
 
 const Documents = () => {
   const { id } = useParams();
@@ -168,6 +174,54 @@ const Documents = () => {
       icon: Factory,
       component: ProductionContractForm
     },
+    {
+      id: 'ConstructionManagementAgreementForm',
+      title: 'Construction Management Agreement',
+      description: 'Create a comprehensive construction management agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: ConstructionManagementAgreementForm
+    },
+    
+     {
+      id: 'ConstructionContractForm',
+      title: 'Construction Contract',
+      description: 'Create a comprehensive construction agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: ConstructionContractForm
+    },
+    
+     {
+      id: 'ConsignmentAgreementForm',
+      title: 'Consignment Agreement',
+      description: 'Create a comprehensive consignment agreement between two parties for joint ventures and partnerships',
+      icon: Package,
+      component: ConsignmentAgreementForm
+    },
+    
+    {
+      id: 'CoMarketingAgreementForm',
+      title: 'CoMarketing Agreement ',
+      description: 'Create a comprehensive CoMarketing agreement between two parties for joint ventures and partnerships',
+      icon: Megaphone,
+      component: CoMarketingAgreementForm
+    },
+    
+    {
+      id: 'CollaborationAgreementForm',
+      title: 'Collaboration Agreement ',
+      description: 'Create a comprehensive collaboration agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: CollaborationAgreementForm
+    },
+    
+    {
+      id: 'CateringAgreementForm',
+      title: 'Catering Agreement',
+      description: 'Create a comprehensive catering agreement between two parties for joint ventures and partnerships',
+      icon: Utensils,
+      component: CateringAgreementForm
+    },
+    
      {
       id: 'AffidavitOfSurvivorshipForm',
       title: 'Affidavit Of Survivorship ',
