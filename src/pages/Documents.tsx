@@ -87,6 +87,10 @@ const CoMarketingAgreementForm = lazy(() => import("@/components/CoMarketingAgre
 const ConsignmentAgreementForm = lazy(() => import("@/components/ConsignmentAgreementForm"));
 const ConstructionContractForm = lazy(() => import("@/components/ConstructionContractForm"));
 const ConstructionManagementAgreementForm = lazy(() => import("@/components/ConstructionManagementAgreementForm"));
+const ConstructionPerformanceBondForm = lazy(() => import("@/components/ConstructionPerformanceBondForm"));
+const CooperationAgreementForm = lazy(() => import("@/components/CooperationAgreementForm"));
+const CoSignerAgreementForm = lazy(() => import("@/components/CoSignerAgreementForm"));
+const CoursePartnershipAgreementForm = lazy(() => import("@/components/CoursePartnershipAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 import TruckingContractForm from "@/components/TruckingContractForm";
 import ProductionContractForm from "@/components/ProductionContractForm";
@@ -97,7 +101,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen } from "lucide-react";
 
 const Documents = () => {
   const { id } = useParams();
@@ -174,6 +178,41 @@ const Documents = () => {
       icon: Factory,
       component: ProductionContractForm
     },
+    
+     {
+      id: 'CoursePartnershipAgreementForm',
+      title: 'Course Partnership Agreement ',
+      description: 'Create a comprehensive course partnership agreement between two parties for joint ventures and partnerships',
+      icon: BookOpen,
+      component: CoursePartnershipAgreementForm
+        },
+    {
+      id: 'ConstructionPerformanceBondForm',
+      title: 'Construction Performance Bond Agreement',
+      description: 'Create a comprehensive construction performance bond agreement between two parties for joint ventures and partnerships',
+      icon: ShieldCheck,
+      component: ConstructionPerformanceBondForm
+        },
+
+       {
+      id: 'CooperationAgreementForm',
+      title: 'Cooperation Agreement ',
+      description: 'Create a comprehensive cooperation performance bond agreement between two parties for joint ventures and partnerships',
+      icon: Users,
+      component: CooperationAgreementForm
+        },
+        
+       {
+      id: 'CoSignerAgreementForm',
+      title: 'CoSigner Agreement ',
+      description: 'Create a comprehensive CoSigner agreement between two parties for joint ventures and partnerships',
+      icon: Clipboard,
+      component: CoSignerAgreementForm
+        },
+
+      
+        
+    
     {
       id: 'ConstructionManagementAgreementForm',
       title: 'Construction Management Agreement',
