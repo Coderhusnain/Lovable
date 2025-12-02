@@ -91,6 +91,9 @@ const ConstructionPerformanceBondForm = lazy(() => import("@/components/Construc
 const CooperationAgreementForm = lazy(() => import("@/components/CooperationAgreementForm"));
 const CoSignerAgreementForm = lazy(() => import("@/components/CoSignerAgreementForm"));
 const CoursePartnershipAgreementForm = lazy(() => import("@/components/CoursePartnershipAgreementForm"));
+const MasterServiceAgreementForm = lazy(() => import("@/components/MasterServiceAgreementForm"));
+const DrywallServicesAgreementForm = lazy(() => import("@/components/DrywallServicesAgreementForm"));
+const EventPhotographyAgreementForm = lazy(() => import("@/components/EventPhotographyAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 import TruckingContractForm from "@/components/TruckingContractForm";
 import ProductionContractForm from "@/components/ProductionContractForm";
@@ -101,7 +104,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera } from "lucide-react";
 
 const Documents = () => {
   const { id } = useParams();
@@ -178,6 +181,31 @@ const Documents = () => {
       icon: Factory,
       component: ProductionContractForm
     },
+    {
+      id: 'EventPhotographyAgreementForm',
+      title: 'Event Photography Agreement ',
+      description: 'Create a comprehensive event photography agreement between two parties for joint ventures and partnerships',
+      icon: Factory,
+      component: EventPhotographyAgreementForm
+    },
+    
+    
+     {
+      id: 'DrywallServicesAgreementForm',
+      title: 'Drywall Services Agreement ',
+      description: 'Create a comprehensive drywall services agreement between two parties for joint ventures and partnerships',
+      icon: Camera,
+      component: DrywallServicesAgreementForm
+        },
+    
+     {
+      id: 'MasterServiceAgreementForm',
+      title: 'Master Service Agreement ',
+      description: 'Create a comprehensive master service agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: MasterServiceAgreementForm
+        },
+
     
      {
       id: 'CoursePartnershipAgreementForm',
