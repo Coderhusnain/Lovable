@@ -99,6 +99,10 @@ const HomeImprovementContractForm = lazy(() => import("@/components/HomeImprovem
 const HomeRemodellingAgreementForm = lazy(() => import("@/components/HomeRemodellingAgreementForm"));
 const InformationForPoliceReportForm = lazy(() => import("@/components/InformationForPoliceReportForm")); 
 const InteriorDesignAgreementForm = lazy(() => import("@/components/InteriorDesignAgreementForm"));
+const JanitorialServicesAgreementForm = lazy(() => import("@/components/JanitorialServicesAgreementForm"));
+const LandscapingServicesAgreementForm = lazy(() => import("@/components/LandscapingServicesAgreementForm"));
+const LeaseSubordinationAgreementForm = lazy(() => import("@/components/LeaseSubordinationAgreementForm"));
+const LimitedPartnershipAgreementForm = lazy(() => import("@/components/LimitedPartnershipAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -110,7 +114,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert  } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck } from "lucide-react";
+import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
   const { id } = useParams();
@@ -188,6 +193,46 @@ const Documents = () => {
       component: ProductionContractForm
     },
     
+     {
+      id: 'LimitedPartnershipAgreementForm',
+      title: 'Limited Partnership Agreement  ',
+      description: 'Create a comprehensive limited partnership agreement between two parties for joint ventures and partnerships',
+      icon: Users,
+      component: LimitedPartnershipAgreementForm
+    },
+    
+    
+     {
+      id: 'LeaseSubordinationAgreementForm',
+      title: 'Lease Subordination Agreement   ',
+      description: 'Create a comprehensive lease subordiantion agreement between two parties for joint ventures and partnerships',
+      icon: FileCheck,
+      component: LeaseSubordinationAgreementForm
+    },
+    
+    {
+      id: 'LandscapingServicesAgreementForm',
+      title: 'Landscaping Services Agreement  ',
+      description: 'Create a comprehensive landscaping services agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: LandscapingServicesAgreementForm
+    },
+    
+    {
+      id: 'JointVentureAgreementForm',
+      title: 'Joint Venture Agreement  ',
+      description: 'Create a comprehensive joint venture agreement between two parties for joint ventures and partnerships',
+      icon: Building,
+      component: JointVentureAgreementForm
+    },
+    
+     {
+      id: 'JanitorialServicesAgreementForm',
+      title: 'Janitorial Services Agreement ',
+      description: 'Create a comprehensive Janitorial agreement between two parties for joint ventures and partnerships',
+      icon: Sparkles,
+      component: JanitorialServicesAgreementForm
+    },
      {
       id: 'InteriorDesignAgreementForm',
       title: 'Interior Design Agreement',
