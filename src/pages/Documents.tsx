@@ -103,6 +103,10 @@ const JanitorialServicesAgreementForm = lazy(() => import("@/components/Janitori
 const LandscapingServicesAgreementForm = lazy(() => import("@/components/LandscapingServicesAgreementForm"));
 const LeaseSubordinationAgreementForm = lazy(() => import("@/components/LeaseSubordinationAgreementForm"));
 const LimitedPartnershipAgreementForm = lazy(() => import("@/components/LimitedPartnershipAgreementForm"));
+const LiquidationDissolutionAgreementForm = lazy(() => import("@/components/LiquidationDissolutionAgreementForm"));
+const MemorandumOfAgreementForm = lazy(() => import("@/components/MemorandumOfAgreementForm"));
+const MediationAgreementForm = lazy(() => import("@/components/MediationAgreementForm"));
+const MOUForm = lazy(() => import("@/components/MOUForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -114,7 +118,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare } from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -191,6 +195,38 @@ const Documents = () => {
       description: 'Create a comprehensive production agreement between two parties for joint ventures and partnerships',
       icon: Factory,
       component: ProductionContractForm
+    },
+    {
+      id: 'MOUForm',
+      title: 'Memorandum Of Understanding  ',
+      description: 'Create a comprehensive MOU agreement between two parties for joint ventures and partnerships',
+      icon: FileSignature ,
+      component: MOUForm
+    },
+    
+     {
+      id: 'MemorandumOfAgreementForm',
+      title: 'Memorandum Of Agreement  ',
+      description: 'Create a comprehensive memorandum of agreement between two parties for joint ventures and partnerships',
+      icon: FileText,
+      component: MemorandumOfAgreementForm
+    },
+    
+     {
+      id: 'MediationAgreementForm',
+      title: 'Mediation Agreement   ',
+      description: 'Create a comprehensive mediation agreement between two parties for joint ventures and partnerships',
+      icon: MessageSquare,
+      component: MediationAgreementForm
+    },
+    
+    
+     {
+      id: 'LiquidationDissolutionAgreementForm',
+      title: 'Liquidation Dissolution Agreement  ',
+      description: 'Create a comprehensive liquidation dissolution agreement between two parties for joint ventures and partnerships',
+      icon: FileMinus,
+      component: LiquidationDissolutionAgreementForm
     },
     
      {
