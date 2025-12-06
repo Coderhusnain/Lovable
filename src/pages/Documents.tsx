@@ -107,6 +107,12 @@ const LiquidationDissolutionAgreementForm = lazy(() => import("@/components/Liqu
 const MemorandumOfAgreementForm = lazy(() => import("@/components/MemorandumOfAgreementForm"));
 const MediationAgreementForm = lazy(() => import("@/components/MediationAgreementForm"));
 const MOUForm = lazy(() => import("@/components/MOUForm"));
+const MusicalPerformanceAgreementForm = lazy(() => import("@/components/MusicalPerformanceAgreementForm"));
+const MutualReleaseForm = lazy(() => import("@/components/MutualReleaseForm"));
+const MutualRescissionForm = lazy(() => import("@/components/MutualRescissionForm"));
+const PaintingServicesContractForm = lazy(() => import("@/components/PaintingServicesContractForm"));
+const ParentingPlanForm = lazy(() => import("@/components/ParentingPlanForm"));
+const PartnershipAgreementForm = lazy(() => import("@/components/PartnershipAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -118,7 +124,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby} from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -195,6 +201,56 @@ const Documents = () => {
       description: 'Create a comprehensive production agreement between two parties for joint ventures and partnerships',
       icon: Factory,
       component: ProductionContractForm
+    },
+    
+    
+     {
+      id: 'PartnershipAgreementForm',
+      title: 'Partnership Agreement    ',
+      description: 'Create a comprehensive partnership agreement between two parties for joint ventures and partnerships',
+      icon: Handshake ,
+      component: PartnershipAgreementForm
+    },
+    
+     {
+      id: 'ParentingPlanForm',
+      title: 'Parenting Plan Form   ',
+      description: 'Create a comprehensive parenting plan agreement between two parties for joint ventures and partnerships',
+      icon: Baby ,
+      component: ParentingPlanForm
+    },
+    
+    {
+      id: 'PaintingServicesContractForm',
+      title: 'Painting Services Contract  ',
+      description: 'Create a comprehensive painting services agreement between two parties for joint ventures and partnerships',
+      icon: Paintbrush ,
+      component: PaintingServicesContractForm
+    },
+    
+      {
+      id: 'MutualRescissionForm',
+      title: 'Mutual Rescission Agreement ',
+      description: 'Create a comprehensive mutual recision agreement between two parties for joint ventures and partnerships',
+      icon: FileX ,
+      component: MutualRescissionForm
+    },
+
+    {
+      id: 'MutualReleaseForm',
+      title: 'Mutual Release Agreement ',
+      description: 'Create a comprehensive mutual release agreement between two parties for joint ventures and partnerships',
+      icon: FileCheck ,
+      component: MutualReleaseForm
+    },
+
+    
+    {
+      id: 'MusicalPerformanceAgreementForm',
+      title: 'Musical Performance Agreement  ',
+      description: 'Create a comprehensive musical performance agreement between two parties for joint ventures and partnerships',
+      icon: Music ,
+      component: MusicalPerformanceAgreementForm
     },
     {
       id: 'MOUForm',
