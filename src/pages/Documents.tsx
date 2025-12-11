@@ -113,6 +113,12 @@ const MutualRescissionForm = lazy(() => import("@/components/MutualRescissionFor
 const PaintingServicesContractForm = lazy(() => import("@/components/PaintingServicesContractForm"));
 const ParentingPlanForm = lazy(() => import("@/components/ParentingPlanForm"));
 const PartnershipAgreementForm = lazy(() => import("@/components/PartnershipAgreementForm"));
+const PartnershipDissolutionForm = lazy(() => import("@/components/PartnershipDissolutionForm"));
+const PostnuptialAgreementForm = lazy(() => import("@/components/PostnuptialAgreementForm"));
+const PrenuptialAgreementForm = lazy(() => import("@/components/PrenuptialAgreementForm"));
+const PropertyManagerAgreementForm = lazy(() => import("@/components/PropertyManagerAgreementForm"));
+const RealEstateDevelopmentForm = lazy(() => import("@/components/RealEstateDevelopmentForm"));
+const RetailerAgreementForm = lazy(() => import("@/components/RetailerAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -124,7 +130,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby} from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction } from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -203,6 +209,55 @@ const Documents = () => {
       component: ProductionContractForm
     },
     
+         {
+      id: 'RetailerAgreementForm',
+      title: 'Retailer Agreement',
+      description: 'Create a comprehensive retailer agreement between two parties for joint ventures and partnerships',
+      icon: ShoppingCart  ,
+      component: RetailerAgreementForm
+    },
+    
+     {
+      id: 'RealEstateDevelopmentForm',
+      title: 'Real Estate Development',
+      description: 'Create a comprehensive real estate development agreement between two parties for joint ventures and partnerships',
+      icon: Construction  ,
+      component: RealEstateDevelopmentForm
+    },
+    
+
+ {
+      id: 'PropertyManagerAgreementForm',
+      title: 'Property Manager Agreement',
+      description: 'Create a comprehensive property manager agreement between two parties for joint ventures and partnerships',
+      icon: Home  ,
+      component: PropertyManagerAgreementForm
+    },
+    
+     {
+      id: 'PrenuptialAgreementForm',
+      title: 'Prenuptial Agreement',
+      description: 'Create a comprehensive prenuptial agreement between two parties for joint ventures and partnerships',
+      icon: SplitSquareHorizontal  ,
+      component: PrenuptialAgreementForm
+    },
+    
+       {
+      id: 'PostnuptialAgreementForm',
+      title: 'Postnuptial Agreement',
+      description: 'Create a comprehensive postnuptial agreement between two parties for joint ventures and partnerships',
+      icon: HeartHandshake ,
+      component: PostnuptialAgreementForm
+    },
+    
+      
+      {
+      id: 'PartnershipDissolutionForm',
+      title: 'Partnership Dissolution Agreement    ',
+      description: 'Create a comprehensive partnership dissolution agreement between two parties for joint ventures and partnerships',
+      icon: Split ,
+      component: PartnershipDissolutionForm
+    },
     
      {
       id: 'PartnershipAgreementForm',
