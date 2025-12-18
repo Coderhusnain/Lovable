@@ -119,6 +119,17 @@ const PrenuptialAgreementForm = lazy(() => import("@/components/PrenuptialAgreem
 const PropertyManagerAgreementForm = lazy(() => import("@/components/PropertyManagerAgreementForm"));
 const RealEstateDevelopmentForm = lazy(() => import("@/components/RealEstateDevelopmentForm"));
 const RetailerAgreementForm = lazy(() => import("@/components/RetailerAgreementForm"));
+const RoofingContractForm = lazy(() => import("@/components/RoofingContractForm"));
+const SecurityAgreementForm = lazy(() => import("@/components/SecurityAgreementForm"));
+const SeparationAgreementForm = lazy(() => import("@/components/SeparationAgreementForm"));
+const ServiceAgreementForm = lazy(() => import("@/components/ServiceAgreementForm"));
+const SilentPartnershipForm = lazy(() => import("@/components/SilentPartnershipForm"));
+const StrategicAllianceForm = lazy(() => import("@/components/StrategicAllianceForm"));
+const TechnicalConsultingForm = lazy(() => import("@/components/TechnicalConsultingForm"));
+const VacationLeaseForm = lazy(() => import("@/components/VacationLeaseForm"));
+const AssetPurchaseForm = lazy(() => import("@/components/AssetPurchaseForm"));
+const BarterAgreementForm = lazy(() => import("@/components/BarterAgreementForm"));
+const BusinessSaleAgreementForm = lazy(() => import("@/components/BusinessSaleAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -130,7 +141,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction, UserMinus, EyeOff, Cpu } from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -141,6 +152,51 @@ const Documents = () => {
 
   // Family Protection documents
   const familyProtectionDocs = [
+     {
+      id: 'InformationForPoliceReportForm',
+      title: 'Information For Police Report  ',
+      description: 'Create a comprehensive information for police report agreement between two parties for joint ventures and partnerships',
+      icon: ShieldAlert ,
+      component: InformationForPoliceReportForm
+    },
+   
+     {
+      id: 'AffidavitOfSurvivorshipForm',
+      title: 'Affidavit Of Survivorship ',
+      description: 'Create a comprehensive affidavit agreement between two parties for joint ventures and partnerships',
+      icon: Scroll,
+      component: AffidavitOfSurvivorshipForm
+    },
+     {
+      id: 'ParentingPlanForm',
+      title: 'Parenting Plan Form   ',
+      description: 'Create a comprehensive parenting plan agreement between two parties for joint ventures and partnerships',
+      icon: Baby ,
+      component: ParentingPlanForm
+    },
+    
+     {
+      id: 'SeparationAgreementForm',
+      title: 'Separation Agreement',
+      description: 'Create a comprehensive separation agreement between two parties for joint ventures and partnerships',
+      icon: UserMinus  ,
+      component: SeparationAgreementForm
+    },
+     {
+      id: 'PrenuptialAgreementForm',
+      title: 'Prenuptial Agreement',
+      description: 'Create a comprehensive prenuptial agreement between two parties for joint ventures and partnerships',
+      icon: SplitSquareHorizontal  ,
+      component: PrenuptialAgreementForm
+    },
+    
+       {
+      id: 'PostnuptialAgreementForm',
+      title: 'Postnuptial Agreement',
+      description: 'Create a comprehensive postnuptial agreement between two parties for joint ventures and partnerships',
+      icon: HeartHandshake ,
+      component: PostnuptialAgreementForm
+    },
     {
       id: 'living-will',
       title: 'Living Will',
@@ -208,8 +264,70 @@ const Documents = () => {
       icon: Factory,
       component: ProductionContractForm
     },
+    {
+      id: 'BarterAgreementForm',
+      title: 'Barter Agreement',
+      description: 'Create a comprehensive barter agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: BarterAgreementForm
+    },
+    {
+      id: 'BusinessSaleAgreementForm',
+      title: 'Business Sale Agreement',
+      description: 'Create a comprehensive business sale agreement between two parties for joint ventures and partnerships',
+      icon: Briefcase,
+      component: BusinessSaleAgreementForm
+    },
+    {
+      id: 'AssetPurchaseForm',
+      title: 'Asset Purchase Agreement',
+      description: 'Create a comprehensive asset purchase agreement between two parties for joint ventures and partnerships',
+      icon: Briefcase,
+      component: AssetPurchaseForm
+    },
+    {
+      id: 'TechnicalConsultingForm',
+      title: 'Technical Consulting Agreement',
+      description: 'Create a comprehensive technical consulting agreement between two parties for joint ventures and partnerships',
+      icon: Cpu,
+      component: TechnicalConsultingForm
+    },
+    {
+      id: 'StrategicAllianceForm',
+      title: 'Strategic Alliance Agreement',
+      description: 'Create a comprehensive strategic alliance agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: StrategicAllianceForm
+    },
+    {
+      id: 'SilentPartnershipForm',
+      title: 'Silent Partnership Agreement',
+      description: 'Create a comprehensive silent partnership agreement between two parties for joint ventures and partnerships',
+      icon: EyeOff,
+      component: SilentPartnershipForm
+    },
     
-         {
+    {
+      id: 'ServiceAgreementForm',
+      title: 'Service Agreement',
+      description: 'Create a comprehensive service agreement between two parties for joint ventures and partnerships',
+      icon: Briefcase   ,
+      component: ServiceAgreementForm
+    },
+    
+   
+    
+    {
+      id: 'SecurityAgreementForm',
+      title: 'Security Agreement',
+      description: 'Create a comprehensive security agreement between two parties for joint ventures and partnerships',
+      icon: Lock  ,
+      component: SecurityAgreementForm
+    },
+    
+   
+    
+     {
       id: 'RetailerAgreementForm',
       title: 'Retailer Agreement',
       description: 'Create a comprehensive retailer agreement between two parties for joint ventures and partnerships',
@@ -217,38 +335,9 @@ const Documents = () => {
       component: RetailerAgreementForm
     },
     
-     {
-      id: 'RealEstateDevelopmentForm',
-      title: 'Real Estate Development',
-      description: 'Create a comprehensive real estate development agreement between two parties for joint ventures and partnerships',
-      icon: Construction  ,
-      component: RealEstateDevelopmentForm
-    },
     
-
- {
-      id: 'PropertyManagerAgreementForm',
-      title: 'Property Manager Agreement',
-      description: 'Create a comprehensive property manager agreement between two parties for joint ventures and partnerships',
-      icon: Home  ,
-      component: PropertyManagerAgreementForm
-    },
     
-     {
-      id: 'PrenuptialAgreementForm',
-      title: 'Prenuptial Agreement',
-      description: 'Create a comprehensive prenuptial agreement between two parties for joint ventures and partnerships',
-      icon: SplitSquareHorizontal  ,
-      component: PrenuptialAgreementForm
-    },
     
-       {
-      id: 'PostnuptialAgreementForm',
-      title: 'Postnuptial Agreement',
-      description: 'Create a comprehensive postnuptial agreement between two parties for joint ventures and partnerships',
-      icon: HeartHandshake ,
-      component: PostnuptialAgreementForm
-    },
     
       
       {
@@ -267,21 +356,8 @@ const Documents = () => {
       component: PartnershipAgreementForm
     },
     
-     {
-      id: 'ParentingPlanForm',
-      title: 'Parenting Plan Form   ',
-      description: 'Create a comprehensive parenting plan agreement between two parties for joint ventures and partnerships',
-      icon: Baby ,
-      component: ParentingPlanForm
-    },
     
-    {
-      id: 'PaintingServicesContractForm',
-      title: 'Painting Services Contract  ',
-      description: 'Create a comprehensive painting services agreement between two parties for joint ventures and partnerships',
-      icon: Paintbrush ,
-      component: PaintingServicesContractForm
-    },
+   
     
       {
       id: 'MutualRescissionForm',
@@ -357,14 +433,7 @@ const Documents = () => {
       component: LeaseSubordinationAgreementForm
     },
     
-    {
-      id: 'LandscapingServicesAgreementForm',
-      title: 'Landscaping Services Agreement  ',
-      description: 'Create a comprehensive landscaping services agreement between two parties for joint ventures and partnerships',
-      icon: Home,
-      component: LandscapingServicesAgreementForm
-    },
-    
+   
     {
       id: 'JointVentureAgreementForm',
       title: 'Joint Venture Agreement  ',
@@ -373,57 +442,8 @@ const Documents = () => {
       component: JointVentureAgreementForm
     },
     
-     {
-      id: 'JanitorialServicesAgreementForm',
-      title: 'Janitorial Services Agreement ',
-      description: 'Create a comprehensive Janitorial agreement between two parties for joint ventures and partnerships',
-      icon: Sparkles,
-      component: JanitorialServicesAgreementForm
-    },
-     {
-      id: 'InteriorDesignAgreementForm',
-      title: 'Interior Design Agreement',
-      description: 'Create a comprehensive interior design agreement between two parties for joint ventures and partnerships',
-      icon: Home,
-      component: InteriorDesignAgreementForm
-    },
-
     
-       {
-      id: 'InformationForPoliceReportForm',
-      title: 'Information For Police Report  ',
-      description: 'Create a comprehensive information for police report agreement between two parties for joint ventures and partnerships',
-      icon: ShieldAlert ,
-      component: InformationForPoliceReportForm
-    },
-
-    
-       {
-      id: 'HomeRemodellingAgreementForm',
-      title: 'Home Remodelling Agreement ',
-      description: 'Create a comprehensive home remodelling agreement between two parties for joint ventures and partnerships',
-      icon: Home,
-      component: HomeRemodellingAgreementForm
-    },
-
-    
-    
-     {
-      id: 'HomeImprovementContractForm',
-      title: 'Home Improvement Contract  ',
-      description: 'Create a comprehensive home improvement agreement between two parties for joint ventures and partnerships',
-      icon: FileText,
-      component: HomeImprovementContractForm
-    },
-    
-    
-     {
-      id: 'FlooringServicesAgreementForm',
-      title: 'Flooring Services Agreement ',
-      description: 'Create a comprehensive flooring services agreement between two parties for joint ventures and partnerships',
-      icon: HardHat,
-      component: FlooringServicesAgreementForm
-    },
+      
     
     {
       id: 'EventPhotographyAgreementForm',
@@ -434,13 +454,7 @@ const Documents = () => {
     },
     
     
-     {
-      id: 'DrywallServicesAgreementForm',
-      title: 'Drywall Services Agreement ',
-      description: 'Create a comprehensive drywall services agreement between two parties for joint ventures and partnerships',
-      icon: Camera,
-      component: DrywallServicesAgreementForm
-        },
+    
     
      {
       id: 'MasterServiceAgreementForm',
@@ -474,32 +488,12 @@ const Documents = () => {
       component: CooperationAgreementForm
         },
         
-       {
-      id: 'CoSignerAgreementForm',
-      title: 'CoSigner Agreement ',
-      description: 'Create a comprehensive CoSigner agreement between two parties for joint ventures and partnerships',
-      icon: Clipboard,
-      component: CoSignerAgreementForm
-        },
+      
 
       
         
     
-    {
-      id: 'ConstructionManagementAgreementForm',
-      title: 'Construction Management Agreement',
-      description: 'Create a comprehensive construction management agreement between two parties for joint ventures and partnerships',
-      icon: Handshake,
-      component: ConstructionManagementAgreementForm
-    },
     
-     {
-      id: 'ConstructionContractForm',
-      title: 'Construction Contract',
-      description: 'Create a comprehensive construction agreement between two parties for joint ventures and partnerships',
-      icon: Home,
-      component: ConstructionContractForm
-    },
     
      {
       id: 'ConsignmentAgreementForm',
@@ -533,13 +527,7 @@ const Documents = () => {
       component: CateringAgreementForm
     },
     
-     {
-      id: 'AffidavitOfSurvivorshipForm',
-      title: 'Affidavit Of Survivorship ',
-      description: 'Create a comprehensive affidavit agreement between two parties for joint ventures and partnerships',
-      icon: Scroll,
-      component: AffidavitOfSurvivorshipForm
-    },
+    
    {
     id: 'ArbitrationAgreementForm',
     title: 'Arbitration Agreement',
@@ -547,13 +535,7 @@ const Documents = () => {
     icon: Handshake,
     component: ArbitrationAgreementForm
   },
-  {
-    id: 'ArchitecturalServicesAgreementForm',
-    title: 'Architectural Services Agreement',
-    description: 'Create a comprehensive architectural agreement between two parties for joint ventures and partnerships',
-    icon: Home,
-    component: ArchitecturalServicesAgreementForm
-  },
+ 
   {
     id: 'BillOfSaleForm',
     title: 'Bill Of Sale',
@@ -568,13 +550,7 @@ const Documents = () => {
     icon: Handshake,
     component: BrokerAgreementForm
   },
-  {
-    id: 'CarpentryContractForm',
-    title: 'Carpentry Contract',
-    description: 'Create a comprehensive carpentry agreement between two parties for joint ventures and partnerships',
-    icon: Hammer,
-    component: CarpentryContractForm
-  },
+ 
     
     
     
@@ -896,6 +872,135 @@ const Documents = () => {
 
   // Property Matters documents
   const propertyMattersDocs = [
+     {
+      id: 'JanitorialServicesAgreementForm',
+      title: 'Janitorial Services Agreement ',
+      description: 'Create a comprehensive Janitorial agreement between two parties for joint ventures and partnerships',
+      icon: Sparkles,
+      component: JanitorialServicesAgreementForm
+    },
+    {
+      id: 'VacationLeaseForm',
+      title: 'Vacation Lease Agreement',
+      description: 'Create a comprehensive vacation lease agreement between two parties for joint ventures and partnerships',
+      icon: Building2,
+      component: VacationLeaseForm
+    },
+    
+      {
+      id: 'InteriorDesignAgreementForm',
+      title: 'Interior Design Agreement',
+      description: 'Create a comprehensive interior design agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: InteriorDesignAgreementForm
+    },
+     {
+    id: 'CarpentryContractForm',
+    title: 'Carpentry Contract',
+    description: 'Create a comprehensive carpentry agreement between two parties for joint ventures and partnerships',
+    icon: Hammer,
+    component: CarpentryContractForm
+  },
+     {
+    id: 'ArchitecturalServicesAgreementForm',
+    title: 'Architectural Services Agreement',
+    description: 'Create a comprehensive architectural agreement between two parties for joint ventures and partnerships',
+    icon: Home,
+    component: ArchitecturalServicesAgreementForm
+  },
+    {
+      id: 'ConstructionManagementAgreementForm',
+      title: 'Construction Management Agreement',
+      description: 'Create a comprehensive construction management agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: ConstructionManagementAgreementForm
+    },
+    
+     {
+      id: 'ConstructionContractForm',
+      title: 'Construction Contract',
+      description: 'Create a comprehensive construction agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: ConstructionContractForm
+    },
+     {
+      id: 'DrywallServicesAgreementForm',
+      title: 'Drywall Services Agreement ',
+      description: 'Create a comprehensive drywall services agreement between two parties for joint ventures and partnerships',
+      icon: Camera,
+      component: DrywallServicesAgreementForm
+        },
+     {
+      id: 'HomeRemodellingAgreementForm',
+      title: 'Home Remodelling Agreement ',
+      description: 'Create a comprehensive home remodelling agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: HomeRemodellingAgreementForm
+    },
+
+    
+    
+     {
+      id: 'HomeImprovementContractForm',
+      title: 'Home Improvement Contract  ',
+      description: 'Create a comprehensive home improvement agreement between two parties for joint ventures and partnerships',
+      icon: FileText,
+      component: HomeImprovementContractForm
+    },
+    
+    
+     {
+      id: 'FlooringServicesAgreementForm',
+      title: 'Flooring Services Agreement ',
+      description: 'Create a comprehensive flooring services agreement between two parties for joint ventures and partnerships',
+      icon: HardHat,
+      component: FlooringServicesAgreementForm
+    },
+     {
+      id: 'LandscapingServicesAgreementForm',
+      title: 'Landscaping Services Agreement  ',
+      description: 'Create a comprehensive landscaping services agreement between two parties for joint ventures and partnerships',
+      icon: Home,
+      component: LandscapingServicesAgreementForm
+    },
+    
+     {
+      id: 'PaintingServicesContractForm',
+      title: 'Painting Services Contract  ',
+      description: 'Create a comprehensive painting services agreement between two parties for joint ventures and partnerships',
+      icon: Paintbrush ,
+      component: PaintingServicesContractForm
+    },
+     {
+      id: 'RealEstateDevelopmentForm',
+      title: 'Real Estate Development',
+      description: 'Create a comprehensive real estate development agreement between two parties for joint ventures and partnerships',
+      icon: Construction  ,
+      component: RealEstateDevelopmentForm
+    },
+    
+
+ {
+      id: 'PropertyManagerAgreementForm',
+      title: 'Property Manager Agreement',
+      description: 'Create a comprehensive property manager agreement between two parties for joint ventures and partnerships',
+      icon: Home  ,
+      component: PropertyManagerAgreementForm
+    },
+      {
+      id: 'RoofingContractForm',
+      title: 'Roofing Contract Agreement',
+      description: 'Create a comprehensive roofing contract agreement between two parties for joint ventures and partnerships',
+      icon: Clipboard  ,
+      component: RoofingContractForm
+    },
+     {
+      id: 'CoSignerAgreementForm',
+      title: 'CoSigner Agreement ',
+      description: 'Create a comprehensive CoSigner agreement between two parties for joint ventures and partnerships',
+      icon: Clipboard,
+      component: CoSignerAgreementForm
+        },
     {
       id: 'lease-agreement',
       title: 'Lease Agreement',
