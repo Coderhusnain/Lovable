@@ -130,6 +130,21 @@ const VacationLeaseForm = lazy(() => import("@/components/VacationLeaseForm"));
 const AssetPurchaseForm = lazy(() => import("@/components/AssetPurchaseForm"));
 const BarterAgreementForm = lazy(() => import("@/components/BarterAgreementForm"));
 const BusinessSaleAgreementForm = lazy(() => import("@/components/BusinessSaleAgreementForm"));
+const AccountingContractForm = lazy(() => import("@/components/AccountingContractForm"));
+const AdministrativeServicesContractForm = lazy(() => import("@/components/AdministrativeServicesContractForm"));
+const AdvertisingAgencyAgreementForm = lazy(() => import("@/components/AdvertisingAgencyAgreementForm"));
+const ClinicalTrialAgreementForm = lazy(() => import("@/components/ClinicalTrialAgreementForm"));
+const ContractExtensionForm = lazy(() => import("@/components/ContractExtensionForm"));
+const ContractForSaleForm = lazy(() => import("@/components/ContractForSaleForm"));
+const FeeAgreementForm = lazy(() => import("@/components/FeeAgreementForm"));
+const FranchisePurchaseForm = lazy(() => import("@/components/FranchisePurchaseForm"));
+const ITServicesAgreementForm = lazy(() => import("@/components/ITServicesAgreementForm"));
+const JointBidAgreementForm = lazy(() => import("@/components/JointBidAgreementForm"));
+const MarketingAgreementForm = lazy(() => import("@/components/MarketingAgreementForm"))
+const MergerAgreementForm = lazy(() => import("@/components/MergerAgreementForm"));
+const ProductDistributionAgreementForm = lazy(() => import("@/components/ProductDistributionAgreementForm"));
+const ReferralAndWarrantyForm = lazy(() => import("@/components/ReferralAndWarrantyForm"));
+const ServiceLevelAgreementForm = lazy(() => import("@/components/ServiceLevelAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -141,7 +156,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction, UserMinus, EyeOff, Cpu } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction, UserMinus, EyeOff, Cpu, Calculator, Stethoscope, CalendarClock, Computer, GitMerge, AlarmClockCheck } from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -263,6 +278,125 @@ const Documents = () => {
       description: 'Create a comprehensive production agreement between two parties for joint ventures and partnerships',
       icon: Factory,
       component: ProductionContractForm
+    },
+    
+    {
+      id: 'ServiceLevelAgreementForm',
+      title: 'Service Level Agreement',
+      description: 'Create a comprehensive service level agreement between two parties for joint ventures and partnerships',
+      icon: AlarmClockCheck,
+      component: ServiceLevelAgreementForm
+
+    },
+    
+    {
+      id: 'ProductDistributionAgreementForm',
+      title: 'Product Distribution Agreement',
+      description: 'Create a comprehensive product distribution agreement between two parties for joint ventures and partnerships',
+      icon: Package,
+      component: ProductDistributionAgreementForm
+
+    },
+    
+    {
+      id: 'ReferralAndWarrantyForm',
+      title: 'Referral Fee Agreement',
+      description: 'Create a comprehensive referral fee agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: ReferralAndWarrantyForm
+      
+
+    },
+    {
+      id: 'MergerAgreementForm',
+      title: 'Merger Agreement',
+      description: 'Create a comprehensive merger agreement between two parties for joint ventures and partnerships',
+      icon: GitMerge,
+      component: MergerAgreementForm
+      
+
+    },
+    {
+      id: 'MarketingAgreementForm',
+      title: 'Marketing Agreement',
+      description: 'Create a comprehensive marketing agreement between two parties for joint ventures and partnerships',
+      icon: Megaphone,
+      component: MarketingAgreementForm
+      
+
+    },
+    {
+      id: "JointBidAgreementForm",
+      title: 'Joint Bid Agreement',
+      description: 'Create a comprehensive joint bid agreement between two parties for joint ventures and partnerships',
+      icon: Handshake,
+      component: JointBidAgreementForm
+      
+    },
+  
+  {
+    id: 'ITServicesAgreementForm',
+    title: 'IT Services Agreement',
+    description: 'Create a comprehensive IT services agreement between two parties for joint ventures and partnerships',
+    icon: Computer,
+    component: ITServicesAgreementForm
+  },
+    {
+      id: 'FranchisePurchaseForm',
+      title: 'Franchise Purchase Agreement',
+      description: 'Create a comprehensive franchise purchase agreement between two parties for joint ventures and partnerships',
+      icon: Factory,
+      component: FranchisePurchaseForm
+    },
+    {
+      id: 'FeeAgreementForm',
+      title: 'Fee Agreement',
+      description: 'Create a comprehensive fee agreement between two parties for joint ventures and partnerships',
+      icon: DollarSign,
+      component: FeeAgreementForm
+    },
+    
+    {
+      id: 'ContractForSaleForm',
+      title: 'Contract For Sale',
+      description: 'Create a comprehensive contract for sale between two parties for joint ventures and partnerships',
+      icon: ShoppingCart,
+      component: ContractForSaleForm
+    },
+    {
+      id: 'ContractExtensionForm',
+      title: 'Contract Extension',
+      description: 'Create a comprehensive contract extension between two parties for joint ventures and partnerships',
+      icon: CalendarClock,
+      component: ContractExtensionForm
+    },
+    {
+      id: 'ClinicalTrialAgreementForm',
+      title: 'Clinical Trial Agreement',
+      description: 'Create a comprehensive clinical trial agreement between two parties for joint ventures and partnerships',
+      icon: Stethoscope,
+      component: ClinicalTrialAgreementForm
+    },
+    {
+      id: 'AdvertisingAgencyAgreementForm',
+      title: 'Advertising Agency Agreement',
+      description: 'Create a comprehensive advertising agency agreement between two parties for joint ventures and partnerships',
+      icon: Megaphone,
+      component: AdvertisingAgencyAgreementForm
+    },
+    {
+      id: 'AdministrativeServicesContractForm',
+      title: 'Administrative Services Contract',
+      description: 'Create a comprehensive administrative services contract between two parties for joint ventures and partnerships',
+      icon: Briefcase,
+      component: AdministrativeServicesContractForm
+    },
+    {
+      id: 'AccountingContractForm',
+      title: 'Accounting Contract',
+      description: 'Create a comprehensive accounting contract between two parties for joint ventures and partnerships',
+      icon: Calculator,
+      component: AccountingContractForm
     },
     {
       id: 'BarterAgreementForm',
