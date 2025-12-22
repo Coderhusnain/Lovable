@@ -145,6 +145,11 @@ const MergerAgreementForm = lazy(() => import("@/components/MergerAgreementForm"
 const ProductDistributionAgreementForm = lazy(() => import("@/components/ProductDistributionAgreementForm"));
 const ReferralAndWarrantyForm = lazy(() => import("@/components/ReferralAndWarrantyForm"));
 const ServiceLevelAgreementForm = lazy(() => import("@/components/ServiceLevelAgreementForm"));
+const SocialMediaContractForm = lazy(() => import("@/components/SocialMediaContractForm"));
+const StaffingAgencyContractForm = lazy(() => import("@/components/StaffingAgencyContractForm"));
+const StockPurchaseAgreementForm = lazy(() => import("@/components/StockPurchaseAgreementForm"));
+const SupplierAgreementForm = lazy(() => import("@/components/StockPurchaseAgreementForm"));
+const WarrantyAgreementForm = lazy(() => import("@/components/WarrantyAgreementForm"));
 import BidProposalForm from "@/components/BidProposalForm";
 
 import TruckingContractForm from "@/components/TruckingContractForm";
@@ -156,7 +161,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction, UserMinus, EyeOff, Cpu, Calculator, Stethoscope, CalendarClock, Computer, GitMerge, AlarmClockCheck } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, ArrowLeft, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, TrendingUp, Handshake, UtensilsCrossed, Fuel,Lock, Phone, Search, Factory, Truck, Package, Boxes, FileSignature, Scroll, Hammer, Utensils, Megaphone, ShieldCheck, Clipboard, BookOpen, HardHat, Camera, ShieldAlert, Sparkles, Building, FileCheck, FileMinus,  MessageSquare, Music, FileX, Paintbrush, Baby, Split, HeartHandshake, SplitSquareHorizontal, Construction, UserMinus, EyeOff, Cpu, Calculator, Stethoscope, CalendarClock, Computer, GitMerge, AlarmClockCheck, Share2, FilePlus } from "lucide-react";
 import JointVentureAgreementForm from "@/components/JointVentureAgreementForm";
 
 const Documents = () => {
@@ -254,6 +259,7 @@ const Documents = () => {
       icon: Scale,
       component: SpecialPowerOfAttorneyForm
     },
+
     {
       id: 'gift-affidavit',
       title: 'Gift Affidavit',
@@ -261,6 +267,7 @@ const Documents = () => {
       icon: DollarSign,
       component: GiftAffidavitForm
     },
+
     {
       id: 'financial-support-affidavit',
       title: 'Affidavit of Financial Support',
@@ -278,6 +285,47 @@ const Documents = () => {
       description: 'Create a comprehensive production agreement between two parties for joint ventures and partnerships',
       icon: Factory,
       component: ProductionContractForm
+    },
+    
+    {
+      id: 'WarrantyAgreementForm',
+      title: 'Warranty Agreement',
+      description: 'Create a comprehensive warranty agreement between two parties for joint ventures and partnerships',
+      icon: ShieldCheck,
+      component: WarrantyAgreementForm
+    },
+    {
+      id: 'SupplierAgreementForm',
+      title: 'Supplier Agreement',
+      description: 'Create a comprehensive supplier agreement between two parties for joint ventures and partnerships',
+      icon: Truck,
+      component: SupplierAgreementForm
+    },
+    
+    {
+      id: 'StockPurchaseAgreementForm',
+      title: 'Stock Purchase Agreement',
+      description: 'Create a comprehensive stock purchase agreement between two parties for joint ventures and partnerships',
+      icon: FilePlus,
+      component: StockPurchaseAgreementForm
+    },
+    
+    {
+      id: 'StaffingAgencyContractForm',
+      title: 'Staffing Agency Contract',
+      description: 'Create a comprehensive staffing agency agreement between two parties for joint ventures and partnerships',
+      icon: Users,
+      component: StaffingAgencyContractForm
+
+    },
+    
+    {
+      id: 'SocialMediaContractForm',
+      title: 'Social Media Contract',
+      description: 'Create a comprehensive social media agreement between two parties for joint ventures and partnerships',
+      icon: Share2,
+      component: SocialMediaContractForm
+
     },
     
     {
