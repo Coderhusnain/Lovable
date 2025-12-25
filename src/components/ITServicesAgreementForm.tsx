@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
   effectiveDate: string;
@@ -31,7 +33,8 @@ interface FormData {
 }
 
 export default function ITServicesAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
+  const navigate = useNavigate();
+    const [formData, setFormData] = useState<FormData>({
     effectiveDate: "",
     recipientName: "",
     recipientAddress: "",
@@ -203,6 +206,17 @@ export default function ITServicesAgreementForm() {
         return (
           <Card>
             <CardContent className="space-y-3">
+            <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/it-services-agreement-info')}
+              className="text-orange-600 border-orange-200  hover:border-orange-300"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Learn More About IT Services Agreement
+            </Button>
+          </div>
               <h3 className="font-semibold">Parties & Basics</h3>
               <Label>Effective Date</Label>
               <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
@@ -221,6 +235,7 @@ export default function ITServicesAgreementForm() {
 
               <Label>Computer System Exhibit (brief)</Label>
               <Textarea name="computerSystemExhibit" value={formData.computerSystemExhibit} onChange={handleChange} />
+              
             </CardContent>
           </Card>
         );

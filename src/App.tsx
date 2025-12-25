@@ -56,7 +56,13 @@ import RoyaltyAgreementInfo from "./pages/RoyaltyAgreementInfo"; // Import Royal
 import BillboardLeaseInfo from "./pages/BillboardLeaseInfo"; // Import BillboardLeaseInfo directly
 import RestaurantLeaseInfo from "./pages/RestaurantLeaseInfo"; // Import RestaurantLeaseInfo directly
 import GasLeaseInfo from "./pages/GasLeaseInfo"; // Import GasLeaseInfo directly
-
+import AccountingContractInfo from "./pages/AccountingContractInfo"; // Import AccountingContractInfo directly
+import BusinessSaleAgreementInfo from "./pages/BusinessSaleContractInfo"; // Import BusinessSaleAgreementInfo directly
+import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo"; // Import ClinicalTrialAgreementInfo directly
+import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo"; // Import FeeAgreementContractInfo directly
+import FranchiseAgreementInfo from "./pages/FranchiseAgreementInfo"; // Import FranchiseAgreementInfo directly
+import AdministrativeServicesAgreementInfo from "./pages/AdministrativeServicesAgreementInfo"; // Import AdministrativeServicesAgreementInfo directly
+import AdvertisingAgencyAgreementInfo from "./pages/AdvertisingAgencyAgreementInfo"; // Import AdvertisingAgencyAgreementInfo directly
 // Lazy load other pages for better performance
 const DocumentTemplates = lazy(() => import("./pages/DocumentTemplates"));
 const ContactLawyer = lazy(() => import("./pages/ContactLawyer"));
@@ -75,6 +81,8 @@ const AskALawyer = lazy(() => import("./pages/AskALawyer"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
+import ITServiceAgreementInfo from "./pages/ITServiceAgreementInfo"; // Import ITServiceAgreementInfo directly
+import MergerAgreementInfo from "./pages/MergerAgreementInfo"; // Import MergerAgreementInfo directly
 // Loading component for suspense fallback
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
@@ -209,6 +217,15 @@ const App = () => {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/accounting-contract-info" element={<AccountingContractInfo />} />
+                <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
+                <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
+                <Route path="/fee-agreement-info" element={<FeeAgreementContractInfo />} />
+                <Route path="/franchise-agreement-info" element={<FranchiseAgreementInfo />} />
+                <Route path="/it-services-agreement-info" element={<ITServiceAgreementInfo />} />
+                <Route path="/merger-agreement-info" element={<MergerAgreementInfo />} />
+                <Route path="/administrative-services-contract-info" element={<AdministrativeServicesAgreementInfo />} />
+                <Route path="/advertising-agency-agreement-info" element={<AdvertisingAgencyAgreementInfo />} />
               </Routes>
             </Suspense>
           </BrowserRouter>

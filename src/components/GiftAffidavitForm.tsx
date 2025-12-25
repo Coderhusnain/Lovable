@@ -721,6 +721,7 @@ const GiftAffidavitForm = () => {
               Learn More About Gift Affidavits
             </Button>
           </div>
+          
         )}
       </CardHeader>
       <CardContent className="text-black">

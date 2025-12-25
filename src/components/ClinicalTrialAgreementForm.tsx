@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
-
+import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 interface FormData {
   effectiveDate: string;
   institutionName: string;
@@ -39,6 +40,7 @@ interface FormData {
 }
 
 export default function ClinicalTrialAgreementForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     effectiveDate: "",
     institutionName: "",
@@ -170,6 +172,17 @@ export default function ClinicalTrialAgreementForm() {
         return (
           <Card>
             <CardContent className="space-y-3">
+            <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/clinical-trial-agreement-info')}
+              className="text-orange-600 border-orange-200  hover:border-orange-300"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Learn More About Clinical Trial Agreement
+            </Button>
+          </div>
               <h3 className="font-semibold">Parties & Protocol</h3>
               <Label>Effective Date</Label>
               <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />

@@ -300,4 +300,5 @@ const GiftAffidavitInfo = () => {
   );
 };
 
+
 export default GiftAffidavitInfo;
