@@ -83,6 +83,12 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
 import ITServiceAgreementInfo from "./pages/ITServiceAgreementInfo"; // Import ITServiceAgreementInfo directly
 import MergerAgreementInfo from "./pages/MergerAgreementInfo"; // Import MergerAgreementInfo directly
+import AssetPurchaseAgreementInfo from "./pages/AssetPurchaseAgreementInfo"; // Import AssetPurchaseAgreementInfo directly
+import MarketingAgreementInfo from "./pages/MarketingAgreementInfo"; // Import MarketingAgreementInfo directly
+import ContractExtensionAgreementInfo from "./pages/ContractExtensionAgreementInfo"; // Import ContractExtensionAgreementInfo directly
+import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreementInfo"; // Import ProductDistributionAgreementInfo directly
+import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo"; // Import ReferralFeeAgreementInfo directly
+import BarterAgreementInfo from "./pages/BarterAgreementInfo"; // Import BarterAgreementInfo directly
 // Loading component for suspense fallback
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
@@ -226,6 +232,12 @@ const App = () => {
                 <Route path="/merger-agreement-info" element={<MergerAgreementInfo />} />
                 <Route path="/administrative-services-contract-info" element={<AdministrativeServicesAgreementInfo />} />
                 <Route path="/advertising-agency-agreement-info" element={<AdvertisingAgencyAgreementInfo />} />
+                <Route path="/asset-purchase-agreement-info" element={<AssetPurchaseAgreementInfo />} />
+                <Route path="/contract-extension-agreement-info" element={<ContractExtensionAgreementInfo />} />
+                <Route path="/marketing-agreement-info" element={<MarketingAgreementInfo />} />
+                <Route path="/product-distribution-agreement-info" element={<ProductDistributionAgreementInfo />} />
+                <Route path="/referral-fee-agreement-info" element={<ReferralFeeAgreementInfo />} />
+                <Route path="/barter-agreement-info" element={<BarterAgreementInfo />} />
               </Routes>
             </Suspense>
           </BrowserRouter>
