@@ -11,6 +11,7 @@ import { jsPDF } from "jspdf";
 import { toast } from "sonner";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "@/components/UserInfoStep";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
 // Define interfaces for data structures
 interface CountryData {
@@ -331,7 +332,17 @@ const NDAForm = () => {
     doc.text("Date: ___________________________", 20, yPosition);
     
     doc.save('non-disclosure-agreement.pdf');
-    toast.success("Non-Disclosure Agreement PDF generated successfully!");
+    
+    // Also generate and save the guide PDF
+    const guidePDF = generateGuidePDF({ 
+      documentId: "nda", 
+      documentTitle: "Non-Disclosure Agreement (NDA)" 
+    });
+    setTimeout(() => {
+      guidePDF.save('nda_guide.pdf');
+    }, 500);
+    
+    toast.success("NDA and Guide PDF generated successfully!");
     setIsGeneratingPDF(false);
   };
 

@@ -1,7 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Scale, Building2, ArrowRight } from "lucide-react";
+import { Shield, Scale, Building2, ArrowRight, LayoutGrid } from "lucide-react";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 interface LegalConcernsSectionProps {
@@ -9,6 +10,7 @@ interface LegalConcernsSectionProps {
 }
 
 const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategorySelect }) => {
+  const navigate = useNavigate();
   
   const categories = [
     {
@@ -50,6 +52,18 @@ const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategoryS
         
         <div className="max-w-4xl mx-auto mb-8">
         <LegalDisclaimer />
+        </div>
+        
+        {/* Browse All Categories Button */}
+        <div className="flex justify-center mb-10">
+          <Button 
+            onClick={() => navigate('/document-categories')}
+            className="bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 hover:from-bright-orange-600 hover:to-bright-orange-700 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          >
+            <LayoutGrid className="w-5 h-5 mr-3" />
+            Browse All Document Categories
+            <ArrowRight className="w-5 h-5 ml-3" />
+          </Button>
         </div>
       </div>
         

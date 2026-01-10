@@ -1,7 +1,8 @@
 import React, { useState, lazy, Suspense } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
+import DocumentAboutSidebar from "@/components/DocumentAboutSidebar";
 
 // Convert all large components to lazy imports to fix deployment chunk issues
 const GuaranteeAgreementForm = lazy(() => import("@/components/GuaranteeAgreementForm"));
@@ -156,6 +157,30 @@ import TruckingContractForm from "@/components/TruckingContractForm";
 import ProductionContractForm from "@/components/ProductionContractForm";
 import MovingContractForm from "@/components/MovingContractForm";
 import FulfillmentServicesContractForm from "@/components/FulfillmentAgreementForm";
+import RoommateAgreementForm from "@/components/RoommateAgreementForm";
+import BartendingAgreementForm from "@/components/BartendingAgreementForm";
+import DJServicesAgreementForm from "@/components/DJServicesAgreementForm";
+import WeddingPlannerAgreementForm from "@/components/WeddingPlannerAgreementForm";
+import FoodServiceAgreementForm from "@/components/FoodServiceAgreementForm";
+import VideographyServicesAgreementForm from "@/components/VideographyServicesAgreementForm";
+import PersonalTrainingAgreementForm from "@/components/PersonalTrainingAgreementForm";
+import TutoringAgreementForm from "@/components/TutoringAgreementForm";
+import RetainerAgreementForm from "@/components/RetainerAgreementForm";
+import LimousineServiceAgreementForm from "@/components/LimousineServiceAgreementForm";
+import ConsultingAgreementForm from "@/components/ConsultingAgreementForm";
+import VendorAgreementForm from "@/components/VendorAgreementForm";
+import ComposerAgreementForm from "@/components/ComposerAgreementForm";
+import ConcessionAgreementForm from "@/components/ConcessionAgreementForm";
+import CoTenancyAgreementForm from "@/components/CoTenancyAgreementForm";
+import ValetServiceAgreementForm from "@/components/ValetServiceAgreementForm";
+import RoommateReleaseAgreementForm from "@/components/RoommateReleaseAgreementForm";
+import OfferToLeaseForm from "@/components/documents/OfferToLeaseForm";
+import LegalServicesAgreementForm from "@/components/documents/LegalServicesAgreementForm";
+import PhysicianServicesAgreementForm from "@/components/documents/PhysicianServicesAgreementForm";
+import RealEstateAgentAgreementForm from "@/components/documents/RealEstateAgentAgreementForm";
+import LimitedScopeRepresentationAgreementForm from "@/components/documents/LimitedScopeRepresentationAgreementForm";
+import UnbundledLegalServicesAgreementForm from "@/components/documents/UnbundledLegalServicesAgreementForm";
+import AttorneyEngagementLetterForm from "@/components/documents/AttorneyEngagementLetterForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1234,6 +1259,118 @@ const Documents = () => {
       component: LeaseAmendmentForm
     },
     {
+      id: 'roommate-agreement',
+      title: 'Roommate Agreement',
+      description: 'Create a comprehensive agreement between roommates for shared living arrangements',
+      icon: Users,
+      component: RoommateAgreementForm
+    },
+    {
+      id: 'bartending-agreement',
+      title: 'Bartending Services Agreement',
+      description: 'Create a professional bartending services agreement for events',
+      icon: UtensilsCrossed,
+      component: BartendingAgreementForm
+    },
+    {
+      id: 'dj-services-agreement',
+      title: 'DJ Services Agreement',
+      description: 'Create a professional DJ services agreement for events and performances',
+      icon: Music,
+      component: DJServicesAgreementForm
+    },
+    {
+      id: 'wedding-planner-agreement',
+      title: 'Wedding Planner Agreement',
+      description: 'Create a comprehensive wedding planner services agreement',
+      icon: Heart,
+      component: WeddingPlannerAgreementForm
+    },
+    {
+      id: 'food-service-agreement',
+      title: 'Food Service Agreement',
+      description: 'Create a catering and food service agreement for events',
+      icon: UtensilsCrossed,
+      component: FoodServiceAgreementForm
+    },
+    {
+      id: 'videography-agreement',
+      title: 'Videography Services Agreement',
+      description: 'Create a professional videography services agreement for events',
+      icon: Camera,
+      component: VideographyServicesAgreementForm
+    },
+    {
+      id: 'personal-training-agreement',
+      title: 'Personal Training Agreement',
+      description: 'Create a personal training services agreement between trainer and client',
+      icon: Heart,
+      component: PersonalTrainingAgreementForm
+    },
+    {
+      id: 'tutoring-agreement',
+      title: 'Tutoring Agreement',
+      description: 'Create a tutoring services agreement between tutor and student/parent',
+      icon: GraduationCap,
+      component: TutoringAgreementForm
+    },
+    {
+      id: 'retainer-agreement',
+      title: 'Retainer Agreement',
+      description: 'Create a legal retainer agreement between attorney and client',
+      icon: Scale,
+      component: RetainerAgreementForm
+    },
+    {
+      id: 'limousine-agreement',
+      title: 'Limousine Service Agreement',
+      description: 'Create a professional limousine service agreement for events',
+      icon: Truck,
+      component: LimousineServiceAgreementForm
+    },
+    {
+      id: 'consulting-agreement',
+      title: 'Consulting Agreement',
+      description: 'Create a consulting services agreement between consultant and client',
+      icon: Briefcase,
+      component: ConsultingAgreementForm
+    },
+    {
+      id: 'vendor-agreement',
+      title: 'Vendor Agreement',
+      description: 'Create a vendor services agreement for event or business services',
+      icon: FileText,
+      component: VendorAgreementForm
+    },
+    {
+      id: 'composer-agreement',
+      title: 'Composer Agreement',
+      description: 'Create a comprehensive agreement between a production company and composer for original music',
+      icon: FileText,
+      component: ComposerAgreementForm
+    },
+    {
+      id: 'concession-agreement',
+      title: 'Concession Agreement',
+      description: 'Create a comprehensive concession agreement for vendor operations',
+      icon: FileText,
+      component: ConcessionAgreementForm
+    },
+    {
+      id: 'co-tenancy-agreement',
+      title: 'Co-Tenancy Agreement',
+      description: 'Create an agreement between roommates sharing a rental property',
+      icon: Users,
+      component: CoTenancyAgreementForm
+    },
+    {
+      id: 'valet-service-agreement',
+      title: 'Valet Service Agreement',
+      description: 'Create a professional valet parking services agreement',
+      icon: FileText,
+      component: ValetServiceAgreementForm
+    },
+    {
       id: 'commercial-lease',
       title: 'Commercial Lease Agreement',
       description: 'Create a comprehensive commercial lease agreement for business properties',
@@ -1337,6 +1474,62 @@ const Documents = () => {
       description: 'Create a professional non-disturbance agreement between mortgagee and tenant',
       icon: Shield,
       component: NonDisturbanceAgreement
+    },
+    {
+      id: 'roommate-release-agreement',
+      title: 'Roommate Release Agreement',
+      description: 'Create an agreement to release a roommate from a shared lease',
+      icon: UserMinus,
+      component: RoommateReleaseAgreementForm
+    },
+    {
+      id: 'offer-to-lease',
+      title: 'Offer to Lease',
+      description: 'Create a formal offer to lease commercial property',
+      icon: Building2,
+      component: OfferToLeaseForm
+    },
+    {
+      id: 'legal-services-agreement',
+      title: 'Legal Services Agreement',
+      description: 'Create a comprehensive attorney-client legal services agreement',
+      icon: Scale,
+      component: LegalServicesAgreementForm
+    },
+    {
+      id: 'physician-services-agreement',
+      title: 'Physician Services Agreement',
+      description: 'Create a professional agreement for physician services',
+      icon: Stethoscope,
+      component: PhysicianServicesAgreementForm
+    },
+    {
+      id: 'real-estate-agent-agreement',
+      title: 'Real Estate Agent Agreement',
+      description: 'Create an exclusive listing agreement with a real estate agent',
+      icon: Home,
+      component: RealEstateAgentAgreementForm
+    },
+    {
+      id: 'limited-scope-representation-agreement',
+      title: 'Limited Scope Representation Agreement',
+      description: 'Create a limited scope legal representation agreement',
+      icon: Scale,
+      component: LimitedScopeRepresentationAgreementForm
+    },
+    {
+      id: 'unbundled-legal-services-agreement',
+      title: 'Unbundled Legal Services Agreement',
+      description: 'Create an agreement for specific unbundled legal services',
+      icon: Scale,
+      component: UnbundledLegalServicesAgreementForm
+    },
+    {
+      id: 'attorney-engagement-letter',
+      title: 'Attorney Engagement Letter',
+      description: 'Create a formal attorney engagement letter for legal representation',
+      icon: FileText,
+      component: AttorneyEngagementLetterForm
     }
   ];
 
@@ -1405,13 +1598,26 @@ const Documents = () => {
               Back to Document Selection
             </Button>
           </div>
-          <Suspense fallback={
-            <div className="flex h-64 w-full items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          
+          {/* Form with About Sidebar */}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Main Form */}
+            <div className="flex-1 min-w-0">
+              <Suspense fallback={
+                <div className="flex h-64 w-full items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                </div>
+              }>
+                <DocumentComponent />
+              </Suspense>
             </div>
-          }>
-            <DocumentComponent />
-          </Suspense>
+            
+            {/* About Sidebar */}
+            <DocumentAboutSidebar 
+              documentId={selectedDocument} 
+              onNavigateToDocument={(docId) => setSelectedDocument(docId)}
+            />
+          </div>
         </div>
       </Layout>
     );

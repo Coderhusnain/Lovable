@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "./UserInfoStep";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
 // Define section structure
 interface Section {
@@ -688,7 +689,16 @@ const LLCOperatingAgreementForm = () => {
       
       doc.save(filename);
       
-      toast.success("LLC Operating Agreement successfully generated!");
+      // Also generate and save the guide PDF
+      const guidePDF = generateGuidePDF({ 
+        documentId: "llc-operating-agreement", 
+        documentTitle: "LLC Operating Agreement" 
+      });
+      setTimeout(() => {
+        guidePDF.save(`llc_operating_agreement_guide_${timestamp}.pdf`);
+      }, 500);
+      
+      toast.success("LLC Operating Agreement and Guide PDF successfully generated!");
       return doc;
     } catch (error) {
       console.error("Error generating PDF:", error);

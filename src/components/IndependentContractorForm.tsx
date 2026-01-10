@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "./UserInfoStep";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
 // Define section structure
 interface Section {
@@ -1034,7 +1035,16 @@ const IndependentContractorForm = () => {
       
       doc.save(filename);
       
-      toast.success("Independent Contractor Agreement successfully generated!");
+      // Also generate and save the guide PDF
+      const guidePDF = generateGuidePDF({ 
+        documentId: "independent-contractor", 
+        documentTitle: "Independent Contractor Agreement" 
+      });
+      setTimeout(() => {
+        guidePDF.save(`independent_contractor_guide_${timestamp}.pdf`);
+      }, 500);
+      
+      toast.success("Independent Contractor Agreement and Guide PDF successfully generated!");
       return doc;
     } catch (error) {
       console.error("Error generating PDF:", error);

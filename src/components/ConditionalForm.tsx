@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "@/components/UserInfoStep";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
 // Define section structure
 interface Section {
@@ -849,7 +850,16 @@ The Landlord is unaware of any asbestos-containing construction materials or any
       
       doc.save(filename);
       
-      toast.success("Complete Lease Agreement successfully generated with all sections and disclosures!");
+      // Also generate and save the guide PDF
+      const guidePDF = generateGuidePDF({ 
+        documentId: "lease-agreement", 
+        documentTitle: "Residential Lease Agreement" 
+      });
+      setTimeout(() => {
+        guidePDF.save(`lease_agreement_guide_${timestamp}.pdf`);
+      }, 500);
+      
+      toast.success("Complete Lease Agreement and Guide PDF successfully generated!");
       return doc;
     } catch (error) {
       console.error("Error generating PDF:", error);

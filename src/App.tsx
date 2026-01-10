@@ -11,6 +11,7 @@ import { useEffect } from "react";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const StartABusiness = lazy(() => import("./pages/StartABusiness"));
 const Documents = lazy(() => import("./pages/Documents"));
+const DocumentCategories = lazy(() => import("./pages/DocumentCategories"));
 const UserDashboard = lazy(() => import("./pages/UserDashboard"));
 const WhatsAnLLC = lazy(() => import("./pages/WhatsAnLLC"));
 const WhatsACorporation = lazy(() => import("./pages/WhatsACorporation"));
@@ -134,6 +135,7 @@ const App = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<LandingPage />} />
                 <Route path="/documents" element={<Documents />} />
+                <Route path="/document-categories" element={<DocumentCategories />} />
                 <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
                 <Route path="/documents/:id" element={<Documents />} />
                 <Route path="/contact-lawyer" element={<ContactLawyer />} />

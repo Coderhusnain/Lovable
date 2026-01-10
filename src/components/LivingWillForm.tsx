@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 import { cn } from "@/lib/utils";
 import CountryStateAPI from 'countries-states-cities';
 
@@ -1110,7 +1111,16 @@ const LivingWillForm = () => {
       
       doc.save(filename);
       
-      toast.success("Living Will successfully generated!");
+      // Also generate and save the guide PDF
+      const guidePDF = generateGuidePDF({ 
+        documentId: "living-will", 
+        documentTitle: "Living Will (Advance Directive)" 
+      });
+      setTimeout(() => {
+        guidePDF.save(`living_will_guide_${timestamp}.pdf`);
+      }, 500);
+      
+      toast.success("Living Will and Guide PDF successfully generated!");
       return doc;
     } catch (error) {
       console.error("Error generating PDF:", error);

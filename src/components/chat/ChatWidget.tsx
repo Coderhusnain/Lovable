@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, MessageCircle } from "lucide-react";
+import { X, Send, MessageCircle, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { legalFaqData } from "@/data/legalFaqData";
 
@@ -18,8 +18,8 @@ const ChatWidget = () => {
     {
       id: "welcome",
       sender: "support",
-      text: "Hello there! 👋\nHow can we help?",
-      timestamp: "02:55 AM",
+      text: "Welcome to Legalgram! ⚖️\nI'm here to help you with legal document questions. What can I assist you with today?",
+      timestamp: "Now",
     }
   ]);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -106,48 +106,46 @@ const ChatWidget = () => {
     <div className="fixed bottom-6 right-6 z-50" ref={chatRef}>
       {/* Chat Popup */}
       {isOpen && (
-        <div className="mb-4 w-80 rounded-lg shadow-lg overflow-hidden animate-fade-in">
-          {/* Chat Header */}
-          <div className="bg-emerald-700 text-white p-3 flex justify-between items-center">
+        <div className="mb-4 w-80 rounded-xl shadow-2xl overflow-hidden animate-fade-in border border-gray-200">
+          {/* Chat Header - Professional Legal Theme */}
+          <div className="bg-gradient-to-r from-deep-blue-500 to-deep-blue-600 text-white p-4 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full overflow-hidden mr-2 border-2 border-white">
-                <div className="bg-red-500 w-full h-full flex items-center justify-center text-white text-xs font-bold">
-                  <span>LG</span>
-                </div>
+              <div className="w-10 h-10 rounded-full overflow-hidden mr-3 bg-bright-orange-500 flex items-center justify-center shadow-md">
+                <Scale size={20} className="text-white" />
               </div>
               <div>
-                <h3 className="font-semibold">Legal Gram Support</h3>
-                <p className="text-xs opacity-90">Typically replies within 1 hour</p>
+                <h3 className="font-semibold text-base">Legal Assistant</h3>
+                <p className="text-xs text-gray-300">Here to help with your questions</p>
               </div>
             </div>
             <button 
               onClick={toggleChat} 
-              className="text-white hover:text-gray-200 transition-colors"
+              className="text-white hover:text-gray-200 transition-colors p-1 rounded-full hover:bg-white/10"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
           
-          {/* Chat Messages */}
-          <div className="bg-gray-100 h-60 overflow-auto p-3 bg-[url('/lovable-uploads/386a6ab3-6e61-47e3-ac6e-8da415db5752.png')] bg-opacity-10">
+          {/* Chat Messages - Solid Professional Background */}
+          <div className="bg-gray-50 h-72 overflow-auto p-4">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
                 className={`${
                   msg.sender === 'user' 
-                    ? 'ml-auto bg-green-500 text-white' 
-                    : 'bg-white text-gray-800'
-                } rounded-lg p-3 shadow-sm max-w-[80%] mb-2`}
+                    ? 'ml-auto bg-bright-orange-500 text-white' 
+                    : 'bg-white text-gray-800 border border-gray-100'
+                } rounded-xl p-3 shadow-sm max-w-[85%] mb-3`}
               >
                 {msg.sender === 'support' && (
-                  <p className="text-xs text-gray-500 font-medium mb-1">Legal Gram Support</p>
+                  <p className="text-xs text-bright-orange-500 font-semibold mb-1">Legal Assistant</p>
                 )}
                 {msg.text.split('\n').map((text, i) => (
-                  <p key={i} className={msg.sender === 'user' ? 'text-white' : 'text-gray-800'}>
+                  <p key={i} className={`${msg.sender === 'user' ? 'text-white' : 'text-gray-700'} text-sm leading-relaxed`}>
                     {text}
                   </p>
                 ))}
-                <p className={`text-xs ${msg.sender === 'user' ? 'text-green-100' : 'text-gray-400'} text-right mt-1`}>
+                <p className={`text-xs ${msg.sender === 'user' ? 'text-orange-100' : 'text-gray-400'} text-right mt-2`}>
                   {msg.timestamp} {msg.sender === 'user' ? '✓✓' : ''}
                 </p>
               </div>
@@ -155,33 +153,41 @@ const ChatWidget = () => {
             <div ref={messagesEndRef} />
           </div>
           
-          {/* Chat Input */}
-          <form onSubmit={handleSendMessage} className="bg-white p-2 flex items-center">
+          {/* Chat Input - Clean Professional Style */}
+          <form onSubmit={handleSendMessage} className="bg-white p-3 flex items-center border-t border-gray-100">
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              placeholder="Ask a legal question..."
+              className="flex-1 border border-gray-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bright-orange-500 focus:border-transparent bg-gray-50"
             />
             <button 
               type="submit" 
-              className="ml-2 bg-gray-200 hover:bg-gray-300 rounded-full p-2 transition-colors"
+              className={`ml-2 rounded-full p-2.5 transition-all ${
+                inputMessage.trim() 
+                  ? 'bg-bright-orange-500 hover:bg-bright-orange-600 shadow-md' 
+                  : 'bg-gray-100'
+              }`}
               disabled={!inputMessage.trim()}
             >
-              <Send size={18} className={`${!inputMessage.trim() ? 'text-gray-400' : 'text-gray-600'}`} />
+              <Send size={18} className={`${!inputMessage.trim() ? 'text-gray-400' : 'text-white'}`} />
             </button>
           </form>
         </div>
       )}
       
-      {/* Floating Button */}
+      {/* Floating Button - Professional Legal Theme */}
       <button
         onClick={toggleChat}
-        className="bg-green-500 hover:bg-green-600 transition-colors rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
-        aria-label="Open chat"
+        className="bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 hover:from-bright-orange-600 hover:to-bright-orange-700 transition-all rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105"
+        aria-label="Open legal assistant chat"
       >
-        {!isOpen && <MessageCircle size={28} className="text-white" />}
+        {isOpen ? (
+          <X size={24} className="text-white" />
+        ) : (
+          <Scale size={26} className="text-white" />
+        )}
       </button>
     </div>
   );

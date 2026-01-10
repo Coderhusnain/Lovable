@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "./UserInfoStep";
+import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
 // Define section structure
 interface Section {
@@ -803,7 +804,16 @@ const GeneralPowerOfAttorneyForm = () => {
       
       doc.save(filename);
       
-      toast.success("General Power of Attorney successfully generated!");
+      // Also generate and save the guide PDF
+      const guidePDF = generateGuidePDF({ 
+        documentId: "general-power-of-attorney", 
+        documentTitle: "General Power of Attorney" 
+      });
+      setTimeout(() => {
+        guidePDF.save(`power_of_attorney_guide_${timestamp}.pdf`);
+      }, 500);
+      
+      toast.success("General Power of Attorney and Guide PDF successfully generated!");
       return doc;
     } catch (error) {
       console.error("Error generating PDF:", error);
