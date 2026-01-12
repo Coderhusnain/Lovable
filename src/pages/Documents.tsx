@@ -1601,8 +1601,8 @@ const Documents = () => {
           
           {/* Form with About Sidebar */}
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Main Form */}
-            <div className="flex-1 min-w-0">
+            {/* Main Form - 68% on large screens */}
+            <div className="w-full lg:w-[68%] xl:w-[70%] min-w-0">
               <Suspense fallback={
                 <div className="flex h-64 w-full items-center justify-center">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
