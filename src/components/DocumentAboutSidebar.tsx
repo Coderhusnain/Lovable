@@ -643,6 +643,78 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
     tips: ["Get detailed specifications", "Include warranty provisions", "Require proof of insurance"],
     warnings: ["Ensure contractor is licensed", "Get permits before starting"],
     estimatedTime: "30-40 minutes"
+  },
+  "affidavit-general": {
+    title: "General Affidavit",
+    shortDescription: "A written and notarized sworn statement declaring facts under oath.",
+    fullDescription: "A General Affidavit is a legal document where the affiant (person making the statement) swears under oath that certain facts are true. It can be used for various purposes including court proceedings, immigration matters, property verification, and official declarations.",
+    whenToUse: ["Court proceedings requiring sworn testimony", "Immigration applications", "Property or identity verification", "Insurance claims", "Business transactions requiring sworn statements"],
+    keyTerms: [
+      { term: "Affiant", definition: "The person making the sworn statement." },
+      { term: "Notarization", definition: "Official certification by a notary public." },
+      { term: "Perjury", definition: "Crime of lying under oath." }
+    ],
+    tips: ["Be specific and accurate with all facts", "Include all relevant details", "Have the document notarized promptly", "Keep a copy for your records"],
+    warnings: ["False statements constitute perjury", "Must be signed in presence of notary", "Some jurisdictions have specific requirements"],
+    estimatedTime: "15-20 minutes"
+  },
+  "affidavit-character": {
+    title: "Affidavit of Character",
+    shortDescription: "A formal legal document providing a sworn character reference.",
+    fullDescription: "An Affidavit of Character is a sworn statement attesting to someone's good character, moral standing, and reputation. It is commonly used in court proceedings, immigration cases, custody disputes, and professional licensing applications.",
+    whenToUse: ["Court sentencing hearings", "Immigration visa applications", "Child custody proceedings", "Professional licensing", "Adoption proceedings"],
+    keyTerms: [
+      { term: "Character Witness", definition: "Person attesting to someone's character." },
+      { term: "Personal Knowledge", definition: "First-hand knowledge of the subject." },
+      { term: "Reputation", definition: "General opinion held about someone in the community." }
+    ],
+    tips: ["Provide specific examples of good character", "State how long you've known the person", "Be honest and objective", "Include your credentials or relationship"],
+    warnings: ["Must be based on personal knowledge", "False statements are perjury", "May be subject to cross-examination"],
+    estimatedTime: "20-25 minutes"
+  },
+  "affidavit-ownership": {
+    title: "Affidavit of Ownership",
+    shortDescription: "Formally declares ownership of property or assets under oath.",
+    fullDescription: "An Affidavit of Ownership is a sworn legal document that formally declares a person's ownership of specific property, assets, or items. It is used when official documentation is lost, unavailable, or to support title transfers and legal claims.",
+    whenToUse: ["Title transfers without original documents", "Insurance claims for lost items", "Estate and probate matters", "Vehicle registration issues", "Real estate transactions"],
+    keyTerms: [
+      { term: "Title", definition: "Legal right to ownership of property." },
+      { term: "Encumbrance", definition: "Claim or lien against property." },
+      { term: "Chain of Title", definition: "History of property ownership." }
+    ],
+    tips: ["Include detailed property descriptions", "List any supporting documentation", "Explain how you acquired the property", "Include identifying numbers (VIN, serial numbers)"],
+    warnings: ["False claims are criminal fraud", "May require additional verification", "Does not replace official title documents"],
+    estimatedTime: "15-25 minutes"
+  },
+  "healthcare-poa": {
+    title: "Healthcare Power of Attorney",
+    shortDescription: "Authorizes an agent to make medical decisions on your behalf.",
+    fullDescription: "A Healthcare Power of Attorney (HCPOA) is a legal document that designates a trusted person (healthcare agent) to make medical decisions for you if you become incapacitated and cannot make decisions yourself. It includes directives about life support, organ donation, and treatment preferences.",
+    whenToUse: ["Advance care planning", "Before major surgery", "Diagnosis of serious illness", "General estate planning", "As part of an advance directive package"],
+    keyTerms: [
+      { term: "Healthcare Agent", definition: "Person authorized to make medical decisions." },
+      { term: "Incapacity", definition: "Inability to make or communicate decisions." },
+      { term: "Life-Sustaining Treatment", definition: "Medical interventions that prolong life." },
+      { term: "HIPAA Authorization", definition: "Permission to access medical records." }
+    ],
+    tips: ["Discuss your wishes with your agent", "Provide copies to doctors and hospitals", "Review and update periodically", "Consider naming an alternate agent"],
+    warnings: ["Requirements vary by state", "Agent cannot override valid advance directives", "Some decisions may be excluded by law"],
+    estimatedTime: "25-35 minutes"
+  },
+  "vehicle-lease": {
+    title: "Vehicle Lease Agreement",
+    shortDescription: "Contract between vehicle owner and driver for leasing a vehicle.",
+    fullDescription: "A Vehicle Lease Agreement establishes the terms and conditions for leasing a vehicle from its owner to a lessee (driver). It covers monthly payments, mileage limits, insurance requirements, maintenance responsibilities, and return conditions.",
+    whenToUse: ["Private vehicle leasing", "Company car arrangements", "Fleet vehicle management", "Ride-share vehicle leases", "Family vehicle sharing agreements"],
+    keyTerms: [
+      { term: "Lessor", definition: "Vehicle owner leasing the vehicle." },
+      { term: "Lessee", definition: "Person leasing/renting the vehicle." },
+      { term: "Mileage Allowance", definition: "Maximum miles permitted annually." },
+      { term: "Excess Mileage Fee", definition: "Charge for miles over the limit." }
+    ],
+    tips: ["Document vehicle condition at start", "Verify insurance coverage", "Understand all fee structures", "Keep maintenance records"],
+    warnings: ["Lessee is liable for damages", "Exceeding mileage incurs fees", "Early termination may have penalties"],
+    estimatedTime: "20-30 minutes"
   }
 };
 

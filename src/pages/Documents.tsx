@@ -181,6 +181,11 @@ import RealEstateAgentAgreementForm from "@/components/documents/RealEstateAgent
 import LimitedScopeRepresentationAgreementForm from "@/components/documents/LimitedScopeRepresentationAgreementForm";
 import UnbundledLegalServicesAgreementForm from "@/components/documents/UnbundledLegalServicesAgreementForm";
 import AttorneyEngagementLetterForm from "@/components/documents/AttorneyEngagementLetterForm";
+import AffidavitGeneralForm from "@/components/documents/AffidavitGeneralForm";
+import AffidavitCharacterForm from "@/components/documents/AffidavitCharacterForm";
+import AffidavitOwnershipForm from "@/components/documents/AffidavitOwnershipForm";
+import HealthcarePOAForm from "@/components/documents/HealthcarePOAForm";
+import VehicleLeaseForm from "@/components/documents/VehicleLeaseForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -299,6 +304,38 @@ const Documents = () => {
       description: 'Create a sworn statement of your financial condition and ability to provide financial support',
       icon: DollarSign,
       component: FinancialSupportAffidavitForm
+    },
+
+    {
+      id: 'affidavit-general',
+      title: 'General Affidavit',
+      description: 'Create a legally binding sworn statement for various purposes',
+      icon: FileText,
+      component: AffidavitGeneralForm
+    },
+
+    {
+      id: 'affidavit-character',
+      title: 'Affidavit of Character',
+      description: 'Create a sworn character reference statement for legal proceedings',
+      icon: UserCheck,
+      component: AffidavitCharacterForm
+    },
+
+    {
+      id: 'affidavit-ownership',
+      title: 'Affidavit of Ownership',
+      description: 'Formally declare ownership of property with a sworn statement',
+      icon: FileSignature,
+      component: AffidavitOwnershipForm
+    },
+
+    {
+      id: 'healthcare-poa',
+      title: 'Healthcare Power of Attorney',
+      description: 'Authorize someone to make medical decisions on your behalf',
+      icon: Heart,
+      component: HealthcarePOAForm
     }
   ];
 
@@ -1530,6 +1567,14 @@ const Documents = () => {
       description: 'Create a formal attorney engagement letter for legal representation',
       icon: FileText,
       component: AttorneyEngagementLetterForm
+    },
+
+    {
+      id: 'vehicle-lease',
+      title: 'Vehicle Lease Agreement',
+      description: 'Create a contract for leasing a vehicle between owner and driver',
+      icon: Truck,
+      component: VehicleLeaseForm
     }
   ];
 
