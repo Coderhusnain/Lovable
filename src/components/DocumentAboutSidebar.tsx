@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Info, FileText, AlertCircle, CheckCircle, BookOpen, HelpCircle, Scale, Clock, Target, Sparkles, Gavel } from "lucide-react";
+import { FileText, AlertCircle, CheckCircle, BookOpen, HelpCircle, Scale, Clock, Target, Sparkles, Gavel, Info, ChevronRight, AlertTriangle, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 export interface DocumentInfo {
   title: string;
@@ -734,113 +735,201 @@ interface DocumentAboutSidebarProps {
   onNavigateToDocument?: (id: string) => void;
 }
 
-interface CollapsibleSectionProps {
-  title: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}
-
-const CollapsibleSection = ({ title, icon, children, defaultOpen = false }: CollapsibleSectionProps) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-3 hover:bg-orange-50 rounded-lg transition-colors">
-        <div className="flex items-center gap-2">
-          {icon}
-          <span className="font-medium text-gray-700">{title}</span>
-        </div>
-        {isOpen ? <ChevronUp className="h-4 w-4 text-gray-500" /> : <ChevronDown className="h-4 w-4 text-gray-500" />}
-      </CollapsibleTrigger>
-      <CollapsibleContent className="px-3 pb-3">{children}</CollapsibleContent>
-    </Collapsible>
-  );
-};
-
 const DocumentAboutSidebar = ({ documentId, onNavigateToDocument }: DocumentAboutSidebarProps) => {
   const docInfo = documentInfoDatabase[documentId] || getDefaultDocumentInfo(documentId);
+  
   return (
-    <Card className="w-full lg:w-[32%] xl:w-[30%] flex-shrink-0 bg-white border-orange-200 shadow-lg sticky top-4">
-      <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <BookOpen className="h-5 w-5" />
-          About This Document
-        </CardTitle>
-        {docInfo.estimatedTime && (
-          <div className="flex items-center gap-1 text-orange-100 text-sm">
-            <Clock className="h-4 w-4" />
-            <span>Est. {docInfo.estimatedTime}</span>
-          </div>
-        )}
-      </CardHeader>
-      <CardContent className="p-0 max-h-[calc(100vh-200px)] overflow-y-auto">
-        <div className="p-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-2">{docInfo.title}</h3>
-          <p className="text-sm text-gray-600">{docInfo.shortDescription}</p>
-        </div>
-        <div className="divide-y divide-gray-100">
-          <CollapsibleSection title="What Is This?" icon={<HelpCircle className="h-4 w-4 text-orange-500" />} defaultOpen={true}>
-            <p className="text-sm text-gray-600 leading-relaxed">{docInfo.fullDescription}</p>
-          </CollapsibleSection>
-          <CollapsibleSection title="When To Use" icon={<Target className="h-4 w-4 text-blue-500" />}>
-            <ul className="space-y-2">
-              {docInfo.whenToUse.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                  <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </CollapsibleSection>
-          <CollapsibleSection title="Key Terms" icon={<Scale className="h-4 w-4 text-purple-500" />}>
-            <div className="space-y-3">
-              {docInfo.keyTerms.map((item, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-2">
-                  <div className="font-medium text-sm text-gray-800">{item.term}</div>
-                  <div className="text-xs text-gray-600">{item.definition}</div>
-                </div>
-              ))}
-            </div>
-          </CollapsibleSection>
-          <CollapsibleSection title="Helpful Tips" icon={<Info className="h-4 w-4 text-green-500" />}>
-            <ul className="space-y-2">
-              {docInfo.tips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                  <Sparkles className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                  <span>{tip}</span>
-                </li>
-              ))}
-            </ul>
-          </CollapsibleSection>
-          <CollapsibleSection title="Important Warnings" icon={<AlertCircle className="h-4 w-4 text-red-500" />}>
-            <ul className="space-y-2">
-              {docInfo.warnings.map((warning, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-red-700 bg-red-50 p-2 rounded">
-                  <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>{warning}</span>
-                </li>
-              ))}
-            </ul>
-          </CollapsibleSection>
-          {docInfo.relatedDocuments && docInfo.relatedDocuments.length > 0 && (
-            <CollapsibleSection title="Related Documents" icon={<FileText className="h-4 w-4 text-orange-500" />}>
-              <div className="space-y-2">
-                {docInfo.relatedDocuments.map((doc, index) => (
-                  <button key={index} onClick={() => onNavigateToDocument?.(doc.id)} className="w-full flex items-center gap-2 p-2 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors text-left">
-                    <FileText className="h-4 w-4" />
-                    <span>{doc.title}</span>
-                  </button>
-                ))}
+    <Card className="w-full lg:w-[38%] xl:w-[36%] flex-shrink-0 bg-white/95 backdrop-blur-sm border-orange-200/60 shadow-xl sticky top-4 overflow-hidden">
+      {/* Rich Header with gradient and badge */}
+      <CardHeader className="bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 text-white rounded-t-lg pb-5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNDBMNDAgNDBIMHoiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1IiBjeD0iMjAiIGN5PSIyMCIgcj0iMiIvPjwvZz48L3N2Zz4=')] opacity-30"></div>
+        <div className="relative">
+          <div className="flex items-center justify-between mb-3">
+            <CardTitle className="flex items-center gap-2.5 text-xl font-bold">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <BookOpen className="h-5 w-5" />
               </div>
-            </CollapsibleSection>
-          )}
-        </div>
-        <div className="p-4 bg-gray-50 border-t border-gray-100">
-          <div className="flex items-start gap-2">
-            <Gavel className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-gray-500">This information is for general guidance only and does not constitute legal advice.</p>
+              Document Guide
+            </CardTitle>
+            {docInfo.estimatedTime && (
+              <Badge variant="secondary" className="bg-white/20 text-white border-0 backdrop-blur-sm">
+                <Clock className="h-3 w-3 mr-1" />
+                {docInfo.estimatedTime}
+              </Badge>
+            )}
           </div>
+          <h3 className="font-semibold text-lg text-white/95 leading-tight">{docInfo.title}</h3>
+          <p className="text-sm text-orange-100 mt-2 leading-relaxed">{docInfo.shortDescription}</p>
         </div>
+      </CardHeader>
+      
+      {/* Scrollable Accordion Content */}
+      <CardContent className="p-0">
+        <ScrollArea className="h-[calc(100vh-280px)] min-h-[400px]">
+          <div className="p-4">
+            <Accordion type="single" collapsible defaultValue="what-is-this" className="space-y-3">
+              {/* What Is This Section */}
+              <AccordionItem value="what-is-this" className="border border-gray-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-orange-50/50 to-white shadow-sm">
+                <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-orange-50/80 transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                      <HelpCircle className="h-4 w-4" />
+                    </div>
+                    <span className="font-semibold text-gray-800">What Is This Document?</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-11 pt-2">
+                    <p className="text-sm text-gray-600 leading-relaxed">{docInfo.fullDescription}</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* When To Use Section */}
+              <AccordionItem value="when-to-use" className="border border-gray-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-blue-50/50 to-white shadow-sm">
+                <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-blue-50/80 transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                      <Target className="h-4 w-4" />
+                    </div>
+                    <span className="font-semibold text-gray-800">When To Use</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-11 pt-2 space-y-2.5">
+                    {docInfo.whenToUse.map((item, index) => (
+                      <div key={index} className="flex items-start gap-3 group/item">
+                        <div className="mt-0.5 p-1 bg-green-100 rounded-full">
+                          <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                        </div>
+                        <span className="text-sm text-gray-600 leading-relaxed">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Key Terms & Definitions Section */}
+              <AccordionItem value="key-terms" className="border border-gray-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-purple-50/50 to-white shadow-sm">
+                <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-purple-50/80 transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                      <Scale className="h-4 w-4" />
+                    </div>
+                    <span className="font-semibold text-gray-800">Key Terms & Definitions</span>
+                    <Badge variant="outline" className="ml-2 text-xs border-purple-200 text-purple-600 bg-purple-50">
+                      {docInfo.keyTerms.length} terms
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-11 pt-2 space-y-3">
+                    {docInfo.keyTerms.map((item, index) => (
+                      <div key={index} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200/50 hover:border-purple-200 hover:shadow-sm transition-all">
+                        <div className="flex items-center gap-2 mb-1">
+                          <ChevronRight className="h-3.5 w-3.5 text-purple-500" />
+                          <span className="font-semibold text-sm text-gray-800">{item.term}</span>
+                        </div>
+                        <p className="text-sm text-gray-600 pl-5">{item.definition}</p>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Helpful Tips Section */}
+              <AccordionItem value="tips" className="border border-gray-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-emerald-50/50 to-white shadow-sm">
+                <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-emerald-50/80 transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                      <Lightbulb className="h-4 w-4" />
+                    </div>
+                    <span className="font-semibold text-gray-800">Expert Tips & Best Practices</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-11 pt-2 space-y-2.5">
+                    {docInfo.tips.map((tip, index) => (
+                      <div key={index} className="flex items-start gap-3 group/item">
+                        <div className="mt-0.5 p-1 bg-yellow-100 rounded-full">
+                          <Sparkles className="h-3.5 w-3.5 text-yellow-600" />
+                        </div>
+                        <span className="text-sm text-gray-600 leading-relaxed">{tip}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Important Warnings Section */}
+              <AccordionItem value="warnings" className="border border-red-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-red-50/50 to-white shadow-sm">
+                <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-red-50/80 transition-all group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-red-500 to-red-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                      <AlertTriangle className="h-4 w-4" />
+                    </div>
+                    <span className="font-semibold text-gray-800">Important Warnings</span>
+                    <Badge variant="destructive" className="ml-2 text-xs">
+                      {docInfo.warnings.length} items
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-11 pt-2 space-y-2.5">
+                    {docInfo.warnings.map((warning, index) => (
+                      <div key={index} className="flex items-start gap-3 p-2.5 bg-red-50 rounded-lg border border-red-100">
+                        <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-red-700 leading-relaxed">{warning}</span>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Related Documents Section */}
+              {docInfo.relatedDocuments && docInfo.relatedDocuments.length > 0 && (
+                <AccordionItem value="related" className="border border-gray-200/60 rounded-xl overflow-hidden bg-gradient-to-r from-amber-50/50 to-white shadow-sm">
+                  <AccordionTrigger className="px-4 py-3.5 hover:no-underline hover:bg-amber-50/80 transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg text-white shadow-md group-hover:shadow-lg transition-shadow">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <span className="font-semibold text-gray-800">Related Documents</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 pb-4">
+                    <div className="pl-11 pt-2 space-y-2">
+                      {docInfo.relatedDocuments.map((doc, index) => (
+                        <button 
+                          key={index} 
+                          onClick={() => onNavigateToDocument?.(doc.id)} 
+                          className="w-full flex items-center gap-3 p-3 text-sm text-orange-700 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all border border-orange-100 hover:border-orange-200 hover:shadow-sm text-left group/btn"
+                        >
+                          <FileText className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                          <span className="font-medium">{doc.title}</span>
+                          <ChevronRight className="h-4 w-4 ml-auto opacity-50 group-hover/btn:opacity-100 group-hover/btn:translate-x-1 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+            </Accordion>
+          </div>
+          
+          {/* Footer Disclaimer */}
+          <div className="p-4 mx-4 mb-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-200/50">
+            <div className="flex items-start gap-3">
+              <div className="p-1.5 bg-gray-200 rounded-lg">
+                <Gavel className="h-4 w-4 text-gray-500" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-500 mb-0.5">Legal Disclaimer</p>
+                <p className="text-xs text-gray-400 leading-relaxed">This information is for general guidance only and does not constitute legal advice. Consult a licensed attorney for legal matters.</p>
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   );
