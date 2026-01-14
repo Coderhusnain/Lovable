@@ -1,8 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
-import { X, Send, MessageCircle, Scale } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { legalFaqData } from "@/data/legalFaqData";
+import { X, Send, Scale, Loader2, Sparkles } from "lucide-react";
+import { getChatCompletion, ChatMessage } from "@/services/groqService";
 
 interface Message {
   id: string;
@@ -14,11 +13,12 @@ interface Message {
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       sender: "support",
-      text: "Welcome to Legalgram! ⚖️\nI'm here to help you with legal document questions. What can I assist you with today?",
+      text: "Welcome to Legalgram! ⚖️\nI'm your AI Legal Assistant, here to help you find the right legal documents. What can I assist you with today?",
       timestamp: "Now",
     }
   ]);
@@ -28,56 +28,69 @@ const ChatWidget = () => {
   const toggleChat = () => {
     setIsOpen(!isOpen);
   };
-
-  // Find FAQ matches from user input
-  const findFaqMatch = (text: string): string | null => {
-    const lowercaseText = text.toLowerCase();
-    
-    for (const faq of legalFaqData) {
-      for (const keyword of faq.keywords) {
-        if (lowercaseText.includes(keyword.toLowerCase())) {
-          return faq.answer;
-        }
-      }
-    }
-    
-    return null;
-  };
   
   const getCurrentTime = (): string => {
     const now = new Date();
     return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  // Convert messages to ChatMessage format for the AI
+  const getConversationHistory = (): ChatMessage[] => {
+    return messages
+      .filter(msg => msg.id !== 'welcome') // Exclude welcome message
+      .map(msg => ({
+        role: msg.sender === 'user' ? 'user' as const : 'assistant' as const,
+        content: msg.text
+      }));
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (inputMessage.trim()) {
+    if (inputMessage.trim() && !isTyping) {
+      const userMessageText = inputMessage.trim();
       const userMessage: Message = {
         id: Date.now().toString(),
         sender: 'user',
-        text: inputMessage,
+        text: userMessageText,
         timestamp: getCurrentTime(),
       };
       
       // Add user message to chat
       setMessages(prev => [...prev, userMessage]);
       setInputMessage("");
+      setIsTyping(true);
       
-      // Check for FAQ matches
-      const faqAnswer = findFaqMatch(inputMessage);
-      
-      // Simulate a short delay before assistant responds
-      setTimeout(() => {
+      try {
+        // Get conversation history including the new message
+        const conversationHistory: ChatMessage[] = [
+          ...getConversationHistory(),
+          { role: 'user', content: userMessageText }
+        ];
+        
+        // Call the Groq AI service
+        const aiResponse = await getChatCompletion(conversationHistory);
+        
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           sender: 'support',
-          text: faqAnswer || "I don't have a specific answer for that question. For personalized assistance, please email us at support@legalgram.com or call us at 1-800-LEGAL-HELP.",
+          text: aiResponse,
           timestamp: getCurrentTime(),
         };
         
         setMessages(prev => [...prev, assistantMessage]);
-      }, 1000);
+      } catch (error) {
+        console.error('Chat error:', error);
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          sender: 'support',
+          text: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment.",
+          timestamp: getCurrentTime(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } finally {
+        setIsTyping(false);
+      }
     }
   };
   
@@ -86,7 +99,7 @@ const ChatWidget = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, isTyping]);
   
   // Close chat when clicking outside
   useEffect(() => {
@@ -106,7 +119,7 @@ const ChatWidget = () => {
     <div className="fixed bottom-6 right-6 z-50" ref={chatRef}>
       {/* Chat Popup */}
       {isOpen && (
-        <div className="mb-4 w-80 rounded-xl shadow-2xl overflow-hidden animate-fade-in border border-gray-200">
+        <div className="mb-4 w-80 sm:w-96 rounded-xl shadow-2xl overflow-hidden animate-fade-in border border-gray-200">
           {/* Chat Header - Professional Legal Theme */}
           <div className="bg-gradient-to-r from-deep-blue-500 to-deep-blue-600 text-white p-4 flex justify-between items-center">
             <div className="flex items-center">
@@ -114,8 +127,13 @@ const ChatWidget = () => {
                 <Scale size={20} className="text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-base">Legal Assistant</h3>
-                <p className="text-xs text-gray-300">Here to help with your questions</p>
+                <h3 className="font-semibold text-base flex items-center gap-1.5">
+                  Legal Assistant
+                  <Sparkles size={14} className="text-yellow-300" />
+                </h3>
+                <p className="text-xs text-gray-300">
+                  {isTyping ? 'Typing...' : 'Powered by AI'}
+                </p>
               </div>
             </div>
             <button 
@@ -127,7 +145,7 @@ const ChatWidget = () => {
           </div>
           
           {/* Chat Messages - Solid Professional Background */}
-          <div className="bg-gray-50 h-72 overflow-auto p-4">
+          <div className="bg-gray-50 h-80 overflow-auto p-4">
             {messages.map((msg) => (
               <div 
                 key={msg.id} 
@@ -138,7 +156,10 @@ const ChatWidget = () => {
                 } rounded-xl p-3 shadow-sm max-w-[85%] mb-3`}
               >
                 {msg.sender === 'support' && (
-                  <p className="text-xs text-bright-orange-500 font-semibold mb-1">Legal Assistant</p>
+                  <p className="text-xs text-bright-orange-500 font-semibold mb-1 flex items-center gap-1">
+                    <Sparkles size={10} />
+                    AI Legal Assistant
+                  </p>
                 )}
                 {msg.text.split('\n').map((text, i) => (
                   <p key={i} className={`${msg.sender === 'user' ? 'text-white' : 'text-gray-700'} text-sm leading-relaxed`}>
@@ -150,6 +171,21 @@ const ChatWidget = () => {
                 </p>
               </div>
             ))}
+            
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="bg-white text-gray-800 border border-gray-100 rounded-xl p-3 shadow-sm max-w-[85%] mb-3">
+                <p className="text-xs text-bright-orange-500 font-semibold mb-2 flex items-center gap-1">
+                  <Sparkles size={10} />
+                  AI Legal Assistant
+                </p>
+                <div className="flex items-center gap-2">
+                  <Loader2 size={16} className="animate-spin text-bright-orange-500" />
+                  <span className="text-sm text-gray-500">Thinking...</span>
+                </div>
+              </div>
+            )}
+            
             <div ref={messagesEndRef} />
           </div>
           
@@ -159,21 +195,33 @@ const ChatWidget = () => {
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Ask a legal question..."
+              placeholder="Ask about legal documents..."
               className="flex-1 border border-gray-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-bright-orange-500 focus:border-transparent bg-gray-50"
+              disabled={isTyping}
             />
             <button 
               type="submit" 
               className={`ml-2 rounded-full p-2.5 transition-all ${
-                inputMessage.trim() 
+                inputMessage.trim() && !isTyping
                   ? 'bg-bright-orange-500 hover:bg-bright-orange-600 shadow-md' 
-                  : 'bg-gray-100'
+                  : 'bg-gray-100 cursor-not-allowed'
               }`}
-              disabled={!inputMessage.trim()}
+              disabled={!inputMessage.trim() || isTyping}
             >
-              <Send size={18} className={`${!inputMessage.trim() ? 'text-gray-400' : 'text-white'}`} />
+              {isTyping ? (
+                <Loader2 size={18} className="animate-spin text-gray-400" />
+              ) : (
+                <Send size={18} className={`${!inputMessage.trim() ? 'text-gray-400' : 'text-white'}`} />
+              )}
             </button>
           </form>
+          
+          {/* Footer Disclaimer */}
+          <div className="bg-gray-100 px-3 py-2 border-t border-gray-200">
+            <p className="text-[10px] text-gray-400 text-center">
+              AI responses are for guidance only, not legal advice.
+            </p>
+          </div>
         </div>
       )}
       
