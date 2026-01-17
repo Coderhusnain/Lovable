@@ -2,18 +2,28 @@
  * =========================================================
  * LEGALGRAM AI CHATBOT SERVICE
  * =========================================================
- * Implements secure Groq API integration with:
- * - Round-Robin Load Balancing (3 API keys)
- * - Domain-Specific System Prompting (Legal topics only)
- * - Rate Limit Protection with automatic failover
- * - Request throttling to prevent API abuse
+ * 
+ * ⚠️ DEPRECATED - DO NOT USE FOR NEW CODE ⚠️
+ * 
+ * This file is DEPRECATED as of Legalgram 2.0.
+ * API keys were exposed in the client-side bundle.
+ * 
+ * USE INSTEAD: src/services/backendService.ts
+ * The new backend service routes all AI calls through
+ * the Python FastAPI backend where keys are secure.
+ * 
+ * This file is kept for reference only.
  * =========================================================
  */
+
+// ⚠️ SECURITY WARNING: These keys were exposed in production!
+// They should be REVOKED and new keys generated for the backend.
+// See: backend/.env.example
 
 import Groq from 'groq-sdk';
 
 // =========================================================
-// 1. SECURE KEY LOADING (NEVER LOG THESE!)
+// DEPRECATED: Keys now in backend/.env
 // =========================================================
 const API_KEYS: string[] = [
   import.meta.env.VITE_GROQ_API_KEY_1,
@@ -22,7 +32,7 @@ const API_KEYS: string[] = [
 ].filter((key): key is string => Boolean(key));
 
 if (API_KEYS.length === 0) {
-  console.error('[GroqService] CRITICAL: No Groq API Keys found in environment variables.');
+  console.warn('[GroqService] DEPRECATED: No API keys. Use backendService.ts instead.');
 }
 
 // =========================================================
