@@ -44,7 +44,7 @@ const Footer = () => {
               <span className="text-xl font-bold text-white">Legal Gram</span>
             </div>
             <p className="text-rocket-gray-200">
-              We provide affordable, accessible legal services for individuals and businesses.
+              Mission Statement.. To provide quality legal services at affordable prices
             </p>
           </div>
 
@@ -95,12 +95,6 @@ const Footer = () => {
           <div>
             <h5 className="font-semibold text-lg mb-4">Contact</h5>
             <ul className="space-y-2">
-              <ContactItem icon={MapPin}>
-                <span className="text-rocket-gray-200">123 Legal Ave, Suite 400</span>
-              </ContactItem>
-              <ContactItem icon={Phone}>
-                <span className="text-rocket-gray-200">+1 (555) 123-4567</span>
-              </ContactItem>
               <ContactItem icon={Mail}>
                 <a href="mailto:info@legalgram.com" className="text-rocket-gray-200  transition-all duration-200 transform hover:scale-105">
                   info@legalgram.com
@@ -150,7 +144,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-rocket-blue-400 dark:border-rocket-blue-800 text-center text-rocket-gray-200">
-          <p>&copy; {currentYear} Legal Gram. All rights reserved.</p>
+          <p>&copy; 2020 - 2026 Legal Gram. All rights reserved.</p>
         </div>
       </div>
     </footer>
