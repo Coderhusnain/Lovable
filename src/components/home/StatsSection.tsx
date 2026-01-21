@@ -52,32 +52,53 @@ const useCountUp = (end: number, duration: number = 2000) => {
   return { count, elementRef };
 };
 
+const StatItem = ({ stat, index }: { stat: any, index: number }) => {
+  const Icon = stat.icon;
+  const { count, elementRef } = useCountUp(stat.value, 2000 + (index * 200));
+  
+  return (
+    <div 
+      ref={elementRef}
+      className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:transform hover:-translate-y-2 transition-all duration-300"
+    >
+      <div className="mx-auto bg-gradient-to-br from-bright-orange-400 to-bright-orange-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-bright-orange-500/20">
+        <Icon className="h-8 w-8 text-white" />
+      </div>
+      <h3 className="text-4xl md:text-5xl font-bold mb-2 text-black">
+        {count}{stat.suffix}
+      </h3>
+      <p className="text-xl font-medium mb-2 text-black">{stat.label}</p>
+      <p className="text-sm text-black/70">{stat.description}</p>
+    </div>
+  );
+};
+
 const StatsSection = () => {
   const stats = [
     { 
       icon: Users, 
-      value: 20, 
+      value: 1, 
       suffix: "M+", 
       label: "Customers", 
       description: "People who trust our services"
     },
     { 
       icon: FileText, 
-      value: 10, 
+      value: 1, 
       suffix: "M+", 
       label: "Documents", 
       description: "Legal documents created" 
     },
     { 
       icon: MessageSquare, 
-      value: 500, 
+      value: 5, 
       suffix: "K+", 
       label: "Consultations", 
       description: "Legal advice sessions provided" 
     },
     { 
       icon: Clock, 
-      value: 15, 
+      value: 5, 
       suffix: "+", 
       label: "Years", 
       description: "Of legal service experience" 
@@ -107,27 +128,9 @@ const StatsSection = () => {
         </div>
         
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            const { count, elementRef } = useCountUp(stat.value, 2000 + (index * 200));
-            
-            return (
-              <div 
-                key={index} 
-                ref={elementRef}
-                className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:transform hover:-translate-y-2 transition-all duration-300"
-              >
-                <div className="mx-auto bg-gradient-to-br from-bright-orange-400 to-bright-orange-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-bright-orange-500/20">
-                  <Icon className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-4xl md:text-5xl font-bold mb-2 text-black">
-                  {count}{stat.suffix}
-                </h3>
-                <p className="text-xl font-medium mb-2 text-black">{stat.label}</p>
-                <p className="text-sm text-black/70">{stat.description}</p>
-              </div>
-            );
-          })}
+          {stats.map((stat, index) => (
+            <StatItem key={index} stat={stat} index={index} />
+          ))}
         </div>
       </div>
     </section>

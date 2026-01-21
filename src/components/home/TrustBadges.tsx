@@ -28,17 +28,12 @@ const TrustBadges = () => {
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
             <CheckCircle className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Trusted by 20M+ Customers</span>
+            <span className="text-xs md:text-sm font-medium text-black text-center">Trusted by 1M+ Customers</span>
           </div>
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
             <Clock className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">15+ Years of Experience</span>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Link className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">BBB Accredited Business</span>
+            <span className="text-xs md:text-sm font-medium text-black text-center">5+ Years of Experience</span>
           </div>
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
