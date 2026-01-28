@@ -139,7 +139,7 @@ const AdvertisingAgencyAgreementInfo = () => {
                 </InfoBadge>
 
                 <InfoBadge icon={CheckCircle} title="Legal Support">
-                  Consult Legal Gram’s support services for a professional review if you need additional assurance.
+                  Consult Legalgram’s support services for a professional review if you need additional assurance.
                 </InfoBadge>
               </div>
             </CardContent>
@@ -183,7 +183,7 @@ const AdvertisingAgencyAgreementInfo = () => {
               <CardTitle>Can a Lawyer Review My Advertising Agency Agreement?</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">Legal Gram provides professional review services through membership — a practical option to confirm compliance and address specific legal questions.</p>
+              <p className="text-gray-700">Legalgram provides professional review services through membership — a practical option to confirm compliance and address specific legal questions.</p>
             </CardContent>
           </Card>
 

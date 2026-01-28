@@ -292,7 +292,7 @@ const BusinessAgreementInfo = () => {
           {/* Benefits */}
           <Card>
             <CardHeader>
-              <CardTitle>Why Choose Legal Gram for Business Agreements?</CardTitle>
+              <CardTitle>Why Choose Legalgram for Business Agreements?</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">

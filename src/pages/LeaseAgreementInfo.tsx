@@ -28,7 +28,7 @@ const LeaseAgreementInfo = () => {
             </p>
             
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-              <h3 className="font-semibold text-green-900 mb-2">Benefits of Using Legal Gram:</h3>
+              <h3 className="font-semibold text-green-900 mb-2">Benefits of Using Legalgram:</h3>
               <ul className="text-green-800 space-y-1">
                 <li>• Draft lease agreements for free</li>
                 <li>• Fast, compliant, and hassle-free process</li>
@@ -129,7 +129,7 @@ const LeaseAgreementInfo = () => {
                   Specify if the lease is month-to-month, for a year, or custom.
                 </p>
                 <p className="text-gray-600 text-sm">
-                  At Legal Gram, you can choose flexible durations when you draft lease agreements for free using our document builder.
+                  At Legalgram, you can choose flexible durations when you draft lease agreements for free using our document builder.
                 </p>
               </div>
 
@@ -258,7 +258,7 @@ const LeaseAgreementInfo = () => {
                 <div className="border-l-4 border-indigo-500 bg-indigo-50 p-4">
                   <h4 className="font-semibold text-indigo-900 mb-2">Understand Tenant Rights</h4>
                   <p className="text-indigo-800 text-sm">
-                    Learn your state's tenant protection laws. Visit HUD.gov's Tenant Rights by State page or consult Legal Gram for resources.
+                    Learn your state's tenant protection laws. Visit HUD.gov's Tenant Rights by State page or consult Legalgram for resources.
                   </p>
                 </div>
               </div>
@@ -276,7 +276,7 @@ const LeaseAgreementInfo = () => {
                   Yes. Once both parties sign, the Lease Agreement becomes enforceable.
                 </p>
                 <p className="text-gray-600 text-sm">
-                  At Legal Gram, our platform lets you safely sign and store your lease online.
+                  At Legalgram, our platform lets you safely sign and store your lease online.
                 </p>
               </div>
 
@@ -313,7 +313,7 @@ const LeaseAgreementInfo = () => {
                   <li>• Additional terms like rules, maintenance, pets, etc.</li>
                 </ul>
                 <p className="text-gray-600 text-sm">
-                  Legal Gram's Lease Agreement drafting tool guides you through each step.
+                  Legalgram's Lease Agreement drafting tool guides you through each step.
                 </p>
               </div>
 
@@ -323,7 +323,7 @@ const LeaseAgreementInfo = () => {
                   Traditional attorneys may charge $200–$500 per hour.
                 </p>
                 <p className="text-gray-600 text-sm">
-                  At Legal Gram, you can draft Lease Agreements for free or connect with a licensed lawyer at an affordable rate.
+                  At Legalgram, you can draft Lease Agreements for free or connect with a licensed lawyer at an affordable rate.
                 </p>
               </div>
             </div>
@@ -377,12 +377,12 @@ const LeaseAgreementInfo = () => {
 
           {/* Checklist Section */}
           <section>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">Lease Agreement Checklist by Legal Gram</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">Lease Agreement Checklist by Legalgram</h2>
             
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
               <h3 className="font-semibold text-green-900 mb-2">Quick Steps to Success:</h3>
               <p className="text-green-800">
-                At Legal Gram, we make it easy to create, customize, and sign your best Lease Agreement—all online, all compliant, and all at no cost to you.
+                At Legalgram, we make it easy to create, customize, and sign your best Lease Agreement—all online, all compliant, and all at no cost to you.
               </p>
             </div>
 

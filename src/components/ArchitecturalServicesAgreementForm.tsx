@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   agreementDate: string;
@@ -245,90 +246,74 @@ export default function ArchitecturalServicesAgreementForm() {
     setStep(4);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Parties Information</h3>
-              <Label>Agreement Date</Label>
-              <Input name="agreementDate" value={formData.agreementDate} onChange={handleChange} />
-              <Label>Party A Name</Label>
-              <Input name="partyAName" value={formData.partyAName} onChange={handleChange} />
-              <Label>Party A Address</Label>
-              <Input name="partyAAddress" value={formData.partyAAddress} onChange={handleChange} />
-              <Label>Party B Name</Label>
-              <Input name="partyBName" value={formData.partyBName} onChange={handleChange} />
-              <Label>Party B Address</Label>
-              <Input name="partyBAddress" value={formData.partyBAddress} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services & Terms</h3>
-              <Label>Service Start Date</Label>
-              <Input name="serviceStartDate" value={formData.serviceStartDate} onChange={handleChange} />
-              <Label>Architect Name</Label>
-              <Input name="architectName" value={formData.architectName} onChange={handleChange} />
-              <Label>Client Name</Label>
-              <Input name="clientName" value={formData.clientName} onChange={handleChange} />
-              <Label>Payment Amount</Label>
-              <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} />
-              <Label>Discount Terms</Label>
-              <Input name="discountTerms" value={formData.discountTerms} onChange={handleChange} />
-              <Label>Late Payment Interest</Label>
-              <Input name="latePaymentInterest" value={formData.latePaymentInterest} onChange={handleChange} />
-              <Label>Cure Days on Default</Label>
-              <Input name="cureDays" value={formData.cureDays} onChange={handleChange} />
-              <Label>Termination Date</Label>
-              <Input name="terminationDate" value={formData.terminationDate} onChange={handleChange} />
-              <Label>Governing Law State</Label>
-              <Input name="governingLawState" value={formData.governingLawState} onChange={handleChange} />
-              <Label>Work Product Ownership</Label>
-              <Input name="workProductOwnership" value={formData.workProductOwnership} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Execution & Signatures</h3>
-              <Label>Client Signatory Name</Label>
-              <Input name="clientSignatoryName" value={formData.clientSignatoryName} onChange={handleChange} />
-              <Label>Client Sign Date</Label>
-              <Input name="clientSignDate" value={formData.clientSignDate} onChange={handleChange} />
-              <Label>Architect Signatory Name</Label>
-              <Input name="architectSignatoryName" value={formData.architectSignatoryName} onChange={handleChange} />
-              <Label>Architect Sign Date</Label>
-              <Input name="architectSignDate" value={formData.architectSignDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
+  const steps = [
+    {
+      label: "Parties Information",
+      content: (
+        <>
+          <Label>Agreement Date</Label>
+          <Input name="agreementDate" value={formData.agreementDate} onChange={handleChange} />
+          <Label>Party A Name</Label>
+          <Input name="partyAName" value={formData.partyAName} onChange={handleChange} />
+          <Label>Party A Address</Label>
+          <Input name="partyAAddress" value={formData.partyAAddress} onChange={handleChange} />
+          <Label>Party B Name</Label>
+          <Input name="partyBName" value={formData.partyBName} onChange={handleChange} />
+          <Label>Party B Address</Label>
+          <Input name="partyBAddress" value={formData.partyBAddress} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.agreementDate && formData.partyAName && formData.partyBName),
+    },
+    {
+      label: "Services & Terms",
+      content: (
+        <>
+          <Label>Service Start Date</Label>
+          <Input name="serviceStartDate" value={formData.serviceStartDate} onChange={handleChange} />
+          <Label>Architect Name</Label>
+          <Input name="architectName" value={formData.architectName} onChange={handleChange} />
+          <Label>Client Name</Label>
+          <Input name="clientName" value={formData.clientName} onChange={handleChange} />
+          <Label>Payment Amount</Label>
+          <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} />
+          <Label>Discount Terms</Label>
+          <Input name="discountTerms" value={formData.discountTerms} onChange={handleChange} />
+          <Label>Late Payment Interest</Label>
+          <Input name="latePaymentInterest" value={formData.latePaymentInterest} onChange={handleChange} />
+          <Label>Cure Days on Default</Label>
+          <Input name="cureDays" value={formData.cureDays} onChange={handleChange} />
+          <Label>Termination Date</Label>
+          <Input name="terminationDate" value={formData.terminationDate} onChange={handleChange} />
+          <Label>Governing Law State</Label>
+          <Input name="governingLawState" value={formData.governingLawState} onChange={handleChange} />
+          <Label>Work Product Ownership</Label>
+          <Input name="workProductOwnership" value={formData.workProductOwnership} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.serviceStartDate && formData.paymentAmount),
+    },
+    {
+      label: "Execution & Signatures",
+      content: (
+        <>
+          <Label>Client Signatory Name</Label>
+          <Input name="clientSignatoryName" value={formData.clientSignatoryName} onChange={handleChange} />
+          <Label>Client Sign Date</Label>
+          <Input name="clientSignDate" value={formData.clientSignDate} onChange={handleChange} />
+          <Label>Architect Signatory Name</Label>
+          <Input name="architectSignatoryName" value={formData.architectSignatoryName} onChange={handleChange} />
+          <Label>Architect Sign Date</Label>
+          <Input name="architectSignDate" value={formData.architectSignDate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.clientSignatoryName && formData.architectSignatoryName),
+    },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <Button onClick={generatePDF}>Generate PDF</Button>
-        )}
-      </div>
+      <FormWizard steps={steps} onFinish={generatePDF} />
 
       {step === 4 && pdfGenerated && (
         <Card>

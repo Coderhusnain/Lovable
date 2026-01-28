@@ -48,7 +48,7 @@ const SaleAgreementInfo = () => {
                 A Sales Agreement is a legally binding contract that outlines the terms and conditions for the sale of goods or services. Whether your business is selling to or buying from another company—or you're an individual purchasing services from a business—a properly drafted Sales Agreement helps avoid misunderstandings and ensures both parties are clear on their responsibilities.
               </p>
               <p className="text-gray-700 leading-relaxed">
-                This document defines essential elements such as delivery terms, pricing, payment details, service scope, and the effective date of the sale. If you're looking to create the best Sales Agreement for US transactions, Legal Gram offers customizable, easy-to-use templates designed to meet professional and legal standards.
+                This document defines essential elements such as delivery terms, pricing, payment details, service scope, and the effective date of the sale. If you're looking to create the best Sales Agreement for US transactions, Legalgram offers customizable, easy-to-use templates designed to meet professional and legal standards.
               </p>
             </CardContent>
           </Card>
@@ -145,7 +145,7 @@ const SaleAgreementInfo = () => {
             </CardHeader>
             <CardContent className="prose max-w-none">
               <p className="text-gray-700 leading-relaxed mb-4">
-                Using Legal Gram, you can create a Sales Agreement for free by answering simple questions. The contract updates in real time based on your responses, allowing you to:
+                Using Legalgram, you can create a Sales Agreement for free by answering simple questions. The contract updates in real time based on your responses, allowing you to:
               </p>
 
               <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -252,10 +252,10 @@ const SaleAgreementInfo = () => {
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="text-center py-8">
               <h3 className="text-xl font-semibold text-blue-900 mb-4">
-                Create Your Sales Agreement for Free with Legal Gram
+                Create Your Sales Agreement for Free with Legalgram
               </h3>
               <p className="text-blue-700 mb-6">
-                Legal Gram offers a simple way to draft a Sales Agreement for US businesses or individuals. Our intuitive builder creates a legally sound document customized for your needs—without the hassle of hiring a lawyer for basic terms.
+                Legalgram offers a simple way to draft a Sales Agreement for US businesses or individuals. Our intuitive builder creates a legally sound document customized for your needs—without the hassle of hiring a lawyer for basic terms.
               </p>
               <Button 
                 onClick={() => navigate('/documents/sale-agreement')}

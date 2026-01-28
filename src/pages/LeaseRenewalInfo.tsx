@@ -28,7 +28,7 @@ const LeaseRenewalInfo = () => {
             </p>
             
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-              <h3 className="font-semibold text-green-900 mb-2">Benefits of Using Legal Gram:</h3>
+              <h3 className="font-semibold text-green-900 mb-2">Benefits of Using Legalgram:</h3>
               <ul className="text-green-800 space-y-1">
                 <li>• Create lease renewal agreements for free</li>
                 <li>• Fast, compliant, and hassle-free process</li>

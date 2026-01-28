@@ -1,3 +1,4 @@
+// Removed duplicate FormWizard-based component to avoid duplicate React imports and exports.
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";

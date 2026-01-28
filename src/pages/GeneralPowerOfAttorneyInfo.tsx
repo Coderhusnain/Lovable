@@ -45,7 +45,7 @@ const GeneralPowerOfAttorneyInfo = () => {
             </div>
 
             <p className="text-gray-700 leading-relaxed">
-              This document is often used when someone becomes unavailable, travels abroad, or is medically incapacitated. All General Power of Attorney forms available on Legal Gram are state-compliant and customizable for use anywhere in the United States.
+              This document is often used when someone becomes unavailable, travels abroad, or is medically incapacitated. All General Power of Attorney forms available on Legalgram are state-compliant and customizable for use anywhere in the United States.
             </p>
           </section>
 
@@ -149,7 +149,7 @@ const GeneralPowerOfAttorneyInfo = () => {
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
               <h3 className="font-semibold text-green-900 mb-2">Simple 4-Step Process:</h3>
               <p className="text-green-800">
-                With Legal Gram, it's easy and affordable to draft a legally binding General Power of Attorney.
+                With Legalgram, it's easy and affordable to draft a legally binding General Power of Attorney.
               </p>
             </div>
 
@@ -225,7 +225,7 @@ const GeneralPowerOfAttorneyInfo = () => {
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6">
               <h4 className="font-semibold text-blue-900 mb-2">Customization Available:</h4>
               <p className="text-blue-800 text-sm">
-                Legal Gram's free templates allow you to define the scope, timing, and duration of your PoA according to your unique situation.
+                Legalgram's free templates allow you to define the scope, timing, and duration of your PoA according to your unique situation.
               </p>
             </div>
           </section>
@@ -238,10 +238,10 @@ const GeneralPowerOfAttorneyInfo = () => {
               <div className="bg-gray-50 rounded-lg p-6">
                 <h4 className="font-semibold text-gray-900 mb-2">Do I need an attorney to draft a General Power of Attorney?</h4>
                 <p className="text-gray-700 mb-2">
-                  In most cases, no. You can create a General Power of Attorney online for free with Legal Gram.
+                  In most cases, no. You can create a General Power of Attorney online for free with Legalgram.
                 </p>
                 <p className="text-gray-600 text-sm">
-                  If you need personalized legal advice, Legal Gram also offers discounted access to licensed attorneys across the United States.
+                  If you need personalized legal advice, Legalgram also offers discounted access to licensed attorneys across the United States.
                 </p>
               </div>
 
@@ -267,7 +267,7 @@ const GeneralPowerOfAttorneyInfo = () => {
                     <p className="text-red-700 text-sm">$200 to $500 or more</p>
                   </div>
                   <div className="bg-green-50 rounded p-3">
-                    <p className="text-green-800 text-sm mb-1"><strong>Legal Gram:</strong></p>
+                    <p className="text-green-800 text-sm mb-1"><strong>Legalgram:</strong></p>
                     <p className="text-green-700 text-sm">Free + discounted legal support</p>
                   </div>
                 </div>
@@ -325,12 +325,12 @@ const GeneralPowerOfAttorneyInfo = () => {
 
           {/* Getting Started Section */}
           <section>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">Start Your General Power of Attorney with Legal Gram</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">Start Your General Power of Attorney with Legalgram</h2>
             
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
               <h3 className="font-semibold text-green-900 mb-2">Ready to give someone legal authority to manage your affairs?</h3>
               <p className="text-green-800">
-                Legal Gram helps you draft a General Power of Attorney for the US, completely free. With our simple step-by-step form builder, you can:
+                Legalgram helps you draft a General Power of Attorney for the US, completely free. With our simple step-by-step form builder, you can:
               </p>
             </div>
 

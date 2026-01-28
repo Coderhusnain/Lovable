@@ -180,7 +180,7 @@ const MarketingAgreementInfo = () => {
               <CardTitle>Can a Lawyer Review My Marketing Agreement?</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">Legal Gram’s professional review services are available via membership — a practical option to confirm compliance and address specific legal questions before signing.</p>
+              <p className="text-gray-700">Legalgram’s professional review services are available via membership — a practical option to confirm compliance and address specific legal questions before signing.</p>
             </CardContent>
           </Card>
 

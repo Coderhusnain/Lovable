@@ -668,7 +668,7 @@ const DocumentCategories = () => {
             >
               <Scale className="h-6 w-6 text-orange-500" />
               <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                LegalGram
+                Legalgram
               </span>
             </button>
             <div className="flex items-center gap-4">
@@ -699,7 +699,7 @@ const DocumentCategories = () => {
       <footer className="bg-gray-900 text-white py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-gray-400">
-            © 2024 LegalGram. Professional legal document templates for everyone.
+            © 2020 Legalgram. Professional legal document templates for everyone.
           </p>
         </div>
       </footer>

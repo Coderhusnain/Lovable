@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FormWizard } from "./FormWizard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,276 +26,289 @@ const getStateName = (countryId: string, stateId: string): string => { const c =
 interface FormData {
   country: string; state: string; effectiveDate: string;
   clientName1: string; clientName2: string; clientAddress: string; clientPhone: string; clientEmail: string;
-  plannerName: string; plannerCompany: string; plannerAddress: string; plannerPhone: string; plannerEmail: string;
-  weddingDate: string; ceremonyLocation: string; receptionLocation: string; estimatedGuests: string;
-  packageType: string; totalFee: string; depositAmount: string; depositDueDate: string;
-  paymentSchedule: string;
-  servicesIncluded: string[];
-  additionalNotes: string;
-  cancellationDays: string;
 }
 
-const WeddingPlannerAgreementForm = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    country: '', state: '', effectiveDate: '',
-    clientName1: '', clientName2: '', clientAddress: '', clientPhone: '', clientEmail: '',
-    plannerName: '', plannerCompany: '', plannerAddress: '', plannerPhone: '', plannerEmail: '',
-    weddingDate: '', ceremonyLocation: '', receptionLocation: '', estimatedGuests: '',
-    packageType: '', totalFee: '', depositAmount: '', depositDueDate: '',
-    paymentSchedule: '',
-    servicesIncluded: [],
-    additionalNotes: '',
-    cancellationDays: '30'
-  });
+// Refactor in progress: FormWizard integration will be added next
 
-  const serviceOptions = [
-    "Venue selection and booking",
-    "Vendor coordination (caterer, florist, photographer, etc.)",
-    "Budget planning and management",
-    "Timeline and schedule creation",
-    "Guest list management",
-    "Invitation design coordination",
-    "Ceremony coordination",
-    "Reception coordination",
-    "Rehearsal coordination",
-    "Day-of coordination",
-    "Transportation arrangements",
-    "Accommodation arrangements"
+const fields = [
+  // Step 1: Location
+  {
+    name: "country",
+    label: "Country",
+    type: "select",
+    options: getAllCountries().map((c) => ({ value: `${c.id}:${c.name}`, label: c.name })),
+    required: true,
+  },
+  {
+    name: "state",
+    label: "State/Province",
+    type: "select",
+    options: [], // Will be dynamically set in FormWizard based on country
+    required: true,
+    dependsOn: "country",
+  },
+  {
+    name: "effectiveDate",
+    label: "Agreement Date",
+    type: "date",
+    required: true,
+  },
+  // Step 2: Parties
+  { name: "clientName1", label: "Partner 1 Name", type: "text", required: true },
+  { name: "clientName2", label: "Partner 2 Name", type: "text" },
+  { name: "clientAddress", label: "Client Address", type: "textarea", required: true },
+  { name: "clientPhone", label: "Client Phone", type: "text" },
+  { name: "clientEmail", label: "Client Email", type: "email" },
+  { name: "plannerName", label: "Planner Name", type: "text", required: true },
+  { name: "plannerCompany", label: "Planner Company", type: "text" },
+  { name: "plannerAddress", label: "Planner Address", type: "textarea" },
+  { name: "plannerPhone", label: "Planner Phone", type: "text" },
+  { name: "plannerEmail", label: "Planner Email", type: "email" },
+  // Step 3: Wedding Details
+  { name: "weddingDate", label: "Wedding Date", type: "date", required: true },
+  { name: "ceremonyLocation", label: "Ceremony Location", type: "textarea" },
+  { name: "receptionLocation", label: "Reception Location", type: "textarea" },
+  { name: "estimatedGuests", label: "Estimated Number of Guests", type: "number" },
+  // Step 4: Services & Payment
+  {
+    name: "packageType",
+    label: "Package Type",
+    type: "select",
+    options: [
+      { value: "Full Planning", label: "Full Planning" },
+      { value: "Partial Planning", label: "Partial Planning" },
+      { value: "Day-Of Coordination", label: "Day-Of Coordination" },
+      { value: "Custom", label: "Custom Package" },
+    ],
+  },
+  {
+    name: "servicesIncluded",
+    label: "Services Included",
+    type: "checkbox-group",
+    options: [
+      "Venue selection and booking",
+      "Vendor coordination (caterer, florist, photographer, etc.)",
+      "Budget planning and management",
+      "Timeline and schedule creation",
+      "Guest list management",
+      "Invitation design coordination",
+      "Ceremony coordination",
+      "Reception coordination",
+      "Rehearsal coordination",
+      "Day-of coordination",
+      "Transportation arrangements",
+      "Accommodation arrangements",
+    ].map((s) => ({ value: s, label: s })),
+    required: true,
+  },
+  { name: "totalFee", label: "Total Fee ($)", type: "number", required: true },
+  { name: "depositAmount", label: "Deposit Amount ($)", type: "number", required: true },
+  { name: "depositDueDate", label: "Deposit Due Date", type: "date" },
+  { name: "paymentSchedule", label: "Payment Schedule", type: "text" },
+  { name: "additionalNotes", label: "Additional Notes", type: "textarea" },
+  { name: "cancellationDays", label: "Cancellation Days", type: "number", default: 30 },
+];
+
+const initialValues = {
+  country: "",
+  state: "",
+  effectiveDate: "",
+  clientName1: "",
+  clientName2: "",
+  clientAddress: "",
+  clientPhone: "",
+  clientEmail: "",
+  plannerName: "",
+  plannerCompany: "",
+  plannerAddress: "",
+  plannerPhone: "",
+  plannerEmail: "",
+  weddingDate: "",
+  ceremonyLocation: "",
+  receptionLocation: "",
+  estimatedGuests: "",
+  packageType: "Full Planning",
+  servicesIncluded: [],
+  totalFee: "",
+  depositAmount: "",
+  depositDueDate: "",
+  paymentSchedule: "",
+  additionalNotes: "",
+  cancellationDays: 30,
+};
+
+import React from "react";
+
+const WeddingPlannerAgreementForm = () => {
+  // State for all form values
+  const [values, setValues] = useState(initialValues);
+
+  // Step definitions (max 3 fields per step)
+  const steps = [
+    {
+      label: "Location",
+      content: (
+        <>
+          {/* Country */}
+          <Label>Country</Label>
+          <select
+            value={values.country}
+            onChange={e => {
+              setValues(v => ({ ...v, country: e.target.value, state: "" }));
+            }}
+            className="block w-full mb-4 border rounded p-2"
+          >
+            <option value="">Select...</option>
+            {getAllCountries().map(c => (
+              <option key={c.id} value={`${c.id}:${c.name}`}>{c.name}</option>
+            ))}
+          </select>
+          {/* State/Province */}
+          <Label>State/Province</Label>
+          <select
+            value={values.state}
+            onChange={e => setValues(v => ({ ...v, state: e.target.value }))}
+            disabled={!values.country}
+            className="block w-full mb-4 border rounded p-2"
+          >
+            <option value="">Select...</option>
+            {values.country && getStatesByCountry(parseInt(values.country.split(":")[0])).map(s => (
+              <option key={s.id} value={`${s.id}:${s.name}`}>{s.name}</option>
+            ))}
+          </select>
+          {/* Agreement Date */}
+          <Label>Agreement Date</Label>
+          <Input type="date" value={values.effectiveDate} onChange={e => setValues(v => ({ ...v, effectiveDate: e.target.value }))} />
+        </>
+      ),
+      validate: () => !!(values.country && values.state && values.effectiveDate),
+    },
+    {
+      label: "Parties",
+      content: (
+        <>
+          <Label>Partner 1 Name *</Label>
+          <Input value={values.clientName1} onChange={e => setValues(v => ({ ...v, clientName1: e.target.value }))} />
+          <Label>Partner 2 Name</Label>
+          <Input value={values.clientName2} onChange={e => setValues(v => ({ ...v, clientName2: e.target.value }))} />
+          <Label>Client Address *</Label>
+          <Textarea value={values.clientAddress} onChange={e => setValues(v => ({ ...v, clientAddress: e.target.value }))} />
+        </>
+      ),
+      validate: () => !!values.clientName1 && !!values.clientAddress,
+    },
+    {
+      label: "Contact Info",
+      content: (
+        <>
+          <Label>Client Phone</Label>
+          <Input value={values.clientPhone} onChange={e => setValues(v => ({ ...v, clientPhone: e.target.value }))} />
+          <Label>Client Email</Label>
+          <Input type="email" value={values.clientEmail} onChange={e => setValues(v => ({ ...v, clientEmail: e.target.value }))} />
+          <Label>Planner Name *</Label>
+          <Input value={values.plannerName} onChange={e => setValues(v => ({ ...v, plannerName: e.target.value }))} />
+        </>
+      ),
+      validate: () => !!values.plannerName,
+    },
+    {
+      label: "Planner Details",
+      content: (
+        <>
+          <Label>Planner Company</Label>
+          <Input value={values.plannerCompany} onChange={e => setValues(v => ({ ...v, plannerCompany: e.target.value }))} />
+          <Label>Planner Address</Label>
+          <Textarea value={values.plannerAddress} onChange={e => setValues(v => ({ ...v, plannerAddress: e.target.value }))} />
+          <Label>Planner Phone</Label>
+          <Input value={values.plannerPhone} onChange={e => setValues(v => ({ ...v, plannerPhone: e.target.value }))} />
+          <Label>Planner Email</Label>
+          <Input type="email" value={values.plannerEmail} onChange={e => setValues(v => ({ ...v, plannerEmail: e.target.value }))} />
+        </>
+      ),
+    },
+    {
+      label: "Wedding Details",
+      content: (
+        <>
+          <Label>Wedding Date *</Label>
+          <Input type="date" value={values.weddingDate} onChange={e => setValues(v => ({ ...v, weddingDate: e.target.value }))} />
+          <Label>Ceremony Location</Label>
+          <Textarea value={values.ceremonyLocation} onChange={e => setValues(v => ({ ...v, ceremonyLocation: e.target.value }))} />
+          <Label>Reception Location</Label>
+          <Textarea value={values.receptionLocation} onChange={e => setValues(v => ({ ...v, receptionLocation: e.target.value }))} />
+          <Label>Estimated Number of Guests</Label>
+          <Input type="number" value={values.estimatedGuests} onChange={e => setValues(v => ({ ...v, estimatedGuests: e.target.value }))} />
+        </>
+      ),
+      validate: () => !!values.weddingDate,
+    },
+    {
+      label: "Services & Payment",
+      content: (
+        <>
+          <Label>Package Type</Label>
+          <select
+            value={values.packageType}
+            onChange={e => setValues(v => ({ ...v, packageType: e.target.value }))}
+            className="block w-full mb-4 border rounded p-2"
+          >
+            <option value="Full Planning">Full Planning</option>
+            <option value="Partial Planning">Partial Planning</option>
+            <option value="Day-Of Coordination">Day-Of Coordination</option>
+            <option value="Custom">Custom Package</option>
+          </select>
+          <Label>Services Included *</Label>
+          <div className="mb-2">
+            {[
+              "Venue selection and booking",
+              "Vendor coordination (caterer, florist, photographer, etc.)",
+              "Budget planning and management",
+              "Timeline and schedule creation",
+              "Guest list management",
+              "Invitation design coordination",
+              "Ceremony coordination",
+              "Reception coordination",
+              "Rehearsal coordination",
+              "Day-of coordination",
+              "Transportation arrangements",
+              "Accommodation arrangements",
+            ].map((s) => (
+              <div key={s} className="flex items-center space-x-2">
+                <Checkbox
+                  id={s}
+                  checked={values.servicesIncluded.includes(s)}
+                  onCheckedChange={() => {
+                    setValues(v => ({
+                      ...v,
+                      servicesIncluded: v.servicesIncluded.includes(s)
+                        ? v.servicesIncluded.filter(x => x !== s)
+                        : [...v.servicesIncluded, s],
+                    }));
+                  }}
+                />
+                <Label htmlFor={s} className="text-sm cursor-pointer">{s}</Label>
+              </div>
+            ))}
+          </div>
+          <Label>Total Fee ($) *</Label>
+          <Input type="number" value={values.totalFee} onChange={e => setValues(v => ({ ...v, totalFee: e.target.value }))} />
+          <Label>Deposit Amount ($) *</Label>
+          <Input type="number" value={values.depositAmount} onChange={e => setValues(v => ({ ...v, depositAmount: e.target.value }))} />
+          <Label>Deposit Due Date</Label>
+          <Input type="date" value={values.depositDueDate} onChange={e => setValues(v => ({ ...v, depositDueDate: e.target.value }))} />
+          <Label>Payment Schedule</Label>
+          <Input value={values.paymentSchedule} onChange={e => setValues(v => ({ ...v, paymentSchedule: e.target.value }))} />
+          <Label>Additional Notes</Label>
+          <Textarea value={values.additionalNotes} onChange={e => setValues(v => ({ ...v, additionalNotes: e.target.value }))} />
+          <Label>Cancellation Days</Label>
+          <Input type="number" value={values.cancellationDays} onChange={e => setValues(v => ({ ...v, cancellationDays: Number(e.target.value) }))} />
+        </>
+      ),
+      validate: () => !!values.totalFee && !!values.depositAmount && values.servicesIncluded.length > 0,
+    },
   ];
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'country') setFormData(prev => ({ ...prev, state: '' }));
-  };
-
-  const handleServiceToggle = (service: string) => {
-    setFormData(prev => ({
-      ...prev,
-      servicesIncluded: prev.servicesIncluded.includes(service)
-        ? prev.servicesIncluded.filter(s => s !== service)
-        : [...prev.servicesIncluded, service]
-    }));
-  };
-
-  const getStatesForCountry = (country: string): string[] => {
-    if (!country) return [];
-    return getStatesByCountry(parseInt(country.split(':')[0])).map(s => `${s.id}:${s.name}`);
-  };
-
-  const canAdvance = (): boolean => {
-    switch (currentStep) {
-      case 1: return !!(formData.country && formData.state && formData.effectiveDate);
-      case 2: return !!(formData.clientName1 && formData.clientAddress && formData.plannerName);
-      case 3: return !!(formData.weddingDate && (formData.ceremonyLocation || formData.receptionLocation));
-      case 4: return !!(formData.totalFee && formData.depositAmount && formData.servicesIncluded.length > 0);
-      case 5: return true;
-      default: return false;
-    }
-  };
-
-  const handleNext = () => { if (!canAdvance()) return; if (currentStep < 5) setCurrentStep(currentStep + 1); else setIsComplete(true); };
-  const handleBack = () => { if (currentStep > 1) setCurrentStep(currentStep - 1); };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const lh = 7; let y = 20;
-      const checkPage = (n: number = 25) => { if (y > 270 - n) { doc.addPage(); y = 20; } };
-
-      doc.setFont("helvetica", "bold"); doc.setFontSize(16);
-      doc.text("WEDDING PLANNER AGREEMENT", pageWidth / 2, y, { align: "center" });
-      y += lh * 2;
-
-      doc.setFont("helvetica", "normal"); doc.setFontSize(11);
-      const intro = `This Wedding Planner Agreement ("Agreement") is made and entered into as of ${formData.effectiveDate || '__________'} ("Effective Date"), by and between:`;
-      doc.splitTextToSize(intro, 180).forEach((line: string) => { doc.text(line, 15, y); y += lh; });
-      y += lh;
-
-      doc.setFont("helvetica", "bold"); doc.text("Client(s):", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      const clientNames = [formData.clientName1, formData.clientName2].filter(Boolean).join(' and ');
-      doc.text(`Name(s): ${clientNames || '__________'}`, 20, y); y += lh;
-      doc.text(`Address: ${formData.clientAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.clientPhone || '__________'} | Email: ${formData.clientEmail || '__________'}`, 20, y); y += lh * 2;
-
-      doc.setFont("helvetica", "bold"); doc.text("Wedding Planner:", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Name: ${formData.plannerName || '__________'}`, 20, y); y += lh;
-      if (formData.plannerCompany) { doc.text(`Company: ${formData.plannerCompany}`, 20, y); y += lh; }
-      doc.text(`Address: ${formData.plannerAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.plannerPhone || '__________'} | Email: ${formData.plannerEmail || '__________'}`, 20, y); y += lh * 2;
-
-      const sections = [
-        { title: "1. WEDDING DETAILS", content: `Wedding Date: ${formData.weddingDate || '__________'}\nCeremony Location: ${formData.ceremonyLocation || '__________'}\nReception Location: ${formData.receptionLocation || '__________'}\nEstimated Guests: ${formData.estimatedGuests || '__________'}` },
-        { title: "2. SERVICES PROVIDED", content: `Package Type: ${formData.packageType || 'Full Planning'}\n\nServices included:\n${formData.servicesIncluded.map(s => `• ${s}`).join('\n') || '• As agreed upon'}` },
-        { title: "3. PAYMENT TERMS", content: `Total Fee: $${formData.totalFee || '__________'}\nDeposit Required: $${formData.depositAmount || '__________'} (due by ${formData.depositDueDate || 'upon signing'})\nPayment Schedule: ${formData.paymentSchedule || 'Remaining balance due 30 days before wedding date'}` },
-        { title: "4. PLANNER RESPONSIBILITIES", content: "The Planner agrees to: Provide professional wedding planning services, Act in the best interest of the Client, Maintain confidentiality of all Client information, Communicate regularly regarding progress and decisions, Attend meetings and site visits as reasonably necessary." },
-        { title: "5. CLIENT RESPONSIBILITIES", content: "The Client agrees to: Make timely decisions and provide requested information, Make payments according to the agreed schedule, Communicate preferences and concerns promptly, Attend scheduled planning meetings." },
-        { title: "6. VENDOR RELATIONSHIPS", content: "The Planner may recommend vendors but final selection is the Client's decision. Any vendor contracts are between the Client and the vendor directly." },
-        { title: "7. CANCELLATION POLICY", content: `Cancellation by Client: If cancelled more than ${formData.cancellationDays || '30'} days before the wedding, Client forfeits the deposit. Less than ${formData.cancellationDays || '30'} days notice, Client is responsible for 50% of total fee.\nCancellation by Planner: Full refund of all payments, Planner will assist in finding replacement.` },
-        { title: "8. LIABILITY", content: "The Planner shall not be liable for actions of third-party vendors. Maximum liability shall not exceed fees paid under this Agreement." },
-        { title: "9. GOVERNING LAW", content: `This Agreement shall be governed by the laws of ${formData.state ? getStateName(formData.country.split(':')[0], formData.state.split(':')[0]) : '__________'}.` }
-      ];
-
-      sections.forEach(s => {
-        checkPage(30);
-        doc.setFont("helvetica", "bold"); doc.text(s.title, 15, y); y += lh;
-        doc.setFont("helvetica", "normal");
-        doc.splitTextToSize(s.content, 180).forEach((line: string) => { checkPage(); doc.text(line, 15, y); y += lh; });
-        y += 3;
-      });
-
-      if (formData.additionalNotes) {
-        checkPage(30);
-        doc.setFont("helvetica", "bold"); doc.text("10. ADDITIONAL NOTES", 15, y); y += lh;
-        doc.setFont("helvetica", "normal");
-        doc.splitTextToSize(formData.additionalNotes, 180).forEach((line: string) => { checkPage(); doc.text(line, 15, y); y += lh; });
-        y += 3;
-      }
-
-      checkPage(60);
-      doc.setFont("helvetica", "bold"); doc.text("SIGNATURES", 15, y); y += lh * 2;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Client: ${formData.clientName1 || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y); y += lh * 2;
-      if (formData.clientName2) {
-        doc.text(`Client: ${formData.clientName2}`, 15, y); y += lh;
-        doc.text("Signature: ____________________________ Date: ____________", 15, y); y += lh * 2;
-      }
-      doc.text(`Wedding Planner: ${formData.plannerName || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y);
-
-      const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
-      doc.save(`wedding_planner_agreement_${timestamp}.pdf`);
-      const guidePDF = generateGuidePDF({ documentId: "wedding-planner-agreement", documentTitle: "Wedding Planner Agreement" });
-      setTimeout(() => guidePDF.save(`wedding_planner_guide_${timestamp}.pdf`), 500);
-      toast.success("Wedding Planner Agreement and Guide PDF generated!");
-    } catch (error) { console.error("Error:", error); toast.error("Failed to generate PDF"); }
-    finally { setIsGeneratingPDF(false); }
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Country</Label><Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getAllCountries().map((c) => (<SelectItem key={c.id} value={`${c.id}:${c.name}`}>{c.name}</SelectItem>))}</SelectContent></Select></div>
-              <div><Label>State/Province</Label><Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getStatesForCountry(formData.country).map((s) => (<SelectItem key={s} value={s}>{s.split(':')[1]}</SelectItem>))}</SelectContent></Select></div>
-            </div>
-            <div><Label>Agreement Date</Label><Input type="date" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} /></div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Client Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Partner 1 Name *</Label><Input value={formData.clientName1} onChange={(e) => handleInputChange('clientName1', e.target.value)} /></div>
-                <div><Label>Partner 2 Name</Label><Input value={formData.clientName2} onChange={(e) => handleInputChange('clientName2', e.target.value)} /></div>
-              </div>
-              <div><Label>Address *</Label><Textarea value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.clientPhone} onChange={(e) => handleInputChange('clientPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.clientEmail} onChange={(e) => handleInputChange('clientEmail', e.target.value)} /></div>
-              </div>
-            </div>
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Wedding Planner Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Planner Name *</Label><Input value={formData.plannerName} onChange={(e) => handleInputChange('plannerName', e.target.value)} /></div>
-                <div><Label>Company Name</Label><Input value={formData.plannerCompany} onChange={(e) => handleInputChange('plannerCompany', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.plannerAddress} onChange={(e) => handleInputChange('plannerAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.plannerPhone} onChange={(e) => handleInputChange('plannerPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.plannerEmail} onChange={(e) => handleInputChange('plannerEmail', e.target.value)} /></div>
-              </div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div><Label>Wedding Date *</Label><Input type="date" value={formData.weddingDate} onChange={(e) => handleInputChange('weddingDate', e.target.value)} /></div>
-            <div><Label>Ceremony Location</Label><Textarea placeholder="Venue name and address" value={formData.ceremonyLocation} onChange={(e) => handleInputChange('ceremonyLocation', e.target.value)} /></div>
-            <div><Label>Reception Location</Label><Textarea placeholder="Venue name and address (if different)" value={formData.receptionLocation} onChange={(e) => handleInputChange('receptionLocation', e.target.value)} /></div>
-            <div><Label>Estimated Number of Guests</Label><Input type="number" value={formData.estimatedGuests} onChange={(e) => handleInputChange('estimatedGuests', e.target.value)} /></div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <div><Label>Package Type</Label><Select value={formData.packageType} onValueChange={(v) => handleInputChange('packageType', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent><SelectItem value="Full Planning">Full Planning</SelectItem><SelectItem value="Partial Planning">Partial Planning</SelectItem><SelectItem value="Day-Of Coordination">Day-Of Coordination</SelectItem><SelectItem value="Custom">Custom Package</SelectItem></SelectContent></Select></div>
-            <div className="space-y-2">
-              <Label>Services Included *</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {serviceOptions.map((service) => (
-                  <div key={service} className="flex items-center space-x-2">
-                    <Checkbox id={service} checked={formData.servicesIncluded.includes(service)} onCheckedChange={() => handleServiceToggle(service)} />
-                    <Label htmlFor={service} className="text-sm cursor-pointer">{service}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Total Fee ($) *</Label><Input type="number" value={formData.totalFee} onChange={(e) => handleInputChange('totalFee', e.target.value)} /></div>
-              <div><Label>Deposit Amount ($) *</Label><Input type="number" value={formData.depositAmount} onChange={(e) => handleInputChange('depositAmount', e.target.value)} /></div>
-            </div>
-            <div><Label>Deposit Due Date</Label><Input type="date" value={formData.depositDueDate} onChange={(e) => handleInputChange('depositDueDate', e.target.value)} /></div>
-            <div><Label>Additional Notes</Label><Textarea placeholder="Any special arrangements or notes" value={formData.additionalNotes} onChange={(e) => handleInputChange('additionalNotes', e.target.value)} /></div>
-          </div>
-        );
-      case 5:
-        return <UserInfoStep onBack={handleBack} onGenerate={() => setIsComplete(true)} documentType="Wedding Planner Agreement" isGenerating={isGeneratingPDF} />;
-      default: return null;
-    }
-  };
-
-  if (isComplete) {
-    return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2"><CheckCircle className="h-6 w-6" />Wedding Planner Agreement Ready</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="border rounded-lg p-4 text-black">
-            <h3 className="font-semibold mb-4">Summary</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div><p><strong>Couple:</strong> {formData.clientName1}{formData.clientName2 ? ` & ${formData.clientName2}` : ''}</p><p><strong>Planner:</strong> {formData.plannerName}</p><p><strong>Wedding Date:</strong> {formData.weddingDate}</p></div>
-              <div><p><strong>Package:</strong> {formData.packageType}</p><p><strong>Fee:</strong> ${formData.totalFee}</p><p><strong>Services:</strong> {formData.servicesIncluded.length} selected</p></div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between p-6 bg-gray-50">
-          <Button variant="outline" onClick={() => setIsComplete(false)}><ArrowLeft className="mr-2 h-4 w-4" />Edit</Button>
-          <Button onClick={generatePDF} disabled={isGeneratingPDF} className="bg-orange-500 hover:bg-orange-600">{isGeneratingPDF ? "Generating..." : "Generate PDF"}<FileText className="ml-2 h-4 w-4" /></Button>
-        </CardFooter>
-      </Card>
-    );
-  }
-
-  const stepTitles = ["", "Location", "Parties", "Wedding Details", "Services & Payment", "Your Info"];
-  return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
-        <CardTitle>Wedding Planner Agreement</CardTitle>
-        <CardDescription className="text-orange-100">Step {currentStep} of 5: {stepTitles[currentStep]}</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">{renderStep()}</CardContent>
-      <CardFooter className="flex justify-between p-6 bg-gray-50">
-        <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-        <Button onClick={handleNext} disabled={!canAdvance()} className="bg-orange-500 hover:bg-orange-600">{currentStep === 5 ? "Complete" : "Next"}{currentStep === 5 ? <Send className="ml-2 h-4 w-4" /> : <ArrowRight className="ml-2 h-4 w-4" />}</Button>
-      </CardFooter>
-    </Card>
-  );
+  return <FormWizard steps={steps} onFinish={() => {/* TODO: PDF generation */}} />;
 };
 
 export default WeddingPlannerAgreementForm;

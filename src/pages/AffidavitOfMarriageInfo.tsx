@@ -122,7 +122,7 @@ const AffidavitOfMarriageInfo = () => {
               <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">How to Create an Affidavit of Marriage for Free</h2>
             </div>
-            <p className="text-gray-700 mb-6">With Legal Gram, it's quick and simple to generate a personalized Affidavit of Marriage online. Here's how:</p>
+            <p className="text-gray-700 mb-6">With Legalgram, it's quick and simple to generate a personalized Affidavit of Marriage online. Here's how:</p>
             
             <div className="bg-gradient-to-r from-bright-orange-50 to-bright-orange-100 p-6 rounded-lg">
               <ol className="text-gray-700 space-y-3">
@@ -189,7 +189,7 @@ const AffidavitOfMarriageInfo = () => {
 
               <div className="border-l-4 border-orange-500 bg-orange-50 p-4">
                 <h3 className="font-semibold text-orange-900 mb-2">✅ Can I write an Affidavit of Marriage myself?</h3>
-                <p className="text-orange-800">Absolutely. With Legal Gram, you can easily draft an Affidavit of Marriage for free and tailor it to your specific situation. Our step-by-step builder ensures you include all legally necessary elements and provides a state-specific format that holds up in legal and administrative settings.</p>
+                <p className="text-orange-800">Absolutely. With Legalgram, you can easily draft an Affidavit of Marriage for free and tailor it to your specific situation. Our step-by-step builder ensures you include all legally necessary elements and provides a state-specific format that holds up in legal and administrative settings.</p>
               </div>
             </div>
           </section>

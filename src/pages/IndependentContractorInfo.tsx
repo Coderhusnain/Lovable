@@ -42,7 +42,7 @@ const IndependentContractorInfo = () => {
               </p>
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-4">
                 <p className="text-blue-800">
-                  <strong>Key Benefit:</strong> Legal Gram offers easy-to-use templates designed to comply with U.S. laws and contractor classification rules, helping you create the best Independent Contractor Agreement for your needs.
+                  <strong>Key Benefit:</strong> Legalgram offers easy-to-use templates designed to comply with U.S. laws and contractor classification rules, helping you create the best Independent Contractor Agreement for your needs.
                 </p>
               </div>
             </CardContent>
@@ -102,7 +102,7 @@ const IndependentContractorInfo = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-700 leading-relaxed mb-6">
-                Creating a strong, legally valid Independent Contractor Agreement is essential. Legal Gram makes Independent Contractor Agreement drafting for free easy and legally sound. Below are the major provisions you should include:
+                Creating a strong, legally valid Independent Contractor Agreement is essential. Legalgram makes Independent Contractor Agreement drafting for free easy and legally sound. Below are the major provisions you should include:
               </p>
               
               <div className="space-y-6">
@@ -359,7 +359,7 @@ const IndependentContractorInfo = () => {
                 <div className="bg-gray-50 rounded-lg p-6">
                   <h4 className="font-semibold text-gray-900 mb-2">Can I draft an Independent Contractor Agreement for free?</h4>
                   <p className="text-gray-700">
-                    Yes. Legal Gram offers Independent Contractor Agreement drafting for free with customizable templates tailored for U.S. businesses.
+                    Yes. Legalgram offers Independent Contractor Agreement drafting for free with customizable templates tailored for U.S. businesses.
                   </p>
                 </div>
 
@@ -380,7 +380,7 @@ const IndependentContractorInfo = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-700 leading-relaxed mb-6">
-                Legal Gram simplifies the legal process. Here's how to get started:
+                Legalgram simplifies the legal process. Here's how to get started:
               </p>
               
               <div className="space-y-4">
@@ -418,7 +418,7 @@ const IndependentContractorInfo = () => {
               </div>
               
               <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6">
-                <h4 className="font-semibold text-blue-900 mb-2">Why Legal Gram?</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Why Legalgram?</h4>
                 <ul className="text-blue-800 space-y-1">
                   <li>• Fully customizable Independent Contractor Agreement templates</li>
                   <li>• Free to start and easy to use</li>

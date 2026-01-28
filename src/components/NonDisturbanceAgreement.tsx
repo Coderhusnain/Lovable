@@ -208,7 +208,7 @@ The original Agreement should be filed with the Clerk of Court or delivered to t
 The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.
 
 Additional Assistance
-If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.`;
+If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.`;
 
       addText(agreementText);
 

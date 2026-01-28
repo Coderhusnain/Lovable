@@ -1,7 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
+import { FormWizard } from "./FormWizard";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const steps = [
+  {
+    label: "Project Details",
+    content: <>
+      <Input name="projectName" placeholder="Project Name" />
+      <Input name="projectLocation" placeholder="Project Location" />
+      <Input name="bidDate" placeholder="Bid Date" type="date" />
+    </>,
+  },
+  {
+    label: "Bidder & Client",
+    content: <>
+      <Input name="bidderName" placeholder="Bidder Name" />
+      <Input name="bidderAddress" placeholder="Bidder Address" />
+      <Input name="clientName" placeholder="Client Name" />
+    </>,
+  },
+  {
+    label: "Bid & Terms",
+    content: <>
+      <Input name="bidAmount" placeholder="Bid Amount" type="number" />
+      <Textarea name="bidTerms" placeholder="Bid Terms" />
+      <Textarea name="additionalNotes" placeholder="Additional Notes" />
+    </>,
+  },
+  {
+    label: "Signatures",
+    content: <>
+      <Input name="bidderSignature" placeholder="Bidder Signature" />
+      <Input name="bidderSignDate" placeholder="Bidder Signature Date" type="date" />
+      <Input name="clientSignature" placeholder="Client Signature" />
+      <Input name="clientSignDate" placeholder="Client Signature Date" type="date" />
+    </>,
+  },
+];
+
+
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState } from 'react';
+import { FormWizard } from './FormWizard';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -197,7 +198,72 @@ const CoTenancyAgreementForm = () => {
           </div>
         );
 
-      case 2:
+              const CoTenancyAgreementForm = () => { 
+                const [form, setForm] = useState({
+                  country: '',
+                  state: '',
+                  effectiveDate: '',
+                  coTenants: '',
+                  landlordName: '',
+                  propertyAddress: '',
+                  leaseStartDate: '',
+                  leaseEndDate: '',
+                  securityDeposit: '',
+                  monthlyRent: '',
+                  rentAllocations: '',
+                  repairThreshold: '',
+                });
+
+                const steps = [
+                  {
+                    label: 'Step 1',
+                    content: (
+                      <>
+                        <label>Country<input type="text" value={form.country} onChange={e => setForm(f => ({ ...f, country: e.target.value }))} required /></label>
+                        <label>State<input type="text" value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))} required /></label>
+                        <label>Effective Date<input type="date" value={form.effectiveDate} onChange={e => setForm(f => ({ ...f, effectiveDate: e.target.value }))} required /></label>
+                      </>
+                    ),
+                    validate: () => Boolean(form.country && form.state && form.effectiveDate),
+                  },
+                  {
+                    label: 'Step 2',
+                    content: (
+                      <>
+                        <label>Co-Tenants<textarea value={form.coTenants} onChange={e => setForm(f => ({ ...f, coTenants: e.target.value }))} required /></label>
+                        <label>Landlord Name<input type="text" value={form.landlordName} onChange={e => setForm(f => ({ ...f, landlordName: e.target.value }))} required /></label>
+                        <label>Property Address<input type="text" value={form.propertyAddress} onChange={e => setForm(f => ({ ...f, propertyAddress: e.target.value }))} required /></label>
+                      </>
+                    ),
+                    validate: () => Boolean(form.coTenants && form.landlordName && form.propertyAddress),
+                  },
+                  {
+                    label: 'Step 3',
+                    content: (
+                      <>
+                        <label>Lease Start Date<input type="date" value={form.leaseStartDate} onChange={e => setForm(f => ({ ...f, leaseStartDate: e.target.value }))} required /></label>
+                        <label>Lease End Date<input type="date" value={form.leaseEndDate} onChange={e => setForm(f => ({ ...f, leaseEndDate: e.target.value }))} required /></label>
+                        <label>Security Deposit<input type="text" value={form.securityDeposit} onChange={e => setForm(f => ({ ...f, securityDeposit: e.target.value }))} required /></label>
+                      </>
+                    ),
+                    validate: () => Boolean(form.leaseStartDate && form.leaseEndDate && form.securityDeposit),
+                  },
+                  {
+                    label: 'Step 4',
+                    content: (
+                      <>
+                        <label>Monthly Rent<input type="text" value={form.monthlyRent} onChange={e => setForm(f => ({ ...f, monthlyRent: e.target.value }))} required /></label>
+                        <label>Rent Allocations<textarea value={form.rentAllocations} onChange={e => setForm(f => ({ ...f, rentAllocations: e.target.value }))} /></label>
+                        <label>Repair Threshold<input type="text" value={form.repairThreshold} onChange={e => setForm(f => ({ ...f, repairThreshold: e.target.value }))} /></label>
+                      </>
+                    ),
+                    validate: () => Boolean(form.monthlyRent),
+                  },
+                ];
+
+                return <FormWizard steps={steps} onFinish={() => alert('Form submitted!')} />;
+              };
+
         return (
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-white">Co-Tenant Information</h3>

@@ -457,7 +457,7 @@ const WhatsAnLLC = () => {
               Ready to Start Your LLC?
             </h2>
             <p className="text-xl text-white mb-8">
-              Let Legal Gram handle the paperwork while you focus on building your business. Our expert team will guide you through every step of the process.
+              Let Legalgram handle the paperwork while you focus on building your business. Our expert team will guide you through every step of the process.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 

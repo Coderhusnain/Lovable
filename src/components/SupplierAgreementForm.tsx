@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   effectiveDate: string;
@@ -255,166 +256,182 @@ export default function SupplierAgreementForm() {
     setPdfGenerated(true);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Parties & Items</h3>
-              <Label>Effective Date</Label>
-              <Input type="date" name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
+  const steps = [
+    {
+      label: "Step 1",
+      content: (
+        <>
+          <Label>Effective Date</Label>
+          <Input type="date" name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} required />
 
-              <Label className="pt-2">Supplier - Name</Label>
-              <Input name="supplierName" value={formData.supplierName} onChange={handleChange} />
-              <Label>Supplier - Address</Label>
-              <Textarea name="supplierAddress" value={formData.supplierAddress} onChange={handleChange} />
+          <Label className="pt-2">Supplier - Name</Label>
+          <Input name="supplierName" value={formData.supplierName} onChange={handleChange} required />
+          <Label>Supplier - Address</Label>
+          <Textarea name="supplierAddress" value={formData.supplierAddress} onChange={handleChange} required />
 
-              <Label className="pt-2">Customer - Name</Label>
-              <Input name="customerName" value={formData.customerName} onChange={handleChange} />
-              <Label>Customer - Address</Label>
-              <Textarea name="customerAddress" value={formData.customerAddress} onChange={handleChange} />
+          <Label className="pt-2">Customer - Name</Label>
+          <Input name="customerName" value={formData.customerName} onChange={handleChange} required />
+          <Label>Customer - Address</Label>
+          <Textarea name="customerAddress" value={formData.customerAddress} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.effectiveDate && formData.supplierName && formData.supplierAddress),
+    },
+    {
+      label: "Step 2",
+      content: (
+        <>
+          <Label className="pt-2">Item Description</Label>
+          <Textarea name="itemDescription" value={formData.itemDescription} onChange={handleChange} required />
+          <Label>Quantity</Label>
+          <Input name="quantity" value={formData.quantity} onChange={handleChange} required />
+          <Label>Unit Price</Label>
+          <Input name="unitPrice" value={formData.unitPrice} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.itemDescription && formData.quantity && formData.unitPrice),
+    },
+    {
+      label: "Step 3",
+      content: (
+        <>
+          <Label>Total Price</Label>
+          <Input name="totalPrice" value={formData.totalPrice} onChange={handleChange} required />
+          <Label>Total Contract Value</Label>
+          <Input name="totalContractValue" value={formData.totalContractValue} onChange={handleChange} required />
 
-              <Label className="pt-2">Item Description</Label>
-              <Textarea name="itemDescription" value={formData.itemDescription} onChange={handleChange} />
-              <Label>Quantity</Label>
-              <Input name="quantity" value={formData.quantity} onChange={handleChange} />
-              <Label>Unit Price</Label>
-              <Input name="unitPrice" value={formData.unitPrice} onChange={handleChange} />
-              <Label>Total Price</Label>
-              <Input name="totalPrice" value={formData.totalPrice} onChange={handleChange} />
-              <Label>Total Contract Value</Label>
-              <Input name="totalContractValue" value={formData.totalContractValue} onChange={handleChange} />
+          <Label className="pt-2">Quotation Date</Label>
+          <Input type="date" name="quotationDate" value={formData.quotationDate} onChange={handleChange} required />
+          <Label>Delivery FOB</Label>
+          <Input name="deliveryFOB" value={formData.deliveryFOB} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.totalPrice && formData.totalContractValue && formData.quotationDate),
+    },
+    {
+      label: "Step 4",
+      content: (
+        <>
+          <Label className="pt-2">Payment To</Label>
+          <Input name="paymentTo" value={formData.paymentTo} onChange={handleChange} required />
+          <Label>Payment Amount</Label>
+          <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} required />
 
-            </CardContent>
-          </Card>
-        );
+          <Label className="pt-2">Cash Discount (%)</Label>
+          <Input name="cashDiscountPercent" value={formData.cashDiscountPercent} onChange={handleChange} />
+          <Label>Cash Discount - Days</Label>
+          <Input name="cashDiscountDays" value={formData.cashDiscountDays} onChange={handleChange} />
 
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Standards, Title & Payment</h3>
-              <Label>Supplier Quotation Date</Label>
-              <Input type="date" name="quotationDate" value={formData.quotationDate} onChange={handleChange} />
+          <Label className="pt-2">Overdue Interest Rate (%)</Label>
+          <Input name="overdueInterestRate" value={formData.overdueInterestRate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.paymentTo && formData.paymentAmount),
+    },
+    {
+      label: "Step 5",
+      content: (
+        <>
+          <Label className="pt-2">Delivery By</Label>
+          <Input type="date" name="deliveryByDate" value={formData.deliveryByDate} onChange={handleChange} />
 
-              <Label className="pt-2">Delivery FOB / Title Transfer</Label>
-              <Input name="deliveryFOB" value={formData.deliveryFOB} onChange={handleChange} />
+          <Label className="pt-2">Taxes (notes)</Label>
+          <Textarea name="taxesNotes" value={formData.taxesNotes} onChange={handleChange} />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 6",
+      content: (
+        <>
+          <Label>Warranty & Liability (override)</Label>
+          <Textarea name="warrantyAndLiability" value={formData.warrantyAndLiability} onChange={handleChange} />
 
-              <Label className="pt-2">Payment To</Label>
-              <Input name="paymentTo" value={formData.paymentTo} onChange={handleChange} />
-              <Label>Payment Amount</Label>
-              <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} />
+          <Label className="pt-2">Inspection - Return Days</Label>
+          <Input name="inspectionReturnDays" value={formData.inspectionReturnDays} onChange={handleChange} />
 
-              <Label className="pt-2">Cash Discount (%)</Label>
-              <Input name="cashDiscountPercent" value={formData.cashDiscountPercent} onChange={handleChange} />
-              <Label>Cash Discount - Days</Label>
-              <Input name="cashDiscountDays" value={formData.cashDiscountDays} onChange={handleChange} />
+          <Label className="pt-2">Default Events (override)</Label>
+          <Textarea name="defaultEvents" value={formData.defaultEvents} onChange={handleChange} />
 
-              <Label className="pt-2">Overdue Interest Rate (%)</Label>
-              <Input name="overdueInterestRate" value={formData.overdueInterestRate} onChange={handleChange} />
+          <Label className="pt-2">Cure Period (days)</Label>
+          <Input name="curePeriodDays" value={formData.curePeriodDays} onChange={handleChange} />
 
-              <Label className="pt-2">Delivery By</Label>
-              <Input type="date" name="deliveryByDate" value={formData.deliveryByDate} onChange={handleChange} />
+          <Label className="pt-2">Remedies / Notes</Label>
+          <Textarea name="remediesNotes" value={formData.remediesNotes} onChange={handleChange} />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 7",
+      content: (
+        <>
+          <Label>Force Majeure (override)</Label>
+          <Textarea name="forceMajeureNotes" value={formData.forceMajeureNotes} onChange={handleChange} />
 
-              <Label className="pt-2">Taxes (notes)</Label>
-              <Textarea name="taxesNotes" value={formData.taxesNotes} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
+          <Label className="pt-2">Dispute Resolution (override)</Label>
+          <Textarea name="disputeResolutionNotes" value={formData.disputeResolutionNotes} onChange={handleChange} />
 
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Warranty, Inspection & Defaults</h3>
-              <Label>Warranty & Liability (override)</Label>
-              <Textarea name="warrantyAndLiability" value={formData.warrantyAndLiability} onChange={handleChange} />
+          <Label className="pt-2">Confidentiality (override)</Label>
+          <Textarea name="confidentialityNotes" value={formData.confidentialityNotes} onChange={handleChange} />
 
-              <Label className="pt-2">Inspection - Return Days</Label>
-              <Input name="inspectionReturnDays" value={formData.inspectionReturnDays} onChange={handleChange} />
+          <Label className="pt-2">Notices Address / Instructions</Label>
+          <Textarea name="noticesAddress" value={formData.noticesAddress} onChange={handleChange} />
 
-              <Label className="pt-2">Default Events (override)</Label>
-              <Textarea name="defaultEvents" value={formData.defaultEvents} onChange={handleChange} />
+          <Label className="pt-2">Assignment (override)</Label>
+          <Textarea name="assignmentConsent" value={formData.assignmentConsent} onChange={handleChange} />
 
-              <Label className="pt-2">Cure Period (days)</Label>
-              <Input name="curePeriodDays" value={formData.curePeriodDays} onChange={handleChange} />
+          <Label className="pt-2">Entire Agreement / Amendment / Severability / Waiver</Label>
+          <Textarea name="entireAgreementNotes" value={formData.entireAgreementNotes} onChange={handleChange} />
+          <Textarea name="amendmentNotes" value={formData.amendmentNotes} onChange={handleChange} />
+          <Textarea name="severabilityNotes" value={formData.severabilityNotes} onChange={handleChange} />
+          <Textarea name="waiverNotes" value={formData.waiverNotes} onChange={handleChange} />
 
-              <Label className="pt-2">Remedies / Notes</Label>
-              <Textarea name="remediesNotes" value={formData.remediesNotes} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
+          <Label className="pt-2">Governing Law</Label>
+          <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
 
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Force Majeure, Dispute & Signatures</h3>
+          <Label className="pt-2">Attorneys' Fees (override)</Label>
+          <Textarea name="attorneysFeesNotes" value={formData.attorneysFeesNotes} onChange={handleChange} />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 8",
+      content: (
+        <>
+          <Label className="pt-2">Supplier Signatory - Name</Label>
+          <Input name="supplierSignName" value={formData.supplierSignName} onChange={handleChange} required />
+          <Label>Supplier Signatory - Title</Label>
+          <Input name="supplierSignTitle" value={formData.supplierSignTitle} onChange={handleChange} required />
+          <Label>Supplier Signatory - Date</Label>
+          <Input type="date" name="supplierSignDate" value={formData.supplierSignDate} onChange={handleChange} required />
 
-              <Label>Force Majeure (override)</Label>
-              <Textarea name="forceMajeureNotes" value={formData.forceMajeureNotes} onChange={handleChange} />
+          <hr />
 
-              <Label className="pt-2">Dispute Resolution (override)</Label>
-              <Textarea name="disputeResolutionNotes" value={formData.disputeResolutionNotes} onChange={handleChange} />
-
-              <Label className="pt-2">Confidentiality (override)</Label>
-              <Textarea name="confidentialityNotes" value={formData.confidentialityNotes} onChange={handleChange} />
-
-              <Label className="pt-2">Notices Address / Instructions</Label>
-              <Textarea name="noticesAddress" value={formData.noticesAddress} onChange={handleChange} />
-
-              <Label className="pt-2">Assignment (override)</Label>
-              <Textarea name="assignmentConsent" value={formData.assignmentConsent} onChange={handleChange} />
-
-              <Label className="pt-2">Entire Agreement / Amendment / Severability / Waiver</Label>
-              <Textarea name="entireAgreementNotes" value={formData.entireAgreementNotes} onChange={handleChange} />
-              <Textarea name="amendmentNotes" value={formData.amendmentNotes} onChange={handleChange} />
-              <Textarea name="severabilityNotes" value={formData.severabilityNotes} onChange={handleChange} />
-              <Textarea name="waiverNotes" value={formData.waiverNotes} onChange={handleChange} />
-
-              <Label className="pt-2">Governing Law</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-
-              <Label className="pt-2">Attorneys' Fees (override)</Label>
-              <Textarea name="attorneysFeesNotes" value={formData.attorneysFeesNotes} onChange={handleChange} />
-
-              <hr />
-
-              <Label className="pt-2">Supplier Signatory - Name</Label>
-              <Input name="supplierSignName" value={formData.supplierSignName} onChange={handleChange} />
-              <Label>Supplier Signatory - Title</Label>
-              <Input name="supplierSignTitle" value={formData.supplierSignTitle} onChange={handleChange} />
-              <Label>Supplier Signatory - Date</Label>
-              <Input type="date" name="supplierSignDate" value={formData.supplierSignDate} onChange={handleChange} />
-
-              <hr />
-
-              <Label className="pt-2">Customer Signatory - Name</Label>
-              <Input name="customerSignName" value={formData.customerSignName} onChange={handleChange} />
-              <Label>Customer Signatory - Title</Label>
-              <Input name="customerSignTitle" value={formData.customerSignTitle} onChange={handleChange} />
-              <Label>Customer Signatory - Date</Label>
-              <Input type="date" name="customerSignDate" value={formData.customerSignDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
+          <Label className="pt-2">Customer Signatory - Name</Label>
+          <Input name="customerSignName" value={formData.customerSignName} onChange={handleChange} required />
+          <Label>Customer Signatory - Title</Label>
+          <Input name="customerSignTitle" value={formData.customerSignTitle} onChange={handleChange} required />
+          <Label>Customer Signatory - Date</Label>
+          <Input type="date" name="customerSignDate" value={formData.customerSignDate} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.supplierSignName && formData.supplierSignTitle && formData.supplierSignDate),
+    },
+  ];
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
+      <FormWizard steps={steps} onFinish={() => alert("Form submitted!")} />
 
       <div className="flex justify-between pt-4">
         <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
           Back
         </Button>
-        {step < 4 ? (
-          <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>Next</Button>
+        {step < 8 ? (
+          <Button onClick={() => setStep((s) => Math.min(8, s + 1))}>Next</Button>
         ) : (
           <div className="space-x-2">
             <Button onClick={generatePDF}>Generate PDF</Button>

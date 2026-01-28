@@ -86,7 +86,7 @@ const WhyChooseUsSection = () => {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
           >
-            Why Choose Legal Gram
+            Why Choose Legalgram
           </motion.span>
           
           <motion.h2 

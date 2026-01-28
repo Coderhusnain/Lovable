@@ -237,7 +237,7 @@ const AffidavitOfResidenceInfo = () => {
 
               <div className="border-l-4 border-blue-500 bg-blue-50 p-4">
                 <h3 className="font-semibold text-blue-900 mb-2">Can I write an Affidavit of Residence online?</h3>
-                <p className="text-blue-800">Yes, you can easily generate a free Affidavit of Residence at Legal Gram by answering a few guided questions. You can save, download, or print your document at any stage.</p>
+                <p className="text-blue-800">Yes, you can easily generate a free Affidavit of Residence at Legalgram by answering a few guided questions. You can save, download, or print your document at any stage.</p>
               </div>
 
               <div className="border-l-4 border-purple-500 bg-purple-50 p-4">
@@ -259,7 +259,7 @@ const AffidavitOfResidenceInfo = () => {
               <ol className="text-gray-700 space-y-3">
                 <li className="flex items-start">
                   <span className="bg-gray-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">1</span>
-                  <span><strong>Create the Affidavit</strong> – Answer guided questions and generate your personalized form on Legal Gram.</span>
+                  <span><strong>Create the Affidavit</strong> – Answer guided questions and generate your personalized form on Legalgram.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="bg-gray-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
@@ -280,7 +280,7 @@ const AffidavitOfResidenceInfo = () => {
           {/* CTA Section */}
           <section className="text-center bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 text-white p-8 rounded-xl">
             <h2 className="text-3xl font-bold mb-4">Create Your Affidavit of Residence Now</h2>
-            <p className="text-xl mb-6">With Legal Gram, creating a legally valid Affidavit of Residence for US purposes is simple, secure, and cost-effective. Whether you're managing your own affairs or handling matters for a deceased loved one, our platform helps you document residency clearly and confidently.</p>
+            <p className="text-xl mb-6">With Legalgram, creating a legally valid Affidavit of Residence for US purposes is simple, secure, and cost-effective. Whether you're managing your own affairs or handling matters for a deceased loved one, our platform helps you document residency clearly and confidently.</p>
             <Button 
               size="lg" 
               onClick={() => navigate('/documents/affidavit-of-residence')}

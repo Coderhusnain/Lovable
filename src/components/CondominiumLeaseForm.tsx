@@ -1,3 +1,5 @@
+/* Removed duplicate FormWizard demo and duplicate Input/Textarea imports to avoid duplicate identifier errors.
+   The full CondominiumLeaseForm implementation below imports Input and Textarea once. */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";

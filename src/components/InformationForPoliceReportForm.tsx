@@ -177,7 +177,7 @@ export default function InformationForPoliceReportForm() {
     write("\n");
 
     write("Additional Assistance", 12, true);
-    write("If you are unsure or have questions regarding this report or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
+    write("If you are unsure or have questions regarding this report or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
     write("\n");
 
     write("Report Filed By:", 12, true);

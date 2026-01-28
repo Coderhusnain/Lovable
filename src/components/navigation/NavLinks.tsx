@@ -36,7 +36,8 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
     { path: "/start-a-business", label: "Start a Business", protected: false },
     { path: "/documents", label: "Make Documents", protected: false },
     { path: "/pricing", label: "Pricing", protected: false },
-    { path: "/ask-legal-advice", label: "Ask Legal Advice", protected: false}
+    { path: "/ask-legal-advice", label: "Ask Legal Advice", protected: false },
+    { path: "/community", label: "Community", protected: false }
   ];
 
   return (

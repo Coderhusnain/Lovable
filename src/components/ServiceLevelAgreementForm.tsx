@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   effectiveDate: string;
@@ -184,129 +185,119 @@ export default function ServiceLevelAgreementForm() {
     setPdfGenerated(true);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Commencement & Parties</h3>
-              <Label>Effective Date</Label>
-              <Input type="date" name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
+  const steps = [
+    {
+      label: "Step 1",
+      content: (
+        <>
+          <Label>Effective Date</Label>
+          <Input type="date" name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} required />
 
-              <Label className="pt-2">Service Provider - Name</Label>
-              <Input name="serviceProviderName" value={formData.serviceProviderName} onChange={handleChange} />
-              <Label>Service Provider - Address/Location</Label>
-              <Textarea name="serviceProviderAddress" value={formData.serviceProviderAddress} onChange={handleChange} />
+          <Label className="pt-2">Service Provider - Name</Label>
+          <Input name="serviceProviderName" value={formData.serviceProviderName} onChange={handleChange} required />
+          <Label>Service Provider - Address/Location</Label>
+          <Textarea name="serviceProviderAddress" value={formData.serviceProviderAddress} onChange={handleChange} required />
 
-              <Label className="pt-2">Client - Name</Label>
-              <Input name="clientName" value={formData.clientName} onChange={handleChange} />
-              <Label>Client - Address/Location</Label>
-              <Textarea name="clientAddress" value={formData.clientAddress} onChange={handleChange} />
+          <Label className="pt-2">Client - Name</Label>
+          <Input name="clientName" value={formData.clientName} onChange={handleChange} required />
+          <Label>Client - Address/Location</Label>
+          <Textarea name="clientAddress" value={formData.clientAddress} onChange={handleChange} required />
 
-              <Label className="pt-2">Type of Services</Label>
-              <Input name="serviceType" value={formData.serviceType} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
+          <Label className="pt-2">Type of Services</Label>
+          <Input name="serviceType" value={formData.serviceType} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.effectiveDate && formData.serviceProviderName && formData.serviceProviderAddress),
+    },
+    {
+      label: "Step 2",
+      content: (
+        <>
+          <Label>Service Description</Label>
+          <Textarea name="serviceDescription" value={formData.serviceDescription} onChange={handleChange} required />
 
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services, Obligations & Service Levels</h3>
-              <Label>Service Description</Label>
-              <Textarea name="serviceDescription" value={formData.serviceDescription} onChange={handleChange} />
+          <Label className="pt-2">Client Obligations</Label>
+          <Textarea name="clientObligations" value={formData.clientObligations} onChange={handleChange} required />
 
-              <Label className="pt-2">Client Obligations</Label>
-              <Textarea name="clientObligations" value={formData.clientObligations} onChange={handleChange} />
+          <Label className="pt-2">Service Provider Obligations</Label>
+          <Textarea name="providerObligations" value={formData.providerObligations} onChange={handleChange} required />
 
-              <Label className="pt-2">Service Provider Obligations</Label>
-              <Textarea name="providerObligations" value={formData.providerObligations} onChange={handleChange} />
+          <Label className="pt-2">Service (specific)</Label>
+          <Input name="specificService" value={formData.specificService} onChange={handleChange} required />
+          <Label>Duration</Label>
+          <Input name="duration" value={formData.duration} onChange={handleChange} required />
+          <Label>Service Level Standard</Label>
+          <Input name="serviceLevelStandard" value={formData.serviceLevelStandard} onChange={handleChange} required />
+          <Label>Service Credit</Label>
+          <Input name="serviceCredit" value={formData.serviceCredit} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.serviceDescription && formData.clientObligations && formData.providerObligations),
+    },
+    {
+      label: "Step 3",
+      content: (
+        <>
+          <Label>High Priority - Response Timeframe</Label>
+          <Input name="responseHighTimeframe" value={formData.responseHighTimeframe} onChange={handleChange} required />
+          <Label>High Priority - Issue Description</Label>
+          <Input name="responseHighDescription" value={formData.responseHighDescription} onChange={handleChange} required />
 
-              <Label className="pt-2">Service (specific)</Label>
-              <Input name="specificService" value={formData.specificService} onChange={handleChange} />
-              <Label>Duration</Label>
-              <Input name="duration" value={formData.duration} onChange={handleChange} />
-              <Label>Service Level Standard</Label>
-              <Input name="serviceLevelStandard" value={formData.serviceLevelStandard} onChange={handleChange} />
-              <Label>Service Credit</Label>
-              <Input name="serviceCredit" value={formData.serviceCredit} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
+          <Label className="pt-2">Medium Priority - Response Timeframe</Label>
+          <Input name="responseMediumTimeframe" value={formData.responseMediumTimeframe} onChange={handleChange} required />
+          <Label>Medium Priority - Issue Description</Label>
+          <Input name="responseMediumDescription" value={formData.responseMediumDescription} onChange={handleChange} required />
 
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Response Times & KPIs</h3>
+          <Label className="pt-2">Low Priority - Response Timeframe</Label>
+          <Input name="responseLowTimeframe" value={formData.responseLowTimeframe} onChange={handleChange} required />
+          <Label>Low Priority - Issue Description</Label>
+          <Input name="responseLowDescription" value={formData.responseLowDescription} onChange={handleChange} required />
 
-              <Label>High Priority - Response Timeframe</Label>
-              <Input name="responseHighTimeframe" value={formData.responseHighTimeframe} onChange={handleChange} />
-              <Label>High Priority - Issue Description</Label>
-              <Input name="responseHighDescription" value={formData.responseHighDescription} onChange={handleChange} />
+          <Label className="pt-2">KPI - Service</Label>
+          <Input name="kpiService" value={formData.kpiService} onChange={handleChange} required />
+          <Label>KPI - Measurement Period</Label>
+          <Input name="kpiMeasurementPeriod" value={formData.kpiMeasurementPeriod} onChange={handleChange} required />
+          <Label>KPI - Description</Label>
+          <Textarea name="kpiDescription" value={formData.kpiDescription} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.responseHighTimeframe && formData.responseHighDescription && formData.responseMediumTimeframe && formData.responseMediumDescription && formData.responseLowTimeframe && formData.responseLowDescription && formData.kpiService && formData.kpiMeasurementPeriod && formData.kpiDescription),
+    },
+    {
+      label: "Step 4",
+      content: (
+        <>
+          <Label>Termination Date</Label>
+          <Input type="date" name="termEndDate" value={formData.termEndDate} onChange={handleChange} required />
+          <Label>Early Termination Notice (days)</Label>
+          <Input name="earlyTerminationDays" value={formData.earlyTerminationDays} onChange={handleChange} required />
 
-              <Label className="pt-2">Medium Priority - Response Timeframe</Label>
-              <Input name="responseMediumTimeframe" value={formData.responseMediumTimeframe} onChange={handleChange} />
-              <Label>Medium Priority - Issue Description</Label>
-              <Input name="responseMediumDescription" value={formData.responseMediumDescription} onChange={handleChange} />
+          <hr />
 
-              <Label className="pt-2">Low Priority - Response Timeframe</Label>
-              <Input name="responseLowTimeframe" value={formData.responseLowTimeframe} onChange={handleChange} />
-              <Label>Low Priority - Issue Description</Label>
-              <Input name="responseLowDescription" value={formData.responseLowDescription} onChange={handleChange} />
+          <Label>Client Signatory - Name</Label>
+          <Input name="signatoryClientName" value={formData.signatoryClientName} onChange={handleChange} required />
+          <Label>Client Signatory - Title</Label>
+          <Input name="signatoryClientTitle" value={formData.signatoryClientTitle} onChange={handleChange} required />
+          <Label>Client Signatory - Date</Label>
+          <Input type="date" name="signatoryClientDate" value={formData.signatoryClientDate} onChange={handleChange} required />
 
-              <Label className="pt-2">KPI - Service</Label>
-              <Input name="kpiService" value={formData.kpiService} onChange={handleChange} />
-              <Label>KPI - Measurement Period</Label>
-              <Input name="kpiMeasurementPeriod" value={formData.kpiMeasurementPeriod} onChange={handleChange} />
-              <Label>KPI - Description</Label>
-              <Textarea name="kpiDescription" value={formData.kpiDescription} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
+          <hr />
 
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Term & Signatories</h3>
-
-              <Label>Termination Date</Label>
-              <Input type="date" name="termEndDate" value={formData.termEndDate} onChange={handleChange} />
-              <Label>Early Termination Notice (days)</Label>
-              <Input name="earlyTerminationDays" value={formData.earlyTerminationDays} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Client Signatory - Name</Label>
-              <Input name="signatoryClientName" value={formData.signatoryClientName} onChange={handleChange} />
-              <Label>Client Signatory - Title</Label>
-              <Input name="signatoryClientTitle" value={formData.signatoryClientTitle} onChange={handleChange} />
-              <Label>Client Signatory - Date</Label>
-              <Input type="date" name="signatoryClientDate" value={formData.signatoryClientDate} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Service Provider Signatory - Name</Label>
-              <Input name="signatoryProviderName" value={formData.signatoryProviderName} onChange={handleChange} />
-              <Label>Service Provider Signatory - Title</Label>
-              <Input name="signatoryProviderTitle" value={formData.signatoryProviderTitle} onChange={handleChange} />
-              <Label>Service Provider Signatory - Date</Label>
-              <Input type="date" name="signatoryProviderDate" value={formData.signatoryProviderDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
+          <Label>Service Provider Signatory - Name</Label>
+          <Input name="signatoryProviderName" value={formData.signatoryProviderName} onChange={handleChange} required />
+          <Label>Service Provider Signatory - Title</Label>
+          <Input name="signatoryProviderTitle" value={formData.signatoryProviderTitle} onChange={handleChange} required />
+          <Label>Service Provider Signatory - Date</Label>
+          <Input type="date" name="signatoryProviderDate" value={formData.signatoryProviderDate} onChange={handleChange} required />
+        </>
+      ),
+      validate: () => Boolean(formData.termEndDate && formData.earlyTerminationDays && formData.signatoryClientName && formData.signatoryClientTitle && formData.signatoryClientDate && formData.signatoryProviderName && formData.signatoryProviderTitle && formData.signatoryProviderDate),
+    },
+  ];
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
+      <FormWizard steps={steps} onFinish={() => alert("Form submitted!")} />
 
       <div className="flex justify-between pt-4">
         <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>

@@ -169,7 +169,7 @@ const GeneralContractInfo = () => {
               Sample General Contract for Products
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Legal Gram makes it easy to draft your General Contract for Products. Just answer a few guided questions about your transaction, and the contract will be customized accordingly. As you fill in your details—such as product types, quantities, delivery terms, and payment conditions—the agreement dynamically updates to reflect your input.
+              Legalgram makes it easy to draft your General Contract for Products. Just answer a few guided questions about your transaction, and the contract will be customized accordingly. As you fill in your details—such as product types, quantities, delivery terms, and payment conditions—the agreement dynamically updates to reflect your input.
             </p>
           </section>
 
@@ -201,14 +201,14 @@ const GeneralContractInfo = () => {
             </p>
           </section>
 
-          {/* Legal Gram Section */}
+          {/* Legalgram Section */}
           <section className="bg-bright-orange-50 p-6 rounded-xl">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
               <Scale className="w-6 h-6 mr-2 text-bright-orange-500" />
-              Get Started with Legal Gram
+              Get Started with Legalgram
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              Looking to create the best General Contract for Products? Legal Gram offers professional templates tailored for US businesses that are easy to customize, sign, and share.
+              Looking to create the best General Contract for Products? Legalgram offers professional templates tailored for US businesses that are easy to customize, sign, and share.
             </p>
             
             

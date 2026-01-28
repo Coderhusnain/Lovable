@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   effectiveDate: string;
@@ -67,13 +68,314 @@ export default function MemorandumOfAgreementForm() {
     witness2Date: "",
   });
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
+  const steps = [
+    {
+      label: "Step 1",
+      content: (
+        <>
+          <Label>Effective Date</Label>
+          <Input
+            type="date"
+            name="effectiveDate"
+            value={form.effectiveDate}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, effectiveDate: e.target.value }))
+            }
+            required
+          />
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm((p) => ({ ...p, [name]: value } as FormData));
-  };
+          <Label>First Party Name</Label>
+          <Input
+            name="firstPartyName"
+            value={form.firstPartyName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, firstPartyName: e.target.value }))
+            }
+            required
+          />
+          <Label>First Party Address</Label>
+          <Input
+            name="firstPartyAddress"
+            value={form.firstPartyAddress}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, firstPartyAddress: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(
+          form.effectiveDate &&
+            form.firstPartyName &&
+            form.firstPartyAddress
+        ),
+    },
+    {
+      label: "Step 2",
+      content: (
+        <>
+          <Label>Second Party Name</Label>
+          <Input
+            name="secondPartyName"
+            value={form.secondPartyName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, secondPartyName: e.target.value }))
+            }
+            required
+          />
+          <Label>Second Party Address</Label>
+          <Input
+            name="secondPartyAddress"
+            value={form.secondPartyAddress}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, secondPartyAddress: e.target.value }))
+            }
+            required
+          />
+
+          <Label>Term (e.g., 12 months)</Label>
+          <Input
+            name="term"
+            value={form.term}
+            onChange={(e) => setForm((f) => ({ ...f, term: e.target.value }))}
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(
+          form.secondPartyName && form.secondPartyAddress && form.term
+        ),
+    },
+    {
+      label: "Step 3",
+      content: (
+        <>
+          <Label>Default Cure Period (days)</Label>
+          <Input
+            name="cureDays"
+            value={form.cureDays}
+            onChange={(e) => setForm((f) => ({ ...f, cureDays: e.target.value }))}
+            required
+          />
+
+          <Label>Goal 1</Label>
+          <Input
+            name="goal1"
+            value={form.goal1}
+            onChange={(e) => setForm((f) => ({ ...f, goal1: e.target.value }))}
+            required
+          />
+          <Label>Goal 2</Label>
+          <Input
+            name="goal2"
+            value={form.goal2}
+            onChange={(e) => setForm((f) => ({ ...f, goal2: e.target.value }))}
+          />
+        </>
+      ),
+      validate: () => Boolean(form.cureDays && form.goal1),
+    },
+    {
+      label: "Step 4",
+      content: (
+        <>
+          <Label>Additional Goals</Label>
+          <Textarea
+            name="additionalGoals"
+            value={form.additionalGoals}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, additionalGoals: e.target.value }))
+            }
+          />
+
+          <Label>Schedule A (First Party Duties)</Label>
+          <Textarea
+            name="scheduleA"
+            value={form.scheduleA}
+            onChange={(e) => setForm((f) => ({ ...f, scheduleA: e.target.value }))}
+          />
+
+          <Label>Schedule B (Second Party Duties)</Label>
+          <Textarea
+            name="scheduleB"
+            value={form.scheduleB}
+            onChange={(e) => setForm((f) => ({ ...f, scheduleB: e.target.value }))}
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 5",
+      content: (
+        <>
+          <Label>Consideration / Schedule C</Label>
+          <Textarea
+            name="scheduleC"
+            value={form.scheduleC}
+            onChange={(e) => setForm((f) => ({ ...f, scheduleC: e.target.value }))}
+          />
+
+          <Label>Work Product Owner (who owns IP)</Label>
+          <Input
+            name="ipOwner"
+            value={form.ipOwner}
+            onChange={(e) => setForm((f) => ({ ...f, ipOwner: e.target.value }))}
+          />
+
+          <Label>Governing Jurisdiction</Label>
+          <Input
+            name="jurisdiction"
+            value={form.jurisdiction}
+            onChange={(e) => setForm((f) => ({ ...f, jurisdiction: e.target.value }))}
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 6",
+      content: (
+        <>
+          <Label>First Party - Signatory Name</Label>
+          <Input
+            name="signFirstName"
+            value={form.signFirstName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signFirstName: e.target.value }))
+            }
+            required
+          />
+          <Label>First Party - Title</Label>
+          <Input
+            name="signFirstTitle"
+            value={form.signFirstTitle}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signFirstTitle: e.target.value }))
+            }
+            required
+          />
+          <Label>First Party - Date</Label>
+          <Input
+            type="date"
+            name="signFirstDate"
+            value={form.signFirstDate}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signFirstDate: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(form.signFirstName && form.signFirstTitle && form.signFirstDate),
+    },
+    {
+      label: "Step 7",
+      content: (
+        <>
+          <Label>Second Party - Signatory Name</Label>
+          <Input
+            name="signSecondName"
+            value={form.signSecondName}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signSecondName: e.target.value }))
+            }
+            required
+          />
+          <Label>Second Party - Title</Label>
+          <Input
+            name="signSecondTitle"
+            value={form.signSecondTitle}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signSecondTitle: e.target.value }))
+            }
+            required
+          />
+          <Label>Second Party - Date</Label>
+          <Input
+            type="date"
+            name="signSecondDate"
+            value={form.signSecondDate}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, signSecondDate: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(form.signSecondName && form.signSecondTitle && form.signSecondDate),
+    },
+    {
+      label: "Step 8",
+      content: (
+        <>
+          <Label>Witness 1 - Name</Label>
+          <Input
+            name="witness1Name"
+            value={form.witness1Name}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness1Name: e.target.value }))
+            }
+          />
+          <Label>Witness 1 - CNIC/ID</Label>
+          <Input
+            name="witness1Cnic"
+            value={form.witness1Cnic}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness1Cnic: e.target.value }))
+            }
+          />
+          <Label>Witness 1 - Date</Label>
+          <Input
+            type="date"
+            name="witness1Date"
+            value={form.witness1Date}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness1Date: e.target.value }))
+            }
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 9",
+      content: (
+        <>
+          <Label>Witness 2 - Name</Label>
+          <Input
+            name="witness2Name"
+            value={form.witness2Name}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness2Name: e.target.value }))
+            }
+          />
+          <Label>Witness 2 - CNIC/ID</Label>
+          <Input
+            name="witness2Cnic"
+            value={form.witness2Cnic}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness2Cnic: e.target.value }))
+            }
+          />
+          <Label>Witness 2 - Date</Label>
+          <Input
+            type="date"
+            name="witness2Date"
+            value={form.witness2Date}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, witness2Date: e.target.value }))
+            }
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+  ];
 
   const generatePDF = () => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -181,138 +483,17 @@ export default function MemorandumOfAgreementForm() {
     write(`2. ${form.witness2Name || "________________"}  CNIC/ID: ${form.witness2Cnic || "________________"}  Date: ${form.witness2Date || "________________"}`);
 
     doc.save("Memorandum_of_Agreement.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold">Parties & Term</h3>
-              </div>
-
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={form.effectiveDate} onChange={handleChange} />
-
-              <Label>First Party Name</Label>
-              <Input name="firstPartyName" value={form.firstPartyName} onChange={handleChange} />
-              <Label>First Party Address</Label>
-              <Input name="firstPartyAddress" value={form.firstPartyAddress} onChange={handleChange} />
-
-              <Label>Second Party Name</Label>
-              <Input name="secondPartyName" value={form.secondPartyName} onChange={handleChange} />
-              <Label>Second Party Address</Label>
-              <Input name="secondPartyAddress" value={form.secondPartyAddress} onChange={handleChange} />
-
-              <Label>Term (e.g., 12 months)</Label>
-              <Input name="term" value={form.term} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Goals, Obligations & IP</h3>
-              <Label>Goal 1</Label>
-              <Input name="goal1" value={form.goal1} onChange={handleChange} />
-              <Label>Goal 2</Label>
-              <Input name="goal2" value={form.goal2} onChange={handleChange} />
-              <Label>Additional Objectives / Notes</Label>
-              <Textarea name="additionalGoals" value={form.additionalGoals} onChange={handleChange} />
-
-              <Label>Schedule A (First Party Duties)</Label>
-              <Textarea name="scheduleA" value={form.scheduleA} onChange={handleChange} />
-
-              <Label>Schedule B (Second Party Duties)</Label>
-              <Textarea name="scheduleB" value={form.scheduleB} onChange={handleChange} />
-
-              <Label>Consideration / Schedule C</Label>
-              <Textarea name="scheduleC" value={form.scheduleC} onChange={handleChange} />
-
-              <Label>Work Product Owner (who owns IP)</Label>
-              <Input name="ipOwner" value={form.ipOwner} onChange={handleChange} />
-
-              <Label>Governing Jurisdiction</Label>
-              <Input name="jurisdiction" value={form.jurisdiction} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Termination & Signatures</h3>
-
-              <Label>Default Cure Period (days)</Label>
-              <Input name="cureDays" value={form.cureDays} onChange={handleChange} />
-
-              <Label>First Party - Signatory Name</Label>
-              <Input name="signFirstName" value={form.signFirstName} onChange={handleChange} />
-              <Label>First Party - Title</Label>
-              <Input name="signFirstTitle" value={form.signFirstTitle} onChange={handleChange} />
-              <Label>First Party - Date</Label>
-              <Input name="signFirstDate" value={form.signFirstDate} onChange={handleChange} />
-
-              <Label>Second Party - Signatory Name</Label>
-              <Input name="signSecondName" value={form.signSecondName} onChange={handleChange} />
-              <Label>Second Party - Title</Label>
-              <Input name="signSecondTitle" value={form.signSecondTitle} onChange={handleChange} />
-              <Label>Second Party - Date</Label>
-              <Input name="signSecondDate" value={form.signSecondDate} onChange={handleChange} />
-
-              <h4 className="font-semibold pt-2">Witnesses</h4>
-              <Label>Witness 1 - Name</Label>
-              <Input name="witness1Name" value={form.witness1Name} onChange={handleChange} />
-              <Label>Witness 1 - CNIC/ID</Label>
-              <Input name="witness1Cnic" value={form.witness1Cnic} onChange={handleChange} />
-              <Label>Witness 1 - Date</Label>
-              <Input name="witness1Date" value={form.witness1Date} onChange={handleChange} />
-
-              <Label>Witness 2 - Name</Label>
-              <Input name="witness2Name" value={form.witness2Name} onChange={handleChange} />
-              <Label>Witness 2 - CNIC/ID</Label>
-              <Input name="witness2Cnic" value={form.witness2Cnic} onChange={handleChange} />
-              <Label>Witness 2 - Date</Label>
-              <Input name="witness2Date" value={form.witness2Date} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Memorandum of Agreement PDF generated successfully.</div>
-          </CardContent>
-        </Card>
-      )}
+      <FormWizard
+        steps={steps}
+        onFinish={() => {
+          generatePDF();
+          alert("Form submitted!");
+        }}
+      />
     </div>
   );
 }

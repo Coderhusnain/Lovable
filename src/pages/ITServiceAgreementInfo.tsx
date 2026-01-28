@@ -202,7 +202,7 @@ const ITServiceAgreementInfo = () => {
               <CardTitle>Can a Lawyer Review My IT Service Agreement?</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">Professional legal review is available through Legal Gram’s services — a practical option to confirm compliance and address specific legal questions.</p>
+              <p className="text-gray-700">Professional legal review is available through Legalgram’s services — a practical option to confirm compliance and address specific legal questions.</p>
             </CardContent>
           </Card>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import CountryStateAPI from 'countries-states-cities';
 import UserInfoStep from "@/components/UserInfoStep";
+import { FormWizard } from './FormWizard';
 
 interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
 interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }
@@ -21,36 +22,29 @@ const getStatesByCountry = (countryId: number): StateData[] => CountryStateAPI.g
 const getCountryName = (countryId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); return c?.name || countryId; };
 const getStateName = (countryId: string, stateId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); if (!c) return stateId; const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId); return s?.name || stateId; };
 
-interface FormData {
-  country: string;
-  state: string;
-  effectiveDate: string;
-  clientName: string;
-  clientAddress: string;
-  providerName: string;
-  providerAddress: string;
-  totalAmount: string;
-  overtimeRate: string;
-  lateInterestRate: string;
-  depositAmount: string;
-  depositRefundDays: string;
-  terminationNoticeDays: string;
-  cureDays: string;
-}
-
 const ValetServiceAgreementForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    country: '', state: '', effectiveDate: '', clientName: '', clientAddress: '',
-    providerName: '', providerAddress: '', totalAmount: '', overtimeRate: '',
-    lateInterestRate: '', depositAmount: '', depositRefundDays: '',
-    terminationNoticeDays: '', cureDays: ''
+  const [formData, setFormData] = useState({
+    country: '',
+    state: '',
+    effectiveDate: '',
+    clientName: '',
+    clientAddress: '',
+    providerName: '',
+    providerAddress: '',
+    totalAmount: '',
+    overtimeRate: '',
+    lateInterestRate: '',
+    depositAmount: '',
+    depositRefundDays: '',
+    terminationNoticeDays: '',
+    cureDays: '',
   });
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'country') setFormData(prev => ({ ...prev, state: '' }));
   };
@@ -177,129 +171,130 @@ const ValetServiceAgreementForm = () => {
     }
   };
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Jurisdiction / Location</h3>
-            <p className="text-gray-400 text-sm">Select the country and state/province that will govern this agreement.</p>
+  const steps = [
+    {
+      label: 'Step 1',
+      content: (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+              <Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}>
+                <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Select country" /></SelectTrigger>
+                <SelectContent>{getAllCountries().map(c => (<SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>))}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">State/Province</Label>
+              <Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}>
+                <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Select state" /></SelectTrigger>
+                <SelectContent>{getStatesForCountry().map(s => (<SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>))}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="effectiveDate">Effective Date</Label>
+              <Input type="date" id="effectiveDate" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} className="bg-gray-800 border-gray-700" />
+            </div>
+          </div>
+        </>
+      ),
+      validate: () => Boolean(formData.country && formData.state && formData.effectiveDate),
+    },
+    {
+      label: 'Step 2',
+      content: (
+        <>
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-300">Client Information</h4>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}>
-                  <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Select country" /></SelectTrigger>
-                  <SelectContent>{getAllCountries().map(c => (<SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>))}</SelectContent>
-                </Select>
+                <Label htmlFor="clientName">Client Name</Label>
+                <Input id="clientName" value={formData.clientName} onChange={(e) => handleInputChange('clientName', e.target.value)} placeholder="Enter client name" className="bg-gray-800 border-gray-700" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="state">State/Province</Label>
-                <Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}>
-                  <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Select state" /></SelectTrigger>
-                  <SelectContent>{getStatesForCountry().map(s => (<SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>))}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="effectiveDate">Effective Date</Label>
-                <Input type="date" id="effectiveDate" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} className="bg-gray-800 border-gray-700" />
+                <Label htmlFor="clientAddress">Client Address</Label>
+                <Textarea id="clientAddress" value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} placeholder="Enter client address" className="bg-gray-800 border-gray-700" />
               </div>
             </div>
           </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Party Information</h3>
-            <div className="space-y-4">
-              <h4 className="font-medium text-gray-300">Client Information</h4>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="clientName">Client Name</Label>
-                  <Input id="clientName" value={formData.clientName} onChange={(e) => handleInputChange('clientName', e.target.value)} placeholder="Enter client name" className="bg-gray-800 border-gray-700" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="clientAddress">Client Address</Label>
-                  <Textarea id="clientAddress" value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} placeholder="Enter client address" className="bg-gray-800 border-gray-700" />
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h4 className="font-medium text-gray-300">Service Provider Information</h4>
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="providerName">Provider Name</Label>
-                  <Input id="providerName" value={formData.providerName} onChange={(e) => handleInputChange('providerName', e.target.value)} placeholder="Enter provider name" className="bg-gray-800 border-gray-700" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="providerAddress">Provider Address</Label>
-                  <Textarea id="providerAddress" value={formData.providerAddress} onChange={(e) => handleInputChange('providerAddress', e.target.value)} placeholder="Enter provider address" className="bg-gray-800 border-gray-700" />
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Payment Terms</h3>
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-300">Service Provider Information</h4>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="totalAmount">Total Service Amount ($)</Label>
-                <Input type="number" id="totalAmount" value={formData.totalAmount} onChange={(e) => handleInputChange('totalAmount', e.target.value)} placeholder="Total service fee" className="bg-gray-800 border-gray-700" />
+                <Label htmlFor="providerName">Provider Name</Label>
+                <Input id="providerName" value={formData.providerName} onChange={(e) => handleInputChange('providerName', e.target.value)} placeholder="Enter provider name" className="bg-gray-800 border-gray-700" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="depositAmount">Deposit Amount ($)</Label>
-                <Input type="number" id="depositAmount" value={formData.depositAmount} onChange={(e) => handleInputChange('depositAmount', e.target.value)} placeholder="Required deposit" className="bg-gray-800 border-gray-700" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="overtimeRate">Overtime Rate ($/hour)</Label>
-                <Input type="number" id="overtimeRate" value={formData.overtimeRate} onChange={(e) => handleInputChange('overtimeRate', e.target.value)} placeholder="Hourly overtime rate" className="bg-gray-800 border-gray-700" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lateInterestRate">Late Payment Interest (%)</Label>
-                <Input type="number" id="lateInterestRate" value={formData.lateInterestRate} onChange={(e) => handleInputChange('lateInterestRate', e.target.value)} placeholder="Annual interest rate" className="bg-gray-800 border-gray-700" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="depositRefundDays">Deposit Refund Days</Label>
-                <Input type="number" id="depositRefundDays" value={formData.depositRefundDays} onChange={(e) => handleInputChange('depositRefundDays', e.target.value)} placeholder="Days to refund deposit" className="bg-gray-800 border-gray-700" />
+                <Label htmlFor="providerAddress">Provider Address</Label>
+                <Textarea id="providerAddress" value={formData.providerAddress} onChange={(e) => handleInputChange('providerAddress', e.target.value)} placeholder="Enter provider address" className="bg-gray-800 border-gray-700" />
               </div>
             </div>
           </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Agreement Terms</h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="terminationNoticeDays">Termination Notice (Days)</Label>
-                <Input type="number" id="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={(e) => handleInputChange('terminationNoticeDays', e.target.value)} placeholder="Days notice for termination" className="bg-gray-800 border-gray-700" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cureDays">Cure Period (Days)</Label>
-                <Input type="number" id="cureDays" value={formData.cureDays} onChange={(e) => handleInputChange('cureDays', e.target.value)} placeholder="Days to cure breach" className="bg-gray-800 border-gray-700" />
-              </div>
+        </>
+      ),
+      validate: () => Boolean(formData.clientName && formData.clientAddress && formData.providerName),
+    },
+    {
+      label: 'Step 3',
+      content: (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="totalAmount">Total Service Amount ($)</Label>
+              <Input type="number" id="totalAmount" value={formData.totalAmount} onChange={(e) => handleInputChange('totalAmount', e.target.value)} placeholder="Total service fee" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="depositAmount">Deposit Amount ($)</Label>
+              <Input type="number" id="depositAmount" value={formData.depositAmount} onChange={(e) => handleInputChange('depositAmount', e.target.value)} placeholder="Required deposit" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="overtimeRate">Overtime Rate ($/hour)</Label>
+              <Input type="number" id="overtimeRate" value={formData.overtimeRate} onChange={(e) => handleInputChange('overtimeRate', e.target.value)} placeholder="Hourly overtime rate" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lateInterestRate">Late Payment Interest (%)</Label>
+              <Input type="number" id="lateInterestRate" value={formData.lateInterestRate} onChange={(e) => handleInputChange('lateInterestRate', e.target.value)} placeholder="Annual interest rate" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="depositRefundDays">Deposit Refund Days</Label>
+              <Input type="number" id="depositRefundDays" value={formData.depositRefundDays} onChange={(e) => handleInputChange('depositRefundDays', e.target.value)} placeholder="Days to refund deposit" className="bg-gray-800 border-gray-700" />
             </div>
           </div>
-        );
-
-      case 5:
-        return (
-          <UserInfoStep
-            onBack={handleBack}
-            onGenerate={generatePDF}
-            documentType="Valet Service Agreement"
-            isGenerating={isGeneratingPDF}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
+        </>
+      ),
+      validate: () => Boolean(formData.totalAmount && formData.depositAmount && formData.overtimeRate),
+    },
+    {
+      label: 'Step 4',
+      content: (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="terminationNoticeDays">Termination Notice (Days)</Label>
+              <Input type="number" id="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={(e) => handleInputChange('terminationNoticeDays', e.target.value)} placeholder="Days notice for termination" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cureDays">Cure Period (Days)</Label>
+              <Input type="number" id="cureDays" value={formData.cureDays} onChange={(e) => handleInputChange('cureDays', e.target.value)} placeholder="Days to cure breach" className="bg-gray-800 border-gray-700" />
+            </div>
+          </div>
+        </>
+      ),
+      validate: () => Boolean(formData.terminationNoticeDays && formData.cureDays),
+    },
+    {
+      label: 'Review & Generate',
+      content: (
+        <UserInfoStep
+          onBack={handleBack}
+          onGenerate={generatePDF}
+          documentType="Valet Service Agreement"
+          isGenerating={isGeneratingPDF}
+        />
+      ),
+      validate: () => true,
+    },
+  ];
 
   if (isComplete) {
     return (
@@ -345,13 +340,9 @@ const ValetServiceAgreementForm = () => {
             <div className="flex justify-between mb-8 text-xs text-gray-400">
               <span>Location</span><span>Parties</span><span>Payment</span><span>Terms</span><span>Generate</span>
             </div>
-            <div className="min-h-[400px]">{renderStep()}</div>
-            {currentStep < 5 && (
-              <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={handleBack} disabled={currentStep === 1} className="border-gray-600 text-gray-300 hover:bg-gray-700"><ArrowLeft className="w-4 h-4 mr-2" /> Previous</Button>
-                <Button onClick={handleNext} disabled={!canAdvance()} className="bg-purple-600 hover:bg-purple-700">Next <ArrowRight className="w-4 h-4 ml-2" /></Button>
-              </div>
-            )}
+            <div className="min-h-[400px]">
+              <FormWizard steps={steps} onFinish={() => alert('Form submitted!')} />
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -120,7 +120,7 @@ const ClinicalTrialContractInfo = () => {
               </div>
 
               <p className="text-gray-700 mt-2">
-                The Clinical Trial Agreement on Legal Gram ensures that each party’s contributions and expectations are clearly documented and legally enforceable.
+                The Clinical Trial Agreement on Legalgram ensures that each party’s contributions and expectations are clearly documented and legally enforceable.
               </p>
             </CardContent>
           </Card>
@@ -173,7 +173,7 @@ const ClinicalTrialContractInfo = () => {
                 </InfoBadge>
 
                 <InfoBadge icon={CheckCircle} title="eSign Available">
-                  The Clinical Trial Agreement on Legal Gram can be signed online for free for a fast, secure, and efficient process.
+                  The Clinical Trial Agreement on Legalgram can be signed online for free for a fast, secure, and efficient process.
                 </InfoBadge>
               </div>
             </CardContent>

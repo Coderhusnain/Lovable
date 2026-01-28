@@ -1,3 +1,31 @@
+import { FormWizard } from "./FormWizard";
+
+const steps = [
+  {
+    label: "Parties",
+    fields: [
+      { name: "vendor", label: "Vendor", type: "text", required: true },
+      { name: "client", label: "Client", type: "text", required: true },
+      { name: "serviceDescription", label: "Service Description", type: "textarea", required: true },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      { name: "agreementDate", label: "Agreement Date", type: "date", required: true },
+      { name: "paymentTerms", label: "Payment Terms", type: "text" },
+      { name: "term", label: "Term", type: "text" },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      { name: "additionalTerms", label: "Additional Terms", type: "textarea" },
+    ],
+  },
+];
+
+import React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,14 +34,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, Send, FileText, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import CountryStateAPI from 'countries-states-cities';
-import UserInfoStep from "@/components/UserInfoStep";
 import { generateGuidePDF } from "@/utils/generateGuidePDF";
+
+// ...rest of the VendorAgreementForm implementation (no duplicate export default)...
+
+// Legacy code removed
+
+interface UserInfoStepProps {
+  onBack: () => void;
+  onGenerate: () => void;
+  documentType: string;
+  isGenerating: boolean;
+}
+
+const UserInfoStep: React.FC<UserInfoStepProps> = ({ onBack, onGenerate, documentType, isGenerating }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const canGenerate = !!(name && email);
+
+  return (
+    <div className="space-y-4">
+      <div className="border rounded-lg p-4 space-y-3">
+        <h3 className="font-semibold">{documentType} Requestor Info</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <Label>Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div>
+            <Label>Email</Label>
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onBack}>Back</Button>
+        <Button onClick={() => onGenerate()} disabled={!canGenerate || isGenerating}>
+          {isGenerating ? "Generating..." : "Generate"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 
 interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
 interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }

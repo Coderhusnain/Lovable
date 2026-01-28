@@ -47,7 +47,7 @@ const AdminLogin = () => {
             </div>
             <CardTitle className="text-2xl">Admin Login</CardTitle>
             <CardDescription>
-              Sign in to access the Legal Gram admin dashboard
+              Sign in to access the Legalgram admin dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -1,3 +1,4 @@
+// Removed duplicate FormWizard stub and duplicate Input/Textarea imports to avoid conflicting identifiers.
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

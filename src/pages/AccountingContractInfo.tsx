@@ -148,7 +148,7 @@ const AccountingContractInfo = () => {
                 </InfoBadge>
 
                 <InfoBadge icon={CheckCircle} title="eSign & Secure">
-                  The document can be signed online for free through Legal Gram for a fast, secure, and convenient
+                  The document can be signed online for free through Legalgram for a fast, secure, and convenient
                   signing process.
                 </InfoBadge>
               </div>

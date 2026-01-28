@@ -152,7 +152,7 @@ const AdministrativeServicesAgreementInfo = () => {
                 </InfoBadge>
 
                 <InfoBadge icon={CheckCircle} title="Legal Support">
-                  If needed, consult a legal professional or Legal Gram membership to request a document review.
+                  If needed, consult a legal professional or Legalgram membership to request a document review.
                 </InfoBadge>
               </div>
             </CardContent>
@@ -196,7 +196,7 @@ const AdministrativeServicesAgreementInfo = () => {
               <CardTitle>How Can a Lawyer Review My Administrative Services Agreement?</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700">Legal Gram offers paid legal support services for document review. With membership, you can request a professional review to confirm compliance and address specific questions.</p>
+              <p className="text-gray-700">Legalgram offers paid legal support services for document review. With membership, you can request a professional review to confirm compliance and address specific questions.</p>
             </CardContent>
           </Card>
 

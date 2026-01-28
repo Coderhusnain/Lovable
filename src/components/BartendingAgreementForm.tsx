@@ -1,3 +1,45 @@
+import React from "react";
+import { FormWizard } from "./FormWizard";
+
+
+
+const steps = [
+  {
+    label: "Event Details",
+    content: <>
+      <Input name="eventName" placeholder="Event Name" />
+      <Input name="eventDate" placeholder="Event Date" type="date" />
+      <Input name="eventLocation" placeholder="Event Location" />
+    </>,
+  },
+  {
+    label: "Bartender & Client",
+    content: <>
+      <Input name="bartenderName" placeholder="Bartender Name" />
+      <Input name="clientName" placeholder="Client Name" />
+      <Input name="clientContact" placeholder="Client Contact" />
+    </>,
+  },
+  {
+    label: "Service & Payment",
+    content: <>
+      <Input name="serviceFee" placeholder="Service Fee" type="number" />
+      <Input name="paymentMethod" placeholder="Payment Method" />
+      <Textarea name="serviceDetails" placeholder="Service Details" />
+    </>,
+  },
+  {
+    label: "Signatures",
+    content: <>
+      <Input name="bartenderSignature" placeholder="Bartender Signature" />
+      <Input name="bartenderSignDate" placeholder="Bartender Signature Date" type="date" />
+      <Input name="clientSignature" placeholder="Client Signature" />
+      <Input name="clientSignDate" placeholder="Client Signature Date" type="date" />
+    </>,
+  },
+];
+
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

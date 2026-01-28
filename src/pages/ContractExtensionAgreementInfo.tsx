@@ -132,7 +132,7 @@ const ContractExtensionAgreementInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <BookOpen className="w-5 h-5 mr-2 text-indigo-600" />
-                Why Use a Contract Extension Agreement on Legal Gram?
+                Why Use a Contract Extension Agreement on Legalgram?
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -167,7 +167,7 @@ const ContractExtensionAgreementInfo = () => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="text-gray-700">
                   <p className="mb-1">Download a professional, customizable Contract Extension Agreement suitable for businesses, professionals, and individuals.</p>
-                  <p className="text-sm text-gray-500">Free download | Draft Contract Extension Agreement | Contract Extension Agreement on Legal Gram</p>
+                  <p className="text-sm text-gray-500">Free download | Draft Contract Extension Agreement | Contract Extension Agreement on Legalgram</p>
                 </div>
 
                 <div className="flex items-center gap-3">

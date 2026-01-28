@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   effectiveDate: string;
@@ -84,13 +85,133 @@ export default function AdvertisingAgencyAgreementForm() {
     signAgencyDate: "",
   });
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
+
+  const steps = [
+    {
+      label: "Parties & Intro",
+      content: (
+        <>
+          <Label>Effective Date</Label>
+          <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
+
+          <hr />
+          <h4 className="font-medium">Advertiser</h4>
+          <Label>Name</Label>
+          <Input name="advertiserName" value={formData.advertiserName} onChange={handleChange} />
+          <Label>Address</Label>
+          <Textarea name="advertiserAddress" value={formData.advertiserAddress} onChange={handleChange} />
+          <Label>Business / Description</Label>
+          <Input name="advertiserBusiness" value={formData.advertiserBusiness} onChange={handleChange} />
+
+          <hr />
+          <h4 className="font-medium">Agency</h4>
+          <Label>Name</Label>
+          <Input name="agencyName" value={formData.agencyName} onChange={handleChange} />
+          <Label>Address</Label>
+          <Textarea name="agencyAddress" value={formData.agencyAddress} onChange={handleChange} />
+          <Label>Business / Description</Label>
+          <Input name="agencyBusiness" value={formData.agencyBusiness} onChange={handleChange} />
+
+          <Label>Products / Services Covered</Label>
+          <Textarea name="productsServices" value={formData.productsServices} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.effectiveDate && formData.advertiserName && formData.agencyName),
+    },
+    {
+      label: "Services & Costs",
+      content: (
+        <>
+          <Label>Commencement Date</Label>
+          <Input name="commencementDate" value={formData.commencementDate} onChange={handleChange} />
+
+          <Label>Exclusivity Scope</Label>
+          <Textarea name="exclusivityScope" value={formData.exclusivityScope} onChange={handleChange} />
+
+          <Label>Media Costs / Notes</Label>
+          <Textarea name="mediaCostsNotes" value={formData.mediaCostsNotes} onChange={handleChange} />
+
+          <Label>Commission % (media)</Label>
+          <Input name="commissionPercent" value={formData.commissionPercent} onChange={handleChange} />
+
+          <Label>Outdoor Commission %</Label>
+          <Input name="outdoorCommissionPercent" value={formData.outdoorCommissionPercent} onChange={handleChange} />
+
+          <Label>Third-Party Commission %</Label>
+          <Input name="thirdPartyCommissionPercent" value={formData.thirdPartyCommissionPercent} onChange={handleChange} />
+
+          <Label>Hourly Rate (non-commission items)</Label>
+          <Input name="hourlyRate" value={formData.hourlyRate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.commencementDate && formData.commissionPercent),
+    },
+    {
+      label: "Term, Termination & Legal",
+      content: (
+        <>
+          <Label>Term End Date / Review</Label>
+          <Input name="termEndDate" value={formData.termEndDate} onChange={handleChange} />
+
+          <Label>Termination Notice (days)</Label>
+          <Input name="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={handleChange} />
+
+          <Label>Default Cure Period (days)</Label>
+          <Input name="defaultCureDays" value={formData.defaultCureDays} onChange={handleChange} />
+
+          <Label>Assignment Clause</Label>
+          <Textarea name="assignmentClause" value={formData.assignmentClause} onChange={handleChange} />
+
+          <Label>Disposition of Materials</Label>
+          <Textarea name="dispositionMaterials" value={formData.dispositionMaterials} onChange={handleChange} />
+
+          <Label>Audit Rights</Label>
+          <Textarea name="auditRights" value={formData.auditRights} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.termEndDate && formData.terminationNoticeDays),
+    },
+    {
+      label: "Insurance, Billing, Dispute & Signatures",
+      content: (
+        <>
+          <Label>Indemnity Clause</Label>
+          <Textarea name="indemnityClause" value={formData.indemnityClause} onChange={handleChange} />
+
+          <Label>Insurance Limits / Requirements</Label>
+          <Input name="insuranceLimits" value={formData.insuranceLimits} onChange={handleChange} />
+
+          <Label>Billing Standards / Notes</Label>
+          <Textarea name="billingStandards" value={formData.billingStandards} onChange={handleChange} />
+
+          <Label>Arbitration Terms</Label>
+          <Textarea name="arbitrationTerms" value={formData.arbitrationTerms} onChange={handleChange} />
+
+          <Label>Governing Law / State</Label>
+          <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
+
+          <Label>Attorneys' Fees Clause</Label>
+          <Textarea name="attorneysFeesClause" value={formData.attorneysFeesClause} onChange={handleChange} />
+
+          <hr />
+          <Label>Advertiser - Signatory Name</Label>
+          <Input name="signAdvertiserName" value={formData.signAdvertiserName} onChange={handleChange} />
+          <Label>Advertiser - Date</Label>
+          <Input name="signAdvertiserDate" value={formData.signAdvertiserDate} onChange={handleChange} />
+
+          <Label>Agency - Signatory Name</Label>
+          <Input name="signAgencyName" value={formData.signAgencyName} onChange={handleChange} />
+          <Label>Agency - Date</Label>
+          <Input name="signAgencyDate" value={formData.signAgencyDate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.indemnityClause && formData.insuranceLimits && formData.billingStandards),
+    },
+  ];
 
   // small helper to write and paginate
   const writeText = (doc: jsPDF, text: string, state: { y: number }, opts?: { size?: number; bold?: boolean; center?: boolean }) => {
@@ -254,171 +375,12 @@ export default function AdvertisingAgencyAgreementForm() {
     );
 
     doc.save("Advertising_Agency_Agreement.pdf");
-    setPdfGenerated(true);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-            <div className="mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/advertising-agency-agreement-info')}
-              className="text-orange-600 border-orange-200  hover:border-orange-300"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Learn More About Advertising Agency Agreement
-            </Button>
-          </div>
-              <h3 className="font-semibold">Parties & Intro</h3>
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <hr />
-              <h4 className="font-medium">Advertiser</h4>
-              <Label>Name</Label>
-              <Input name="advertiserName" value={formData.advertiserName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="advertiserAddress" value={formData.advertiserAddress} onChange={handleChange} />
-              <Label>Business / Description</Label>
-              <Input name="advertiserBusiness" value={formData.advertiserBusiness} onChange={handleChange} />
-
-              <hr />
-              <h4 className="font-medium">Agency</h4>
-              <Label>Name</Label>
-              <Input name="agencyName" value={formData.agencyName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="agencyAddress" value={formData.agencyAddress} onChange={handleChange} />
-              <Label>Business / Description</Label>
-              <Input name="agencyBusiness" value={formData.agencyBusiness} onChange={handleChange} />
-
-              <Label>Products / Services Covered</Label>
-              <Textarea name="productsServices" value={formData.productsServices} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services & Costs</h3>
-              <Label>Commencement Date</Label>
-              <Input name="commencementDate" value={formData.commencementDate} onChange={handleChange} />
-
-              <Label>Exclusivity Scope</Label>
-              <Textarea name="exclusivityScope" value={formData.exclusivityScope} onChange={handleChange} />
-
-              <Label>Media Costs / Notes</Label>
-              <Textarea name="mediaCostsNotes" value={formData.mediaCostsNotes} onChange={handleChange} />
-
-              <Label>Commission % (media)</Label>
-              <Input name="commissionPercent" value={formData.commissionPercent} onChange={handleChange} />
-
-              <Label>Outdoor Commission %</Label>
-              <Input name="outdoorCommissionPercent" value={formData.outdoorCommissionPercent} onChange={handleChange} />
-
-              <Label>Third-Party Commission %</Label>
-              <Input name="thirdPartyCommissionPercent" value={formData.thirdPartyCommissionPercent} onChange={handleChange} />
-
-              <Label>Hourly Rate (non-commission items)</Label>
-              <Input name="hourlyRate" value={formData.hourlyRate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Term, Termination & Legal</h3>
-              <Label>Term End Date / Review</Label>
-              <Input name="termEndDate" value={formData.termEndDate} onChange={handleChange} />
-
-              <Label>Termination Notice (days)</Label>
-              <Input name="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={handleChange} />
-
-              <Label>Default Cure Period (days)</Label>
-              <Input name="defaultCureDays" value={formData.defaultCureDays} onChange={handleChange} />
-
-              <Label>Assignment Clause</Label>
-              <Textarea name="assignmentClause" value={formData.assignmentClause} onChange={handleChange} />
-
-              <Label>Disposition of Materials</Label>
-              <Textarea name="dispositionMaterials" value={formData.dispositionMaterials} onChange={handleChange} />
-
-              <Label>Audit Rights</Label>
-              <Textarea name="auditRights" value={formData.auditRights} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Insurance, Billing, Dispute & Signatures</h3>
-              <Label>Indemnity Clause</Label>
-              <Textarea name="indemnityClause" value={formData.indemnityClause} onChange={handleChange} />
-
-              <Label>Insurance Limits / Requirements</Label>
-              <Input name="insuranceLimits" value={formData.insuranceLimits} onChange={handleChange} />
-
-              <Label>Billing Standards / Notes</Label>
-              <Textarea name="billingStandards" value={formData.billingStandards} onChange={handleChange} />
-
-              <Label>Arbitration Terms</Label>
-              <Textarea name="arbitrationTerms" value={formData.arbitrationTerms} onChange={handleChange} />
-
-              <Label>Governing Law / State</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-
-              <Label>Attorneys' Fees Clause</Label>
-              <Textarea name="attorneysFeesClause" value={formData.attorneysFeesClause} onChange={handleChange} />
-
-              <hr />
-              <Label>Advertiser - Signatory Name</Label>
-              <Input name="signAdvertiserName" value={formData.signAdvertiserName} onChange={handleChange} />
-              <Label>Advertiser - Date</Label>
-              <Input name="signAdvertiserDate" value={formData.signAdvertiserDate} onChange={handleChange} />
-
-              <Label>Agency - Signatory Name</Label>
-              <Input name="signAgencyName" value={formData.signAgencyName} onChange={handleChange} />
-              <Label>Agency - Date</Label>
-              <Input name="signAgencyDate" value={formData.signAgencyDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
+  const handleSubmit = () => {
+    generatePDF();
+    alert("Form submitted!");
   };
 
-  return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 4 ? (
-          <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Advertising Agency Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+  return <FormWizard steps={steps} onFinish={handleSubmit} />;
 }

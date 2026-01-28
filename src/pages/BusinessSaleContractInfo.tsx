@@ -97,13 +97,13 @@ const BusinessSaleContractInfo = () => {
             </CardHeader>
             <CardContent>
               <p className="text-gray-700">
-                With Legal Gram, you can prepare a Business Sale Agreement without drafting from scratch. Complete a few
+                With Legalgram, you can prepare a Business Sale Agreement without drafting from scratch. Complete a few
                 guided steps to generate a complete, professional, and legally sound Business Sale Contract. This streamlined
                 process saves time, reduces complexity, and ensures accuracy.
               </p>
 
               <p className="text-gray-700">
-                The Legal Gram template follows the best format for Business Sale Agreements and is suitable for both
+                The Legalgram template follows the best format for Business Sale Agreements and is suitable for both
                 small and large transactions.
               </p>
             </CardContent>

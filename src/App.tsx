@@ -1,13 +1,12 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { useEffect } from "react";
 
-// Lazy load more components to reduce initial bundle size
+// Lazy load pages
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const StartABusiness = lazy(() => import("./pages/StartABusiness"));
 const Documents = lazy(() => import("./pages/Documents"));
@@ -16,55 +15,6 @@ const UserDashboard = lazy(() => import("./pages/UserDashboard"));
 const WhatsAnLLC = lazy(() => import("./pages/WhatsAnLLC"));
 const WhatsACorporation = lazy(() => import("./pages/WhatsACorporation"));
 const WhatsAnSCorp = lazy(() => import("./pages/WhatsAnSCorp"));
-import AffidavitOfMarriageInfo from "./pages/AffidavitOfMarriageInfo"; // Import AffidavitOfMarriageInfo directly
-import AffidavitOfResidenceInfo from "./pages/AffidavitOfResidenceInfo"; // Import AffidavitOfResidenceInfo directly
-import LLCOperatingAgreementInfo from "./pages/LLCOperatingAgreementInfo"; // Import LLCOperatingAgreementInfo directly
-import SpecialPowerOfAttorneyInfo from "./pages/SpecialPowerOfAttorneyInfo"; // Import SpecialPowerOfAttorneyInfo directly
-import GeneralPowerOfAttorneyInfo from "./pages/GeneralPowerOfAttorneyInfo"; // Import GeneralPowerOfAttorneyInfo directly
-import LeaseAgreementInfo from "./pages/LeaseAgreementInfo"; // Import LeaseAgreementInfo directly
-import LeaseRenewalInfo from "./pages/LeaseRenewalInfo"; // Import LeaseRenewalInfo directly
-import LeaseTerminationInfo from "./pages/LeaseTerminationInfo"; // Import LeaseTerminationInfo directly
-import CondominiumLeaseInfo from "./pages/CondominiumLeaseInfo"; // Import CondominiumLeaseInfo directly
-import RentIncreaseInfo from "./pages/RentIncreaseInfo"; // Import RentIncreaseInfo directly
-import SubleaseInfo from "./pages/SubleaseInfo"; // Import SubleaseInfo directly
-import LeaseAmendmentInfo from "./pages/LeaseAmendmentInfo"; // Import LeaseAmendmentInfo directly
-import CommercialLeaseInfo from "./pages/CommercialLeaseInfo"; // Import CommercialLeaseInfo directly
-import TripleNetLeaseInfo from "./pages/TripleNetLeaseInfo"; // Import TripleNetLeaseInfo directly
-import CorporateBylawsInfo from "./pages/CorporateBylawsInfo"; // Import CorporateBylawsInfo directly
-import BuySellAgreementInfo from "./pages/BuySellAgreementInfo"; // Import BuySellAgreementInfo directly
-import MutualNDAInfo from "./pages/MutualNDAInfo"; // Import MutualNDAInfo directly
-import BusinessPlanInfo from "./pages/BusinessPlanInfo"; // Import BusinessPlanInfo directly
-import ConfidentialInformationInfo from "./pages/ConfidentialInformationInfo"; // Import ConfidentialInformationInfo directly
-import NonCircumventionInfo from "./pages/NonCircumventionInfo"; // Import NonCircumventionInfo directly
-import CopyrightPermissionInfo from "./pages/CopyrightPermissionInfo"; // Import CopyrightPermissionInfo directly
-import LicenseAgreementInfo from "./pages/LicenseAgreementInfo"; // Import LicenseAgreementInfo directly
-import ManufacturingLicenseInfo from "./pages/ManufacturingLicenseInfo"; // Import ManufacturingLicenseInfo directly
-import MusicLicenseInfo from "./pages/MusicLicenseInfo"; // Import MusicLicenseInfo directly
-import ChildCareAuthorizationInfo from "./pages/ChildCareAuthorizationInfo"; // Import ChildCareAuthorizationInfo directly
-import DivorceSettlementAgreementInfo from "./pages/DivorceSettlementAgreementInfo"; // Import DivorceSettlementAgreementInfo directly
-import GeneralContractInfo from "./pages/GeneralContractInfo"; // Import GeneralContractInfo directly
-import LivingWillInfo from "./pages/LivingWillInfo"; // Import LivingWillInfo directly
-import SaleAgreementInfo from "./pages/SaleAgreementInfo"; // Import SaleAgreementInfo directly
-import IndependentContractorInfo from "./pages/IndependentContractorInfo"; // Import IndependentContractorInfo directly
-import LoanAgreementInfo from "./pages/LoanAgreementInfo"; // Import LoanAgreementInfo directly
-import GiftAffidavitInfo from "./pages/GiftAffidavitInfo"; // Import GiftAffidavitInfo directly
-import FinancialSupportAffidavitInfo from "./pages/FinancialSupportAffidavitInfo"; // Import FinancialSupportAffidavitInfo directly
-import ServicesContractInfo from "./pages/ServicesContractInfo"; // Import ServicesContractInfo directly
-import OfficeSpaceLeaseInfo from "./pages/OfficeSpaceLeaseInfo"; // Import OfficeSpaceLeaseInfo directly
-import StorageSpaceLeaseInfo from "./pages/StorageSpaceLeaseInfo"; // Import StorageSpaceLeaseInfo directly
-import PatentAssignmentInfo from "./pages/PatentAssignmentInfo"; // Import PatentAssignmentInfo directly
-import RoyaltyAgreementInfo from "./pages/RoyaltyAgreementInfo"; // Import RoyaltyAgreementInfo directly
-import BillboardLeaseInfo from "./pages/BillboardLeaseInfo"; // Import BillboardLeaseInfo directly
-import RestaurantLeaseInfo from "./pages/RestaurantLeaseInfo"; // Import RestaurantLeaseInfo directly
-import GasLeaseInfo from "./pages/GasLeaseInfo"; // Import GasLeaseInfo directly
-import AccountingContractInfo from "./pages/AccountingContractInfo"; // Import AccountingContractInfo directly
-import BusinessSaleAgreementInfo from "./pages/BusinessSaleContractInfo"; // Import BusinessSaleAgreementInfo directly
-import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo"; // Import ClinicalTrialAgreementInfo directly
-import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo"; // Import FeeAgreementContractInfo directly
-import FranchiseAgreementInfo from "./pages/FranchiseAgreementInfo"; // Import FranchiseAgreementInfo directly
-import AdministrativeServicesAgreementInfo from "./pages/AdministrativeServicesAgreementInfo"; // Import AdministrativeServicesAgreementInfo directly
-import AdvertisingAgencyAgreementInfo from "./pages/AdvertisingAgencyAgreementInfo"; // Import AdvertisingAgencyAgreementInfo directly
-// Lazy load other pages for better performance
 const DocumentTemplates = lazy(() => import("./pages/DocumentTemplates"));
 const ContactLawyer = lazy(() => import("./pages/ContactLawyer"));
 const Login = lazy(() => import("./pages/Login"));
@@ -82,15 +32,76 @@ const AskALawyer = lazy(() => import("./pages/AskALawyer"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
-import ITServiceAgreementInfo from "./pages/ITServiceAgreementInfo"; // Import ITServiceAgreementInfo directly
-import MergerAgreementInfo from "./pages/MergerAgreementInfo"; // Import MergerAgreementInfo directly
-import AssetPurchaseAgreementInfo from "./pages/AssetPurchaseAgreementInfo"; // Import AssetPurchaseAgreementInfo directly
-import MarketingAgreementInfo from "./pages/MarketingAgreementInfo"; // Import MarketingAgreementInfo directly
-import ContractExtensionAgreementInfo from "./pages/ContractExtensionAgreementInfo"; // Import ContractExtensionAgreementInfo directly
-import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreementInfo"; // Import ProductDistributionAgreementInfo directly
-import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo"; // Import ReferralFeeAgreementInfo directly
-import BarterAgreementInfo from "./pages/BarterAgreementInfo"; // Import BarterAgreementInfo directly
-// Loading component for suspense fallback
+
+// Direct Imports for Info Pages
+import AffidavitOfMarriageInfo from "./pages/AffidavitOfMarriageInfo";
+import AffidavitOfResidenceInfo from "./pages/AffidavitOfResidenceInfo";
+import LLCOperatingAgreementInfo from "./pages/LLCOperatingAgreementInfo";
+import SpecialPowerOfAttorneyInfo from "./pages/SpecialPowerOfAttorneyInfo";
+import GeneralPowerOfAttorneyInfo from "./pages/GeneralPowerOfAttorneyInfo";
+import LeaseAgreementInfo from "./pages/LeaseAgreementInfo";
+import LeaseRenewalInfo from "./pages/LeaseRenewalInfo";
+import LeaseTerminationInfo from "./pages/LeaseTerminationInfo";
+import CondominiumLeaseInfo from "./pages/CondominiumLeaseInfo";
+import RentIncreaseInfo from "./pages/RentIncreaseInfo";
+import SubleaseInfo from "./pages/SubleaseInfo";
+import LeaseAmendmentInfo from "./pages/LeaseAmendmentInfo";
+import CommercialLeaseInfo from "./pages/CommercialLeaseInfo";
+import TripleNetLeaseInfo from "./pages/TripleNetLeaseInfo";
+import CorporateBylawsInfo from "./pages/CorporateBylawsInfo";
+import BuySellAgreementInfo from "./pages/BuySellAgreementInfo";
+import MutualNDAInfo from "./pages/MutualNDAInfo";
+import BusinessPlanInfo from "./pages/BusinessPlanInfo";
+import ConfidentialInformationInfo from "./pages/ConfidentialInformationInfo";
+import NonCircumventionInfo from "./pages/NonCircumventionInfo";
+import CopyrightPermissionInfo from "./pages/CopyrightPermissionInfo";
+import LicenseAgreementInfo from "./pages/LicenseAgreementInfo";
+import ManufacturingLicenseInfo from "./pages/ManufacturingLicenseInfo";
+import MusicLicenseInfo from "./pages/MusicLicenseInfo";
+import ChildCareAuthorizationInfo from "./pages/ChildCareAuthorizationInfo";
+import DivorceSettlementAgreementInfo from "./pages/DivorceSettlementAgreementInfo";
+import GeneralContractInfo from "./pages/GeneralContractInfo";
+import LivingWillInfo from "./pages/LivingWillInfo";
+import SaleAgreementInfo from "./pages/SaleAgreementInfo";
+import IndependentContractorInfo from "./pages/IndependentContractorInfo";
+import LoanAgreementInfo from "./pages/LoanAgreementInfo";
+import GiftAffidavitInfo from "./pages/GiftAffidavitInfo";
+import FinancialSupportAffidavitInfo from "./pages/FinancialSupportAffidavitInfo";
+import ServicesContractInfo from "./pages/ServicesContractInfo";
+import OfficeSpaceLeaseInfo from "./pages/OfficeSpaceLeaseInfo";
+import StorageSpaceLeaseInfo from "./pages/StorageSpaceLeaseInfo";
+import PatentAssignmentInfo from "./pages/PatentAssignmentInfo";
+import RoyaltyAgreementInfo from "./pages/RoyaltyAgreementInfo";
+import BillboardLeaseInfo from "./pages/BillboardLeaseInfo";
+import RestaurantLeaseInfo from "./pages/RestaurantLeaseInfo";
+import GasLeaseInfo from "./pages/GasLeaseInfo";
+import AccountingContractInfo from "./pages/AccountingContractInfo";
+import BusinessSaleAgreementInfo from "./pages/BusinessSaleContractInfo";
+import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo";
+import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo";
+import FranchiseAgreementInfo from "./pages/FranchiseAgreementInfo";
+import AdministrativeServicesAgreementInfo from "./pages/AdministrativeServicesAgreementInfo";
+import AdvertisingAgencyAgreementInfo from "./pages/AdvertisingAgencyAgreementInfo";
+import ITServiceAgreementInfo from "./pages/ITServiceAgreementInfo";
+import MergerAgreementInfo from "./pages/MergerAgreementInfo";
+import AssetPurchaseAgreementInfo from "./pages/AssetPurchaseAgreementInfo";
+import MarketingAgreementInfo from "./pages/MarketingAgreementInfo";
+import ContractExtensionAgreementInfo from "./pages/ContractExtensionAgreementInfo";
+import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreementInfo";
+import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo";
+import BarterAgreementInfo from "./pages/BarterAgreementInfo";
+
+// --- NEW IMPORTS (Fixed: removed missing SecurityAgreementInfo import) ---
+import MediationAgreementInfo from "./pages/MediationAgreementInfo";
+import MutualReleaseInfo from "./pages/MutualReleaseInfo";
+import LeaseSubordinationAgreementInfo from "./pages/LeaseSubordinationAgreementInfo";
+import MasterUseLicenseInfo from "./pages/MasterUseLicenseInfo";
+import FlooringServicesAgreementInfo from "./pages/FlooringServicesAgreementInfo";
+import CoSignerAgreementInfo from "./pages/CoSignerAgreementInfo";
+import CopyrightLicenseInfo from "./pages/CopyrightLicenseInfo";
+import CooperationAgreementInfo from "./pages/CooperationAgreementInfo";
+
+// Loading component
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
     <div className="h-16 w-16 animate-spin rounded-full border-4 border-rocket-blue-300 border-t-rocket-blue-600"></div>
@@ -107,17 +118,11 @@ const queryClient = new QueryClient({
   },
 });
 
-// Component to handle scrolling to top when route changes
 const ScrollToTop = () => {
   const location = useLocation();
-  
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location]);
-  
   return null;
 };
 
@@ -132,28 +137,43 @@ const App = () => {
             <ScrollToTop />
             <Suspense fallback={<PageLoader />}>
               <Routes>
+                {/* Core Pages */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<LandingPage />} />
                 <Route path="/documents" element={<Documents />} />
                 <Route path="/document-categories" element={<DocumentCategories />} />
                 <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
                 <Route path="/documents/:id" element={<Documents />} />
-                <Route path="/contact-lawyer" element={<ContactLawyer />} />
+                <Route path="/make-documents" element={<Documents />} />
+                <Route path="/make-documents/:id" element={<Documents />} />
+                
+                {/* Auth & User */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/user-dashboard" element={<UserDashboard />} />
+                <Route path="/sso-callback" element={<SSOCallback />} />
+                
+                {/* Admin */}
                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/sso-callback" element={<SSOCallback />} />
+                
+                {/* Services */}
+                <Route path="/contact-lawyer" element={<ContactLawyer />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/start-a-business" element={<StartABusiness />} />
+                <Route path="/ask-legal-advice" element={<AskLegalAdvice />} />
+                <Route path="/ask-lawyer" element={<AskALawyer />} />
+
+                {/* Educational / Static */}
                 <Route path="/whats-an-llc" element={<WhatsAnLLC />} />
                 <Route path="/whats-a-corporation" element={<WhatsACorporation />} />
                 <Route path="/whats-an-s-corp" element={<WhatsAnSCorp />} />
-                <Route path="/ask-legal-advice" element={<AskLegalAdvice />} />
-                <Route path="/ask-lawyer" element={<AskALawyer />} />
+
+                {/* --- DOCUMENT ROUTES --- */}
                 <Route path="/affidavit-of-marriage-info" element={<AffidavitOfMarriageInfo />} />
                 <Route path="/affidavit-of-residence-info" element={<AffidavitOfResidenceInfo />} />
                 <Route path="/llc-operating-agreement-info" element={<LLCOperatingAgreementInfo />} />
@@ -175,8 +195,11 @@ const App = () => {
                 <Route path="/corporate-bylaws-form" element={<Documents />} />
                 <Route path="/buy-sell-agreement-info" element={<BuySellAgreementInfo />} />
                 <Route path="/buy-sell-agreement-form" element={<Documents />} />
+                <Route path="/business-agreement-info" element={<BuySellAgreementInfo />} />
                 <Route path="/mutual-nda-info" element={<MutualNDAInfo />} />
                 <Route path="/mutual-nda-form" element={<Documents />} />
+                <Route path="/nda-info" element={<MutualNDAInfo />} />
+                <Route path="/nda-form" element={<Documents />} />
                 <Route path="/business-plan-info" element={<BusinessPlanInfo />} />
                 <Route path="/business-plan-form" element={<Documents />} />
                 <Route path="/confidential-information-info" element={<ConfidentialInformationInfo />} />
@@ -217,14 +240,6 @@ const App = () => {
                 <Route path="/lease-termination-letter" element={<Documents />} />
                 <Route path="/late-rent-payment-agreement" element={<Documents />} />
                 <Route path="/non-disturbance-agreement" element={<Documents />} />
-                <Route path="/business-agreement-info" element={<BuySellAgreementInfo />} />
-                <Route path="/nda-info" element={<MutualNDAInfo />} />
-                <Route path="/nda-form" element={<Documents />} />
-                <Route path="/make-documents" element={<Documents />} />
-                <Route path="/make-documents/:id" element={<Documents />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="*" element={<NotFound />} />
                 <Route path="/accounting-contract-info" element={<AccountingContractInfo />} />
                 <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
                 <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
@@ -240,6 +255,46 @@ const App = () => {
                 <Route path="/product-distribution-agreement-info" element={<ProductDistributionAgreementInfo />} />
                 <Route path="/referral-fee-agreement-info" element={<ReferralFeeAgreementInfo />} />
                 <Route path="/barter-agreement-info" element={<BarterAgreementInfo />} />
+
+                {/* --- NEW DOCUMENT ROUTES --- */}
+                
+                {/* Security Agreement */}
+                {/* Security Agreement */}
+                <Route path="/security-agreement-info" element={<Documents />} />
+                <Route path="/security-agreement-form" element={<Documents />} />
+                {/* Mediation Agreement */}
+                <Route path="/mediation-agreement-info" element={<MediationAgreementInfo />} />
+                <Route path="/mediation-agreement-form" element={<Documents />} />
+
+                {/* Mutual Release */}
+                <Route path="/mutual-release-info" element={<MutualReleaseInfo />} />
+                <Route path="/mutual-release-form" element={<Documents />} />
+
+                {/* Lease Subordination */}
+                <Route path="/lease-subordination-agreement-info" element={<LeaseSubordinationAgreementInfo />} />
+                <Route path="/lease-subordination-agreement-form" element={<Documents />} />
+
+                {/* Master Use License */}
+                <Route path="/master-use-license-info" element={<MasterUseLicenseInfo />} />
+                <Route path="/master-use-license-form" element={<Documents />} />
+
+                {/* Flooring Services */}
+                <Route path="/flooring-services-agreement-info" element={<FlooringServicesAgreementInfo />} />
+                <Route path="/flooring-services-agreement-form" element={<Documents />} />
+
+                {/* Co-Signer Agreement */}
+                <Route path="/co-signer-agreement-info" element={<CoSignerAgreementInfo />} />
+                <Route path="/co-signer-agreement-form" element={<Documents />} />
+
+                {/* Copyright License */}
+                <Route path="/copyright-license-info" element={<CopyrightLicenseInfo />} />
+                <Route path="/copyright-license-form" element={<Documents />} />
+
+                {/* Cooperation Agreement */}
+                <Route path="/cooperation-agreement-info" element={<CooperationAgreementInfo />} />
+                <Route path="/cooperation-agreement-form" element={<Documents />} />
+
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
           </BrowserRouter>

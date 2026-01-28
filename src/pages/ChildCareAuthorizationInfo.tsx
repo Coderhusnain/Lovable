@@ -160,14 +160,14 @@ const ChildCareAuthorizationInfo = () => {
             </p>
           </section>
 
-          {/* Legal Gram Section */}
+          {/* Legalgram Section */}
           <section className="bg-bright-orange-50 p-6 rounded-xl">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
               <Scale className="w-6 h-6 mr-2 text-bright-orange-500" />
-              Draft Your Child Care Authorization for Free with Legal Gram
+              Draft Your Child Care Authorization for Free with Legalgram
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              At Legal Gram, we make it easy to create a free Child Care Authorization Form online. Our customizable template allows you to:
+              At Legalgram, we make it easy to create a free Child Care Authorization Form online. Our customizable template allows you to:
             </p>
             <ul className="text-gray-700 space-y-2 ml-4 mb-6">
               <li>• Specify dates of authorization</li>
@@ -188,7 +188,7 @@ const ChildCareAuthorizationInfo = () => {
             </div>
             
             <p className="text-center text-lg font-semibold text-gray-800 mt-4">
-              Protect your child's care with confidence—create your Child Care Authorization Form for free today at Legal Gram.
+              Protect your child's care with confidence—create your Child Care Authorization Form for free today at Legalgram.
             </p>
           </section>
 

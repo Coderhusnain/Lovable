@@ -108,7 +108,7 @@ const DivorceSettlementAgreementInfo = () => {
               How to Create a Divorce Settlement Agreement for Free
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              With Legal Gram, you can easily draft a Divorce Settlement Agreement online by following a few simple steps:
+              With Legalgram, you can easily draft a Divorce Settlement Agreement online by following a few simple steps:
             </p>
 
             <div className="space-y-6">
@@ -136,7 +136,7 @@ const DivorceSettlementAgreementInfo = () => {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="text-lg font-semibold mb-2 text-gray-900">4. Distribute Copies</h3>
                 <p className="text-gray-700">
-                  Each spouse should retain a signed copy. If signed online, copies are securely stored in your Legal Gram account and can be downloaded or shared when needed.
+                  Each spouse should retain a signed copy. If signed online, copies are securely stored in your Legalgram account and can be downloaded or shared when needed.
                 </p>
               </div>
             </div>
@@ -197,7 +197,7 @@ const DivorceSettlementAgreementInfo = () => {
               <div className="border-l-4 border-bright-orange-500 pl-6">
                 <h3 className="text-lg font-semibold mb-2 text-gray-900">✅ Do I need a lawyer to create a Divorce Settlement Agreement?</h3>
                 <p className="text-gray-700">
-                  Not necessarily. If both parties agree on all terms, you can draft a Divorce Settlement Agreement without a lawyer using a trusted platform like Legal Gram. However, legal advice may be helpful in complex situations, especially where high-value assets or children are involved.
+                  Not necessarily. If both parties agree on all terms, you can draft a Divorce Settlement Agreement without a lawyer using a trusted platform like Legalgram. However, legal advice may be helpful in complex situations, especially where high-value assets or children are involved.
                 </p>
               </div>
 
@@ -217,18 +217,18 @@ const DivorceSettlementAgreementInfo = () => {
             </div>
           </section>
 
-          {/* Legal Gram Section */}
+          {/* Legalgram Section */}
           <section className="bg-bright-orange-50 p-6 rounded-xl">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
               <Scale className="w-6 h-6 mr-2 text-bright-orange-500" />
               Create Your Divorce Settlement Agreement Today
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">
-              Whether you're filing for an uncontested divorce or just starting negotiations, Legal Gram makes it simple to create a Divorce Settlement Agreement for free. Our platform ensures your form is state-compliant, easy to edit, and ready to sign when you are.
+              Whether you're filing for an uncontested divorce or just starting negotiations, Legalgram makes it simple to create a Divorce Settlement Agreement for free. Our platform ensures your form is state-compliant, easy to edit, and ready to sign when you are.
             </p>
             
             <div className="bg-white p-4 rounded-lg mb-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Why Use Legal Gram?</h3>
+              <h3 className="text-xl font-semibold mb-4 text-gray-900">Why Use Legalgram?</h3>
               <ul className="text-gray-700 space-y-2 ml-4">
                 <li>• Step-by-step guidance for every section</li>
                 <li>• Secure online signature tools</li>

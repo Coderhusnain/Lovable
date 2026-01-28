@@ -1,3 +1,4 @@
+// Removed duplicate FormWizard component and its React import — keeping the main component below which imports React once.
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";

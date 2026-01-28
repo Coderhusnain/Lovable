@@ -10,7 +10,7 @@ const CTASection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">
-              Join millions who trust Legal Gram
+              Join millions who trust Legalgram
             </h2>
             <p className="text-lg text-black mb-6">
               Get access to all our legal documents, attorney advice, and more with a monthly membership.
@@ -64,7 +64,7 @@ const CTASection = () => {
             <div className="space-y-6">
               <div className="border-l-4 border-[#F18F01] pl-4">
                 <p className="text-white italic mb-4">
-                  "Legal Gram made creating my LLC so easy. The step-by-step process and customer service were excellent!"
+                  "Legalgram made creating my LLC so easy. The step-by-step process and customer service were excellent!"
                 </p>
                 <p className="font-medium text-white">— Michael T., Small Business Owner</p>
               </div>

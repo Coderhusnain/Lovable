@@ -1,3 +1,4 @@
+// Removed duplicate lightweight FormWizard component to avoid duplicate imports and identifiers.
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

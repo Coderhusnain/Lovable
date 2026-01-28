@@ -173,7 +173,7 @@ const SpecialPowerOfAttorneyInfo = () => {
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
               <h3 className="font-semibold text-green-900 mb-2">Simple 4-Step Process:</h3>
               <p className="text-green-800">
-                With Legal Gram, creating your Special Power of Attorney is simple, cost-effective, and can be completed entirely online.
+                With Legalgram, creating your Special Power of Attorney is simple, cost-effective, and can be completed entirely online.
               </p>
             </div>
 
@@ -289,7 +289,7 @@ const SpecialPowerOfAttorneyInfo = () => {
               </div>
 
               <div className="bg-green-50 rounded-lg p-4">
-                <h4 className="font-semibold text-green-900 mb-2">Legal Gram Solution</h4>
+                <h4 className="font-semibold text-green-900 mb-2">Legalgram Solution</h4>
                 <p className="text-green-800 text-sm mb-2">Create documents for free</p>
                 <p className="text-green-700 text-xs">Premium members get up to 40% off legal fees if attorney services are needed</p>
               </div>
@@ -299,7 +299,7 @@ const SpecialPowerOfAttorneyInfo = () => {
               <h4 className="font-semibold text-blue-900 mb-2">Do I Need a Lawyer?</h4>
               <p className="text-blue-800 text-sm">
                 While Special PoAs are generally easy to draft, legal advice may be beneficial for complex circumstances. 
-                With Legal Gram Premium, you get access to experienced attorneys who can review, answer questions, or help customize your PoA.
+                With Legalgram Premium, you get access to experienced attorneys who can review, answer questions, or help customize your PoA.
               </p>
             </div>
           </section>
@@ -328,10 +328,10 @@ const SpecialPowerOfAttorneyInfo = () => {
 
           {/* Getting Started Section */}
           <section>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">Start Your Special Power of Attorney with Legal Gram</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">Start Your Special Power of Attorney with Legalgram</h2>
             
             <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-              <h3 className="font-semibold text-green-900 mb-2">Why Choose Legal Gram?</h3>
+              <h3 className="font-semibold text-green-900 mb-2">Why Choose Legalgram?</h3>
               <div className="grid md:grid-cols-2 gap-4 text-green-800">
                 <ul className="space-y-1">
                   <li>• Draft custom documents for free</li>

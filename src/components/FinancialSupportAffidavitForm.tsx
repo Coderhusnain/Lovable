@@ -609,7 +609,7 @@ const FinancialSupportAffidavitForm = () => {
     yPosition += 10;
     doc.text("additional assistance with special situations or circumstances, use", 20, yPosition);
     yPosition += 10;
-    doc.text("Legal Gram's Find A Lawyer search engine to find a lawyer in your area", 20, yPosition);
+    doc.text("Legalgram's Find A Lawyer search engine to find a lawyer in your area", 20, yPosition);
     yPosition += 10;
     doc.text("to assist you in this matter.", 20, yPosition);
     

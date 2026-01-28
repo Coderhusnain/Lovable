@@ -368,7 +368,7 @@ const WarehouseLeaseForm = () => {
     currentY += 5;
 
     addText('Additional Assistance', 12, true);
-    addText('If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.');
+    addText('If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.');
 
     // Save the PDF
     doc.save('warehouse-lease-agreement.pdf');

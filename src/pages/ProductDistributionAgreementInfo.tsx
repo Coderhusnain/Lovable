@@ -142,7 +142,7 @@ const ProductDistributionAgreementInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <DollarSign className="w-5 h-5 mr-2 text-indigo-600" />
-                Why Use a Product Distribution Agreement on Legal Gram?
+                Why Use a Product Distribution Agreement on Legalgram?
               </CardTitle>
             </CardHeader>
             <CardContent>

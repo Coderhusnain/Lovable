@@ -80,7 +80,7 @@ const NDAInfo = () => {
               </li>
             </ul>
             <p className="text-gray-700 mt-4">
-              Legal Gram offers the best Non-Disclosure Agreement templates tailored for US law and designed to be used across industries, from startups and agencies to tech companies and freelancers.
+              Legalgram offers the best Non-Disclosure Agreement templates tailored for US law and designed to be used across industries, from startups and agencies to tech companies and freelancers.
             </p>
           </CardContent>
         </Card>
@@ -273,10 +273,10 @@ const NDAInfo = () => {
         <Card className="bg-blue-50 border-blue-200">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl text-blue-900">
-              Create Your NDA for Free with Legal Gram
+              Create Your NDA for Free with Legalgram
             </CardTitle>
             <CardDescription className="text-blue-700">
-              At Legal Gram, you can draft a Non-Disclosure Agreement for free using our easy, step-by-step builder. Whether you're hiring a freelancer, pitching an idea, or sharing sensitive data with a third party, our NDA templates for US businesses ensure your information stays secure and your legal bases are covered.
+              At Legalgram, you can draft a Non-Disclosure Agreement for free using our easy, step-by-step builder. Whether you're hiring a freelancer, pitching an idea, or sharing sensitive data with a third party, our NDA templates for US businesses ensure your information stays secure and your legal bases are covered.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
@@ -289,7 +289,7 @@ const NDAInfo = () => {
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             <p className="text-sm text-blue-600 mt-4">
-              Get started today and protect your business's confidential data with the best Non-Disclosure Agreement. Available now—only on Legal Gram.
+              Get started today and protect your business's confidential data with the best Non-Disclosure Agreement. Available now—only on Legalgram.
             </p>
           </CardContent>
         </Card>

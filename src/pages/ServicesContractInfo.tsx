@@ -305,7 +305,7 @@ const ServicesContractInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <DollarSign className="w-5 h-5" />
-                Why Choose Legal Gram for Your Service Contracts?
+                Why Choose Legalgram for Your Service Contracts?
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -383,7 +383,7 @@ const ServicesContractInfo = () => {
               <div className="text-center space-y-4">
                 <h3 className="text-xl font-semibold">Ready to Create Your Services Contract?</h3>
                 <p className="text-muted-foreground">
-                  Protect your business relationship with the right legal framework. Start your Contract for Services drafting for free with Legal Gram.
+                  Protect your business relationship with the right legal framework. Start your Contract for Services drafting for free with Legalgram.
                 </p>
               </div>
             </CardContent>

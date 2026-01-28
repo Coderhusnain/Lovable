@@ -133,7 +133,7 @@ const FranchiseAgreementInfo = () => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="text-gray-700">
                   <p className="mb-1">Download a professional, customizable Franchise Purchase Agreement ideal for franchisors and franchisees.</p>
-                  <p className="text-sm text-gray-500">Free download | Draft Franchise Purchase Agreement | Franchise Purchase Agreement on Legal Gram</p>
+                  <p className="text-sm text-gray-500">Free download | Draft Franchise Purchase Agreement | Franchise Purchase Agreement on Legalgram</p>
                 </div>
 
                 <div className="flex items-center gap-3">

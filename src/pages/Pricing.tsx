@@ -119,7 +119,7 @@ const Pricing = () => {
   return (
     <Layout>
       <Helmet>
-        <title>Legal Plans & Pricing | Legal Gram</title>
+        <title>Legal Plans & Pricing | Legalgram</title>
         <meta 
           name="description" 
           content="Choose the perfect legal plan for your needs. Get unlimited access to legal documents, attorney consultations, and more." 

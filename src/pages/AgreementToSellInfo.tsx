@@ -316,7 +316,7 @@ const AgreementToSellInfo = () => {
           <CardContent className="space-y-4">
             <div>
               <h4 className="font-semibold mb-2">Can I create my own Agreement to Sell without hiring a lawyer?</h4>
-              <p className="text-gray-600">Yes, using platforms like Legal Gram, you can draft an Agreement to Sell that complies with state laws and meets the specific needs of your transaction.</p>
+              <p className="text-gray-600">Yes, using platforms like Legalgram, you can draft an Agreement to Sell that complies with state laws and meets the specific needs of your transaction.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">Is notarization mandatory?</h4>

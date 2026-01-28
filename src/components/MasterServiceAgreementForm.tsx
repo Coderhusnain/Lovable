@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   agreementDate: string;
@@ -111,13 +112,381 @@ export default function MasterServiceAgreementForm() {
     witness2SignatureDate: "",
   });
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState<boolean>(false);
+  const steps = [
+    {
+      label: "Step 1",
+      content: (
+        <>
+          <Label>Agreement Date</Label>
+          <Input
+            name="agreementDate"
+            value={formData.agreementDate}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, agreementDate: e.target.value }))
+            }
+            required
+          />
+          <Label>Place (city)</Label>
+          <Input
+            name="place"
+            value={formData.place}
+            onChange={(e) => setFormData((prev) => ({ ...prev, place: e.target.value }))}
+            required
+          />
+          <Label>Master Full Name</Label>
+          <Input
+            name="masterName"
+            value={formData.masterName}
+            onChange={(e) => setFormData((prev) => ({ ...prev, masterName: e.target.value }))}
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.agreementDate && formData.place && formData.masterName),
+    },
+    {
+      label: "Step 2",
+      content: (
+        <>
+          <Label>Master Address</Label>
+          <Input
+            name="masterAddress"
+            value={formData.masterAddress}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, masterAddress: e.target.value }))
+            }
+            required
+          />
+          <Label>Servant Full Name</Label>
+          <Input
+            name="servantName"
+            value={formData.servantName}
+            onChange={(e) => setFormData((prev) => ({ ...prev, servantName: e.target.value }))}
+            required
+          />
+          <Label>Servant (son/daughter/wife of)</Label>
+          <Input
+            name="servantRelationOf"
+            value={formData.servantRelationOf}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, servantRelationOf: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.masterAddress && formData.servantName && formData.servantRelationOf),
+    },
+    {
+      label: "Step 3",
+      content: (
+        <>
+          <Label>Servant Address</Label>
+          <Input
+            name="servantAddress"
+            value={formData.servantAddress}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, servantAddress: e.target.value }))
+            }
+            required
+          />
+          <Label>Employment Place Address</Label>
+          <Input
+            name="employmentPlaceAddress"
+            value={formData.employmentPlaceAddress}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, employmentPlaceAddress: e.target.value }))
+            }
+            required
+          />
+          <Label>Duties (each bullet on new line)</Label>
+          <textarea
+            name="dutiesList"
+            value={formData.dutiesList}
+            onChange={(e) => setFormData((prev) => ({ ...prev, dutiesList: e.target.value }))}
+            required
+            className="w-full p-2 border rounded"
+            rows={6}
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.servantAddress && formData.employmentPlaceAddress && formData.dutiesList),
+    },
+    {
+      label: "Step 4",
+      content: (
+        <>
+          <Label>Code of Conduct (each bullet on new line)</Label>
+          <textarea
+            name="conductList"
+            value={formData.conductList}
+            onChange={(e) => setFormData((prev) => ({ ...prev, conductList: e.target.value }))}
+            required
+            className="w-full p-2 border rounded"
+            rows={8}
+          />
+          <Label>Monthly Amount (e.g., US $300)</Label>
+          <Input
+            name="remunerationAmount"
+            value={formData.remunerationAmount}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, remunerationAmount: e.target.value }))
+            }
+            required
+          />
+          <Label>Payment Day (e.g., 5th)</Label>
+          <Input
+            name="remunerationDay"
+            value={formData.remunerationDay}
+            onChange={(e) => setFormData((prev) => ({ ...prev, remunerationDay: e.target.value }))}
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.conductList && formData.remunerationAmount && formData.remunerationDay),
+    },
+    {
+      label: "Step 5",
+      content: (
+        <>
+          <Label>Remuneration Details</Label>
+          <textarea
+            name="remunerationDetails"
+            value={formData.remunerationDetails}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, remunerationDetails: e.target.value }))
+            }
+            required
+            className="w-full p-2 border rounded"
+            rows={3}
+          />
+          <Label>Prohibited Conduct (each bullet on new line)</Label>
+          <textarea
+            name="prohibitedList"
+            value={formData.prohibitedList}
+            onChange={(e) => setFormData((prev) => ({ ...prev, prohibitedList: e.target.value }))}
+            required
+            className="w-full p-2 border rounded"
+            rows={6}
+          />
+          <Label>Term (years)</Label>
+          <Input
+            name="termYears"
+            value={formData.termYears}
+            onChange={(e) => setFormData((prev) => ({ ...prev, termYears: e.target.value }))}
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.remunerationDetails && formData.prohibitedList && formData.termYears),
+    },
+    {
+      label: "Step 6",
+      content: (
+        <>
+          <Label>Termination Notice Days</Label>
+          <Input
+            name="terminationNoticeDays"
+            value={formData.terminationNoticeDays}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, terminationNoticeDays: e.target.value }))
+            }
+            required
+          />
+          <Label>Immediate Termination Note</Label>
+          <textarea
+            name="immediateTerminationNote"
+            value={formData.immediateTerminationNote}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, immediateTerminationNote: e.target.value }))
+            }
+            required
+            className="w-full p-2 border rounded"
+            rows={3}
+          />
+          <Label>Miscellaneous Notes</Label>
+          <textarea
+            name="miscNotes"
+            value={formData.miscNotes}
+            onChange={(e) => setFormData((prev) => ({ ...prev, miscNotes: e.target.value }))}
+            required
+            className="w-full p-2 border rounded"
+            rows={4}
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.terminationNoticeDays && formData.immediateTerminationNote && formData.miscNotes),
+    },
+    {
+      label: "Step 7",
+      content: (
+        <>
+          <Label>Governing Law (state)</Label>
+          <Input
+            name="governingLaw"
+            value={formData.governingLaw}
+            onChange={(e) => setFormData((prev) => ({ ...prev, governingLaw: e.target.value }))}
+            required
+          />
+          <Label>Acknowledgment Text</Label>
+          <textarea
+            name="acknowledgmentNote"
+            value={formData.acknowledgmentNote}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, acknowledgmentNote: e.target.value }))
+            }
+            required
+            className="w-full p-2 border rounded"
+            rows={3}
+          />
+        </>
+      ),
+      validate: () => Boolean(formData.governingLaw && formData.acknowledgmentNote),
+    },
+    {
+      label: "Step 8",
+      content: (
+        <>
+          <Label>Master - Name</Label>
+          <Input
+            name="masterSignName"
+            value={formData.masterSignName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, masterSignName: e.target.value }))
+            }
+            required
+          />
+          <Label>Master - CNIC No.</Label>
+          <Input
+            name="masterSignCNIC"
+            value={formData.masterSignCNIC}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, masterSignCNIC: e.target.value }))
+            }
+            required
+          />
+          <Label>Master - Date</Label>
+          <Input
+            name="masterSignDate"
+            value={formData.masterSignDate}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, masterSignDate: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.masterSignName && formData.masterSignCNIC && formData.masterSignDate),
+    },
+    {
+      label: "Step 9",
+      content: (
+        <>
+          <Label>Servant - Name</Label>
+          <Input
+            name="servantSignName"
+            value={formData.servantSignName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, servantSignName: e.target.value }))
+            }
+            required
+          />
+          <Label>Servant - CNIC No.</Label>
+          <Input
+            name="servantSignCNIC"
+            value={formData.servantSignCNIC}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, servantSignCNIC: e.target.value }))
+            }
+            required
+          />
+          <Label>Servant - Date</Label>
+          <Input
+            name="servantSignDate"
+            value={formData.servantSignDate}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, servantSignDate: e.target.value }))
+            }
+            required
+          />
+        </>
+      ),
+      validate: () =>
+        Boolean(formData.servantSignName && formData.servantSignCNIC && formData.servantSignDate),
+    },
+    {
+      label: "Step 10",
+      content: (
+        <>
+          <Label>Witness 1 - Name</Label>
+          <Input
+            name="witness1Name"
+            value={formData.witness1Name}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness1Name: e.target.value }))
+            }
+          />
+          <Label>Witness 1 - CNIC No.</Label>
+          <Input
+            name="witness1CNIC"
+            value={formData.witness1CNIC}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness1CNIC: e.target.value }))
+            }
+          />
+          <Label>Witness 1 - Date</Label>
+          <Input
+            name="witness1SignatureDate"
+            value={formData.witness1SignatureDate}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness1SignatureDate: e.target.value }))
+            }
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+    {
+      label: "Step 11",
+      content: (
+        <>
+          <Label>Witness 2 - Name</Label>
+          <Input
+            name="witness2Name"
+            value={formData.witness2Name}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness2Name: e.target.value }))
+            }
+          />
+          <Label>Witness 2 - CNIC No.</Label>
+          <Input
+            name="witness2CNIC"
+            value={formData.witness2CNIC}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness2CNIC: e.target.value }))
+            }
+          />
+          <Label>Witness 2 - Date</Label>
+          <Input
+            name="witness2SignatureDate"
+            value={formData.witness2SignatureDate}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, witness2SignatureDate: e.target.value }))
+            }
+          />
+        </>
+      ),
+      validate: () => true,
+    },
+  ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -239,161 +608,16 @@ export default function MasterServiceAgreementForm() {
 
     // Save file
     doc.save("Master_Service_Agreement.pdf");
-    setPdfGenerated(true);
-    setStep(7);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Header & Parties</h3>
-              <Label>Agreement Date</Label>
-              <Input name="agreementDate" value={formData.agreementDate} onChange={handleChange} />
-              <Label>Place (city)</Label>
-              <Input name="place" value={formData.place} onChange={handleChange} />
-              <Label>Master Full Name</Label>
-              <Input name="masterName" value={formData.masterName} onChange={handleChange} />
-              <Label>Master Address</Label>
-              <Input name="masterAddress" value={formData.masterAddress} onChange={handleChange} />
-              <Label>Servant Full Name</Label>
-              <Input name="servantName" value={formData.servantName} onChange={handleChange} />
-              <Label>Servant (son/daughter/wife of)</Label>
-              <Input name="servantRelationOf" value={formData.servantRelationOf} onChange={handleChange} />
-              <Label>Servant Address</Label>
-              <Input name="servantAddress" value={formData.servantAddress} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Employment Place & Duties</h3>
-              <Label>Place of Employment Address</Label>
-              <Input name="employmentPlaceAddress" value={formData.employmentPlaceAddress} onChange={handleChange} />
-              <Label>Duties (each bullet on new line)</Label>
-              <textarea name="dutiesList" value={formData.dutiesList} onChange={handleChange} className="w-full p-2 border rounded" rows={6} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Code of Conduct</h3>
-              <Label>Code of Conduct (each bullet on new line)</Label>
-              <textarea name="conductList" value={formData.conductList} onChange={handleChange} className="w-full p-2 border rounded" rows={8} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Remuneration & Prohibited Conduct</h3>
-              <Label>Monthly Amount (e.g., US $300)</Label>
-              <Input name="remunerationAmount" value={formData.remunerationAmount} onChange={handleChange} />
-              <Label>Payment Day (e.g., 5th)</Label>
-              <Input name="remunerationDay" value={formData.remunerationDay} onChange={handleChange} />
-              <Label>Remuneration Details</Label>
-              <textarea name="remunerationDetails" value={formData.remunerationDetails} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Prohibited Conduct (each bullet on new line)</Label>
-              <textarea name="prohibitedList" value={formData.prohibitedList} onChange={handleChange} className="w-full p-2 border rounded" rows={6} />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Duration, Termination & Misc</h3>
-              <Label>Term (years)</Label>
-              <Input name="termYears" value={formData.termYears} onChange={handleChange} />
-              <Label>Termination Notice Days</Label>
-              <Input name="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={handleChange} />
-              <Label>Immediate Termination Note</Label>
-              <textarea name="immediateTerminationNote" value={formData.immediateTerminationNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Miscellaneous Notes</Label>
-              <textarea name="miscNotes" value={formData.miscNotes} onChange={handleChange} className="w-full p-2 border rounded" rows={4} />
-              <Label>Governing Law (state)</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-              <Label>Acknowledgment Text</Label>
-              <textarea name="acknowledgmentNote" value={formData.acknowledgmentNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatures & Witnesses</h3>
-              <Label>Master - Name</Label>
-              <Input name="masterSignName" value={formData.masterSignName} onChange={handleChange} />
-              <Label>Master - CNIC No.</Label>
-              <Input name="masterSignCNIC" value={formData.masterSignCNIC} onChange={handleChange} />
-              <Label>Master - Date</Label>
-              <Input name="masterSignDate" value={formData.masterSignDate} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Servant - Name</Label>
-              <Input name="servantSignName" value={formData.servantSignName} onChange={handleChange} />
-              <Label>Servant - CNIC No.</Label>
-              <Input name="servantSignCNIC" value={formData.servantSignCNIC} onChange={handleChange} />
-              <Label>Servant - Date</Label>
-              <Input name="servantSignDate" value={formData.servantSignDate} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Witness 1 - Name</Label>
-              <Input name="witness1Name" value={formData.witness1Name} onChange={handleChange} />
-              <Label>Witness 1 - CNIC No.</Label>
-              <Input name="witness1CNIC" value={formData.witness1CNIC} onChange={handleChange} />
-              <Label>Witness 1 - Date</Label>
-              <Input name="witness1SignatureDate" value={formData.witness1SignatureDate} onChange={handleChange} />
-
-              <Label>Witness 2 - Name</Label>
-              <Input name="witness2Name" value={formData.witness2Name} onChange={handleChange} />
-              <Label>Witness 2 - CNIC No.</Label>
-              <Input name="witness2CNIC" value={formData.witness2CNIC} onChange={handleChange} />
-              <Label>Witness 2 - Date</Label>
-              <Input name="witness2SignatureDate" value={formData.witness2SignatureDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-
-        {step < 6 ? (
-          <Button onClick={() => setStep((s) => Math.min(6, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {step === 7 && pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold pt-5">Master Service Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
+      <FormWizard
+        steps={steps}
+        onFinish={() => {
+          generatePDF();
+        }}
+      />
     </div>
   );
 }

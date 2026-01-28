@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { FormWizard } from "./FormWizard";
 
 interface FormData {
   effectiveDate: string;
@@ -231,148 +232,126 @@ export default function AdministrativeServicesContractForm() {
     setPdfGenerated(true);
   };
 
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-            <div className="mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/administrative-services-contract-info')}
-              className="text-orange-600 border-orange-200  hover:border-orange-300"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Learn More About Administrative Services Contract
-            </Button>
-          </div>
-              <h3 className="font-semibold">Parties & Effective Date</h3>
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
+  const steps = [
+    {
+      label: "Parties & Effective Date",
+      content: (
+        <>
+          <Label>Effective Date</Label>
+          <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
 
-              <hr />
-              <h4 className="font-medium">Recipient</h4>
-              <Label>Name</Label>
-              <Input name="recipientName" value={formData.recipientName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="recipientAddress" value={formData.recipientAddress} onChange={handleChange} />
+          <hr />
+          <h4 className="font-medium">Recipient</h4>
+          <Label>Name</Label>
+          <Input name="recipientName" value={formData.recipientName} onChange={handleChange} />
+          <Label>Address</Label>
+          <Textarea name="recipientAddress" value={formData.recipientAddress} onChange={handleChange} />
 
-              <hr />
-              <h4 className="font-medium">Service Provider</h4>
-              <Label>Name</Label>
-              <Input name="providerName" value={formData.providerName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="providerAddress" value={formData.providerAddress} onChange={handleChange} />
+          <hr />
+          <h4 className="font-medium">Service Provider</h4>
+          <Label>Name</Label>
+          <Input name="providerName" value={formData.providerName} onChange={handleChange} />
+          <Label>Address</Label>
+          <Textarea name="providerAddress" value={formData.providerAddress} onChange={handleChange} />
 
-              <Label>Services Start Date</Label>
-              <Input name="servicesStartDate" value={formData.servicesStartDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services & Payment</h3>
-              <Label>Services Description</Label>
-              <Textarea name="servicesDescription" value={formData.servicesDescription} onChange={handleChange} />
+          <Label>Services Start Date</Label>
+          <Input name="servicesStartDate" value={formData.servicesStartDate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.effectiveDate && formData.recipientName && formData.providerName),
+    },
+    {
+      label: "Services & Payment",
+      content: (
+        <>
+          <Label>Services Description</Label>
+          <Textarea name="servicesDescription" value={formData.servicesDescription} onChange={handleChange} />
 
-              <Label>Standard Fee Rate ($/hour)</Label>
-              <Input name="standardFeeRate" value={formData.standardFeeRate} onChange={handleChange} />
+          <Label>Standard Fee Rate ($/hour)</Label>
+          <Input name="standardFeeRate" value={formData.standardFeeRate} onChange={handleChange} />
 
-              <Label>Additional Service Rate ($/hour)</Label>
-              <Input name="additionalServiceRate" value={formData.additionalServiceRate} onChange={handleChange} />
+          <Label>Additional Service Rate ($/hour)</Label>
+          <Input name="additionalServiceRate" value={formData.additionalServiceRate} onChange={handleChange} />
 
-              <Label>Billing / Invoicing Schedule</Label>
-              <Textarea name="billingSchedule" value={formData.billingSchedule} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Term, Termination & Obligations</h3>
-              <Label>Contract End Date</Label>
-              <Input name="contractEndDate" value={formData.contractEndDate} onChange={handleChange} />
+          <Label>Billing / Invoicing Schedule</Label>
+          <Textarea name="billingSchedule" value={formData.billingSchedule} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.servicesDescription && formData.standardFeeRate && formData.additionalServiceRate),
+    },
+    {
+      label: "Term, Termination & Obligations",
+      content: (
+        <>
+          <Label>Contract End Date</Label>
+          <Input name="contractEndDate" value={formData.contractEndDate} onChange={handleChange} />
 
-              <Label>Early Termination Notice (days)</Label>
-              <Input name="earlyTerminationDays" value={formData.earlyTerminationDays} onChange={handleChange} />
+          <Label>Early Termination Notice (days)</Label>
+          <Input name="earlyTerminationDays" value={formData.earlyTerminationDays} onChange={handleChange} />
 
-              <Label>Cure Period (days) for Defaults</Label>
-              <Input name="curePeriodDays" value={formData.curePeriodDays} onChange={handleChange} />
+          <Label>Cure Period (days) for Defaults</Label>
+          <Input name="curePeriodDays" value={formData.curePeriodDays} onChange={handleChange} />
 
-              <Label>Mutual Obligations (optional)</Label>
-              <Textarea name="servicesDescription" value={formData.servicesDescription} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Legal Clauses & Signatures</h3>
-              <Label>Confidentiality Clause</Label>
-              <Textarea name="confidentialityClause" value={formData.confidentialityClause} onChange={handleChange} />
+          <Label>Mutual Obligations (optional)</Label>
+          <Textarea name="servicesDescription" value={formData.servicesDescription} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.contractEndDate && formData.earlyTerminationDays && formData.curePeriodDays),
+    },
+    {
+      label: "Legal Clauses & Signatures",
+      content: (
+        <>
+          <Label>Confidentiality Clause</Label>
+          <Textarea name="confidentialityClause" value={formData.confidentialityClause} onChange={handleChange} />
 
-              <Label>Insurance Note</Label>
-              <Textarea name="insuranceNote" value={formData.insuranceNote} onChange={handleChange} />
+          <Label>Insurance Note</Label>
+          <Textarea name="insuranceNote" value={formData.insuranceNote} onChange={handleChange} />
 
-              <Label>Indemnification Clause</Label>
-              <Textarea name="indemnificationClause" value={formData.indemnificationClause} onChange={handleChange} />
+          <Label>Indemnification Clause</Label>
+          <Textarea name="indemnificationClause" value={formData.indemnificationClause} onChange={handleChange} />
 
-              <Label>Arbitration Terms</Label>
-              <Textarea name="arbitrationTerms" value={formData.arbitrationTerms} onChange={handleChange} />
+          <Label>Arbitration Terms</Label>
+          <Textarea name="arbitrationTerms" value={formData.arbitrationTerms} onChange={handleChange} />
 
-              <Label>Attorneys' Fees Clause</Label>
-              <Input name="attorneysFeesClause" value={formData.attorneysFeesClause} onChange={handleChange} />
+          <Label>Attorneys' Fees Clause</Label>
+          <Input name="attorneysFeesClause" value={formData.attorneysFeesClause} onChange={handleChange} />
 
-              <Label>Limitation of Liability</Label>
-              <Textarea name="limitationOfLiability" value={formData.limitationOfLiability} onChange={handleChange} />
+          <Label>Limitation of Liability</Label>
+          <Textarea name="limitationOfLiability" value={formData.limitationOfLiability} onChange={handleChange} />
 
-              <Label>Governing Law / State</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
+          <Label>Governing Law / State</Label>
+          <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
 
-              <Label>Notices Address / Contact</Label>
-              <Textarea name="noticesAddress" value={formData.noticesAddress} onChange={handleChange} />
+          <Label>Notices Address / Contact</Label>
+          <Textarea name="noticesAddress" value={formData.noticesAddress} onChange={handleChange} />
 
-              <hr />
-              <h4 className="font-medium">Signatures</h4>
-              <Label>Recipient - Signatory Name</Label>
-              <Input name="signRecipientName" value={formData.signRecipientName} onChange={handleChange} />
-              <Label>Recipient - Date</Label>
-              <Input name="signRecipientDate" value={formData.signRecipientDate} onChange={handleChange} />
+          <hr />
+          <h4 className="font-medium">Signatures</h4>
+          <Label>Recipient - Signatory Name</Label>
+          <Input name="signRecipientName" value={formData.signRecipientName} onChange={handleChange} />
+          <Label>Recipient - Date</Label>
+          <Input name="signRecipientDate" value={formData.signRecipientDate} onChange={handleChange} />
 
-              <Label>Service Provider - Signatory Name</Label>
-              <Input name="signProviderName" value={formData.signProviderName} onChange={handleChange} />
-              <Label>Service Provider - Date</Label>
-              <Input name="signProviderDate" value={formData.signProviderDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
+          <Label>Service Provider - Signatory Name</Label>
+          <Input name="signProviderName" value={formData.signProviderName} onChange={handleChange} />
+          <Label>Service Provider - Date</Label>
+          <Input name="signProviderDate" value={formData.signProviderDate} onChange={handleChange} />
+        </>
+      ),
+      validate: () => Boolean(formData.confidentialityClause && formData.insuranceNote && formData.indemnificationClause),
+    },
+  ];
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 4 ? (
-          <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
+      <FormWizard
+        steps={steps}
+        onFinish={() => {
+          generatePDF();
+          alert("Form submitted!");
+        }}
+      />
 
       {pdfGenerated && (
         <Card>

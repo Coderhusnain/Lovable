@@ -2,35 +2,22 @@ import { useState, memo, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Mock testimonial data
+// Client-provided testimonial data (avatars removed, ratings kept)
 const testimonials = [
   {
-    text: "Legal Gram made it easy to create the legal documents I needed for my business. Their customer service team was also very helpful when I had questions.",
-    author: "Jennifer M.",
-    position: "Small Business Owner",
-    image: "https://randomuser.me/api/portraits/women/32.jpg",
+    author: "Jennifer M., Small Business Owner",
+    text: "Legalgram made the process of creating essential legal documents for my business simple and stress-free...",
     rating: 5
   },
   {
-    text: "I needed to create my will but didn't want to spend thousands on an attorney. Legal Gram guided me through the process step by step. Highly recommend!",
-    author: "Marcus T.",
-    position: "Teacher",
-    image: "https://randomuser.me/api/portraits/men/45.jpg",
+    author: "Marcus T., Teacher",
+    text: "I needed to create my will but didn’t want to spend thousands on legal fees. Legalgram guided me...",
     rating: 5
   },
   {
-    text: "The attorney advice I received through Legal Gram answered all my questions and saved me from making a costly mistake with my rental property.",
-    author: "Sarah K.",
-    position: "Property Owner",
-    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    author: "Sarah L., Family Protection",
+    text: "Creating my will was fast, simple, and completely stress-free. The clear guidance of Legalgram...",
     rating: 5
-  },
-  {
-    text: "Setting up my LLC was straightforward and affordable. The detailed instructions helped me understand each step of the process.",
-    author: "David L.",
-    position: "Entrepreneur",
-    image: "https://randomuser.me/api/portraits/men/22.jpg",
-    rating: 4
   }
 ];
 
@@ -49,20 +36,12 @@ const TestimonialCard = memo(({
       style={{ display: isActive ? 'block' : 'none' }}
     >
       <Quote className="h-10 w-10 text-black mb-4 transform -scale-x-100" />
-      
       <p className="text-lg text-black italic mb-6 leading-relaxed">
         "{testimonial.text}"
       </p>
-      
       <div className="flex items-center gap-4">
-        <img 
-          src={testimonial.image} 
-          alt={testimonial.author} 
-          className="h-14 w-14 rounded-full object-cover border-2 border-black"
-        />
         <div>
           <h4 className="font-semibold text-black">{testimonial.author}</h4>
-          <p className="text-black text-sm">{testimonial.position}</p>
           <div className="flex mt-1">
             {[...Array(5)].map((_, i) => (
               <Star 
@@ -118,7 +97,7 @@ const Testimonials = () => {
             Trusted by Millions
           </h2>
           <p className="text-lg text-black max-w-3xl mx-auto">
-            See what our customers have to say about their experience with Legal Gram.
+            See what our customers have to say about their experience with Legalgram.
           </p>
         </div>
         

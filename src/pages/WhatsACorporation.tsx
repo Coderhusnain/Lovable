@@ -503,7 +503,7 @@ const WhatsACorporation = () => {
               Ready to Form Your Corporation?
             </h2>
             <p className="text-xl text-white mb-8">
-              Let Legal Gram handle the complex paperwork while you focus on building your business. Our experienced team will guide you through every step of corporate formation.
+              Let Legalgram handle the complex paperwork while you focus on building your business. Our experienced team will guide you through every step of corporate formation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 

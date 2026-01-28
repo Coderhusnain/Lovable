@@ -417,7 +417,7 @@ const StartABusiness = () => {
       <section className="py-16 bg-white">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
-            Why Choose Legal Gram?
+            Why Choose Legalgram?
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -668,7 +668,7 @@ const StartABusiness = () => {
               {
                 name: "Sarah Johnson",
                 business: "Tech Startup",
-                text: "Legal Gram made forming my LLC incredibly easy. The whole process took less than 30 minutes!",
+                text: "Legalgram made forming my LLC incredibly easy. The whole process took less than 30 minutes!",
                 rating: 5
               },
               {

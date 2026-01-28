@@ -38,13 +38,10 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center text-rocket-blue-500 font-bold">
-                LG
-              </div>
-              <span className="text-xl font-bold text-white">Legal Gram</span>
+              <span className="text-xl font-bold text-white">Legalgram</span>
             </div>
             <p className="text-rocket-gray-200">
-              Mission Statement.. To provide quality legal services at affordable prices
+              Legalgram provides quality legal services and documents at affordable prices for everyone.
             </p>
           </div>
 
@@ -144,7 +141,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-rocket-blue-400 dark:border-rocket-blue-800 text-center text-rocket-gray-200">
-          <p>&copy; 2020 - 2026 Legal Gram. All rights reserved.</p>
+          <p>&copy; 2020 Legalgram. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -1,3 +1,5 @@
+// Removed FormWizard-based component to avoid duplicate React import and duplicate default export;
+// the detailed ContractForSaleForm implementation below is used instead.
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";

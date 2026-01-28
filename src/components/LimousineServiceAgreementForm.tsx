@@ -1,13 +1,13 @@
+// Helper to get all countries
+const getAllCountries = (): CountryData[] => CountryStateAPI.getAllCountries();
+
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { FormWizard } from "./FormWizard";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -18,9 +18,14 @@ import { generateGuidePDF } from "@/utils/generateGuidePDF";
 interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
 interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }
 
-const getAllCountries = (): CountryData[] => CountryStateAPI.getAllCountries();
+
 const getStatesByCountry = (countryId: number): StateData[] => CountryStateAPI.getStatesOfCountry(countryId);
-const getStateName = (countryId: string, stateId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); if (!c) return stateId; const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId); return s?.name || stateId; };
+const getStateName = (countryId: string, stateId: string): string => {
+  const c = getAllCountries().find(c => c.id.toString() === countryId);
+  if (!c) return stateId;
+  const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId);
+  return s?.name || stateId;
+};
 
 interface FormData {
   country: string; state: string; effectiveDate: string;
@@ -37,11 +42,8 @@ interface FormData {
   additionalNotes: string;
 }
 
+
 const LimousineServiceAgreementForm = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     country: '', state: '', effectiveDate: '',
     clientName: '', clientAddress: '', clientPhone: '', clientEmail: '',
@@ -56,6 +58,8 @@ const LimousineServiceAgreementForm = () => {
     servicesIncluded: [],
     additionalNotes: ''
   });
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   const serviceOptions = [
     "Professional chauffeur", "Red carpet service", "Champagne/beverages",
@@ -82,20 +86,6 @@ const LimousineServiceAgreementForm = () => {
     if (!country) return [];
     return getStatesByCountry(parseInt(country.split(':')[0])).map(s => `${s.id}:${s.name}`);
   };
-
-  const canAdvance = (): boolean => {
-    switch (currentStep) {
-      case 1: return !!(formData.country && formData.state && formData.effectiveDate);
-      case 2: return !!(formData.clientName && formData.providerName);
-      case 3: return !!(formData.pickupDate && formData.pickupLocation && formData.vehicleType);
-      case 4: return !!(formData.totalCost);
-      case 5: return true;
-      default: return false;
-    }
-  };
-
-  const handleNext = () => { if (!canAdvance()) return; if (currentStep < 5) setCurrentStep(currentStep + 1); else setIsComplete(true); };
-  const handleBack = () => { if (currentStep > 1) setCurrentStep(currentStep - 1); };
 
   const generatePDF = () => {
     setIsGeneratingPDF(true);
@@ -173,105 +163,13 @@ const LimousineServiceAgreementForm = () => {
     finally { setIsGeneratingPDF(false); }
   };
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Country</Label><Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getAllCountries().map((c) => (<SelectItem key={c.id} value={`${c.id}:${c.name}`}>{c.name}</SelectItem>))}</SelectContent></Select></div>
-              <div><Label>State/Province</Label><Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getStatesForCountry(formData.country).map((s) => (<SelectItem key={s} value={s}>{s.split(':')[1]}</SelectItem>))}</SelectContent></Select></div>
-            </div>
-            <div><Label>Agreement Date</Label><Input type="date" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} /></div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Client Information</h3>
-              <div><Label>Client Name *</Label><Input value={formData.clientName} onChange={(e) => handleInputChange('clientName', e.target.value)} /></div>
-              <div><Label>Address</Label><Textarea value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.clientPhone} onChange={(e) => handleInputChange('clientPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.clientEmail} onChange={(e) => handleInputChange('clientEmail', e.target.value)} /></div>
-              </div>
-            </div>
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Limousine Service Provider</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Provider/Driver Name *</Label><Input value={formData.providerName} onChange={(e) => handleInputChange('providerName', e.target.value)} /></div>
-                <div><Label>Company Name</Label><Input value={formData.providerCompany} onChange={(e) => handleInputChange('providerCompany', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.providerAddress} onChange={(e) => handleInputChange('providerAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.providerPhone} onChange={(e) => handleInputChange('providerPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.providerEmail} onChange={(e) => handleInputChange('providerEmail', e.target.value)} /></div>
-              </div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Service Date *</Label><Input type="date" value={formData.pickupDate} onChange={(e) => handleInputChange('pickupDate', e.target.value)} /></div>
-              <div><Label>Pickup Time</Label><Input type="time" value={formData.pickupTime} onChange={(e) => handleInputChange('pickupTime', e.target.value)} /></div>
-            </div>
-            <div><Label>Pickup Location *</Label><Textarea placeholder="Full address" value={formData.pickupLocation} onChange={(e) => handleInputChange('pickupLocation', e.target.value)} /></div>
-            <div><Label>Dropoff Location</Label><Textarea placeholder="Full address (leave blank if same as pickup)" value={formData.dropoffLocation} onChange={(e) => handleInputChange('dropoffLocation', e.target.value)} /></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Event Type</Label><Select value={formData.eventType} onValueChange={(v) => handleInputChange('eventType', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent><SelectItem value="Wedding">Wedding</SelectItem><SelectItem value="Prom">Prom</SelectItem><SelectItem value="Bachelor/Bachelorette">Bachelor/Bachelorette</SelectItem><SelectItem value="Airport Transfer">Airport Transfer</SelectItem><SelectItem value="Corporate Event">Corporate Event</SelectItem><SelectItem value="Night Out">Night Out</SelectItem><SelectItem value="Anniversary">Anniversary</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent></Select></div>
-              <div><Label>Hours Required</Label><Input type="number" value={formData.hoursRequired} onChange={(e) => handleInputChange('hoursRequired', e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Vehicle Type *</Label><Select value={formData.vehicleType} onValueChange={(v) => handleInputChange('vehicleType', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent><SelectItem value="Sedan">Sedan</SelectItem><SelectItem value="SUV">SUV</SelectItem><SelectItem value="Stretch Limousine">Stretch Limousine</SelectItem><SelectItem value="SUV Limousine">SUV Limousine</SelectItem><SelectItem value="Party Bus">Party Bus</SelectItem><SelectItem value="Luxury Van">Luxury Van</SelectItem></SelectContent></Select></div>
-              <div><Label>Passenger Capacity</Label><Input type="number" value={formData.vehicleCapacity} onChange={(e) => handleInputChange('vehicleCapacity', e.target.value)} /></div>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Services Included</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                {serviceOptions.map((service) => (
-                  <div key={service} className="flex items-center space-x-2">
-                    <Checkbox id={service} checked={formData.servicesIncluded.includes(service)} onCheckedChange={() => handleServiceToggle(service)} />
-                    <Label htmlFor={service} className="text-sm cursor-pointer">{service}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Total Cost ($) *</Label><Input type="number" value={formData.totalCost} onChange={(e) => handleInputChange('totalCost', e.target.value)} /></div>
-              <div><Label>Deposit Amount ($)</Label><Input type="number" value={formData.depositAmount} onChange={(e) => handleInputChange('depositAmount', e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Deposit Due Date</Label><Input type="date" value={formData.depositDueDate} onChange={(e) => handleInputChange('depositDueDate', e.target.value)} /></div>
-              <div><Label>Overtime Rate ($/hour)</Label><Input type="number" value={formData.overtimeRate} onChange={(e) => handleInputChange('overtimeRate', e.target.value)} /></div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="gratuity" checked={formData.gratuityIncluded} onCheckedChange={(c) => handleInputChange('gratuityIncluded', !!c)} />
-              <Label htmlFor="gratuity">Gratuity included in total cost</Label>
-            </div>
-            <div><Label>Additional Notes</Label><Textarea value={formData.additionalNotes} onChange={(e) => handleInputChange('additionalNotes', e.target.value)} /></div>
-          </div>
-        );
-      case 5:
-        return <UserInfoStep onBack={handleBack} onGenerate={() => setIsComplete(true)} documentType="Limousine Service Agreement" isGenerating={isGeneratingPDF} />;
-      default: return null;
-    }
-  };
-
   if (isComplete) {
     return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2"><CheckCircle className="h-6 w-6" />Limousine Agreement Ready</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg p-6">
+          <div className="flex items-center gap-2 text-lg font-semibold"><span>Limousine Agreement Ready</span></div>
+        </div>
+        <div className="p-6 border rounded-b-lg bg-white">
           <div className="border rounded-lg p-4 text-black">
             <h3 className="font-semibold mb-4">Summary</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -279,28 +177,243 @@ const LimousineServiceAgreementForm = () => {
               <div><p><strong>Vehicle:</strong> {formData.vehicleType}</p><p><strong>Event:</strong> {formData.eventType}</p><p><strong>Total:</strong> ${formData.totalCost}</p></div>
             </div>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-between p-6 bg-gray-50">
-          <Button variant="outline" onClick={() => setIsComplete(false)}><ArrowLeft className="mr-2 h-4 w-4" />Edit</Button>
-          <Button onClick={generatePDF} disabled={isGeneratingPDF} className="bg-gray-800 hover:bg-gray-900">{isGeneratingPDF ? "Generating..." : "Generate PDF"}<FileText className="ml-2 h-4 w-4" /></Button>
-        </CardFooter>
-      </Card>
+          <div className="flex justify-between mt-6">
+            <button type="button" className="btn btn-outline" onClick={() => setIsComplete(false)}>Edit</button>
+            <button type="button" className="btn btn-primary" onClick={generatePDF} disabled={isGeneratingPDF}>{isGeneratingPDF ? "Generating..." : "Generate PDF"}</button>
+          </div>
+        </div>
+      </div>
     );
   }
 
-  const stepTitles = ["", "Location", "Parties", "Service Details", "Payment", "Your Info"];
+  // Wizard steps, max 3 fields per step, using label/content for FormWizard
+  const steps = [
+    {
+      label: "Location",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Country</Label>
+            <Select value={formData.country} onValueChange={v => handleInputChange('country', v)}>
+              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectContent>{getAllCountries().map((c) => (<SelectItem key={c.id} value={`${c.id}:${c.name}`}>{c.name}</SelectItem>))}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>State/Province</Label>
+            <Select value={formData.state} onValueChange={v => handleInputChange('state', v)} disabled={!formData.country}>
+              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectContent>{getStatesForCountry(formData.country).map((s) => (<SelectItem key={s} value={s}>{s.split(':')[1]}</SelectItem>))}</SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Agreement Date</Label>
+            <Input type="date" value={formData.effectiveDate} onChange={e => handleInputChange('effectiveDate', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Client Info",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Client Name *</Label>
+            <Input value={formData.clientName} onChange={e => handleInputChange('clientName', e.target.value)} />
+          </div>
+          <div>
+            <Label>Client Address</Label>
+            <Textarea value={formData.clientAddress} onChange={e => handleInputChange('clientAddress', e.target.value)} />
+          </div>
+          <div>
+            <Label>Client Phone</Label>
+            <Input value={formData.clientPhone} onChange={e => handleInputChange('clientPhone', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Client Contact",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Client Email</Label>
+            <Input type="email" value={formData.clientEmail} onChange={e => handleInputChange('clientEmail', e.target.value)} />
+          </div>
+          <div>
+            <Label>Provider/Driver Name *</Label>
+            <Input value={formData.providerName} onChange={e => handleInputChange('providerName', e.target.value)} />
+          </div>
+          <div>
+            <Label>Provider Company Name</Label>
+            <Input value={formData.providerCompany} onChange={e => handleInputChange('providerCompany', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Provider Contact",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Provider Address</Label>
+            <Textarea value={formData.providerAddress} onChange={e => handleInputChange('providerAddress', e.target.value)} />
+          </div>
+          <div>
+            <Label>Provider Phone</Label>
+            <Input value={formData.providerPhone} onChange={e => handleInputChange('providerPhone', e.target.value)} />
+          </div>
+          <div>
+            <Label>Provider Email</Label>
+            <Input type="email" value={formData.providerEmail} onChange={e => handleInputChange('providerEmail', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Service Details",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Service Date *</Label>
+            <Input type="date" value={formData.pickupDate} onChange={e => handleInputChange('pickupDate', e.target.value)} />
+          </div>
+          <div>
+            <Label>Pickup Time</Label>
+            <Input type="time" value={formData.pickupTime} onChange={e => handleInputChange('pickupTime', e.target.value)} />
+          </div>
+          <div>
+            <Label>Pickup Location *</Label>
+            <Textarea placeholder="Full address" value={formData.pickupLocation} onChange={e => handleInputChange('pickupLocation', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Dropoff & Event",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Dropoff Location</Label>
+            <Textarea placeholder="Full address (leave blank if same as pickup)" value={formData.dropoffLocation} onChange={e => handleInputChange('dropoffLocation', e.target.value)} />
+          </div>
+          <div>
+            <Label>Event Type</Label>
+            <Select value={formData.eventType} onValueChange={v => handleInputChange('eventType', v)}>
+              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Wedding">Wedding</SelectItem>
+                <SelectItem value="Prom">Prom</SelectItem>
+                <SelectItem value="Bachelor/Bachelorette">Bachelor/Bachelorette</SelectItem>
+                <SelectItem value="Airport Transfer">Airport Transfer</SelectItem>
+                <SelectItem value="Corporate Event">Corporate Event</SelectItem>
+                <SelectItem value="Night Out">Night Out</SelectItem>
+                <SelectItem value="Anniversary">Anniversary</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Hours Required</Label>
+            <Input type="number" value={formData.hoursRequired} onChange={e => handleInputChange('hoursRequired', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Vehicle",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Vehicle Type *</Label>
+            <Select value={formData.vehicleType} onValueChange={v => handleInputChange('vehicleType', v)}>
+              <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Sedan">Sedan</SelectItem>
+                <SelectItem value="SUV">SUV</SelectItem>
+                <SelectItem value="Stretch Limousine">Stretch Limousine</SelectItem>
+                <SelectItem value="SUV Limousine">SUV Limousine</SelectItem>
+                <SelectItem value="Party Bus">Party Bus</SelectItem>
+                <SelectItem value="Luxury Van">Luxury Van</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Passenger Capacity</Label>
+            <Input type="number" value={formData.vehicleCapacity} onChange={e => handleInputChange('vehicleCapacity', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Services & Payment",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Services Included</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {serviceOptions.map((service) => (
+                <div key={service} className="flex items-center space-x-2">
+                  <Checkbox id={service} checked={formData.servicesIncluded.includes(service)} onCheckedChange={() => handleServiceToggle(service)} />
+                  <Label htmlFor={service} className="text-sm cursor-pointer">{service}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <Label>Total Cost ($) *</Label>
+            <Input type="number" value={formData.totalCost} onChange={e => handleInputChange('totalCost', e.target.value)} />
+          </div>
+          <div>
+            <Label>Deposit Amount ($)</Label>
+            <Input type="number" value={formData.depositAmount} onChange={e => handleInputChange('depositAmount', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Payment Details",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Deposit Due Date</Label>
+            <Input type="date" value={formData.depositDueDate} onChange={e => handleInputChange('depositDueDate', e.target.value)} />
+          </div>
+          <div>
+            <Label>Overtime Rate ($/hour)</Label>
+            <Input type="number" value={formData.overtimeRate} onChange={e => handleInputChange('overtimeRate', e.target.value)} />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="gratuity" checked={formData.gratuityIncluded} onCheckedChange={c => handleInputChange('gratuityIncluded', !!c)} />
+            <Label htmlFor="gratuity">Gratuity included in total cost</Label>
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Additional Notes",
+      content: (
+        <div className="space-y-4">
+          <div>
+            <Label>Additional Notes</Label>
+            <Textarea value={formData.additionalNotes} onChange={e => handleInputChange('additionalNotes', e.target.value)} />
+          </div>
+        </div>
+      )
+    },
+    {
+      label: "Your Info",
+      content: (
+        <UserInfoStep onBack={() => {}} onGenerate={() => setIsComplete(true)} documentType="Limousine Service Agreement" isGenerating={isGeneratingPDF} />
+      )
+    }
+  ];
+
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-        <CardTitle>Limousine Service Agreement</CardTitle>
-        <CardDescription className="text-gray-300">Step {currentStep} of 5: {stepTitles[currentStep]}</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">{renderStep()}</CardContent>
-      <CardFooter className="flex justify-between p-6 bg-gray-50">
-        <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-        <Button onClick={handleNext} disabled={!canAdvance()} className="bg-gray-800 hover:bg-gray-900">{currentStep === 5 ? "Complete" : "Next"}{currentStep === 5 ? <Send className="ml-2 h-4 w-4" /> : <ArrowRight className="ml-2 h-4 w-4" />}</Button>
-      </CardFooter>
-    </Card>
+    <FormWizard
+      steps={steps}
+      onFinish={() => setIsComplete(true)}
+    />
   );
 };
 

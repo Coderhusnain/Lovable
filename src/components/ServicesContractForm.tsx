@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FormWizard } from "./FormWizard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,55 +121,52 @@ interface ContractData {
   state: string;
 }
 
+const initialFormData: ContractData = {
+  contractDate: "",
+  partyACompanyName: "",
+  partyAAddress: "",
+  partyBCompanyName: "",
+  partyBAddress: "",
+  serviceDescription: "",
+  projectDescription: "",
+  resourceProvisionTime: "",
+  probationPeriod: "",
+  paymentMethod: "",
+  manDayRate: "",
+  manHourRate: "",
+  invoicingFrequency: "monthly",
+  paymentTerms: "",
+  resourceRequestTime: "20",
+  liquidatedDamagePercent: "10",
+  terminationPeriod: "90",
+  governingLaw: "",
+  disputeResolution: "arbitration",
+  mediationPeriod: "30",
+  clientAddress: "",
+  clientEmail: "",
+  clientPhone: "",
+  partyASignatoryName: "",
+  partyASignatoryTitle: "",
+  partyBSignatoryName: "",
+  partyBSignatoryTitle: "",
+  witness1Name: "",
+  witness1CNIC: "",
+  witness2Name: "",
+  witness2CNIC: "",
+  witness3Name: "",
+  witness3CNIC: "",
+  witness4Name: "",
+  witness4CNIC: "",
+  country: "",
+  state: ""
+};
+
 const ServicesContractForm = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [formData, setFormData] = useState<ContractData>(initialFormData);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  
-  const [formData, setFormData] = useState<ContractData>({
-    contractDate: "",
-    partyACompanyName: "",
-    partyAAddress: "",
-    partyBCompanyName: "",
-    partyBAddress: "",
-    serviceDescription: "",
-    projectDescription: "",
-    resourceProvisionTime: "",
-    probationPeriod: "",
-    paymentMethod: "",
-    manDayRate: "",
-    manHourRate: "",
-    invoicingFrequency: "monthly",
-    paymentTerms: "",
-    resourceRequestTime: "20",
-    liquidatedDamagePercent: "10",
-    terminationPeriod: "90",
-    governingLaw: "",
-    disputeResolution: "arbitration",
-    mediationPeriod: "30",
-    clientAddress: "",
-    clientEmail: "",
-    clientPhone: "",
-    partyASignatoryName: "",
-    partyASignatoryTitle: "",
-    partyBSignatoryName: "",
-    partyBSignatoryTitle: "",
-    witness1Name: "",
-    witness1CNIC: "",
-    witness2Name: "",
-    witness2CNIC: "",
-    witness3Name: "",
-    witness3CNIC: "",
-    witness4Name: "",
-    witness4CNIC: "",
-    country: "",
-    state: ""
-  });
 
   const updateFormData = (field: keyof ContractData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Reset state when country changes
     if (field === 'country') {
       setFormData(prev => ({ ...prev, state: '' }));
     }
@@ -182,16 +180,123 @@ const ServicesContractForm = () => {
     return states.map(state => `${state.id}:${state.name}`);
   };
 
-  const generatePDF = async () => {
+  // Split fields into steps of max 3 fields per step
+  const fields: Array<{ name: keyof ContractData; label: string; type?: string; options?: any[]; }> = [
+    { name: "contractDate", label: "Contract Date", type: "date" },
+    { name: "partyACompanyName", label: "Party A Company Name" },
+    { name: "partyAAddress", label: "Party A Address" },
+    { name: "partyBCompanyName", label: "Party B Company Name" },
+    { name: "partyBAddress", label: "Party B Address" },
+    { name: "serviceDescription", label: "Service Description" },
+    { name: "projectDescription", label: "Project Description" },
+    { name: "resourceProvisionTime", label: "Resource Provision Time" },
+    { name: "probationPeriod", label: "Probation Period" },
+    { name: "paymentMethod", label: "Payment Method" },
+    { name: "manDayRate", label: "Man-Day Rate" },
+    { name: "manHourRate", label: "Man-Hour Rate" },
+    { name: "invoicingFrequency", label: "Invoicing Frequency" },
+    { name: "paymentTerms", label: "Payment Terms" },
+    { name: "resourceRequestTime", label: "Resource Request Time" },
+    { name: "liquidatedDamagePercent", label: "Liquidated Damage Percent" },
+    { name: "terminationPeriod", label: "Termination Period" },
+    { name: "governingLaw", label: "Governing Law" },
+    { name: "disputeResolution", label: "Dispute Resolution" },
+    { name: "mediationPeriod", label: "Mediation Period" },
+    { name: "clientAddress", label: "Client Address" },
+    { name: "clientEmail", label: "Client Email" },
+    { name: "clientPhone", label: "Client Phone" },
+    { name: "partyASignatoryName", label: "Party A Signatory Name" },
+    { name: "partyASignatoryTitle", label: "Party A Signatory Title" },
+    { name: "partyBSignatoryName", label: "Party B Signatory Name" },
+    { name: "partyBSignatoryTitle", label: "Party B Signatory Title" },
+    { name: "witness1Name", label: "Witness 1 Name" },
+    { name: "witness1CNIC", label: "Witness 1 CNIC" },
+    { name: "witness2Name", label: "Witness 2 Name" },
+    { name: "witness2CNIC", label: "Witness 2 CNIC" },
+    { name: "witness3Name", label: "Witness 3 Name" },
+    { name: "witness3CNIC", label: "Witness 3 CNIC" },
+    { name: "witness4Name", label: "Witness 4 Name" },
+    { name: "witness4CNIC", label: "Witness 4 CNIC" },
+    { name: "country", label: "Country" },
+    { name: "state", label: "State" },
+  ];
+
+  const steps = [];
+  for (let i = 0; i < fields.length; i += 3) {
+    steps.push({
+      label: `Step ${steps.length + 1}`,
+      content: (
+        <div className="space-y-4">
+          {fields.slice(i, i + 3).map((field) => {
+            if (field.name === "country") {
+              return (
+                <div key={field.name}>
+                  <label>{field.label}</label>
+                  <select
+                    value={formData.country}
+                    onChange={e => updateFormData("country", e.target.value)}
+                  >
+                    <option value="">Select country</option>
+                    {getAllCountries().map((country) => (
+                      <option key={country.id} value={`${country.id}:${country.name}`}>{country.name}</option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+            if (field.name === "state") {
+              return (
+                <div key={field.name}>
+                  <label>{field.label}</label>
+                  <select
+                    value={formData.state}
+                    onChange={e => updateFormData("state", e.target.value)}
+                    disabled={!formData.country}
+                  >
+                    <option value="">Select state</option>
+                    {getStatesForCountry(formData.country).map((state) => {
+                      const [id, name] = state.split(":");
+                      return <option key={id} value={state}>{name}</option>;
+                    })}
+                  </select>
+                </div>
+              );
+            }
+            if (field.type === "textarea") {
+              return (
+                <div key={field.name}>
+                  <label>{field.label}</label>
+                  <textarea
+                    value={formData[field.name] as string}
+                    onChange={e => updateFormData(field.name, e.target.value)}
+                  />
+                </div>
+              );
+            }
+            return (
+              <div key={field.name}>
+                <label>{field.label}</label>
+                <input
+                  type={field.type || "text"}
+                  value={formData[field.name] as string}
+                  onChange={e => updateFormData(field.name, e.target.value)}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )
+    });
+  }
+
+  // PDF generation logic moved to onFinish
+  const onFinish = async () => {
     setIsGeneratingPDF(true);
-    
     try {
       const doc = new jsPDF();
       let yPosition = 20;
       const pageHeight = doc.internal.pageSize.height;
       const margin = 20;
-      
-      // Helper function to add new page if needed
       const checkPageBreak = (requiredHeight: number) => {
         if (yPosition + requiredHeight > pageHeight - margin) {
           doc.addPage();
@@ -199,11 +304,11 @@ const ServicesContractForm = () => {
         }
       };
 
-      // Title
-      doc.setFontSize(16);
-      doc.setFont("helvetica", "bold");
-      doc.text("SERVICES CONTRACT", 105, yPosition, { align: "center" });
-      yPosition += 20;
+  // Title
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("SERVICES CONTRACT", 105, yPosition, { align: "center" });
+  yPosition += 20;
 
       // Contract introduction
       doc.setFontSize(12);
@@ -442,668 +547,20 @@ const ServicesContractForm = () => {
       doc.text(`CNIC: ${formData.witness4CNIC || ""}`, margin + 100, yPosition);
 
       // Save the PDF
+
       doc.save("services-contract.pdf");
-      toast.success("Services Contract generated successfully!");
     } catch (error) {
       console.error("Error generating PDF:", error);
-      toast.error("Error generating PDF. Please try again.");
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
-  const nextStep = () => {
-    if (currentStep < 7) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-xl font-semibold">Location & Contract Parties</h2>
-                <p className="text-sm text-muted-foreground">Select your location and enter information for both parties</p>
-              </div>
-              <Link to="/services-contract-info">
-                <Button variant="outline" size="sm" className="text-orange-600 border-orange-600 hover:bg-orange-50">
-                  <Info className="w-4 h-4 mr-2" />
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="country">Country</Label>
-                  <Select value={formData.country} onValueChange={(value) => updateFormData('country', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getAllCountries().map((country) => (
-                        <SelectItem key={country.id} value={`${country.id}:${country.name}`}>
-                          {country.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="state">State/Province</Label>
-                  <Select 
-                    value={formData.state} 
-                    onValueChange={(value) => updateFormData('state', value)}
-                    disabled={!formData.country}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state/province" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getStatesForCountry(formData.country).map((state) => {
-                        const [id, name] = state.split(':');
-                        return (
-                          <SelectItem key={id} value={state}>
-                            {name}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="contractDate">Contract Date</Label>
-                <Input
-                  id="contractDate"
-                  type="date"
-                  value={formData.contractDate}
-                  onChange={(e) => updateFormData("contractDate", e.target.value)}
-                />
-              </div>
-
-              <Separator />
-              
-              <div>
-                <h3 className="text-lg font-medium mb-4">Party A (Service Provider)</h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Label htmlFor="partyACompanyName">Company Name</Label>
-                    <Input
-                      id="partyACompanyName"
-                      value={formData.partyACompanyName}
-                      onChange={(e) => updateFormData("partyACompanyName", e.target.value)}
-                      placeholder="Service provider company name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="partyAAddress">Company Address</Label>
-                    <Textarea
-                      id="partyAAddress"
-                      value={formData.partyAAddress}
-                      onChange={(e) => updateFormData("partyAAddress", e.target.value)}
-                      placeholder="Complete address of service provider"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-              
-              <div>
-                <h3 className="text-lg font-medium mb-4">Party B (Client/Software House)</h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Label htmlFor="partyBCompanyName">Company Name</Label>
-                    <Input
-                      id="partyBCompanyName"
-                      value={formData.partyBCompanyName}
-                      onChange={(e) => updateFormData("partyBCompanyName", e.target.value)}
-                      placeholder="Client company name"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="partyBAddress">Company Address</Label>
-                    <Textarea
-                      id="partyBAddress"
-                      value={formData.partyBAddress}
-                      onChange={(e) => updateFormData("partyBAddress", e.target.value)}
-                      placeholder="Complete address of client"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold">Service Details</h2>
-              <p className="text-sm text-muted-foreground">Define the scope and nature of services</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="serviceDescription">Service Description</Label>
-                <Textarea
-                  id="serviceDescription"
-                  value={formData.serviceDescription}
-                  onChange={(e) => updateFormData("serviceDescription", e.target.value)}
-                  placeholder="Detailed description of services to be provided"
-                  rows={4}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="projectDescription">Project Description</Label>
-                <Textarea
-                  id="projectDescription"
-                  value={formData.projectDescription}
-                  onChange={(e) => updateFormData("projectDescription", e.target.value)}
-                  placeholder="Description of the specific project or ongoing work"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="resourceProvisionTime">Resource Provision Time</Label>
-                  <Input
-                    id="resourceProvisionTime"
-                    value={formData.resourceProvisionTime}
-                    onChange={(e) => updateFormData("resourceProvisionTime", e.target.value)}
-                    placeholder="e.g., 24 hours, 3 days"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="probationPeriod">Probation Period</Label>
-                  <Input
-                    id="probationPeriod"
-                    value={formData.probationPeriod}
-                    onChange={(e) => updateFormData("probationPeriod", e.target.value)}
-                    placeholder="e.g., 30 days, 3 months"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold">Payment Terms</h2>
-              <p className="text-sm text-muted-foreground">Define payment structure and terms</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="paymentMethod">Payment Method</Label>
-                <Input
-                  id="paymentMethod"
-                  value={formData.paymentMethod}
-                  onChange={(e) => updateFormData("paymentMethod", e.target.value)}
-                  placeholder="e.g., Bank transfer, Check, Wire transfer"
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="manDayRate">Man-Day Rate ($)</Label>
-                  <Input
-                    id="manDayRate"
-                    type="number"
-                    value={formData.manDayRate}
-                    onChange={(e) => updateFormData("manDayRate", e.target.value)}
-                    placeholder="Daily rate"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="manHourRate">Man-Hour Rate ($)</Label>
-                  <Input
-                    id="manHourRate"
-                    type="number"
-                    value={formData.manHourRate}
-                    onChange={(e) => updateFormData("manHourRate", e.target.value)}
-                    placeholder="Hourly rate"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="paymentTerms">Payment Terms</Label>
-                <Textarea
-                  id="paymentTerms"
-                  value={formData.paymentTerms}
-                  onChange={(e) => updateFormData("paymentTerms", e.target.value)}
-                  placeholder="e.g., Net 30 days, payment due within 15 days of invoice"
-                  rows={3}
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold">Timeline & Penalties</h2>
-              <p className="text-sm text-muted-foreground">Set timelines and penalty terms</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="resourceRequestTime">Resource Request Time (days)</Label>
-                  <Input
-                    id="resourceRequestTime"
-                    type="number"
-                    value={formData.resourceRequestTime}
-                    onChange={(e) => updateFormData("resourceRequestTime", e.target.value)}
-                    placeholder="20"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="liquidatedDamagePercent">Liquidated Damage (%)</Label>
-                  <Input
-                    id="liquidatedDamagePercent"
-                    type="number"
-                    value={formData.liquidatedDamagePercent}
-                    onChange={(e) => updateFormData("liquidatedDamagePercent", e.target.value)}
-                    placeholder="10"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="terminationPeriod">Termination Period (days)</Label>
-                  <Input
-                    id="terminationPeriod"
-                    type="number"
-                    value={formData.terminationPeriod}
-                    onChange={(e) => updateFormData("terminationPeriod", e.target.value)}
-                    placeholder="90"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="mediationPeriod">Mediation Period (days)</Label>
-                <Input
-                  id="mediationPeriod"
-                  type="number"
-                  value={formData.mediationPeriod}
-                  onChange={(e) => updateFormData("mediationPeriod", e.target.value)}
-                  placeholder="30"
-                />
-              </div>
-            </div>
-          </div>
-        );
-
-      case 5:
-        return (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold">Legal & Contact Information</h2>
-              <p className="text-sm text-muted-foreground">Legal jurisdiction and contact details</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="governingLaw">Governing Law</Label>
-                <Input
-                  id="governingLaw"
-                  value={formData.governingLaw}
-                  onChange={(e) => updateFormData("governingLaw", e.target.value)}
-                  placeholder="e.g., State of California, Pakistan"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="country">Country</Label>
-                  <Select value={formData.country} onValueChange={(value) => updateFormData('country', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getAllCountries().map((country) => (
-                        <SelectItem key={country.id} value={`${country.id}:${country.name}`}>
-                          {country.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="state">State/Province</Label>
-                  <Select 
-                    value={formData.state} 
-                    onValueChange={(value) => updateFormData('state', value)}
-                    disabled={!formData.country}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state/province" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getStatesForCountry(formData.country).map((state) => {
-                        const [id, name] = state.split(':');
-                        return (
-                          <SelectItem key={id} value={state}>
-                            {name}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="clientAddress">Client Contact Address</Label>
-                <Textarea
-                  id="clientAddress"
-                  value={formData.clientAddress}
-                  onChange={(e) => updateFormData("clientAddress", e.target.value)}
-                  placeholder="Address for notices and communications"
-                  rows={3}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="clientEmail">Client Email</Label>
-                  <Input
-                    id="clientEmail"
-                    type="email"
-                    value={formData.clientEmail}
-                    onChange={(e) => updateFormData("clientEmail", e.target.value)}
-                    placeholder="client@company.com"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="clientPhone">Client Phone</Label>
-                  <Input
-                    id="clientPhone"
-                    value={formData.clientPhone}
-                    onChange={(e) => updateFormData("clientPhone", e.target.value)}
-                    placeholder="+1-555-0123"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 6:
-        return (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold">Signatures & Witnesses</h2>
-              <p className="text-sm text-muted-foreground">Authorized signatories and witness information</p>
-            </div>
-            
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium mb-4">Authorized Signatories</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-2">Party A Representative</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="partyASignatoryName">Name</Label>
-                        <Input
-                          id="partyASignatoryName"
-                          value={formData.partyASignatoryName}
-                          onChange={(e) => updateFormData("partyASignatoryName", e.target.value)}
-                          placeholder="Signatory name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="partyASignatoryTitle">Title</Label>
-                        <Input
-                          id="partyASignatoryTitle"
-                          value={formData.partyASignatoryTitle}
-                          onChange={(e) => updateFormData("partyASignatoryTitle", e.target.value)}
-                          placeholder="e.g., CEO, Director"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Party B Representative</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="partyBSignatoryName">Name</Label>
-                        <Input
-                          id="partyBSignatoryName"
-                          value={formData.partyBSignatoryName}
-                          onChange={(e) => updateFormData("partyBSignatoryName", e.target.value)}
-                          placeholder="Signatory name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="partyBSignatoryTitle">Title</Label>
-                        <Input
-                          id="partyBSignatoryTitle"
-                          value={formData.partyBSignatoryTitle}
-                          onChange={(e) => updateFormData("partyBSignatoryTitle", e.target.value)}
-                          placeholder="e.g., CEO, Director"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-              
-              <div>
-                <h3 className="text-lg font-medium mb-4">Witnesses</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-2">Witness 1</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="witness1Name">Name</Label>
-                        <Input
-                          id="witness1Name"
-                          value={formData.witness1Name}
-                          onChange={(e) => updateFormData("witness1Name", e.target.value)}
-                          placeholder="Witness name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="witness1CNIC">CNIC</Label>
-                        <Input
-                          id="witness1CNIC"
-                          value={formData.witness1CNIC}
-                          onChange={(e) => updateFormData("witness1CNIC", e.target.value)}
-                          placeholder="CNIC number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Witness 2</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="witness2Name">Name</Label>
-                        <Input
-                          id="witness2Name"
-                          value={formData.witness2Name}
-                          onChange={(e) => updateFormData("witness2Name", e.target.value)}
-                          placeholder="Witness name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="witness2CNIC">CNIC</Label>
-                        <Input
-                          id="witness2CNIC"
-                          value={formData.witness2CNIC}
-                          onChange={(e) => updateFormData("witness2CNIC", e.target.value)}
-                          placeholder="CNIC number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Witness 3</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="witness3Name">Name</Label>
-                        <Input
-                          id="witness3Name"
-                          value={formData.witness3Name}
-                          onChange={(e) => updateFormData("witness3Name", e.target.value)}
-                          placeholder="Witness name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="witness3CNIC">CNIC</Label>
-                        <Input
-                          id="witness3CNIC"
-                          value={formData.witness3CNIC}
-                          onChange={(e) => updateFormData("witness3CNIC", e.target.value)}
-                          placeholder="CNIC number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Witness 4</h4>
-                    <div className="space-y-2">
-                      <div>
-                        <Label htmlFor="witness4Name">Name</Label>
-                        <Input
-                          id="witness4Name"
-                          value={formData.witness4Name}
-                          onChange={(e) => updateFormData("witness4Name", e.target.value)}
-                          placeholder="Witness name"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="witness4CNIC">CNIC</Label>
-                        <Input
-                          id="witness4CNIC"
-                          value={formData.witness4CNIC}
-                          onChange={(e) => updateFormData("witness4CNIC", e.target.value)}
-                          placeholder="CNIC number"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 7:
-        return (
-          <UserInfoStep
-            onBack={prevStep}
-            onGenerate={generatePDF}
-            documentType="Services Contract"
-            isGenerating={isGeneratingPDF}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-2xl">Services Contract</CardTitle>
-          <CardDescription>
-            Create a comprehensive services contract for software development and staff augmentation
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          {/* Progress indicator */}
-          <div className="flex justify-between items-center mb-8">
-            {[1, 2, 3, 4, 5, 6, 7].map((step) => (
-              <div key={step} className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    step <= currentStep
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {step < currentStep ? <CheckCircle className="w-4 h-4" /> : step}
-                </div>
-                {step < 7 && (
-                  <div
-                    className={`h-1 w-8 mx-2 ${
-                      step < currentStep ? "bg-primary" : "bg-muted"
-                    }`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-          {renderStepContent()}
-
-          {/* Navigation buttons - Hidden on step 7 (UserInfoStep) */}
-          {currentStep !== 7 && (
-            <div className="flex justify-between mt-8">
-              <Button
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                variant="outline"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous
-              </Button>
-
-              {currentStep < 6 ? (
-                <Button onClick={nextStep}>
-                  Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              ) : (
-                <Button onClick={nextStep}>
-                  Continue to Generate PDF
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <h2 className="text-2xl font-bold mb-4">Services Contract</h2>
+      <FormWizard steps={steps} onFinish={onFinish} />
+      {isGeneratingPDF && <div>Generating PDF...</div>}
     </div>
   );
 };
