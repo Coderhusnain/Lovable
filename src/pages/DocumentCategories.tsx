@@ -70,7 +70,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// Document definitions - matching EXACT IDs from Documents.tsx
+// --- DOCUMENT DEFINITIONS ---
+
 const familyProtectionDocs = [
   { id: "InformationForPoliceReportForm", title: "Information For Police Report", description: "Create a comprehensive information for police report agreement", icon: ShieldAlert, category: "Legal Reports" },
   { id: "AffidavitOfSurvivorshipForm", title: "Affidavit Of Survivorship", description: "Create a comprehensive affidavit for survivorship", icon: Scroll, category: "Affidavits" },
@@ -116,148 +117,48 @@ const businessSecurityDocs = [
   { id: "AccountingContractForm", title: "Accounting Contract", description: "Create a comprehensive accounting contract", icon: Calculator, category: "Financial" },
   { id: "BarterAgreementForm", title: "Barter Agreement", description: "Create a comprehensive barter agreement", icon: Handshake, category: "Contracts" },
   { id: "BusinessSaleAgreementForm", title: "Business Sale Agreement", description: "Create a comprehensive business sale agreement", icon: Briefcase, category: "Contracts" },
+  { id: "SaleOfGoodsForm", title: "Sale of Goods Agreement", description: "Create a comprehensive sale of goods agreement", icon: ShoppingCart, category: "Contracts" },
+  { id: "ReferralFeeAgreementForm", title: "Referral Fee Agreement", description: "Create a comprehensive referral fee agreement", icon: Handshake, category: "Contracts" },
+  { id: "ProductDistributionForm", title: "Product Distribution Agreement", description: "Create a comprehensive product distribution agreement", icon: Package, category: "Contracts" },
+  { id: "MarketingAgreementForm", title: "Marketing Agreement", description: "Create a comprehensive marketing agreement", icon: Megaphone, category: "Marketing" },
+  { id: "ContractExtensionForm", title: "Contract Extension Agreement", description: "Create a comprehensive contract extension agreement", icon: CalendarClock, category: "Contracts" },
   { id: "AssetPurchaseForm", title: "Asset Purchase Agreement", description: "Create a comprehensive asset purchase agreement", icon: Briefcase, category: "Contracts" },
-  { id: "TechnicalConsultingForm", title: "Technical Consulting Agreement", description: "Create a comprehensive technical consulting agreement", icon: Cpu, category: "Technology" },
-  { id: "StrategicAllianceForm", title: "Strategic Alliance Agreement", description: "Create a comprehensive strategic alliance agreement", icon: Handshake, category: "Business Formation" },
-  { id: "SilentPartnershipForm", title: "Silent Partnership Agreement", description: "Create a comprehensive silent partnership agreement", icon: EyeOff, category: "Business Formation" },
-  { id: "ServiceAgreementForm", title: "Service Agreement", description: "Create a comprehensive service agreement", icon: Briefcase, category: "Contracts" },
-  { id: "SecurityAgreementForm", title: "Security Agreement", description: "Create a comprehensive security agreement", icon: Lock, category: "Financial" },
-  { id: "RetailerAgreementForm", title: "Retailer Agreement", description: "Create a comprehensive retailer agreement", icon: ShoppingCart, category: "Contracts" },
-  { id: "PartnershipDissolutionForm", title: "Partnership Dissolution Agreement", description: "Create a comprehensive partnership dissolution agreement", icon: Split, category: "Business Formation" },
-  { id: "PartnershipAgreementForm", title: "Partnership Agreement", description: "Create a comprehensive partnership agreement", icon: Handshake, category: "Business Formation" },
-  { id: "MutualRescissionForm", title: "Mutual Rescission Agreement", description: "Create a comprehensive mutual rescission agreement", icon: FileX, category: "Contracts" },
-  { id: "MutualReleaseForm", title: "Mutual Release Agreement", description: "Create a comprehensive mutual release agreement", icon: FileCheck, category: "Contracts" },
-  { id: "MusicalPerformanceAgreementForm", title: "Musical Performance Agreement", description: "Create a comprehensive musical performance agreement", icon: Music, category: "Contracts" },
-  { id: "MOUForm", title: "Memorandum Of Understanding", description: "Create a comprehensive MOU agreement", icon: FileSignature, category: "Contracts" },
-  { id: "MemorandumOfAgreementForm", title: "Memorandum Of Agreement", description: "Create a comprehensive memorandum of agreement", icon: FileText, category: "Contracts" },
-  { id: "MediationAgreementForm", title: "Mediation Agreement", description: "Create a comprehensive mediation agreement", icon: MessageSquare, category: "Contracts" },
-  { id: "LiquidationDissolutionAgreementForm", title: "Liquidation Dissolution Agreement", description: "Create a comprehensive liquidation dissolution agreement", icon: FileMinus, category: "Business Formation" },
-  { id: "LimitedPartnershipAgreementForm", title: "Limited Partnership Agreement", description: "Create a comprehensive limited partnership agreement", icon: Users, category: "Business Formation" },
-  { id: "LeaseSubordinationAgreementForm", title: "Lease Subordination Agreement", description: "Create a comprehensive lease subordination agreement", icon: FileCheck, category: "Contracts" },
-  { id: "JointVentureAgreementForm", title: "Joint Venture Agreement", description: "Create a comprehensive joint venture agreement", icon: Building, category: "Business Formation" },
-  { id: "EventPhotographyAgreementForm", title: "Event Photography Agreement", description: "Create a comprehensive event photography agreement", icon: Camera, category: "Contracts" },
-  { id: "MasterServiceAgreementForm", title: "Master Service Agreement", description: "Create a comprehensive master service agreement", icon: Handshake, category: "Contracts" },
-  { id: "CoursePartnershipAgreementForm", title: "Course Partnership Agreement", description: "Create a comprehensive course partnership agreement", icon: BookOpen, category: "Contracts" },
-  { id: "ConstructionPerformanceBondForm", title: "Construction Performance Bond Agreement", description: "Create a comprehensive construction performance bond agreement", icon: ShieldCheck, category: "Contracts" },
-  { id: "CooperationAgreementForm", title: "Cooperation Agreement", description: "Create a comprehensive cooperation agreement", icon: Users, category: "Contracts" },
-  { id: "ConsignmentAgreementForm", title: "Consignment Agreement", description: "Create a comprehensive consignment agreement", icon: Package, category: "Contracts" },
-  { id: "CoMarketingAgreementForm", title: "CoMarketing Agreement", description: "Create a comprehensive co-marketing agreement", icon: Megaphone, category: "Marketing" },
-  { id: "CollaborationAgreementForm", title: "Collaboration Agreement", description: "Create a comprehensive collaboration agreement", icon: Handshake, category: "Contracts" },
-  { id: "CateringAgreementForm", title: "Catering Agreement", description: "Create a comprehensive catering agreement", icon: Utensils, category: "Contracts" },
-  { id: "ArbitrationAgreementForm", title: "Arbitration Agreement", description: "Create a comprehensive arbitration agreement", icon: Handshake, category: "Contracts" },
-  { id: "BillOfSaleForm", title: "Bill Of Sale", description: "Create a comprehensive bill of sale agreement", icon: FileText, category: "Contracts" },
-  { id: "BrokerAgreementForm", title: "Broker Agreement", description: "Create a comprehensive broker agreement", icon: Handshake, category: "Contracts" },
-  { id: "trucking-agreement", title: "Trucking Agreement", description: "Create a comprehensive trucking agreement", icon: Truck, category: "Contracts" },
-  { id: "bidproposal-agreement", title: "Bid Proposal Agreement", description: "Create a comprehensive bid proposal agreement", icon: FileSignature, category: "Contracts" },
-  { id: "Moving-agreement", title: "Moving Agreement", description: "Create a comprehensive moving agreement", icon: Package, category: "Contracts" },
-  { id: "Fulfillment-agreement", title: "Fulfillment Agreement", description: "Create a comprehensive fulfillment agreement", icon: Boxes, category: "Contracts" },
-  { id: "business-agreement", title: "Business Agreement", description: "Create a comprehensive business agreement", icon: Briefcase, category: "Contracts" },
-  { id: "DEBTSETTLEMENTAGREEMENT", title: "Debt Settlement Agreement", description: "Create a comprehensive debt settlement agreement", icon: Briefcase, category: "Financial" },
-  { id: "GuaranteeAgreementForm", title: "Guarantee Agreement Form", description: "Create a comprehensive guarantee agreement form", icon: Briefcase, category: "Financial" },
-  { id: "services-contract", title: "Services Contract", description: "Create a comprehensive services contract", icon: Briefcase, category: "Contracts" },
-  { id: "payment-agreement", title: "Payment Agreement", description: "Create a comprehensive payment agreement", icon: Briefcase, category: "Financial" },
-  { id: "SECURITYAGREEMENT", title: "Security Agreement", description: "Create a comprehensive security agreement", icon: Briefcase, category: "Financial" },
-  { id: "PROMISSORYNOTEAGREEMENT", title: "Promissory Note Agreement", description: "Create a comprehensive promissory note agreement", icon: Briefcase, category: "Financial" },
-  { id: "independent-contractor", title: "Independent Contractor Agreement", description: "Create a comprehensive independent contractor agreement", icon: Briefcase, category: "Employment" },
-  { id: "nda", title: "Non-Disclosure Agreement", description: "Create a legally binding confidentiality agreement", icon: Shield, category: "Confidentiality" },
-  { id: "mutual-nda", title: "Mutual Non-Disclosure Agreement", description: "Create a bilateral confidentiality agreement", icon: Handshake, category: "Confidentiality" },
-  { id: "llc-operating-agreement", title: "LLC Operating Agreement", description: "Create a comprehensive LLC Operating Agreement", icon: Building2, category: "Business Formation" },
-  { id: "sale-agreement", title: "Sale Agreement", description: "Create a comprehensive sale agreement", icon: Briefcase, category: "Contracts" },
-  { id: "general-contract", title: "General Contract for Products", description: "Create a comprehensive contract for the sale and purchase of products", icon: ShoppingCart, category: "Contracts" },
-  { id: "share-purchase-agreement", title: "Share Purchase Agreement", description: "Create a comprehensive share purchase agreement", icon: Building2, category: "Business Formation" },
-  { id: "loan-agreement", title: "Loan Agreement", description: "Create a comprehensive loan agreement", icon: DollarSign, category: "Financial" },
-  { id: "Cohabitation-AgreementForm", title: "Cohabitation Agreement", description: "Create a comprehensive cohabitation agreement", icon: DollarSign, category: "Contracts" },
-  { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Contracts" },
-  { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Contracts" },
-  { id: "domestic-service-agreement", title: "Domestic Service Agreement", description: "Create a comprehensive domestic service agreement", icon: Home, category: "Employment" },
-  { id: "corporate-bylaws", title: "Corporate Bylaws", description: "Create comprehensive corporate bylaws", icon: Scale, category: "Business Formation" },
-  { id: "buy-sell-agreement", title: "Buy-Sell Agreement", description: "Create a comprehensive buy-sell agreement", icon: TrendingUp, category: "Business Formation" },
-  { id: "business-plan", title: "Business Plan", description: "Create a comprehensive business plan", icon: Briefcase, category: "Business Formation" },
-  { id: "confidential-information", title: "Confidential Information Agreement", description: "Protect sensitive business information with legally binding terms", icon: Shield, category: "Confidentiality" },
-  { id: "non-circumvention", title: "Non-Circumvention Agreement", description: "Protect business relationships and prevent contact circumvention", icon: Handshake, category: "Confidentiality" },
-  { id: "copyright-permission", title: "Copyright Permission Request", description: "Formally request permission to use copyrighted material", icon: FileText, category: "Contracts" },
-  { id: "patent-assignment", title: "Patent Assignment Agreement", description: "Create a comprehensive patent assignment agreement", icon: Shield, category: "Contracts" },
-  { id: "royalty-agreement", title: "Royalty Agreement", description: "Create a professional royalty agreement", icon: DollarSign, category: "Financial" },
-  { id: "Confidentialityagreement", title: "Confidentiality Agreement", description: "Create a professional employee confidentiality agreement", icon: Lock, category: "Confidentiality" },
-  { id: "Employeehandbook", title: "Employee Handbook", description: "Create a professional employee handbook", icon: Users, category: "Employment" },
-  { id: "employeeretirementt", title: "Employee Retirement Agreement", description: "Create a professional employee retirement agreement", icon: Briefcase, category: "Employment" },
-  { id: "EmploymentAgreement", title: "Employment Agreement", description: "Create a professional employment agreement", icon: TrendingUp, category: "Employment" },
-  { id: "lastwill", title: "Last Will and Testament", description: "Create a professional last will and testament", icon: Home, category: "Contracts" },
-  { id: "Home-Agreement", title: "Work From Home Agreement", description: "Create a professional work from home agreement", icon: Home, category: "Employment" },
-  { id: "employment", title: "Offer of Employment Letter", description: "Create a professional offer of employment letter", icon: Users, category: "Employment" },
-  { id: "Severance", title: "Severance Agreement", description: "Create a professional severance agreement", icon: DollarSign, category: "Employment" },
-  { id: "software", title: "Software License Agreement", description: "Create a professional software license agreement", icon: FileText, category: "Technology" },
-  { id: "license-agreement", title: "License Agreement", description: "Create a comprehensive license agreement", icon: Scale, category: "Contracts" },
-  { id: "manufacturing-license", title: "Manufacturing License Agreement", description: "Create a manufacturing license agreement", icon: Scale, category: "Contracts" },
-  { id: "music-license", title: "Music License Agreement", description: "Create a music licensing agreement", icon: Scale, category: "Contracts" },
-  { id: "office-space-lease", title: "Office Space Lease Agreement", description: "Create a comprehensive lease agreement for renting office space", icon: Building2, category: "Commercial Lease" },
+  { id: "AdvertisingAgencyForm", title: "Advertising Agency Agreement", description: "Create a comprehensive advertising agency agreement", icon: Megaphone, category: "Marketing" },
+  { id: "AdministrativeServicesForm", title: "Administrative Services Agreement", description: "Create a comprehensive administrative services agreement", icon: Briefcase, category: "Contracts" },
+  { id: "ITServiceAgreementForm", title: "IT Service Agreement", description: "Create a comprehensive IT service agreement", icon: Computer, category: "Technology" }
 ];
 
 const propertyMattersDocs = [
-  { id: "JanitorialServicesAgreementForm", title: "Janitorial Services Agreement", description: "Create a comprehensive janitorial agreement", icon: Sparkles, category: "Property Management" },
-  { id: "VacationLeaseForm", title: "Vacation Lease Agreement", description: "Create a comprehensive vacation lease agreement", icon: Building2, category: "Residential Lease" },
-  { id: "InteriorDesignAgreementForm", title: "Interior Design Agreement", description: "Create a comprehensive interior design agreement", icon: Home, category: "Construction" },
-  { id: "CarpentryContractForm", title: "Carpentry Contract", description: "Create a comprehensive carpentry agreement", icon: Hammer, category: "Construction" },
-  { id: "ArchitecturalServicesAgreementForm", title: "Architectural Services Agreement", description: "Create a comprehensive architectural agreement", icon: Home, category: "Construction" },
-  { id: "ConstructionManagementAgreementForm", title: "Construction Management Agreement", description: "Create a comprehensive construction management agreement", icon: Handshake, category: "Construction" },
-  { id: "ConstructionContractForm", title: "Construction Contract", description: "Create a comprehensive construction agreement", icon: Home, category: "Construction" },
-  { id: "DrywallServicesAgreementForm", title: "Drywall Services Agreement", description: "Create a comprehensive drywall services agreement", icon: Camera, category: "Construction" },
-  { id: "HomeRemodellingAgreementForm", title: "Home Remodelling Agreement", description: "Create a comprehensive home remodelling agreement", icon: Home, category: "Construction" },
-  { id: "HomeImprovementContractForm", title: "Home Improvement Contract", description: "Create a comprehensive home improvement agreement", icon: FileText, category: "Construction" },
-  { id: "FlooringServicesAgreementForm", title: "Flooring Services Agreement", description: "Create a comprehensive flooring services agreement", icon: HardHat, category: "Construction" },
-  { id: "LandscapingServicesAgreementForm", title: "Landscaping Services Agreement", description: "Create a comprehensive landscaping services agreement", icon: Home, category: "Construction" },
-  { id: "PaintingServicesContractForm", title: "Painting Services Contract", description: "Create a comprehensive painting services agreement", icon: Paintbrush, category: "Construction" },
-  { id: "RealEstateDevelopmentForm", title: "Real Estate Development", description: "Create a comprehensive real estate development agreement", icon: Construction, category: "Construction" },
-  { id: "PropertyManagerAgreementForm", title: "Property Manager Agreement", description: "Create a comprehensive property manager agreement", icon: Home, category: "Property Management" },
-  { id: "RoofingContractForm", title: "Roofing Contract Agreement", description: "Create a comprehensive roofing contract agreement", icon: Clipboard, category: "Construction" },
-  { id: "CoSignerAgreementForm", title: "CoSigner Agreement", description: "Create a comprehensive co-signer agreement", icon: Clipboard, category: "Residential Lease" },
-  { id: "lease-agreement", title: "Lease Agreement", description: "Generate a comprehensive lease agreement for rental properties", icon: FileText, category: "Residential Lease" },
-  { id: "condominium-lease", title: "Condominium Lease Agreement", description: "Create a comprehensive lease agreement for condominium units", icon: Building2, category: "Residential Lease" },
-  { id: "lease-renewal", title: "Lease Renewal Agreement", description: "Create a comprehensive lease renewal agreement", icon: FileText, category: "Lease Modifications" },
-  { id: "lease-termination", title: "Agreement to Terminate Lease", description: "Create a mutual agreement to terminate a lease", icon: FileText, category: "Lease Modifications" },
-  { id: "rent-increase", title: "Rent Increase Agreement", description: "Create a formal agreement to increase rent", icon: DollarSign, category: "Lease Modifications" },
-  { id: "sublease", title: "Sublease Agreement", description: "Create a comprehensive sublease agreement", icon: Building2, category: "Residential Lease" },
-  { id: "lease-amendment", title: "Lease Amendment", description: "Create a formal amendment to modify existing lease terms", icon: FileText, category: "Lease Modifications" },
-  { id: "roommate-agreement", title: "Roommate Agreement", description: "Create a comprehensive agreement between roommates", icon: Users, category: "Residential Lease" },
-  { id: "bartending-agreement", title: "Bartending Services Agreement", description: "Create a professional bartending services agreement", icon: UtensilsCrossed, category: "Property Management" },
-  { id: "dj-services-agreement", title: "DJ Services Agreement", description: "Create a professional DJ services agreement", icon: Music, category: "Property Management" },
-  { id: "wedding-planner-agreement", title: "Wedding Planner Agreement", description: "Create a comprehensive wedding planner services agreement", icon: Heart, category: "Property Management" },
-  { id: "food-service-agreement", title: "Food Service Agreement", description: "Create a catering and food service agreement", icon: UtensilsCrossed, category: "Property Management" },
-  { id: "videography-agreement", title: "Videography Services Agreement", description: "Create a professional videography services agreement", icon: Camera, category: "Property Management" },
-  { id: "personal-training-agreement", title: "Personal Training Agreement", description: "Create a personal training services agreement", icon: Heart, category: "Property Management" },
-  { id: "tutoring-agreement", title: "Tutoring Agreement", description: "Create a tutoring services agreement", icon: GraduationCap, category: "Property Management" },
-  { id: "retainer-agreement", title: "Retainer Agreement", description: "Create a legal retainer agreement", icon: Scale, category: "Property Management" },
-  { id: "limousine-agreement", title: "Limousine Service Agreement", description: "Create a professional limousine service agreement", icon: Truck, category: "Property Management" },
-  { id: "consulting-agreement", title: "Consulting Agreement", description: "Create a consulting services agreement", icon: Briefcase, category: "Property Management" },
-  { id: "vendor-agreement", title: "Vendor Agreement", description: "Create a vendor services agreement", icon: FileText, category: "Property Management" },
-  { id: "composer-agreement", title: "Composer Agreement", description: "Create a comprehensive agreement for original music", icon: FileText, category: "Property Management" },
-  { id: "concession-agreement", title: "Concession Agreement", description: "Create a comprehensive concession agreement", icon: FileText, category: "Property Management" },
-  { id: "co-tenancy-agreement", title: "Co-Tenancy Agreement", description: "Create an agreement between roommates sharing a rental property", icon: Users, category: "Residential Lease" },
-  { id: "valet-service-agreement", title: "Valet Service Agreement", description: "Create a professional valet parking services agreement", icon: FileText, category: "Property Management" },
-  { id: "commercial-lease", title: "Commercial Lease Agreement", description: "Create a comprehensive commercial lease agreement", icon: Building2, category: "Commercial Lease" },
-  { id: "billboard-lease", title: "Billboard Lease Agreement", description: "Create a comprehensive lease agreement for billboard advertising", icon: Building2, category: "Commercial Lease" },
-  { id: "agreement-to-sell", title: "Agreement to Sell", description: "Create a comprehensive agreement to sell for property transactions", icon: FileText, category: "Property Sales" },
-  { id: "eviction-notice", title: "Eviction Notice", description: "Create a formal notice to terminate a tenancy", icon: FileText, category: "Notices & Letters" },
-  { id: "affidavit-of-residence", title: "Affidavit of Residence", description: "Create an affidavit to verify residence", icon: MapPin, category: "Affidavits" },
-  { id: "transcript-request", title: "Transcript Request", description: "Create a formal request for academic transcripts", icon: GraduationCap, category: "Notices & Letters" },
-  { id: "storage-space-lease", title: "Storage Space Lease Agreement", description: "Create a comprehensive lease agreement for renting storage space", icon: Building2, category: "Commercial Lease" },
-  { id: "restaurant-lease", title: "Restaurant Lease Agreement", description: "Create a comprehensive lease agreement for restaurant operations", icon: UtensilsCrossed, category: "Commercial Lease" },
-  { id: "warehouse-lease", title: "Warehouse Lease Agreement", description: "Create a comprehensive lease agreement for warehouse facilities", icon: Building2, category: "Commercial Lease" },
-  { id: "oil-lease", title: "Oil Lease Agreement", description: "Create a comprehensive oil and gas lease agreement", icon: Fuel, category: "Energy & Resources" },
-  { id: "gas-lease", title: "Gas Lease Agreement", description: "Create a comprehensive gas lease agreement", icon: Fuel, category: "Energy & Resources" },
-  { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters" },
-  { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters" },
-  { id: "late-rent-payment-agreement", title: "Late Rent Payment Agreement", description: "Create a professional agreement for tenants with past due rent", icon: DollarSign, category: "Lease Modifications" },
-  { id: "non-disturbance-agreement", title: "Non-Disturbance Agreement", description: "Create a professional non-disturbance agreement", icon: Shield, category: "Property Protection" },
-  { id: "roommate-release-agreement", title: "Roommate Release Agreement", description: "Create an agreement to release a roommate from a shared lease", icon: UserMinus, category: "Residential Lease" },
-  { id: "offer-to-lease", title: "Offer to Lease", description: "Create a formal offer to lease commercial property", icon: Building2, category: "Commercial Lease" },
-  { id: "legal-services-agreement", title: "Legal Services Agreement", description: "Create a comprehensive attorney-client legal services agreement", icon: Scale, category: "Property Management" },
-  { id: "physician-services-agreement", title: "Physician Services Agreement", description: "Create a professional agreement for physician services", icon: Stethoscope, category: "Property Management" },
-  { id: "real-estate-agent-agreement", title: "Real Estate Agent Agreement", description: "Create an exclusive listing agreement with a real estate agent", icon: Home, category: "Property Sales" },
-  { id: "limited-scope-representation-agreement", title: "Limited Scope Representation Agreement", description: "Create a limited scope legal representation agreement", icon: Scale, category: "Property Management" },
-  { id: "unbundled-legal-services-agreement", title: "Unbundled Legal Services Agreement", description: "Create an agreement for specific unbundled legal services", icon: Scale, category: "Property Management" },
-  { id: "attorney-engagement-letter", title: "Attorney Engagement Letter", description: "Create a formal attorney engagement letter", icon: FileText, category: "Property Management" },
-  { id: "vehicle-lease", title: "Vehicle Lease Agreement", description: "Create a contract for leasing a vehicle between owner and driver", icon: Truck, category: "Property Management" },
+  { id: "JanitorialServicesAgreementForm", title: "Janitorial Services Agreement", description: "Create a comprehensive Janitorial agreement", icon: Sparkles, category: "Property Management" },
+  { id: "VacationLeaseForm", title: "Vacation Lease Agreement", description: "Create a vacation lease agreement", icon: Building2, category: "Residential Lease" },
+  { id: "InteriorDesignAgreementForm", title: "Interior Design Agreement", description: "Interior design contract", icon: Paintbrush, category: "Construction" },
+  { id: "CarpentryContractForm", title: "Carpentry Contract", description: "Carpentry services agreement", icon: Hammer, category: "Construction" },
+  { id: "ArchitecturalServicesAgreementForm", title: "Architectural Services", description: "Architectural agreement", icon: Building, category: "Construction" },
+  { id: "ConstructionManagementAgreementForm", title: "Construction Management", description: "Construction management", icon: HardHat, category: "Construction" },
+  { id: "ConstructionPerformanceBondForm", title: "Performance Bond", description: "Construction bond", icon: ShieldCheck, category: "Construction" },
+  { id: "PaintingServicesAgreementForm", title: "Painting Services", description: "Painting contract", icon: Paintbrush, category: "Property Management" },
+  { id: "PoolCleaningServicesAgreementForm", title: "Pool Cleaning", description: "Pool maintenance", icon: Sparkles, category: "Property Management" },
+  { id: "RoofingContractForm", title: "Roofing Contract", description: "Roofing agreement", icon: Home, category: "Construction" },
+  { id: "DrywallServicesAgreementForm", title: "Drywall Services", description: "Drywall contract", icon: Hammer, category: "Construction" },
+  { id: "ConsultingAgreementForm", title: "Consulting Agreement", description: "Property consulting", icon: Briefcase, category: "Property Management" },
+  { id: "SecurityDepositReturnLetterForm", title: "Security Deposit Return", description: "Return letter", icon: DollarSign, category: "Notices & Letters" },
+  { id: "LeaseTerminationLetterForm", title: "Lease Termination Letter", description: "Termination notice", icon: FileX, category: "Notices & Letters" },
+  { id: "LateRentPaymentAgreementForm", title: "Late Rent Payment", description: "Late rent agreement", icon: CalendarClock, category: "Notices & Letters" },
+  { id: "NonDisturbanceAgreementForm", title: "Non-Disturbance Agreement", description: "NDA for property", icon: Shield, category: "Property Protection" },
+  { id: "OfficeSpaceLeaseForm", title: "Office Space Lease", description: "Office lease", icon: Building, category: "Commercial Lease" },
+  { id: "StorageSpaceLeaseForm", title: "Storage Space Lease", description: "Storage lease", icon: Boxes, category: "Commercial Lease" },
+  { id: "RestaurantLeaseForm", title: "Restaurant Lease", description: "Restaurant lease", icon: Utensils, category: "Commercial Lease" },
+  { id: "BillboardLeaseForm", title: "Billboard Lease", description: "Billboard lease", icon: Megaphone, category: "Commercial Lease" },
+  { id: "GasLeaseForm", title: "Gas Lease", description: "Gas/Mineral lease", icon: Fuel, category: "Energy & Resources" },
+  { id: "SecurityAgreementForm", title: "Security Agreement", description: "Security agreement", icon: Lock, category: "Property Protection" },
+  { id: "MediationAgreementForm", title: "Mediation Agreement", description: "Mediation agreement", icon: Handshake, category: "Property Protection" },
+  { id: "MutualReleaseForm", title: "Mutual Release", description: "Mutual release form", icon: FileMinus, category: "Property Protection" },
+  { id: "LeaseSubordinationAgreementForm", title: "Lease Subordination", description: "Subordination agreement", icon: FileCheck, category: "Lease Modifications" },
+  { id: "MasterUseLicenseForm", title: "Master Use License", description: "Master use license", icon: FileCheck, category: "Property Protection" },
+  { id: "FlooringServicesAgreementForm", title: "Flooring Services", description: "Flooring contract", icon: Construction, category: "Construction" },
+  { id: "CoSignerAgreementForm", title: "Co-Signer Agreement", description: "Co-signer form", icon: UserCheck, category: "Residential Lease" },
+  { id: "CopyrightLicenseForm", title: "Copyright License", description: "Copyright license", icon: Shield, category: "Property Protection" },
+  { id: "CooperationAgreementForm", title: "Cooperation Agreement", description: "Cooperation agreement", icon: Users, category: "Property Protection" }
 ];
 
 // Category structure
@@ -300,6 +201,7 @@ const DocumentCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Get the currently selected category object
   const activeCategory = useMemo(() => {
@@ -330,6 +232,15 @@ const DocumentCategories = () => {
     return docs;
   }, [activeCategory, selectedSubcategory, searchQuery]);
 
+  // Filter categories based on search term (Main Page Search)
+  const filteredCategories = useMemo(() =>
+    categories.map(cat => ({
+      ...cat,
+      documents: cat.documents.filter(doc => doc.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    })).filter(cat => cat.documents.length > 0),
+    [searchTerm]
+  );
+
   // Toggle category expansion
   const toggleCategoryExpand = (categoryId: string) => {
     setExpandedCategories(prev => 
@@ -353,7 +264,6 @@ const DocumentCategories = () => {
   };
 
   // Handle document click - navigate to the Documents page with doc ID
-  // The Documents page uses URL params to auto-select a document and show its form
   const handleDocumentClick = (docId: string) => {
     navigate(`/documents/${docId}`);
   };
@@ -378,9 +288,19 @@ const DocumentCategories = () => {
         </p>
       </div>
 
+      {/* Search Bar */}
+      <div className="max-w-md mx-auto">
+        <Input
+          placeholder="Search documents..."
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          className="mb-6"
+        />
+      </div>
+
       {/* Category Cards */}
       <div className="grid md:grid-cols-3 gap-6">
-        {categories.map((category) => {
+        {filteredCategories.map((category) => {
           const IconComponent = category.icon;
           const isExpanded = expandedCategories.includes(category.id);
           
