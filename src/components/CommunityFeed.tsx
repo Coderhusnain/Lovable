@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-import { MessageSquare, User, Send } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient'; 
+import PostCard from './PostCard';
+import CreatePostModal from './CreatePostModal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { formatDistanceToNow } from 'date-fns';
+import { Loader2, Plus } from 'lucide-react';
 
+// Define the Post interface to match Supabase structure
 interface Post {
   id: string;
   guest_name: string;
@@ -19,125 +15,84 @@ interface Post {
   created_at: string;
 }
 
-interface Comment {
-  id: string;
-  guest_name: string;
-  content: string;
-  created_at: string;
-}
+const CommunityFeed: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-export default function PostCard({ post }: { post: Post }) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [commentName, setCommentName] = useState('');
-  const [showComments, setShowComments] = useState(false);
-
-  useEffect(() => {
-    if (showComments) {
-      fetchComments();
-    }
-  }, [showComments]);
-
-  async function fetchComments() {
-    const { data } = await supabase
-      .from('comments')
+  // Function to fetch initial posts
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('posts')
       .select('*')
-      .eq('post_id', post.id)
-      .order('created_at', { ascending: true });
-    if (data) setComments(data);
-  }
+      .order('created_at', { ascending: false });
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim() || !commentName.trim()) return;
-
-    const { error } = await supabase
-      .from('comments')
-      .insert([
-        {
-          post_id: post.id,
-          guest_name: commentName,
-          content: newComment,
-        }
-      ]);
-
-    if (!error) {
-      setNewComment('');
-      fetchComments(); // Refresh comments
+    if (!error && data) {
+      setPosts(data);
+    } else if (error) {
+      console.error("Error fetching posts:", error);
     }
+    setLoading(false);
   };
 
+  useEffect(() => {
+    fetchPosts();
+
+    // Realtime Subscription: Automatically adds new posts when they happen
+    const channel = supabase
+      .channel('public:posts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, (payload) => {
+        setPosts((prev) => [payload.new as Post, ...prev]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   return (
-    <div className="bg-white border rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-            <User className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-sm">{post.guest_name}</h3>
-            <p className="text-xs text-gray-500">
-              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </p>
-          </div>
+    <div className="max-w-2xl mx-auto p-4">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Community Feed</h1>
+          <p className="text-gray-500">Share your legal journey and experiences.</p>
         </div>
-
-        <p className="text-gray-800 mb-4 whitespace-pre-wrap">{post.content}</p>
-
-        {post.media_url && (
-          <div className="mb-4 rounded-lg overflow-hidden bg-black">
-            {post.media_type === 'video' ? (
-              <video src={post.media_url} controls className="w-full max-h-[400px] object-contain" />
-            ) : (
-              <img src={post.media_url} alt="Post media" className="w-full max-h-[400px] object-cover" />
-            )}
-          </div>
-        )}
-
-        <div className="border-t pt-3">
-          <button 
-            onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-blue-600"
-          >
-            <MessageSquare className="w-4 h-4" />
-            {showComments ? 'Hide Comments' : 'Show Comments'}
-          </button>
-        </div>
+        <Button onClick={() => setShowModal(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Plus className="w-4 h-4 mr-2" />
+          New Post
+        </Button>
       </div>
 
-      {showComments && (
-        <div className="bg-gray-50 p-4 border-t">
-          <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
-            {comments.map((comment) => (
-              <div key={comment.id} className="text-sm">
-                <span className="font-bold">{comment.guest_name}: </span>
-                <span className="text-gray-700">{comment.content}</span>
-              </div>
-            ))}
-            {comments.length === 0 && <p className="text-xs text-gray-400">No comments yet.</p>}
-          </div>
+      {/* Create Post Modal */}
+      {showModal && (
+        <CreatePostModal 
+          onClose={() => setShowModal(false)} 
+          onPost={fetchPosts} // <--- FIXED: This missing prop caused the error
+        />
+      )}
 
-          <form onSubmit={handleCommentSubmit} className="space-y-2">
-            <Input 
-              placeholder="Your Name" 
-              value={commentName}
-              onChange={(e) => setCommentName(e.target.value)}
-              className="text-xs h-8"
-            />
-            <div className="flex gap-2">
-              <Input 
-                placeholder="Write a comment..." 
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="text-xs h-8"
-              />
-              <Button type="submit" size="sm" className="h-8 w-8 p-0">
-                <Send className="w-3 h-3" />
-              </Button>
-            </div>
-          </form>
+      {/* Posts List */}
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      ) : posts.length === 0 ? (
+        <div className="text-center py-10 bg-white rounded-lg border border-dashed text-gray-500 shadow-sm">
+          <p className="mb-2">No posts yet.</p>
+          <p className="text-sm">Be the first to share your story!</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
         </div>
       )}
     </div>
   );
-}
+};
+
+export default CommunityFeed;
