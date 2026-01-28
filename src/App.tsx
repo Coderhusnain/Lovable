@@ -32,6 +32,7 @@ const AskALawyer = lazy(() => import("./pages/AskALawyer"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
+const CommunityFeed = lazy(() => import("./pages/CommunityFeed")); // <--- ADDED COMMUNITY TAB
 
 // Direct Imports for Info Pages
 import AffidavitOfMarriageInfo from "./pages/AffidavitOfMarriageInfo";
@@ -91,7 +92,8 @@ import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreeme
 import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo";
 import BarterAgreementInfo from "./pages/BarterAgreementInfo";
 
-// --- NEW IMPORTS (Fixed: removed missing SecurityAgreementInfo import) ---
+// --- NEW DOCUMENT INFO IMPORTS ---
+import SecurityAgreementInfo from "./pages/SecurityAgreementInfo"; // <--- FIXED IMPORT
 import MediationAgreementInfo from "./pages/MediationAgreementInfo";
 import MutualReleaseInfo from "./pages/MutualReleaseInfo";
 import LeaseSubordinationAgreementInfo from "./pages/LeaseSubordinationAgreementInfo";
@@ -143,6 +145,7 @@ const App = () => {
                 <Route path="/documents" element={<Documents />} />
                 <Route path="/document-categories" element={<DocumentCategories />} />
                 <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
+                <Route path="/community" element={<CommunityFeed />} /> {/* <--- ADDED COMMUNITY ROUTE */}
                 <Route path="/documents/:id" element={<Documents />} />
                 <Route path="/make-documents" element={<Documents />} />
                 <Route path="/make-documents/:id" element={<Documents />} />
@@ -259,9 +262,9 @@ const App = () => {
                 {/* --- NEW DOCUMENT ROUTES --- */}
                 
                 {/* Security Agreement */}
-                {/* Security Agreement */}
-                <Route path="/security-agreement-info" element={<Documents />} />
+                <Route path="/security-agreement-info" element={<SecurityAgreementInfo />} />
                 <Route path="/security-agreement-form" element={<Documents />} />
+
                 {/* Mediation Agreement */}
                 <Route path="/mediation-agreement-info" element={<MediationAgreementInfo />} />
                 <Route path="/mediation-agreement-form" element={<Documents />} />
