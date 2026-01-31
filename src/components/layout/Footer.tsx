@@ -68,7 +68,6 @@ const Footer = () => {
           </div>
 
           <div>
-            <h5 className="font-semibold text-lg mb-4">Legal</h5>
             <ul className="space-y-2">
               <li>
                 <FooterLink to="/terms">
