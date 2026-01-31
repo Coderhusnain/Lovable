@@ -1,25 +1,28 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
-const ContractExtensionInfo = () => {
+const ContractExtensionInfo: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-2">Contract Extension Agreement</h1>
-      <p className="mb-4">A Contract Extension Agreement is used to formally extend the duration of an existing contract, specifying the new end date and any amendments. It ensures both parties agree to the updated terms.</p>
-      <h2 className="text-lg font-semibold mt-4 mb-2">Key Features</h2>
-      <ul className="list-disc list-inside mb-4">
-        <li>References the original contract</li>
-        <li>Specifies new end date and amendments</li>
-        <li>Requires agreement from both parties</li>
-        <li>Provides legal clarity for contract changes</li>
+    <div className="max-w-2xl mx-auto py-12 px-4">
+      <h1 className="text-3xl font-bold mb-4">Contract Extension</h1>
+      <p className="mb-6 text-muted-foreground">
+        A Contract Extension document formalizes the extension of an existing
+        agreement, specifying new terms, duration, and any amendments agreed upon
+        by the parties.
+      </p>
+      <h2 className="text-xl font-semibold mb-2">Key Features</h2>
+      <ul className="list-disc pl-6 mb-6">
+        <li>Identifies original contract and parties</li>
+        <li>Specifies new term or duration</li>
+        <li>Outlines amendments or changes</li>
+        <li>Includes signatures and effective date</li>
+        <li>Details dispute resolution and termination</li>
       </ul>
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate('/contract-extension-form')}
-      >
+      <Button onClick={() => navigate("/contract-extension-form")}>
         Create Document
-      </button>
+      </Button>
     </div>
   );
 };

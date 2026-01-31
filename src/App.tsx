@@ -33,6 +33,16 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MostFreqDocuments = lazy(() => import("./pages/MostFreqDocuments"));
 const CommunityFeed = lazy(() => import("./pages/CommunityFeed")); // <--- COMMUNITY TAB ENABLED
+// --- LAZY IMPORTS FOR NEW FORM COMPONENTS ---
+const ReferralFeeAgreementForm = lazy(() => import("@/components/ReferralFeeAgreementForm"));
+const SaleOfGoodsForm = lazy(() => import("@/components/SaleOfGoodsForm"));
+const ProductDistributionAgreementForm = lazy(() => import("@/components/ProductDistributionAgreementForm"));
+const ITServiceAgreementForm = lazy(() => import("@/components/ITServiceAgreementForm"));
+const AdvertisingAgencyAgreementForm = lazy(() => import("@/components/AdvertisingAgencyAgreementForm"));
+const AssetPurchaseForm = lazy(() => import("@/components/AssetPurchaseForm"));
+const ContractExtensionForm = lazy(() => import("@/components/ContractExtensionForm"));
+const MarketingAgreementForm = lazy(() => import("@/components/MarketingAgreementForm"));
+const BarterAgreementForm = lazy(() => import("@/components/BarterAgreementForm"));
 
 // Direct Imports for Existing Info Pages
 import AffidavitOfMarriageInfo from "./pages/AffidavitOfMarriageInfo";
@@ -282,7 +292,6 @@ const App = () => {
                 <Route path="/product-distribution-info" element={<ProductDistributionAgreementInfo />} />
                 <Route path="/referral-fee-agreement-info" element={<ReferralFeeAgreementInfo />} />
                 <Route path="/barter-agreement-info" element={<BarterAgreementInfo />} />
-                {/* <Route path="/sale-of-goods-info" element={<SaleOfGoodsInfo />} /> */}
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

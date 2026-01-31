@@ -4,6 +4,7 @@ import PostCard from './PostCard';
 import CreatePostModal from './CreatePostModal';
 import { Button } from '@/components/ui/button';
 import { Loader2, Plus } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 
 // Define the Post interface to match Supabase structure
 interface Post {
@@ -58,38 +59,38 @@ const CommunityFeed: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Community Feed</h1>
-          <p className="text-gray-500">Share your legal journey and experiences.</p>
+          <p className="text-gray-500 mt-1 text-base">Connect with legal professionals and share your experiences.</p>
         </div>
-        <Button onClick={() => setShowModal(true)} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="w-4 h-4 mr-2" />
-          New Post
+        <Button
+          onClick={() => setShowModal(true)}
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2 rounded-lg shadow hover:from-blue-600 hover:to-indigo-700"
+        >
+          <Plus className="w-4 h-4 mr-2" /> New Post
         </Button>
       </div>
-
-      {/* Create Post Modal */}
-      {showModal && (
-        <CreatePostModal 
-          onClose={() => setShowModal(false)} 
-          onPost={fetchPosts} // <--- FIXED: This missing prop caused the error
-        />
-      )}
-
-      {/* Posts List */}
+      {showModal && <CreatePostModal onClose={() => setShowModal(false)} onPost={fetchPosts} />}
       {loading ? (
-        <div className="flex justify-center py-10">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        </div>
-      ) : posts.length === 0 ? (
-        <div className="text-center py-10 bg-white rounded-lg border border-dashed text-gray-500 shadow-sm">
-          <p className="mb-2">No posts yet.</p>
-          <p className="text-sm">Be the first to share your story!</p>
-        </div>
+        <Loader2 className="w-8 h-8 animate-spin mx-auto" />
       ) : (
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        posts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="bg-gray-100 rounded-full p-6 mb-4">
+              <MessageSquare className="w-10 h-10 text-gray-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-500 mb-2">No posts yet</h2>
+            <p className="text-gray-400 mb-4">Be the first to share your legal experience or ask a question.</p>
+            <Button
+              onClick={() => setShowModal(true)}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:from-blue-600 hover:to-indigo-700"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Create First Post
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {posts.map((post) => <PostCard key={post.id} post={post} />)}
+          </div>
+        )
       )}
     </div>
   );
