@@ -1,184 +1,98 @@
+
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient'; // Uses the shared client
-
-// Inline PostCard component to avoid a missing external module.
-const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-  return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <div className="text-sm text-gray-500">{new Date(post.created_at).toLocaleString()}</div>
-      <div className="font-semibold text-gray-900">{post.guest_name}</div>
-      <p className="mt-2 text-gray-700">{post.content}</p>
-      {post.media_url && (
-        post.media_type?.startsWith('image') ? (
-          <img src={post.media_url} alt="post media" className="mt-3 rounded max-h-60 w-full object-cover" />
-        ) : (
-          <a href={post.media_url} className="text-blue-600 mt-3 block" target="_blank" rel="noreferrer">View attachment</a>
-        )
-      )}
-    </div>
-  );
-};
-
-const CreatePostModal: React.FC<{ onClose: () => void; onPost: () => Promise<void> | void }> = ({ onClose, onPost }) => {
-  const [guestName, setGuestName] = useState('');
-  const [content, setContent] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!guestName.trim() || !content.trim()) return;
-    setSubmitting(true);
-
-    const { error } = await supabase.from('posts').insert([
-      {
-        guest_name: guestName.trim(),
-        content: content.trim(),
-      },
-    ]);
-
-    setSubmitting(false);
-
-    if (error) {
-      console.error('Error creating post:', error);
-      return;
-    }
-
-    setGuestName('');
-    setContent('');
-    await onPost();
-    onClose();
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/40" onClick={onClose}></div>
-      <div className="bg-white rounded-lg p-6 z-10 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4">New Post</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Your name"
-            className="w-full border rounded px-3 py-2"
-          />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Share something..."
-            rows={4}
-            className="w-full border rounded px-3 py-2"
-          />
-          <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
-            >
-              {submitting ? 'Posting...' : 'Post'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
+import { supabase } from '../lib/supabaseClient';
+import PostCard from '../components/PostCard';
+import CreatePostModal from '../components/CreatePostModal';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Loader2 } from 'lucide-react';
-
-interface Post {
-  id: string;
-  guest_name: string;
-  content: string;
-  media_url: string | null;
-  media_type: string | null;
-  created_at: string;
-}
+import { Users, MessageSquarePlus } from 'lucide-react';
 
 const CommunityFeed: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  // Initial Fetch
-  useEffect(() => {
-    fetchPosts();
-
-    // Realtime Subscription (Optional: updates feed automatically)
-    const channel = supabase
-      .channel('public:posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, (payload) => {
-        setPosts((prev) => [payload.new as Post, ...prev]);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  async function fetchPosts() {
+  // Fetch posts from Supabase
+  const fetchPosts = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('posts')
       .select('*')
       .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching posts:', error);
-    } else if (data) {
-      setPosts(data);
-    }
+    if (!error && data) setPosts(data);
     setLoading(false);
-  }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    // Realtime updates
+    const channel = supabase
+      .channel('public:posts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, (payload) => {
+        setPosts((prev) => [payload.new, ...prev]);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Header & Action Button */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Community Feed</h1>
-          <p className="text-gray-500">Share your legal journey and experiences.</p>
-        </div>
-        <Button onClick={() => setShowModal(true)} className="gap-2 bg-blue-600 hover:bg-blue-700">
-          <PlusCircle className="w-4 h-4" />
-          New Post
-        </Button>
-      </div>
-
-      {/* Modal */}
-      {showModal && (
-        <CreatePostModal 
-          onClose={() => setShowModal(false)} 
-          onPost={fetchPosts} 
-        />
-      )}
-
-      {/* Feed Content */}
-      {loading ? (
-        <div className="flex justify-center py-10">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {posts.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 bg-white rounded-lg border border-dashed">
-              <p>No posts yet. Be the first to share!</p>
+    <div className="min-h-[90vh] bg-gradient-to-br from-blue-100/60 via-indigo-100/60 to-white py-12 px-2 md:px-0">
+      <div className="max-w-3xl mx-auto bg-white/90 rounded-3xl shadow-2xl p-6 md:p-12 border border-blue-200/40 backdrop-blur-md">
+        {/* Community Header */}
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-br from-blue-400 via-indigo-400 to-blue-600 p-4 rounded-full shadow-lg">
+              <Users className="w-9 h-9 text-white drop-shadow" />
             </div>
-          ) : (
-            posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))
-          )}
+            <div>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-2 tracking-tight drop-shadow">Community</h1>
+              <p className="text-indigo-700 text-lg md:text-xl font-medium mb-1">Welcome to the Legalgram Community!</p>
+              <p className="text-blue-700 text-base md:text-lg">Share your legal journey, ask questions, and connect with others. This is a safe, supportive space for everyone.</p>
+            </div>
+          </div>
+          <Button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-xl shadow-xl hover:from-blue-600 hover:to-indigo-700 text-lg font-semibold border-2 border-blue-200/40"
+            size="lg"
+          >
+            <MessageSquarePlus className="w-6 h-6" /> New Post
+          </Button>
+          {/* Decorative Accent */}
+          <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-blue-200 via-indigo-200 to-white rounded-full blur-2xl opacity-40 pointer-events-none" />
         </div>
-      )}
+
+        {/* Modal for Creating Post */}
+        {showModal && (
+          <CreatePostModal onClose={() => setShowModal(false)} onPost={fetchPosts} />
+        )}
+
+        {/* Feed Content */}
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <svg className="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="bg-blue-100 rounded-full p-6 mb-4">
+              <MessageSquarePlus className="w-10 h-10 text-blue-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-blue-500 mb-2">No posts yet</h2>
+            <p className="text-blue-400 mb-4">Be the first to share your legal experience or ask a question.</p>
+            <Button
+              onClick={() => setShowModal(true)}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-lg shadow hover:from-blue-600 hover:to-indigo-700"
+            >
+              <MessageSquarePlus className="w-4 h-4 mr-2" /> Create First Post
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {posts.map((post) => <PostCard key={post.id} post={post} />)}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
