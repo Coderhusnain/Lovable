@@ -570,43 +570,19 @@ const Documents = () => {
       );
     }
     
+    // Form is now FULL SCREEN - the new FormWizard has its own sidebar
     const DocumentComponent = selectedDocumentType.component;
     return (
-      <Layout>
-        <div className="container mx-auto px-4 py-12 bg-white min-h-screen">
-          <div className="mb-8 pt-16">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">{selectedDocumentType.title}</h1>
-              <p className="text-muted-foreground">{selectedDocumentType.description}</p>
-            </div>
-            <Button variant="outline" onClick={handleBackToDocuments} className="mb-4 mt-4 pt-2">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Document Selection
-            </Button>
-          </div>
-          
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="w-full lg:w-[68%] xl:w-[70%] min-w-0">
-              <Suspense fallback={
-                <div className="flex h-64 w-full items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                </div>
-              }>
-                <DocumentComponent />
-              </Suspense>
-            </div>
-            <div className="w-full lg:w-[32%] xl:w-[30%] min-w-0">
-               <DocumentAboutSidebar 
-                documentId={selectedDocument} 
-                onNavigateToDocument={(docId) => {
-                  setSelectedDocument(docId);
-                  navigate(`/documents/${docId}`);
-                }}
-              />
-            </div>
+      <Suspense fallback={
+        <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="h-10 w-10 mx-auto animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+            <p className="mt-4 text-gray-600">Loading document builder...</p>
           </div>
         </div>
-      </Layout>
+      }>
+        <DocumentComponent />
+      </Suspense>
     );
   }
 

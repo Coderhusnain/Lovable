@@ -1,592 +1,471 @@
-import React, { useState } from "react";
-import jsPDF from "jspdf";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-export default function OfferOfEmploymentLetterForm() {
-  const [formData, setFormData] = useState({
-    // General
-    date: "",
-    deadlineDate: "",
-    state: "",
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this document?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Document Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and details of this document",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-    // Employee details
-    employeeFullName: "",
-    employeeAddress: "",
-    employeeCityStateZip: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Offer Of Employment", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("DOCUMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  
+  doc.save("offer_of_employment.pdf");
+};
 
-    // Employer details
-    employerFullName: "",
-    employerAddress: "",
-    employerCityStateZip: "",
-
-    // Job details
-    positionTitle: "",
-    meetingDate: "",
-    supervisorNameTitle: "",
-
-    // Compensation
-    baseSalary: "",
-    commissionPercentage: "",
-    commissionBasis: "",
-
-    // Benefits & Leave
-    vacationDays: "",
-    sickLeaveDays: "",
-
-    // Non-compete
-    nonCompetePeriod: "",
-    nonCompeteGeographicArea: "",
-    nonSolicitPeriod: "",
-
-    // Employer signature
-    employerTitle: "",
-    employerSignatureDate: "",
-
-    // Employee signature
-    employeeSignatureDate: "",
-  });
-
-  const [currentStep, setCurrentStep] = useState(1);
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, 7));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
-
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    let currentY = 20;
-    const lineHeight = 8;
-
-    const addText = (text, fontSize = 11, isBold = false, isCenter = false) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("times", isBold ? "bold" : "normal");
-      const textWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line) => {
-        if (currentY > 280) {
-          doc.addPage();
-          currentY = margin;
-        }
-        if (isCenter) {
-          const tw =
-            (doc.getStringUnitWidth(line) * fontSize) /
-            doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // ----- Start PDF Content -----
-    addText("OFFER OF EMPLOYMENT LETTER", 13, true, true);
-    currentY += 5;
-
-    addText(`Date: ${formData.date}`);
-    currentY += 5;
-
-    addText("To:");
-    addText(formData.employeeFullName);
-    addText(formData.employeeAddress);
-    addText(formData.employeeCityStateZip);
-    currentY += 5;
-
-    addText("From:");
-    addText(formData.employerFullName);
-    addText(formData.employerAddress);
-    addText(formData.employerCityStateZip);
-    currentY += 5;
-
-    addText("1. POSITION OFFER", 12, true);
-    addText(
-      `We are pleased to extend to you an offer of employment for the position of ${formData.positionTitle} with ${formData.employerFullName} (“Employer”), as discussed during our meeting on ${formData.meetingDate}.`
-    );
-    addText(
-      "Your acceptance of this offer constitutes your agreement to the terms, conditions, and obligations set forth in this letter, which shall remain binding until superseded by a formal written Employment Agreement."
-    );
-
-    addText("2. COMMENCEMENT OF EMPLOYMENT", 12, true);
-    addText(
-      `Your anticipated start date will be ${formData.date}, or such other date as mutually agreed in writing. You will report directly to ${formData.supervisorNameTitle}, or such other supervisor as the Employer may designate.`
-    );
-
-    addText("3. JOB RESPONSIBILITIES", 12, true);
-    addText(
-      `You will perform all duties customarily associated with the position of ${formData.positionTitle}, along with such additional tasks as may reasonably be assigned from time to time. You are expected to discharge your responsibilities with diligence, integrity, and full compliance with all company policies, applicable laws, and professional standards.`
-    );
-
-    addText("4. COMPENSATION", 12, true);
-    addText(
-      `4.1 Base Salary – You will receive monthly salary of $${formData.baseSalary}, payable in accordance with the Employer’s standard payroll schedule and subject to all applicable withholdings and deductions.`
-    );
-    addText(
-      `4.2 Commission – In addition to your base salary, you will be entitled to commissions calculated at ${formData.commissionPercentage}% of ${formData.commissionBasis}, subject to adjustment in accordance with company policy.`
-    );
-
-    addText("5. EXPENSE REIMBURSEMENT", 12, true);
-    addText(
-      "You will be reimbursed for reasonable, pre-approved out-of-pocket business expenses incurred in the course of performing your duties, provided that proper documentation is submitted in accordance with the Employer’s expense reimbursement policy."
-    );
-
-    addText("6. BENEFITS AND LEAVE", 12, true);
-    addText(
-      `6.1 Benefits – You will be eligible to participate in such health, retirement, and other benefit programs as the Employer may offer from time to time, subject to the applicable terms and eligibility requirements.`
-    );
-    addText(
-      `6.2 Vacation Leave – You will be entitled to ${formData.vacationDays} days of paid vacation per calendar year.`
-    );
-    addText(
-      `6.3 Sick/Personal Leave – You will be entitled to ${formData.sickLeaveDays} days of paid sick or personal leave per calendar year, subject to applicable law and company policy.`
-    );
-
-    addText("7. EMPLOYMENT RELATIONSHIP", 12, true);
-    addText(
-      "Your employment will be at-will, meaning that either you or the Employer may terminate the relationship at any time, with or without cause, and with or without notice, subject to applicable law."
-    );
-
-    addText("8. CONFIDENTIALITY AND INTELLECTUAL PROPERTY", 12, true);
-    addText(
-      "8.1 Confidentiality – You agree to maintain the confidentiality of all proprietary, trade secret, or confidential information belonging to the Employer, whether obtained before, during, or after your employment, and not to use or disclose such information except as authorized in writing by the Employer."
-    );
-    addText(
-      "8.2 Intellectual Property – Any inventions, designs, works of authorship, processes, or other intellectual property created by you in the scope of your employment, or using the Employer’s resources, shall be the sole and exclusive property of the Employer. You agree to execute any documents necessary to vest such rights in the Employer."
-    );
-
-    addText("9. NON-COMPETE AND NON-SOLICITATION", 12, true);
-    addText(
-      `9.1 Non-Compete – During your employment and for a period of ${formData.nonCompetePeriod} following termination, you shall not, within ${formData.nonCompeteGeographicArea}, engage in or provide services to any business that is in direct competition with the Employer’s business as conducted during your employment.`
-    );
-    addText(
-      `9.2 Non-Solicitation – During your employment and for a period of ${formData.nonSolicitPeriod} following termination, you shall not solicit, divert, or attempt to induce any employee, contractor, or client of the Employer to terminate or alter their relationship with the Employer.`
-    );
-
-    addText("10. CONDITIONS OF OFFER", 12, true);
-    addText("This offer is contingent upon:");
-    addText("Your written acceptance of this letter.", 11, false);
-    addText(
-      "Completion of all pre-employment requirements, including any background checks, reference verifications, or drug screening as may be required by the Employer.",
-      11,
-      false
-    );
-
-    addText("11. NON-CONTRACTUAL NATURE", 12, true);
-    addText(
-      "This letter is not intended to create a guarantee of continued employment for any specific duration, and the at-will nature of your employment shall remain in effect unless expressly modified by a subsequent written agreement signed by both parties."
-    );
-
-    addText("12. GOVERNING LAW", 12, true);
-    addText(
-      `This letter shall be governed by and construed in accordance with the laws of the State of ${formData.state}, without regard to its conflict of laws principles.`
-    );
-
-    addText("13. ACCEPTANCE OF OFFER", 12, true);
-    addText(
-      `If you accept this offer, please sign and return a copy of this letter by ${formData.deadlineDate}.`
-    );
-    addText(
-      "We look forward to working with you and are confident that your skills and dedication will be valuable assets to our team."
-    );
-
-    addText("Sincerely,");
-    addText(formData.employerFullName);
-    addText(formData.employerTitle);
-    addText("Signature: _______________________");
-    addText(`Date: ${formData.employerSignatureDate}`);
-    currentY += 5;
-
-    addText("Acknowledgement and Acceptance:");
-    addText(
-      `I, ${formData.employeeFullName}, acknowledge that I have read and understood the terms of this Offer of Employment and agree to be bound by them.`
-    );
-    addText("Employee Signature: _________________________");
-    addText(`Date: ${formData.employeeSignatureDate}`);
-
-    // Save PDF
-    doc.save("OfferOfEmploymentLetter.pdf");
-  };
-
-   const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>General Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => handleInputChange("date", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="deadlineDate">Deadline Date</Label>
-                <Input
-                  id="deadlineDate"
-                  type="date"
-                  value={formData.deadlineDate}
-                  onChange={(e) =>
-                    handleInputChange("deadlineDate", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="state">Governing State</Label>
-                <Input
-                  id="state"
-                  value={formData.state}
-                  onChange={(e) => handleInputChange("state", e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Employee Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="employeeFullName">Full Name</Label>
-                <Input
-                  id="employeeFullName"
-                  value={formData.employeeFullName}
-                  onChange={(e) =>
-                    handleInputChange("employeeFullName", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employeeAddress">Address</Label>
-                <Textarea
-                  id="employeeAddress"
-                  value={formData.employeeAddress}
-                  onChange={(e) =>
-                    handleInputChange("employeeAddress", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employeeCityStateZip">City, State, ZIP</Label>
-                <Input
-                  id="employeeCityStateZip"
-                  value={formData.employeeCityStateZip}
-                  onChange={(e) =>
-                    handleInputChange("employeeCityStateZip", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Employer Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="employerFullName">Full Name</Label>
-                <Input
-                  id="employerFullName"
-                  value={formData.employerFullName}
-                  onChange={(e) =>
-                    handleInputChange("employerFullName", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employerAddress">Address</Label>
-                <Textarea
-                  id="employerAddress"
-                  value={formData.employerAddress}
-                  onChange={(e) =>
-                    handleInputChange("employerAddress", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employerCityStateZip">City, State, ZIP</Label>
-                <Input
-                  id="employerCityStateZip"
-                  value={formData.employerCityStateZip}
-                  onChange={(e) =>
-                    handleInputChange("employerCityStateZip", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="positionTitle">Position Title</Label>
-                <Input
-                  id="positionTitle"
-                  value={formData.positionTitle}
-                  onChange={(e) =>
-                    handleInputChange("positionTitle", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="meetingDate">Meeting Date</Label>
-                <Input
-                  id="meetingDate"
-                  type="date"
-                  value={formData.meetingDate}
-                  onChange={(e) =>
-                    handleInputChange("meetingDate", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="supervisorNameTitle">
-                  Supervisor Name & Title
-                </Label>
-                <Input
-                  id="supervisorNameTitle"
-                  value={formData.supervisorNameTitle}
-                  onChange={(e) =>
-                    handleInputChange("supervisorNameTitle", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Compensation</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="baseSalary">Base Salary (annual)</Label>
-                <Input
-                  id="baseSalary"
-                  value={formData.baseSalary}
-                  onChange={(e) =>
-                    handleInputChange("baseSalary", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="commissionPercentage">Commission %</Label>
-                <Input
-                  id="commissionPercentage"
-                  value={formData.commissionPercentage}
-                  onChange={(e) =>
-                    handleInputChange("commissionPercentage", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="commissionBasis">Commission Basis</Label>
-                <Input
-                  id="commissionBasis"
-                  value={formData.commissionBasis}
-                  onChange={(e) =>
-                    handleInputChange("commissionBasis", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Leave & Restrictions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="vacationDays">Vacation Days</Label>
-                <Input
-                  id="vacationDays"
-                  value={formData.vacationDays}
-                  onChange={(e) =>
-                    handleInputChange("vacationDays", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="sickLeaveDays">Sick Leave Days</Label>
-                <Input
-                  id="sickLeaveDays"
-                  value={formData.sickLeaveDays}
-                  onChange={(e) =>
-                    handleInputChange("sickLeaveDays", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="nonCompetePeriod">Non-Compete Period</Label>
-                <Input
-                  id="nonCompetePeriod"
-                  value={formData.nonCompetePeriod}
-                  onChange={(e) =>
-                    handleInputChange("nonCompetePeriod", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="nonCompeteGeographicArea">
-                  Non-Compete Geographic Area
-                </Label>
-                <Input
-                  id="nonCompeteGeographicArea"
-                  value={formData.nonCompeteGeographicArea}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "nonCompeteGeographicArea",
-                      e.target.value
-                    )
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="nonSolicitPeriod">Non-Solicitation Period</Label>
-                <Input
-                  id="nonSolicitPeriod"
-                  value={formData.nonSolicitPeriod}
-                  onChange={(e) =>
-                    handleInputChange("nonSolicitPeriod", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 7:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Signatures</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="employerTitle">Employer Title</Label>
-                <Input
-                  id="employerTitle"
-                  value={formData.employerTitle}
-                  onChange={(e) =>
-                    handleInputChange("employerTitle", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employerSignatureDate">
-                  Employer Signature Date
-                </Label>
-                <Input
-                  id="employerSignatureDate"
-                  type="date"
-                  value={formData.employerSignatureDate}
-                  onChange={(e) =>
-                    handleInputChange("employerSignatureDate", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="employeeSignatureDate">
-                  Employee Signature Date
-                </Label>
-                <Input
-                  id="employeeSignatureDate"
-                  type="date"
-                  value={formData.employeeSignatureDate}
-                  onChange={(e) =>
-                    handleInputChange("employeeSignatureDate", e.target.value)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function OfferOfEmployment() {
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Offer of Employment Letter
-        </h1>
-        <p className="text-gray-600">
-          Fill in the details and export the offer letter as a PDF.
-        </p>
-      </div>
-
-      {/* Progress bar */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">
-            Step {currentStep} of 7
-          </div>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 7) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {renderStep()}
-
-      {/* Navigation */}
-      <div className="flex justify-between mt-8">
-        <Button
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 1}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </Button>
-
-        <div className="flex gap-2">
-          {currentStep < 7 ? (
-            <Button onClick={nextStep} className="flex items-center gap-2">
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          )}
-        </div>
-      </div>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Offer Of Employment"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="offerofemployment"
+    />
   );
 }

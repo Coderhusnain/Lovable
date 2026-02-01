@@ -1,327 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
 import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  agreementDate: string;
-  partyAName: string;
-  partyAAddress: string;
-  partyBName: string;
-  partyBAddress: string;
-  serviceStartDate: string;
-  architectName: string;
-  clientName: string;
-  paymentAmount: string;
-  discountTerms: string;
-  latePaymentInterest: string;
-  cureDays: string;
-  terminationDate: string;
-  governingLawState: string;
-  workProductOwnership: string;
-  clientSignatoryName: string;
-  clientSignDate: string;
-  architectSignatoryName: string;
-  architectSignDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function ArchitecturalServicesAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: "",
-    partyAName: "",
-    partyAAddress: "",
-    partyBName: "",
-    partyBAddress: "",
-    serviceStartDate: "",
-    architectName: "",
-    clientName: "",
-    paymentAmount: "",
-    discountTerms: "",
-    latePaymentInterest: "",
-    cureDays: "",
-    terminationDate: "",
-    governingLawState: "",
-    workProductOwnership: "",
-    clientSignatoryName: "",
-    clientSignDate: "",
-    architectSignatoryName: "",
-    architectSignDate: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Architectural Services Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("architectural_services_agreement.pdf");
+};
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState<boolean>(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const lineHeight = 8;
-    let currentY = margin;
-
-    const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("times", isBold ? "bold" : "normal");
-      const textWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line: string) => {
-        if (currentY > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          currentY = margin;
-        }
-        if (isCenter) {
-          const tw = (doc.getStringUnitWidth(line) * fontSize) / doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // === PDF Content ===
-    addText("ARCHITECTURAL SERVICES AGREEMENT", 14, true, true);
-    addText("\n");
-    addText(`This Architectural Services Agreement (the “Agreement”) is made and entered into as of ${formData.agreementDate || "____________________"}, by and between:`);
-    addText(`${formData.partyAName || "____________________"}, residing at ${formData.partyAAddress || "____________________"},`);
-    addText("\nAND");
-    addText(`${formData.partyBName || "____________________"}, residing at ${formData.partyBAddress || "____________________"}.`);
-    addText("(Collectively referred to as the “Parties” and individually as a “Party.”)");
-    addText("\n");
-
-    addText("1. Description of Services");
-    addText(`Commencing on ${formData.serviceStartDate || "____________________"}, ${formData.architectName || "____________________"} (the “Architect”) shall provide to ${formData.clientName || "____________________"} (the “Client”) the architectural services described are attached hereto and incorporated by reference (collectively, the “Services”).`);
-    addText("The Services shall include all architectural, site planning, and engineering services related to the shell and core design of the project (the “Project”), including but not limited to:");
-    addText("\n");
-
-    addText("2. Phases of Services");
-    addText("a. Schematic Design Phase");
-    addText("The Architect shall:");
-    addText("• Review all documentation furnished by the Client;");
-    addText("• Determine and confirm the requirements of the Project.");
-    addText("b. Design Development Phase");
-    addText("The Architect shall:");
-    addText("• Prepare construction documents including drawings, specifications, and preliminary plans defining the architectural, structural, mechanical, and electrical elements of the Project, based on approved schematic designs;");
-    addText("• Advise the Client on preliminary construction cost estimates.");
-    addText("c. Construction Documents Phase");
-    addText("The Architect shall:");
-    addText("• Prepare detailed construction drawings and documents based on approved design development materials;");
-    addText("• Advise the Client on anticipated construction costs;");
-    addText("• Assist in obtaining all necessary governmental and regulatory approvals.");
-    addText("d. Bidding or Negotiation Phase");
-    addText("Upon Client approval of construction documents, the Architect shall assist with obtaining bids or negotiated proposals and facilitate the preparation and award of construction contracts.");
-    addText("e. Construction Phase – Administration");
-    addText("The Architect shall:");
-    addText("• Administer the general conditions of the construction contract, from award through issuance of the final certificate of payment;");
-    addText("• Have authority to inspect the work and reject non-compliant work;");
-    addText("• Not assume control over construction means, methods, techniques, scheduling, safety measures, or contractor operations.");
-    addText("\n");
-
-    addText("3. Additional Services");
-    addText("Upon written request by the Client, the Architect may provide additional services, including but not limited to:");
-    addText("• Extended design and planning beyond the basic scope;");
-    addText("• Selection of project representatives or consultants;");
-    addText("• Evaluation of contractor substitution requests;");
-    addText("• Preparation of revisions due to Client-directed changes.");
-    addText("The Client agrees to compensate the Architect for such additional services as provided under Section 10.");
-    addText("\n");
-
-    addText("4. Payment");
-    addText(`• The Client shall pay ${formData.architectName || "____________________"} the total amount of ${formData.paymentAmount || "____________________"} upon completion of Services.`);
-    addText(`• Discount Terms: ${formData.discountTerms || "____________________"}`);
-    addText(`• Late Payment: Interest shall accrue on overdue amounts at ${formData.latePaymentInterest || "____________________"} per annum or the maximum rate permitted by law, whichever is lower.`);
-    addText("• Collection Costs: The Client shall bear all costs of collection, including reasonable attorneys’ fees.");
-    addText("• Non-Payment: Failure to pay shall constitute a material breach and entitle the Architect to terminate this Agreement and pursue legal remedies.");
-    addText("\n");
-
-    addText("5. Warranty");
-    addText("The Architect warrants that the Services shall be performed:");
-    addText("• In a professional and timely manner;");
-    addText("• In accordance with standards customary within the industry and local jurisdiction;");
-    addText("• With a standard of care equal to or greater than that exercised by similarly situated professionals on comparable projects.");
-    addText("\n");
-
-    addText("6. Default");
-    addText("The following shall constitute a material default under this Agreement:");
-    addText("a. Failure to make a required payment when due;");
-    addText("b. Insolvency, bankruptcy, or appointment of a receiver for either Party;");
-    addText("c. Seizure, levy, or general assignment for the benefit of creditors;");
-    addText("d. Failure to perform or deliver services in the time and manner specified herein.");
-    addText("\n");
-
-    addText("7. Remedies");
-    addText(`In the event of a default, the non-defaulting Party may serve written notice detailing the nature of the default. The defaulting Party shall have ${formData.cureDays || "____"} from the effective date of such notice to cure the default.`);
-    addText("Failure to cure within the stipulated period shall result in automatic termination of this Agreement unless otherwise waived in writing by the non-defaulting Party.");
-    addText("\n");
-
-    addText("8. Force Majeure");
-    addText("If performance under this Agreement is delayed or prevented due to circumstances beyond a Party’s reasonable control, including but not limited to acts of God, natural disasters, pandemics, labor strikes, riots, war, vandalism, or governmental restrictions, then the affected Party shall be excused from performance for the duration of the event.");
-    addText("The affected Party must promptly notify the other in writing and use reasonable efforts to resume performance.");
-    addText("\n");
-
-    addText("9. Confidentiality");
-    addText("• Both Parties agree to maintain the confidentiality of all proprietary or sensitive information disclosed in connection with this Agreement.");
-    addText("• Upon termination, each Party shall return or destroy all confidential materials received from the other Party.");
-    addText("• These obligations shall survive termination of this Agreement.");
-    addText("\n");
-
-    addText("10. Indemnification");
-    addText("Each Party shall indemnify, defend, and hold harmless the other Party, its officers, employees, and agents, from any and all claims, liabilities, losses, damages, or expenses (including attorney’s fees) arising from or related to the negligent acts or omissions of the indemnifying Party or its representatives.");
-    addText("\n");
-
-    addText("11. No Mechanic’s Lien");
-    addText("The Architect agrees that no mechanic’s lien or claim shall be filed by any of its employees, subcontractors, or consultants. Upon final payment, the Architect shall certify that all claims for labor, materials, and services have been satisfied.");
-    addText("\n");
-
-    addText("12. Compensation for Additional Services");
-    addText("The Client shall compensate the Architect for all authorized additional services beyond the scope of this Agreement, in accordance with the rates and terms mutually agreed upon in writing.");
-    addText("\n");
-
-    addText("13. Client Responsibilities");
-    addText("The Client shall:");
-    addText("• Provide complete and timely information regarding the Project requirements;");
-    addText("• Furnish all legal and regulatory documentation necessary for design and construction approvals.");
-    addText("\n");
-
-    addText("14. Term");
-    addText(`This Agreement shall automatically terminate on ${formData.terminationDate || "____________________"}, unless otherwise extended or terminated earlier as provided herein.`);
-    addText("\n");
-
-    addText("15. Work Product Ownership");
-    addText(`All intellectual property and work product prepared by the Architect under this Agreement shall remain the ${formData.workProductOwnership || "____________________"} exclusive property, as agreed.`);
-    addText("The Party assigning such rights shall execute all documents necessary to confirm such ownership.");
-    addText("\n");
-
-    addText("16. Arbitration");
-    addText("Any dispute arising out of or relating to this Agreement shall be resolved by binding arbitration under the Commercial Arbitration Rules of the American Arbitration Association.");
-    addText("• Each Party shall appoint one arbitrator; the two arbitrators shall appoint a third.");
-    addText("• Arbitration shall be conducted at a mutually agreed location.");
-    addText("• The arbitrators shall have the power to issue binding decisions but shall not alter the terms of this Agreement or award punitive damages.");
-    addText("• The arbitration award shall be final and enforceable in any court of competent jurisdiction.");
-    addText("\n");
-
-    addText("17. Severability");
-    addText("If any provision of this Agreement is held to be invalid or unenforceable, such provision shall be limited or modified to the extent necessary to render it enforceable. The remainder of this Agreement shall remain in full force and effect.");
-    addText("\n");
-
-    addText("18. Amendment");
-    addText("This Agreement may be amended only by a written instrument executed by the Party against whom enforcement is sought.");
-    addText("\n");
-
-    addText("19. Governing Law");
-    addText(`This Agreement shall be governed by, and construed in accordance with, the laws of the State of ${formData.governingLawState || "____________________"}, without regard to conflict of laws principles.`);
-    addText("\n");
-
-    addText("20. Notice");
-    addText("All notices required or permitted under this Agreement shall be in writing and delivered personally or by certified mail, return receipt requested, to the addresses specified above or as otherwise designated in writing.");
-    addText("\n");
-
-    addText("21. Waiver");
-    addText("The failure of either Party to enforce any provision of this Agreement shall not be construed as a waiver of such provision or any other provision, nor shall it affect the right of the Party to thereafter enforce such provision.");
-    addText("\n");
-
-    addText("22. Entire Agreement");
-    addText("This Agreement constitutes the entire understanding between the Parties with respect to its subject matter and supersedes all prior oral or written communications, representations, or agreements.");
-    addText("\n");
-
-    addText("23. Execution");
-    addText("CLIENT");
-    addText(`By: ___________________________`);
-    addText(`Name: ${formData.clientSignatoryName || "____________________"}`);
-    addText(`Date: ${formData.clientSignDate || "____________________"}`);
-    addText("ARCHITECT");
-    addText(`By: ___________________________`);
-    addText(`Name: ${formData.architectSignatoryName || "____________________"}`);
-    addText(`Date: ${formData.architectSignDate || "____________________"}`);
-
-    doc.save("Architectural_Services_Agreement.pdf");
-    setPdfGenerated(true);
-    setStep(4);
-  };
-
-  const steps = [
-    {
-      label: "Parties Information",
-      content: (
-        <>
-          <Label>Agreement Date</Label>
-          <Input name="agreementDate" value={formData.agreementDate} onChange={handleChange} />
-          <Label>Party A Name</Label>
-          <Input name="partyAName" value={formData.partyAName} onChange={handleChange} />
-          <Label>Party A Address</Label>
-          <Input name="partyAAddress" value={formData.partyAAddress} onChange={handleChange} />
-          <Label>Party B Name</Label>
-          <Input name="partyBName" value={formData.partyBName} onChange={handleChange} />
-          <Label>Party B Address</Label>
-          <Input name="partyBAddress" value={formData.partyBAddress} onChange={handleChange} />
-        </>
-      ),
-      validate: () => Boolean(formData.agreementDate && formData.partyAName && formData.partyBName),
-    },
-    {
-      label: "Services & Terms",
-      content: (
-        <>
-          <Label>Service Start Date</Label>
-          <Input name="serviceStartDate" value={formData.serviceStartDate} onChange={handleChange} />
-          <Label>Architect Name</Label>
-          <Input name="architectName" value={formData.architectName} onChange={handleChange} />
-          <Label>Client Name</Label>
-          <Input name="clientName" value={formData.clientName} onChange={handleChange} />
-          <Label>Payment Amount</Label>
-          <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} />
-          <Label>Discount Terms</Label>
-          <Input name="discountTerms" value={formData.discountTerms} onChange={handleChange} />
-          <Label>Late Payment Interest</Label>
-          <Input name="latePaymentInterest" value={formData.latePaymentInterest} onChange={handleChange} />
-          <Label>Cure Days on Default</Label>
-          <Input name="cureDays" value={formData.cureDays} onChange={handleChange} />
-          <Label>Termination Date</Label>
-          <Input name="terminationDate" value={formData.terminationDate} onChange={handleChange} />
-          <Label>Governing Law State</Label>
-          <Input name="governingLawState" value={formData.governingLawState} onChange={handleChange} />
-          <Label>Work Product Ownership</Label>
-          <Input name="workProductOwnership" value={formData.workProductOwnership} onChange={handleChange} />
-        </>
-      ),
-      validate: () => Boolean(formData.serviceStartDate && formData.paymentAmount),
-    },
-    {
-      label: "Execution & Signatures",
-      content: (
-        <>
-          <Label>Client Signatory Name</Label>
-          <Input name="clientSignatoryName" value={formData.clientSignatoryName} onChange={handleChange} />
-          <Label>Client Sign Date</Label>
-          <Input name="clientSignDate" value={formData.clientSignDate} onChange={handleChange} />
-          <Label>Architect Signatory Name</Label>
-          <Input name="architectSignatoryName" value={formData.architectSignatoryName} onChange={handleChange} />
-          <Label>Architect Sign Date</Label>
-          <Input name="architectSignDate" value={formData.architectSignDate} onChange={handleChange} />
-        </>
-      ),
-      validate: () => Boolean(formData.clientSignatoryName && formData.architectSignatoryName),
-    },
-  ];
-
+export default function ArchitecturalServicesAgreement() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      <FormWizard steps={steps} onFinish={generatePDF} />
-
-      {step === 4 && pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold pt-5">Architectural Services Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Architectural Services Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="architecturalservicesagreement"
+    />
   );
 }

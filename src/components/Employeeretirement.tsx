@@ -1,306 +1,471 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  companyName: string;
-  jurisdiction: string;
-  companyAddress: string;
-  employeeName: string;
-  employeeAddress: string;
-  positionTitle: string;
-  retirementDate: string;
-  baseSalaryAmount: string;
-  adjustmentDate: string;
-  severanceYears: string;
-  cobraMonths: string;
-  governingLaw: string;
-  employeeSignature: string;
-  employeeSignatureDate: string;
-  employerSignature: string;
-  employerSignatureDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this document?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Document Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and details of this document",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function RetirementAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    effectiveDate: "",
-    companyName: "",
-    jurisdiction: "",
-    companyAddress: "",
-    employeeName: "",
-    employeeAddress: "",
-    positionTitle: "",
-    retirementDate: "",
-    baseSalaryAmount: "",
-    adjustmentDate: "",
-    severanceYears: "",
-    cobraMonths: "",
-    governingLaw: "",
-    employeeSignature: "",
-    employeeSignatureDate: "",
-    employerSignature: "",
-    employerSignatureDate: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Employee Retirement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("DOCUMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  
+  doc.save("employee_retirement.pdf");
+};
 
-  const [step, setStep] = useState(1);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // PDF Generator with pixel-to-pixel text
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const lineHeight = 8;
-    let currentY = margin;
-
-    const addText = (
-      text: string,
-      fontSize = 11,
-      isBold = false,
-      isCenter = false
-    ) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("times", isBold ? "bold" : "normal");
-      const textWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line: string) => {
-        if (currentY > 720) {
-          doc.addPage();
-          currentY = margin;
-        }
-        if (isCenter) {
-          const tw =
-            (doc.getStringUnitWidth(line) * fontSize) /
-            doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // === AGREEMENT CONTENT START ===
-    addText("EMPLOYEE RETIREMENT AGREEMENT", 14, true, true);
-    addText(
-      `This Employee Retirement Agreement (“Agreement”) is made and entered into as of ${formData.effectiveDate}, by and between ${formData.companyName}, a corporation duly organized and existing under the laws of ${formData.jurisdiction}, having its principal place of business at ${formData.companyAddress} (hereinafter referred to as the “Company”), and ${formData.employeeName}, residing at ${formData.employeeAddress} (hereinafter referred to as the “Employee”). The Company and the Employee may hereinafter be referred to collectively as the “Parties” and individually as a “Party.”`
-    );
-
-    addText("RECITALS", 12, true);
-    addText(
-      `WHEREAS, the Employee has rendered valuable service to the Company in various capacities during their tenure and is presently employed in the position of ${formData.positionTitle};`
-    );
-    addText(
-      `WHEREAS, the Parties have mutually agreed that it is in their respective best interests for the Employee to retire from employment with the Company, effective ${formData.retirementDate};`
-    );
-    addText(
-      `WHEREAS, the Parties wish to formally set forth the terms and conditions governing the Employee’s retirement and the cessation of their employment with the Company;`
-    );
-    addText(
-      "NOW, THEREFORE, in consideration of the mutual promises, covenants, and undertakings contained herein, and intending to be legally bound, the Parties agree as follows:"
-    );
-
-    addText("1. Retirement", 12, true);
-    addText(
-      `The Employee shall voluntarily retire from and thereby terminate their employment with the Company, effective ${formData.retirementDate} (the “Retirement Date”). As of the Retirement Date, the Employee’s employment and all rights to compensation, remuneration, and benefits under the Company’s benefit plans shall cease, except as expressly provided in this Agreement or required by applicable law.`
-    );
-
-    addText("2. Employment Prior to Retirement Date", 12, true);
-    addText(
-      `Until the Retirement Date, the Employee shall remain employed in the position of ${formData.positionTitle} and shall continue to receive their current base salary in the amount of $${formData.baseSalaryAmount} per month, together with all existing employment benefits. Any retroactive adjustments to base salary shall be paid to the Employee on or before ${formData.adjustmentDate}.`
-    );
-
-    addText("3. Severance Benefits", 12, true);
-    addText(
-      `Commencing on the Retirement Date and continuing for a period of ${formData.severanceYears} years, the Company shall pay the Employee, in accordance with its normal payroll schedule, an amount equal in the aggregate to ${formData.severanceYears} years of the Employee’s base salary as in effect immediately prior to the Retirement Date.`
-    );
-    addText(
-      `In addition, the Company shall reimburse the Employee for the cost of continuing medical and dental insurance coverage for the Employee and any eligible dependents under the Consolidated Omnibus Budget Reconciliation Act of 1985 (“COBRA”), for the duration of the Employee’s COBRA eligibility, but in no event beyond ${formData.cobraMonths} months from the Retirement Date.`
-    );
-
-    addText("4. No Mitigation", 12, true);
-    addText(
-      "The severance benefits provided herein shall not be subject to mitigation or reduction on account of the Employee’s acceptance of other employment or engagement in any other business following retirement, unless otherwise expressly agreed in writing by the Parties."
-    );
-
-    addText("5. Employee Covenants", 12, true);
-    addText(
-      "(a) Confidentiality and Non-Disclosure – The Employee shall not, during or after employment, disclose any confidential or proprietary information of the Company, except as required in the performance of duties or by law, without the Company’s prior written consent."
-    );
-    addText(
-      "(b) Non-Solicitation – For a period of one (1) year following the Retirement Date, the Employee shall not, directly or indirectly, solicit or induce any employee, customer, or supplier of the Company to terminate or alter their relationship with the Company."
-    );
-    addText(
-      "(c) Non-Competition – For a period of one (1) year following the Retirement Date, the Employee shall not, without the Company’s prior written consent, engage in any business that competes directly with the Company."
-    );
-
-    addText("6. Remedies", 12, true);
-    addText(
-      "Any breach of the covenants contained herein shall entitle the Company to equitable relief, including but not limited to injunctive relief, in addition to any other remedies available at law or in equity."
-    );
-
-    addText("7. Cooperation and Non-Disparagement", 12, true);
-    addText(
-      "The Employee shall reasonably cooperate with the Company in any legal, regulatory, or business matters in which the Employee’s prior knowledge may be relevant. Neither Party shall make any disparaging or defamatory statements about the other."
-    );
-
-    addText("8. Release of Claims", 12, true);
-    addText(
-      "(a) By Employee – In consideration of the benefits provided herein, the Employee hereby releases and forever discharges the Company and its affiliates from any and all claims, demands, and liabilities arising out of or in connection with their employment or the termination thereof."
-    );
-    addText(
-      "(b) By Company – The Company releases the Employee from any claims it may have, except for those expressly preserved herein."
-    );
-
-    addText("9. Return of Property", 12, true);
-    addText(
-      "On or before the Retirement Date, the Employee shall return all Company property in their possession, including but not limited to documents, records, computers, keys, and security devices."
-    );
-
-    addText("10. Confidentiality of Agreement", 12, true);
-    addText(
-      "The terms of this Agreement shall remain confidential and shall not be disclosed by either Party, except to legal, financial, or governmental advisors, or to immediate family members who agree to maintain confidentiality."
-    );
-
-    addText("11. Governing Law", 12, true);
-    addText(
-      `This Agreement shall be governed by, and construed in accordance with, the laws of the State of ${formData.governingLaw}, without regard to conflict of laws principles.`
-    );
-
-    addText("12. Entire Agreement", 12, true);
-    addText(
-      "This Agreement contains the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior agreements, understandings, or representations, whether written or oral."
-    );
-
-    addText("13. Amendments", 12, true);
-    addText(
-      "This Agreement may be amended only by a written instrument signed by both Parties."
-    );
-
-    addText("14. Counterparts", 12, true);
-    addText(
-      "This Agreement may be executed in multiple counterparts, each of which shall be deemed an original, but all of which together shall constitute one and the same instrument."
-    );
-
-    addText("IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above.");
-
-    addText(`The Employee: ${formData.employeeSignature} Date: ${formData.employeeSignatureDate}`);
-    addText(`The Employer: ${formData.employerSignature} Date: ${formData.employerSignatureDate}`);
-
-    // Save file
-    doc.save("Employee_Retirement_Agreement.pdf");
-  };
-
-  // Step rendering
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-              <Label>Company Name</Label>
-              <Input name="companyName" value={formData.companyName} onChange={handleChange} />
-              <Label>Jurisdiction</Label>
-              <Input name="jurisdiction" value={formData.jurisdiction} onChange={handleChange} />
-              <Label>Company Address</Label>
-              <Input name="companyAddress" value={formData.companyAddress} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Employee Name</Label>
-              <Input name="employeeName" value={formData.employeeName} onChange={handleChange} />
-              <Label>Employee Address</Label>
-              <Input name="employeeAddress" value={formData.employeeAddress} onChange={handleChange} />
-              <Label>Position Title</Label>
-              <Input name="positionTitle" value={formData.positionTitle} onChange={handleChange} />
-              <Label>Retirement Date</Label>
-              <Input name="retirementDate" value={formData.retirementDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Base Salary Amount</Label>
-              <Input name="baseSalaryAmount" value={formData.baseSalaryAmount} onChange={handleChange} />
-              <Label>Adjustment Date</Label>
-              <Input name="adjustmentDate" value={formData.adjustmentDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Severance Years</Label>
-              <Input name="severanceYears" value={formData.severanceYears} onChange={handleChange} />
-              <Label>COBRA Months</Label>
-              <Input name="cobraMonths" value={formData.cobraMonths} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Governing Law</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Employee Signature</Label>
-              <Input name="employeeSignature" value={formData.employeeSignature} onChange={handleChange} />
-              <Label>Employee Signature Date</Label>
-              <Input name="employeeSignatureDate" value={formData.employeeSignatureDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 7:
-        return (
-          <Card>
-            <CardContent>
-              <Label>Employer Signature</Label>
-              <Input name="employerSignature" value={formData.employerSignature} onChange={handleChange} />
-              <Label>Employer Signature Date</Label>
-              <Input name="employerSignatureDate" value={formData.employerSignatureDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function EmployeeRetirement() {
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-4">
-      {renderStep()}
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep(step - 1)}>Back</Button>
-        {step < 7 ? (
-          <Button onClick={() => setStep(step + 1)}>Next</Button>
-        ) : (
-          <Button onClick={generatePDF}>Generate PDF</Button>
-        )}
-      </div>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Employee Retirement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="employeeretirement"
+    />
   );
 }

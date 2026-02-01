@@ -1,520 +1,506 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { FileText, Download, ArrowRight, ArrowLeft } from "lucide-react";
-import { Country, State, City } from 'country-state-city';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import jsPDF from 'jspdf';
-import LegalDisclaimer from "@/components/LegalDisclaimer";
-import UserInfoStep from "@/components/UserInfoStep";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  // Agreement Information
-  agreementDay: string;
-  agreementMonth: string;
-  agreementYear: string;
-  
-  // Mortgagee Information
-  mortgageeName: string;
-  mortgageeAddress: string;
-  
-  // Tenant Information
-  tenantName: string;
-  tenantAddress: string;
-  
-  // Lease Information
-  leaseDate: string;
-  landlordName: string;
-  landlordAddress: string;
-  
-  // Property Information
-  legalDescription: string;
-  propertyAddress: string;
-  
-  // Signature Information
-  mortgageeSignerName: string;
-  mortgageeSignerTitle: string;
-  mortgageeSignatureDate: string;
-  tenantSignerName: string;
-  tenantSignerTitle: string;
-  tenantSignatureDate: string;
-  
-  // Location Selection
-  selectedCountry: string;
-  selectedState: string;
-  selectedCity: string;
-}
-
-const NonDisturbanceAgreement = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<FormData>({
-    agreementDay: '',
-    agreementMonth: '',
-    agreementYear: '',
-    mortgageeName: '',
-    mortgageeAddress: '',
-    tenantName: '',
-    tenantAddress: '',
-    leaseDate: '',
-    landlordName: '',
-    landlordAddress: '',
-    legalDescription: '',
-    propertyAddress: '',
-    mortgageeSignerName: '',
-    mortgageeSignerTitle: '',
-    mortgageeSignatureDate: '',
-    tenantSignerName: '',
-    tenantSignerTitle: '',
-    tenantSignatureDate: '',
-    selectedCountry: '',
-    selectedState: '',
-    selectedCity: ''
-  });
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const totalSteps = 5;
-
-  const countries = Country.getAllCountries();
-  const states = formData.selectedCountry ? State.getStatesOfCountry(formData.selectedCountry) : [];
-  const cities = formData.selectedState ? City.getCitiesOfState(formData.selectedCountry, formData.selectedState) : [];
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleCountryChange = (countryCode: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedCountry: countryCode,
-      selectedState: '',
-      selectedCity: ''
-    }));
-  };
-
-  const handleStateChange = (stateCode: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedState: stateCode,
-      selectedCity: ''
-    }));
-  };
-
-  const handleCityChange = (cityName: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedCity: cityName
-    }));
-  };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const lineHeight = 6;
-      let yPosition = margin;
-
-      // Helper function to add text with word wrapping
-      const addText = (text: string, fontSize: number = 10, isBold: boolean = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont("helvetica", isBold ? "bold" : "normal");
-        
-        const lines = doc.splitTextToSize(text, pageWidth - 2 * margin);
-        lines.forEach((line: string) => {
-          if (yPosition > doc.internal.pageSize.height - margin) {
-            doc.addPage();
-            yPosition = margin;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
           }
-          doc.text(line, margin, yPosition);
-          yPosition += lineHeight;
-        });
-      };
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-      // Title
-      addText("NON-DISTURBANCE AGREEMENT", 14, true);
-      yPosition += 10;
-
-      // Agreement content with substituted values using the exact legal text
-      const agreementText = `This Agreement ("Agreement") is made and entered into on the ${formData.agreementDay || '___'} day of ${formData.agreementMonth || '_______'}, ${formData.agreementYear || '20__'}, by and between
-
-${formData.mortgageeName || '[Insert Mortgagee Name]'}, of ${formData.mortgageeAddress || '[Insert Address]'} (hereinafter referred to as the "Mortgagee"),
-And
-${formData.tenantName || '[Insert Tenant Name]'}, of ${formData.tenantAddress || '[Insert Address]'} (hereinafter referred to as the "Tenant").
-
-RECITALS
-
-WHEREAS, Tenant entered into a lease agreement (the "Lease") dated ${formData.leaseDate || '__________'}, with ${formData.landlordName || '[Insert Landlord Name]'} (the "Landlord"), of ${formData.landlordAddress || '[Insert Landlord Address]'}, for the lease of a portion of the real property legally described as ${formData.legalDescription || '[Insert Legal Description]'}, commonly known as ${formData.propertyAddress || '[Insert Property Address]'} (the "Real Property");
-
-WHEREAS, Mortgagee has made a loan to Landlord secured, in part, by a mortgage (the "Mortgage") encumbering the Real Property;
-
-WHEREAS, Tenant has agreed to subordinate its leasehold interest to the Mortgage in exchange for the Mortgagee's agreement not to disturb Tenant's possession of the Real Property under the Lease so long as Tenant is not in default under the terms of the Lease.
-
-AGREEMENT
-
-NOW, THEREFORE, in consideration of the mutual covenants herein and intending to be legally bound, the parties agree as follows:
-
-1. Subordination
-Tenant agrees that the Lease, and all rights of the Tenant under it, shall be and remain subordinate in all respects to the lien, terms, and conditions of the Mortgage, including any renewals, extensions, modifications, replacements, or consolidations thereof, and to any future mortgage or mortgages placed on the Real Property by or through the Mortgagee.
-
-2. Non-Disturbance
-Provided Tenant is not in default under the Lease beyond applicable notice and cure periods, the Mortgagee agrees that:
-(a) The Lease shall not be terminated,
-(b) Tenant's possession, use, or enjoyment of the Premises shall not be disturbed, and
-(c) The leasehold estate shall not otherwise be affected
-in the event of foreclosure or any action or proceeding under or related to the Mortgage, or in the event the Mortgagee takes possession of the Real Property.
-
-Notwithstanding the foregoing, any person or entity acquiring the interest of the Landlord as a result of such foreclosure or proceeding, including their successors and assigns (collectively, the "Purchaser"), shall not be:
-(a) liable for any act or omission of any prior landlord;
-(b) subject to any defenses or offsets Tenant may have against any prior landlord;
-(c) bound by any rent prepayment exceeding one month; or
-(d) bound by any amendment or modification of the Lease made without the Mortgagee's prior written consent.
-
-3. Attornment
-In the event of a transfer of the Landlord's interest by foreclosure, deed in lieu of foreclosure, or otherwise, Tenant agrees to attorn to and recognize the Purchaser (including the Mortgagee, if applicable) as its landlord under the Lease. Such attornment shall be effective automatically and without the execution of any further instrument. Following such attornment, the Lease shall remain in full force and effect between the Purchaser and Tenant, with the same terms, covenants, and conditions as though the Purchaser were the original landlord.
-
-4. Successors and Assigns
-This Agreement shall be binding upon and inure to the benefit of the parties hereto, and their respective successors, legal representatives, and assigns.
-
-5. Execution
-This Agreement may be executed in counterparts, each of which shall constitute an original, but all of which together shall constitute one and the same instrument. Facsimile or electronic signatures shall be deemed to have the same force and effect as originals.
-
-IN WITNESS WHEREOF, the undersigned have executed this Lease Subordination and Non-Disturbance Agreement as of the date first written above.
-
-MORTGAGEE:
-
-By: ___________________________
-Name: ${formData.mortgageeSignerName || '________________________'}
-Title: ${formData.mortgageeSignerTitle || '_________________________'}
-Date: ${formData.mortgageeSignatureDate || '_________________________'}
-
-TENANT:
-
-By: ___________________________
-Name: ${formData.tenantSignerName || '________________________'}
-Title: ${formData.tenantSignerTitle || '_________________________'}
-Date: ${formData.tenantSignatureDate || '_________________________'}
-
-Make It Legal
-
-This Agreement should be signed in front of a notary public.
-Once signed in front of a notary, this document should be delivered to the appropriate court for filing.
-
-Copies
-The original Agreement should be filed with the Clerk of Court or delivered to the requesting business.
-The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.
-
-Additional Assistance
-If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.`;
-
-      addText(agreementText);
-
-      // Save the PDF
-      doc.save('non-disturbance-agreement.pdf');
-      toast.success("Document generated successfully!");
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error("Failed to generate document");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const nextStep = () => {
-    if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-    } else if (currentStep === 4) {
-      setCurrentStep(5); // User info step
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 1: Location Selection</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="country">Country</Label>
-                <Select value={formData.selectedCountry} onValueChange={handleCountryChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.isoCode} value={country.isoCode}>
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="state">State</Label>
-                <Select value={formData.selectedState} onValueChange={handleStateChange} disabled={!formData.selectedCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {states.map((state) => (
-                      <SelectItem key={state.isoCode} value={state.isoCode}>
-                        {state.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="city">City</Label>
-                <Select value={formData.selectedCity} onValueChange={handleCityChange} disabled={!formData.selectedState}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select City" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cities.map((city) => (
-                      <SelectItem key={city.name} value={city.name}>
-                        {city.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 2: Agreement Date & Basic Information</h3>
-            
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="agreementDay">Day</Label>
-                <Input
-                  id="agreementDay"
-                  value={formData.agreementDay}
-                  onChange={(e) => handleInputChange('agreementDay', e.target.value)}
-                  placeholder="e.g., 15"
-                />
-              </div>
-              <div>
-                <Label htmlFor="agreementMonth">Month</Label>
-                <Input
-                  id="agreementMonth"
-                  value={formData.agreementMonth}
-                  onChange={(e) => handleInputChange('agreementMonth', e.target.value)}
-                  placeholder="e.g., January"
-                />
-              </div>
-              <div>
-                <Label htmlFor="agreementYear">Year</Label>
-                <Input
-                  id="agreementYear"
-                  value={formData.agreementYear}
-                  onChange={(e) => handleInputChange('agreementYear', e.target.value)}
-                  placeholder="e.g., 2025"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="mortgageeName">Mortgagee Name</Label>
-              <Input
-                id="mortgageeName"
-                value={formData.mortgageeName}
-                onChange={(e) => handleInputChange('mortgageeName', e.target.value)}
-                placeholder="Enter mortgagee's full name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="mortgageeAddress">Mortgagee Address</Label>
-              <Textarea
-                id="mortgageeAddress"
-                value={formData.mortgageeAddress}
-                onChange={(e) => handleInputChange('mortgageeAddress', e.target.value)}
-                placeholder="Enter complete mortgagee address"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tenantName">Tenant Name</Label>
-              <Input
-                id="tenantName"
-                value={formData.tenantName}
-                onChange={(e) => handleInputChange('tenantName', e.target.value)}
-                placeholder="Enter tenant's full name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tenantAddress">Tenant Address</Label>
-              <Textarea
-                id="tenantAddress"
-                value={formData.tenantAddress}
-                onChange={(e) => handleInputChange('tenantAddress', e.target.value)}
-                placeholder="Enter complete tenant address"
-                rows={3}
-              />
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 3: Lease Information</h3>
-            
-            <div>
-              <Label htmlFor="leaseDate">Lease Agreement Date</Label>
-              <Input
-                type="date"
-                id="leaseDate"
-                value={formData.leaseDate}
-                onChange={(e) => handleInputChange('leaseDate', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="landlordName">Landlord Name</Label>
-              <Input
-                id="landlordName"
-                value={formData.landlordName}
-                onChange={(e) => handleInputChange('landlordName', e.target.value)}
-                placeholder="Enter landlord's full name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="landlordAddress">Landlord Address</Label>
-              <Textarea
-                id="landlordAddress"
-                value={formData.landlordAddress}
-                onChange={(e) => handleInputChange('landlordAddress', e.target.value)}
-                placeholder="Enter complete landlord address"
-                rows={3}
-              />
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 4: Property Information</h3>
-            
-            <div>
-              <Label htmlFor="legalDescription">Legal Description of Property</Label>
-              <Textarea
-                id="legalDescription"
-                value={formData.legalDescription}
-                onChange={(e) => handleInputChange('legalDescription', e.target.value)}
-                placeholder="Enter the complete legal description of the property"
-                rows={4}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="propertyAddress">Property Address (commonly known as)</Label>
-              <Textarea
-                id="propertyAddress"
-                value={formData.propertyAddress}
-                onChange={(e) => handleInputChange('propertyAddress', e.target.value)}
-                placeholder="Enter the complete property address"
-                rows={3}
-              />
-            </div>
-          </div>
-        );
-
-      case 5:
-        return (
-          <UserInfoStep
-            onBack={() => setCurrentStep(4)}
-            onGenerate={generatePDF}
-            documentType="Non-Disturbance Agreement"
-            isGenerating={isGeneratingPDF}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <FileText className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Non-Disturbance Agreement</h1>
-          </div>
-          <p className="text-gray-600 mb-4">
-            Create a professional non-disturbance agreement between mortgagee and tenant
-          </p>
-          
-          {/* Professional Legal Services Disclaimer */}
-          <LegalDisclaimer />
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Non-Disturbance Agreement Form</span>
-              <span className="text-sm font-normal text-gray-500">
-                Step {currentStep} of 5
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderStepContent()}
-
-            {currentStep !== 5 && (
-              <div className="flex justify-between mt-8">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
-
-                {currentStep < 5 ? (
-                  <Button type="button" onClick={nextStep}>
-                    Next
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={generatePDF}>
-                    Generate PDF
-                    <Download className="w-4 h-4 ml-2" />
-                  </Button>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Non Disturbance Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("non_disturbance_agreement.pdf");
 };
 
-export default NonDisturbanceAgreement;
+export default function NonDisturbanceAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Non Disturbance Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="nondisturbanceagreement"
+    />
+  );
+}

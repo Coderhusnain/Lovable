@@ -1,374 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  clientName: string;
-  clientAddress: string;
-  contractorName: string;
-  contractorAddress: string;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-  startDate: string;
-  routineFrequency: string; // e.g., 3 times per week
-  routineServices: string; // detailed list
-  monthlyServices: string;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Janitorial Services Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("janitorial_services_agreement.pdf");
+};
 
-  consumablesProvidedBy: string; // Client / Contractor
-  paymentAmount: string;
-  paymentTerms: string;
-
-  termEndDate: string;
-  complianceNote: string;
-
-  insuranceNote: string;
-  confidentialityNote: string;
-  indemnificationNote: string;
-
-  warrantyNote: string;
-
-  defaultCureDays: string;
-
-  forceMajeureNote: string;
-  disputeResolutionNote: string;
-
-  entireAgreementNote: string;
-  governingLaw: string;
-  noticesNote: string;
-
-  clientSignName: string;
-  clientSignDate: string;
-  contractorSignName: string;
-  contractorSignDate: string;
-}
-
-export default function JanitorialServicesAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    clientName: "",
-    clientAddress: "",
-    contractorName: "",
-    contractorAddress: "",
-
-    startDate: "",
-    routineFrequency: "",
-    routineServices: `a. Cleaning of front door glass and thresholds\nb. Sweeping and dust mopping of all floors\nc. Sweeping of all halls and stairways\nd. Vacuuming of carpets and rugs, with spot cleaning as necessary\ne. Emptying and cleaning of all ashtrays\nf. Emptying of all waste containers\ng. Dusting of office furniture, telephones, ledges, woodwork, and accessible surfaces\nh. Removal of fingerprints from both sides of entrance doors, interior doors, partitions, woodwork, and walls\ni. Scrubbing and disinfecting of all restroom floors and fixtures\nj. Replacement of restroom supplies in appropriate dispensers\nk. Dusting of light fixtures\nl. Maintenance of the janitorial room in a clean, neat, and orderly condition.`,
-    monthlyServices: `m. Thorough cleaning and waxing of all floors\nn. Cleaning of exterior windows on both the interior and exterior sides.`,
-
-    consumablesProvidedBy: "Client",
-    paymentAmount: "",
-    paymentTerms: "",
-
-    termEndDate: "",
-    complianceNote: "",
-
-    insuranceNote: "The Contractor shall procure and maintain workers' compensation insurance and furnish evidence upon request.",
-    confidentialityNote: "",
-    indemnificationNote: "",
-
-    warrantyNote: "The Contractor warrants that all Services shall be performed diligently, in a timely and workmanlike manner, and in accordance with generally accepted industry standards.",
-
-    defaultCureDays: "",
-
-    forceMajeureNote: "",
-    disputeResolutionNote: "",
-
-    entireAgreementNote: "This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior agreements.",
-    governingLaw: "",
-    noticesNote: "",
-
-    clientSignName: "",
-    clientSignDate: "",
-    contractorSignName: "",
-    contractorSignDate: "",
-  });
-
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const lineHeight = 13;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const maxW = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += lineHeight;
-      });
-    };
-
-    write("JANITORIAL SERVICES AGREEMENT", 16, true, true);
-    write("\n");
-
-    write(`This Janitorial Services Agreement (the \u201cAgreement\u201d) is entered into and made effective as of ${formData.startDate || "[Effective Date]"}, by and between ${formData.clientName || "[Client Name]"}, having a place of business at ${formData.clientAddress || "[address]"} (the \u201cClient\u201d), and ${formData.contractorName || "[Contractor Name]"}, having a place of business at ${formData.contractorAddress || "[address]"} (the \u201cContractor\u201d).`);
-    write("\n");
-
-    write("1. Description of Services", 12, true);
-    write(`1.1 Beginning on ${formData.startDate || "[start date]"}, the Contractor shall provide professional janitorial and cleaning services to the Client at the Client\'s premises.`);
-    write("1.2 The Services shall include, without limitation, the following duties:");
-    write(`Routine Services (${formData.routineFrequency || "____ times per week"}):`);
-    write(formData.routineServices);
-    write("\n");
-
-    write("Monthly Services (once per month):", 12, true);
-    write(formData.monthlyServices);
-    write("\n");
-
-    write("2. Materials and Supplies", 12, true);
-    write(`2.1 The Contractor shall provide, at its sole cost, all cleaning materials, equipment, and tools necessary for performance of the Services, with the exception of consumables (including hand soap, paper towels, toilet tissue, seat covers, and similar supplies).`);
-    write(`2.2 The Client shall supply all consumables and shall maintain an adequate stock in the janitorial storage area of the building. (${formData.consumablesProvidedBy || "Client"})`);
-    write("\n");
-
-    write("3. Supervision", 12, true);
-    write(`3.1 The Contractor shall conduct systematic inspections to ensure that the Services are performed in a satisfactory manner and in accordance with professional cleaning standards.`);
-    write(`3.2 Any complaints or deficiencies reported by the Client shall be promptly addressed and remedied by the Contractor.`);
-    write("\n");
-
-    write("4. Payment Terms", 12, true);
-    write(`4.1 The Client shall pay the Contractor the sum of US $${formData.paymentAmount || "[amount]"} as compensation for the Services described herein, payable upon completion of Services, unless otherwise agreed in writing.`);
-    write(`4.2 Compensation shall be consistent with the prevailing union wage scale applicable to employees in this sector. Should there be an increase or decrease in the union wage scale, the compensation payable under this Agreement shall be adjusted accordingly.`);
-    write("\n");
-
-    write("5. Term", 12, true);
-    write(`5.1 This Agreement shall commence on the Effective Date and shall automatically terminate on ${formData.termEndDate || "[termination date]"}, unless earlier terminated in accordance with this Agreement or extended by written agreement of the Parties.`);
-    write("\n");
-
-    write("6. Compliance with Laws", 12, true);
-    write(`6.1 In the performance of the Services, the Contractor shall comply with all applicable federal, state, county, and municipal laws, statutes, ordinances, regulations, and codes. ${formData.complianceNote || ""}`);
-    write("\n");
-
-    write("7. Insurance", 12, true);
-    write(formData.insuranceNote || "");
-    write("\n");
-
-    write("8. Confidentiality", 12, true);
-    write(formData.confidentialityNote || "The Contractor, including its employees, agents, and representatives, shall not, during or after the term of this Agreement, disclose, communicate, or use for personal benefit any confidential or proprietary information belonging to the Client. This confidentiality obligation shall survive termination of this Agreement.");
-    write("\n");
-
-    write("9. Indemnification", 12, true);
-    write(formData.indemnificationNote || "The Contractor agrees to indemnify, defend, and hold harmless the Client, its officers, agents, and employees from and against any and all claims, losses, damages, liabilities, expenses, including reasonable attorney\'s fees, arising out of or related to the acts, omissions, or negligence of the Contractor, its employees, agents, or subcontractors in connection with the performance of the Services.");
-    write("\n");
-
-    write("10. Warranty of Services", 12, true);
-    write(formData.warrantyNote || "The Contractor warrants that all Services shall be performed diligently, in a timely and workmanlike manner, and in accordance with generally accepted industry standards. The Contractor further warrants that the quality of Services shall be equal to or superior to that provided by similar service providers in the community.");
-    write("\n");
-
-    write("11. Default", 12, true);
-    write(`11.1 The occurrence of any of the following shall constitute a default under this Agreement: a. Failure of either Party to make payments when due; b. Insolvency or bankruptcy of either Party; c. Property of either Party being subjected to levy, seizure, or sale by creditors or governmental authorities; or d. Failure by the Contractor to perform or deliver the Services in the time, manner, and quality required herein.`);
-    write("\n");
-
-    write("12. Remedies", 12, true);
-    write(`12.1 In the event of default, the non-defaulting Party may terminate this Agreement by providing written notice to the defaulting Party. 12.2 The defaulting Party shall have ${formData.defaultCureDays || "[number]"} days from receipt of such notice to cure the default. If the default is not cured within the stated period, this Agreement shall automatically terminate without further notice.`);
-    write("\n");
-
-    write("13. Force Majeure", 12, true);
-    write(formData.forceMajeureNote || "Neither Party shall be liable for failure to perform its obligations under this Agreement if such failure is caused by an event beyond its reasonable control, including but not limited to acts of God, pandemics, epidemics, natural disasters, strikes, riots, vandalism, governmental restrictions, public health crises, or war.");
-    write("\n");
-
-    write("14. Dispute Resolution", 12, true);
-    write(formData.disputeResolutionNote || "Any dispute, controversy, or claim arising out of or relating to this Agreement shall first be addressed by the Parties through good-faith negotiations. If the dispute is not resolved, it shall proceed to Alternative Dispute Resolution (ADR) in the form of mediation. If mediation fails, either Party may seek appropriate legal or equitable remedies in a court of competent jurisdiction.");
-    write("\n");
-
-    write("15. Entire Agreement", 12, true);
-    write(formData.entireAgreementNote || "This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior discussions, negotiations, or agreements, whether oral or written.");
-    write("\n");
-
-    write("16. Severability", 12, true);
-    write("If any provision of this Agreement is held to be invalid, illegal, or unenforceable, the remaining provisions shall remain in full force and effect.");
-    write("\n");
-
-    write("17. Amendment", 12, true);
-    write("This Agreement may only be amended, modified, or supplemented by a written instrument signed by both Parties.");
-    write("\n");
-
-    write("18. Governing Law", 12, true);
-    write(`This Agreement shall be governed by and construed in accordance with the laws of the State of ${formData.governingLaw || "[insert state]"}, without regard to its conflict-of-law principles.`);
-    write("\n");
-
-    write("19. Notices", 12, true);
-    write(formData.noticesNote || "Any notice or communication required or permitted under this Agreement shall be deemed duly given if delivered personally or sent by certified mail, return receipt requested, to the addresses specified in the preamble of this Agreement.");
-    write("\n");
-
-    write("20. Waiver of Contractual Rights", 12, true);
-    write("The failure of either Party to enforce any provision of this Agreement shall not constitute a waiver of such provision or any other provision, nor shall it affect that Party\'s right to enforce such provision thereafter.");
-    write("\n");
-
-    write("21. Execution and Signatures", 12, true);
-    write(`SERVICE RECIPIENT (Client):\nBy: ${formData.clientSignName || "_________________________"}\nName: ${formData.clientName || ""}\nDate: ${formData.clientSignDate || "________"}`);
-    write(`\nSERVICE PROVIDER (Contractor):\nBy: ${formData.contractorSignName || "_________________________"}\nName: ${formData.contractorName || ""}\nDate: ${formData.contractorSignDate || "________"}`);
-
-    doc.save("Janitorial_Services_Agreement.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold">Parties & Dates</h3>
-              </div>
-              <Label>Client / Service Recipient Name</Label>
-              <Input name="clientName" value={formData.clientName} onChange={handleChange} />
-              <Label>Client Address</Label>
-              <Input name="clientAddress" value={formData.clientAddress} onChange={handleChange} />
-              <Label>Contractor / Service Provider Name</Label>
-              <Input name="contractorName" value={formData.contractorName} onChange={handleChange} />
-              <Label>Contractor Address</Label>
-              <Input name="contractorAddress" value={formData.contractorAddress} onChange={handleChange} />
-              <Label>Effective / Start Date</Label>
-              <Input name="startDate" value={formData.startDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services</h3>
-              <Label>Routine Frequency (times per week)</Label>
-              <Input name="routineFrequency" value={formData.routineFrequency} onChange={handleChange} />
-              <Label>Routine Services (each on new line)</Label>
-              <Textarea name="routineServices" value={formData.routineServices} onChange={handleChange} rows={8} />
-              <Label>Monthly Services</Label>
-              <Textarea name="monthlyServices" value={formData.monthlyServices} onChange={handleChange} rows={4} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Materials, Supervision & Payment</h3>
-              <Label>Consumables Provided By</Label>
-              <Input name="consumablesProvidedBy" value={formData.consumablesProvidedBy} onChange={handleChange} />
-              <Label>Payment Amount (USD)</Label>
-              <Input name="paymentAmount" value={formData.paymentAmount} onChange={handleChange} />
-              <Label>Payment Terms</Label>
-              <Textarea name="paymentTerms" value={formData.paymentTerms} onChange={handleChange} />
-              <Label>Term End Date</Label>
-              <Input name="termEndDate" value={formData.termEndDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Compliance, Insurance & Confidentiality</h3>
-              <Label>Compliance Notes</Label>
-              <Textarea name="complianceNote" value={formData.complianceNote} onChange={handleChange} />
-              <Label>Insurance Note</Label>
-              <Textarea name="insuranceNote" value={formData.insuranceNote} onChange={handleChange} />
-              <Label>Confidentiality Note</Label>
-              <Textarea name="confidentialityNote" value={formData.confidentialityNote} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Indemnification, Warranty & Defaults</h3>
-              <Label>Indemnification Note</Label>
-              <Textarea name="indemnificationNote" value={formData.indemnificationNote} onChange={handleChange} />
-              <Label>Warranty Note</Label>
-              <Textarea name="warrantyNote" value={formData.warrantyNote} onChange={handleChange} />
-              <Label>Default Cure Days</Label>
-              <Input name="defaultCureDays" value={formData.defaultCureDays} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Force Majeure, Dispute & Boilerplate</h3>
-              <Label>Force Majeure Note</Label>
-              <Textarea name="forceMajeureNote" value={formData.forceMajeureNote} onChange={handleChange} />
-              <Label>Dispute Resolution Note</Label>
-              <Textarea name="disputeResolutionNote" value={formData.disputeResolutionNote} onChange={handleChange} />
-              <Label>Entire Agreement Note</Label>
-              <Textarea name="entireAgreementNote" value={formData.entireAgreementNote} onChange={handleChange} />
-              <Label>Governing Law</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-              <Label>Notices Note</Label>
-              <Textarea name="noticesNote" value={formData.noticesNote} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 7:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatures</h3>
-              <Label>Client - Signatory Name</Label>
-              <Input name="clientSignName" value={formData.clientSignName} onChange={handleChange} />
-              <Label>Client - Date</Label>
-              <Input name="clientSignDate" value={formData.clientSignDate} onChange={handleChange} />
-              <Label>Contractor - Signatory Name</Label>
-              <Input name="contractorSignName" value={formData.contractorSignName} onChange={handleChange} />
-              <Label>Contractor - Date</Label>
-              <Input name="contractorSignDate" value={formData.contractorSignDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function JanitorialServicesAgreement() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-
-        {step < 7 ? (
-          <Button onClick={() => setStep((s) => Math.min(7, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Janitorial Services Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Janitorial Services Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="janitorialservicesagreement"
+    />
   );
 }

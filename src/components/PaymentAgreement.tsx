@@ -1,521 +1,506 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  day: string;
-  month: string;
-  year: string;
-  borrowerName: string;
-  borrowerAddress: string;
-  borrowerContact: string;
-  borrowerEmail: string;
-  lenderName: string;
-  lenderAddress: string;
-  lenderContact: string;
-  lenderEmail: string;
-  loanAmount: string;
-  interestRate: string;
-  interestPercent: string;
-  interestBasis: string;
-  installmentAmount: string;
-  commencementDate: string;
-  dueDate: string;
-  paymentFrequency: string;
-  balloonText: string;
-  paymentMethod: string;
-  prepaymentText: string;
-  collateralText: string;
-  governingLawState: string;
-  jurisdictionLocation: string;
-  executedAt: string;
-  executedDate: string;
-  borrowerSignature: string;
-  lenderSignature: string;
-  borrowerPrintedName: string;
-  lenderPrintedName: string;
-  borrowerDate: string;
-  lenderDate: string;
-  notarizationState: string;
-  notarizationCounty: string;
-  notarizationDay: string;
-  notarizationMonth: string;
-  notarizationYear: string;
-  notaryPublic: string;
-  commissionExpires: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const defaultFormData: FormData = {
-  day: "",
-  month: "",
-  year: "",
-  borrowerName: "",
-  borrowerAddress: "",
-  borrowerContact: "",
-  borrowerEmail: "",
-  lenderName: "",
-  lenderAddress: "",
-  lenderContact: "",
-  lenderEmail: "",
-  loanAmount: "",
-  interestRate: "",
-  interestPercent: "",
-  interestBasis: "",
-  installmentAmount: "",
-  commencementDate: "",
-  dueDate: "",
-  paymentFrequency: "",
-  balloonText: "",
-  paymentMethod: "",
-  prepaymentText: "",
-  collateralText: "",
-  governingLawState: "",
-  jurisdictionLocation: "",
-  executedAt: "",
-  executedDate: "",
-  borrowerSignature: "",
-  lenderSignature: "",
-  borrowerPrintedName: "",
-  lenderPrintedName: "",
-  borrowerDate: "",
-  lenderDate: "",
-  notarizationState: "",
-  notarizationCounty: "",
-  notarizationDay: "",
-  notarizationMonth: "",
-  notarizationYear: "",
-    notaryPublic: "",
-    commissionExpires: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Payment Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("payment_agreement.pdf");
 };
 
-const PaymentAgreementForm: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [formData, setFormData] = useState<FormData>(defaultFormData);
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const nextStep = () => setCurrentStep((p) => Math.min(p + 1, 4));
-  const prevStep = () => setCurrentStep((p) => Math.max(p - 1, 1));
-
-  const filled = (template: string, replacement: string) => {
-    // replace first run of underscores (3 or more) with replacement, if provided
-    if (!replacement || replacement.trim() === "") return template;
-    return template.replace(/_{3,}/, replacement);
-  };
-
-  const generatePDF = () => {
-    try {
-      const doc = new jsPDF({ unit: "pt", format: "letter" });
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 40;
-      const lineHeight = 14;
-      let currentY = margin;
-
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont("times", isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 720) {
-            doc.addPage();
-            currentY = margin;
-          }
-          if (isCenter) {
-            const tw = (doc.getStringUnitWidth(line) * fontSize) / doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
-
-      // Build the document verbatim, only substituting user-filled data for underscore placeholders
-      const paragraphs: string[] = [];
-
-      paragraphs.push(
-        `PAYMENT AGREEMENTTHIS PAYMENT AGREEMENT(“Agreement” or “Note”) is made and entered into on this ${formData.day || "___"} day of ${formData.month || "_____________"}, ${formData.year || "------"},by and between:Borrower:${formData.borrowerName || "__________________________________________"}of ${formData.borrowerAddress || "____________________________________________________"}Contact No.: ${formData.borrowerContact || "_______________________"} Email: ${formData.borrowerEmail || "____________________"}ANDLender:${formData.lenderName || "____________________________________________"}of ${formData.lenderAddress || "____________________________________________________"}Contact No.: ${formData.lenderContact || "_______________________"} Email: ${formData.lenderEmail || "____________________"}The Borrower and the Lender are hereinafter collectively referred to as the “Parties,”and individually as a “Party.”`
-      );
-
-      paragraphs.push(
-        `1. INTRODUCTION AND PROMISE TO PAY1.1 Identification of Parties:The Borrower is the personor entity receiving funds under this Agreement, and the Lender is the person or entity providing such funds.1.2 Promise to Pay:For value received, the Borrower hereby unconditionally promises to payto the order of the Lender, in lawful money of the United States of America, the principal sum of United States Dollars (US $${formData.loanAmount || "_________"})(the “Loan Amount”), together with interest thereon in accordance with the terms of this Agreement.1.3 Acknowledgment of Debt:The Borrower acknowledges that the funds advanced by the Lender constitute a valid and enforceable debt obligation. The Borrower further acknowledges that this Agreement represents the entire understanding of the Parties with respect to the payment and repayment of said funds.1.4 Interest Terms:The Loan Amount shall bear interest at a rate of ${formData.interestRate || "_____"} percent (${formData.interestPercent || "___"}%) per annum, calculated on the outstanding principal balance from the date of disbursement until payment in full. Interest shall be computed on a ${formData.interestBasis || "[simple/compound]"} interest basis, as mutually agreed by the Parties.`
-      );
-
-      paragraphs.push(
-        `2. TERMS OF REPAYMENT2.1 Repayment Structure:The Borrower agrees to repay the Loan Amount, together with accrued interest, in periodic installments as follows:•Installment Amount:US $${formData.installmentAmount || "_________"} per month (or other agreed periodicpayment).•Commencement Date:${formData.commencementDate || "____________________________"}•Due Date:${formData.dueDate || "____________________________"} (the “Maturity Date”).•Frequency of Payments:${formData.paymentFrequency || "____________________________"}`
-      );
-
-      paragraphs.push(
-        `2.2 Balloon Payment:The Borrower acknowledges that the periodic installmentpayments may not fully amortizethe principal balance of the loan. Therefore, a final balloon paymentrepresenting the remaining unpaid principal and any accrued interest shall be due and payable in full on the Maturity Date.2.3 Application of Payments:All payments received by the Lender shall be applied in the following order:(a) To any accrued and unpaid interest;(b) To any late fees, costs, or charges due under this Agreement; and(c) To the reduction of the outstanding principal balance.2.4 Methodof Payment:Payments shall be made in lawful currency of the United States, delivered by check, bank transfer, or any mutually agreed method, to the Lender’s designated address or account as specified in writing.2.5 Prepayment:The Borrower may, at any time and without penalty, prepay the whole or any part of the outstanding principal balance. Any prepayment shall first be applied to accrued interest before reducing the principal amount.`
-      );
-
-      paragraphs.push(
-        `3. SECURITY AND COLLATERAL3.1 Secured Loan (if applicable):This Note may be securedby personal or real property as collateral. The Borrower agrees that such collateral shall serve as security for the repayment of this Note and all obligations arising hereunder.3.2 Security Agreement:If the Parties have agreed that the Note is to be secured, the Borrower shall execute a separate Security Agreementidentifying the collateral pledged, together with all necessary instruments of perfection required under applicable law.3.3 Ownership and Maintenance of Collateral:The Borrower represents and warrants that all collateral pledged under the Security Agreement shall be owned free and clear of any other liens or encumbrances, except as disclosed in writing to the Lender. The Borrower shall maintain the collateral in good condition and shall not transfer, sell, or dispose of it without the prior written consent of the Lender.3.4 Default Under Security Agreement:Any default under the Security Agreement shall constitute a default under this Payment Agreement, and the Lender shall be entitled to exercise all rights and remedies available under law, including repossession or foreclosure of the collateral.`
-      );
-
-      paragraphs.push(
-        `4. DEFAULT4.1 Events Constituting Default:The occurrence of any one or more of the following events shall constitute an Event of Defaultunder this Agreement:(a) Failure of the Borrower to pay the principal or accrued interest when due;(b) The liquidation, dissolution, incompetency, or death of the Borrower;(c) The filing of bankruptcy or insolvency proceedings by or against the Borrower;(d) The appointment of a receiver or trustee for the Borrower’s assets;(e) The making of a general assignment for the benefit of the Borrower’s creditors;(f) Any material misrepresentation by the Borrower made to the Lender for the purpose of obtaining or extending credit; or(g) The sale, transfer, or disposal of a material portion of the Borrower’s business or assets without the Lender’s prior written consent.4.2 Effect of Default:Upon the occurrence of any Event of Default:(a) The entire unpaid principal balance, together with all accrued interest and other sums due, shall become immediately due and payable without further notice or demand; and(b) The Lender may pursue any and all rights and remedies available under this Agreement, at law, or in equity.`
-      );
-
-      paragraphs.push(
-        `5. MISCELLANEOUS LEGAL PROVISIONS5.1 Collection Costs:If any payment obligation under this Agreement is not paid when due, the Borrower agrees to pay all reasonable costs of collection incurred by the Lender, including, but not limited to, attorney’s fees, court costs, and collection agency fees, whether or not litigation is commenced.5.2 Waiver of Presentment:The Borrower hereby waives presentment for payment, notice of dishonor, protest, and notice of protest, and all other notices or demands relating to enforcement of this Note.5.3 Waiver of Strict Compliance:No failure or delay by the Lender in exercising any right or remedy under this Agreement shall be deemed a waiver thereof. Acceptance of a late payment or partial payment shall not constitute a waiver of any default or the right to demand full compliance thereafter.5.4 Amendments:This Agreement may not be amended, altered, or modified except by a written instrument executed by both Parties. Oral amendments shall have noforce or effect.`
-      );
-
-      paragraphs.push(
-        `5.5 Severability:If any provision of this Agreement is determined to be invalid, illegal, or unenforceable, the remaining provisions shall remain valid, binding, and enforceable to the fullest extent permitted by law.5.6 Assignment:TheBorrower shall not assign, transfer, or delegate any of its rights or obligations under this Agreement without the prior written consent of the Lender. The Lender may assign its rights under this Note to any third party upon written notice to the Borrower.`
-      );
-
-      paragraphs.push(
-        filled(`6. GOVERNING LAW AND JURISDICTION6.1 Governing Law:This Agreement shall be governed by and construed in accordance with the laws of the State of ____________________________, without regard to its conflict-of-laws principles.`, formData.governingLawState)
-      );
-
-      paragraphs.push(
-        filled(`6.2 Jurisdiction:The Parties agree that any legal action or proceeding arising out of or in connection with this Agreement shall be brought exclusively in the courts of competent jurisdiction located in ____________________________, and both Parties hereby submit to the jurisdiction of such courts.`, formData.jurisdictionLocation)
-      );
-
-      paragraphs.push(
-        `7. EXECUTION AND SIGNATURESIN WITNESS WHEREOF, the Parties hereto have executed this Payment Agreement as of the date first above written.`
-      );
-
-      paragraphs.push(filled(`Executed at:_______________________________________________`, formData.executedAt));
-      paragraphs.push(filled(`Date:___________________________`, formData.executedDate));
-
-      const borrowerBlock = `Borrower
-Signature: ${formData.borrowerSignature || "___________________________"}
-Printed Name: ${formData.borrowerPrintedName || "________________________"}
-Date: ${formData.borrowerDate || "________________________________"}`;
-      const lenderBlock = `Lender
-Signature: ${formData.lenderSignature || "___________________________"}
-Printed Name: ${formData.lenderPrintedName || "________________________"}
-Date: ${formData.lenderDate || "________________________________"}`;
-
-      paragraphs.push(borrowerBlock);
-      paragraphs.push(lenderBlock);
-
-      paragraphs.push(
-        `Optional NotarizationState of ${formData.notarizationState || "___________________"} )County of ${formData.notarizationCounty || "_________________"} )On this ${formData.notarizationDay || "___"} day of ${formData.notarizationMonth || "__________"}, ${formData.notarizationYear || "-----------"}, before me, the undersigned Notary Public, personally appeared ${formData.borrowerPrintedName || "________________________"} (Borrower) and ${formData.lenderPrintedName || "________________________"} (Lender), who acknowledged that they executed the foregoing Payment Agreement for the purposes therein contained.`
-      );
-
-paragraphs.push(
-  `Notary Public: ${formData.notaryPublic || "___________________________"} Commission Expires: ${formData.commissionExpires || "______________________"}`
-);
-
-      // add paragraphs verbatim
-      paragraphs.forEach((p) => {
-        addText(p);
-        currentY += 6;
-      });
-
-      doc.save("payment-agreement.pdf");
-      toast.success("Payment Agreement PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Payment Agreement PDF");
-    }
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Parties & Agreement Date</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Day</Label>
-                  <Input value={formData.day} onChange={(e) => handleInputChange("day", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Month</Label>
-                  <Input value={formData.month} onChange={(e) => handleInputChange("month", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Year</Label>
-                  <Input value={formData.year} onChange={(e) => handleInputChange("year", e.target.value)} placeholder="" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Borrower - Full Legal Name</Label>
-                <Input value={formData.borrowerName} onChange={(e) => handleInputChange("borrowerName", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Borrower - Address</Label>
-                <Textarea value={formData.borrowerAddress} onChange={(e) => handleInputChange("borrowerAddress", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Borrower - Contact No.</Label>
-                  <Input value={formData.borrowerContact} onChange={(e) => handleInputChange("borrowerContact", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Borrower - Email</Label>
-                  <Input value={formData.borrowerEmail} onChange={(e) => handleInputChange("borrowerEmail", e.target.value)} placeholder="" />
-                </div>
-              </div>
-
-              <hr />
-
-              <div className="space-y-2">
-                <Label>Lender - Full Legal Name</Label>
-                <Input value={formData.lenderName} onChange={(e) => handleInputChange("lenderName", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Lender - Address</Label>
-                <Textarea value={formData.lenderAddress} onChange={(e) => handleInputChange("lenderAddress", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Lender - Contact No.</Label>
-                  <Input value={formData.lenderContact} onChange={(e) => handleInputChange("lenderContact", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Lender - Email</Label>
-                  <Input value={formData.lenderEmail} onChange={(e) => handleInputChange("lenderEmail", e.target.value)} placeholder="" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 2:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Loan & Repayment Terms</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Loan Amount (US $)</Label>
-                <Input value={formData.loanAmount} onChange={(e) => handleInputChange("loanAmount", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Interest Rate (percent)</Label>
-                  <Input value={formData.interestRate} onChange={(e) => handleInputChange("interestRate", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Interest Percent (repeat)</Label>
-                  <Input value={formData.interestPercent} onChange={(e) => handleInputChange("interestPercent", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Interest Basis</Label>
-                  <Input value={formData.interestBasis} onChange={(e) => handleInputChange("interestBasis", e.target.value)} placeholder="[simple/compound]" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Installment Amount (US $)</Label>
-                <Input value={formData.installmentAmount} onChange={(e) => handleInputChange("installmentAmount", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Commencement Date</Label>
-                  <Input value={formData.commencementDate} onChange={(e) => handleInputChange("commencementDate", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Due Date (Maturity Date)</Label>
-                  <Input value={formData.dueDate} onChange={(e) => handleInputChange("dueDate", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Payment Frequency</Label>
-                  <Input value={formData.paymentFrequency} onChange={(e) => handleInputChange("paymentFrequency", e.target.value)} placeholder="" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Method of Payment</Label>
-                <Input value={formData.paymentMethod} onChange={(e) => handleInputChange("paymentMethod", e.target.value)} placeholder="check, bank transfer, etc." />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Prepayment Text (optional)</Label>
-                <Textarea value={formData.prepaymentText} onChange={(e) => handleInputChange("prepaymentText", e.target.value)} placeholder="Leave blank to keep original wording" />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 3:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Security, Default & Misc</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Collateral / Security Text (optional)</Label>
-                <Textarea value={formData.collateralText} onChange={(e) => handleInputChange("collateralText", e.target.value)} placeholder="Leave blank to keep original wording" />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Governing Law - State</Label>
-                <Input value={formData.governingLawState} onChange={(e) => handleInputChange("governingLawState", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Jurisdiction - Court Location</Label>
-                <Input value={formData.jurisdictionLocation} onChange={(e) => handleInputChange("jurisdictionLocation", e.target.value)} placeholder="" />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 4:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Execution, Signatures & Notary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Executed at (place)</Label>
-                <Input value={formData.executedAt} onChange={(e) => handleInputChange("executedAt", e.target.value)} placeholder="" />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Executed Date (replace Date:_____)</Label>
-                <Input value={formData.executedDate} onChange={(e) => handleInputChange("executedDate", e.target.value)} placeholder="" />
-              </div>
-
-              <hr />
-
-              <div className="space-y-2">
-                <Label>Borrower - Printed Name</Label>
-                <Input value={formData.borrowerPrintedName} onChange={(e) => handleInputChange("borrowerPrintedName", e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Borrower - Signature (typed)</Label>
-                <Input value={formData.borrowerSignature} onChange={(e) => handleInputChange("borrowerSignature", e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Borrower - Date</Label>
-                <Input value={formData.borrowerDate} onChange={(e) => handleInputChange("borrowerDate", e.target.value)} />
-              </div>
-
-              <hr />
-
-              <div className="space-y-2">
-                <Label>Lender - Printed Name</Label>
-                <Input value={formData.lenderPrintedName} onChange={(e) => handleInputChange("lenderPrintedName", e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Lender - Signature (typed)</Label>
-                <Input value={formData.lenderSignature} onChange={(e) => handleInputChange("lenderSignature", e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Lender - Date</Label>
-                <Input value={formData.lenderDate} onChange={(e) => handleInputChange("lenderDate", e.target.value)} />
-              </div>
-
-              <hr />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Notarization - Name</Label>
-                  <Input value={formData.notaryPublic } onChange={(e) => handleInputChange("notaryPublic", e.target.value)} placeholder="" />
-                </div>
-                
-                <div>
-                  <Label>Notarization - State</Label>
-                  <Input value={formData.notarizationState} onChange={(e) => handleInputChange("notarizationState", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Notarization - County</Label>
-                  <Input value={formData.notarizationCounty} onChange={(e) => handleInputChange("notarizationCounty", e.target.value)} placeholder="" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Notarization - Day</Label>
-                  <Input value={formData.notarizationDay} onChange={(e) => handleInputChange("notarizationDay", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Notarization - Month</Label>
-                  <Input value={formData.notarizationMonth} onChange={(e) => handleInputChange("notarizationMonth", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Notarization - Year</Label>
-                  <Input value={formData.notarizationYear} onChange={(e) => handleInputChange("notarizationYear", e.target.value)} placeholder="" />
-                </div>
-                <div>
-                  <Label>Commission Expire Date</Label>
-                  <Input value={formData.commissionExpires } onChange={(e) => handleInputChange("commissionExpires", e.target.value)} placeholder="" />
-                </div>
-              </div>
-
-              
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
-
+export default function PaymentAgreement() {
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Agreement</h1>
-        <p className="text-gray-600">Complete the fields below and export the Payment Agreement as a PDF (verbatim).</p>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">Step {currentStep} of 4</div>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${(currentStep / 4) * 100}%` }} />
-        </div>
-      </div>
-
-      {renderStep()}
-
-      <div className="flex justify-between mt-8">
-        <Button variant="outline" onClick={prevStep} disabled={currentStep === 1} className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Previous
-        </Button>
-
-        <div className="flex gap-2">
-          {currentStep < 4 ? (
-            <Button onClick={nextStep} className="flex items-center gap-2">
-              Next
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          )}
-        </div>
-      </div>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Payment Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="paymentagreement"
+    />
   );
-};
-
-export default PaymentAgreementForm;
+}

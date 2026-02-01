@@ -1,233 +1,506 @@
-import React, { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-// 1. Define the Data Interface (Kept from your detailed version)
-interface FormData {
-  effectiveDate: string;
-  sellerName: string;
-  sellerAddress: string;
-  buyerName: string;
-  buyerAddress: string;
-  assetsSummary: string;
-  exhibitADetails: string;
-  purchasePrice: string;
-  depositAmount: string;
-  balanceAmount: string;
-  escrowAccount: string;
-  closingDate: string;
-  titleLocations: string;
-  deliveryLocations: string;
-  conditionInventoryDate: string;
-  sellerRepsSummary: string;
-  taxRepresentation: string;
-  insuranceNotes: string;
-  licensesNotes: string;
-  litigationNotes: string;
-  environmentalNotes: string;
-  billOfSaleNotes: string;
-  riskOfLossNotes: string;
-  furtherAssurancesNotes: string;
-  bulkSalesNotes: string;
-  conditionsPrecedentNotes: string;
-  adrNotes: string;
-  feesNotes: string;
-  indemnificationNotes: string;
-  governingLaw: string;
-  sellerSignatureName: string;
-  sellerSignatureDate: string;
-  buyerSignatureName: string;
-  buyerSignatureDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const initialFormData: FormData = {
-  effectiveDate: "",
-  sellerName: "",
-  sellerAddress: "",
-  buyerName: "",
-  buyerAddress: "",
-  assetsSummary: "",
-  exhibitADetails: "",
-  purchasePrice: "",
-  depositAmount: "",
-  balanceAmount: "",
-  escrowAccount: "",
-  closingDate: "",
-  titleLocations: "",
-  deliveryLocations: "",
-  conditionInventoryDate: "",
-  sellerRepsSummary: "",
-  taxRepresentation: "",
-  insuranceNotes: "",
-  licensesNotes: "",
-  litigationNotes: "",
-  environmentalNotes: "",
-  billOfSaleNotes: "",
-  riskOfLossNotes: "",
-  furtherAssurancesNotes: "",
-  bulkSalesNotes: "",
-  conditionsPrecedentNotes: "",
-  adrNotes: "",
-  feesNotes: "",
-  indemnificationNotes: "",
-  governingLaw: "",
-  sellerSignatureName: "",
-  sellerSignatureDate: "",
-  buyerSignatureName: "",
-  buyerSignatureDate: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Asset Purchase", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("asset_purchase.pdf");
 };
 
-export default function AssetPurchaseForm() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  // Helper to update state
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // 2. PDF Generation Logic (Moved inside onFinish)
-  const generatePDF = () => {
-    setIsGenerating(true);
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const ref = { y: 40 };
-
-    const write = (text: string, opts?: { size?: number; bold?: boolean; center?: boolean }) => {
-      const pageW = doc.internal.pageSize.getWidth();
-      const margin = 40;
-      const maxW = pageW - margin * 2;
-      const size = opts?.size ?? 11;
-      doc.setFont("times", opts?.bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      
-      const lines = doc.splitTextToSize(text || "", maxW);
-      for (const line of lines) {
-        if (ref.y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          ref.y = margin;
-        }
-        if (opts?.center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, ref.y);
-        } else {
-          doc.text(line, margin, ref.y);
-        }
-        ref.y += size * 1.3;
-      }
-    };
-
-    // --- PDF Content Construction ---
-    write("ASSET PURCHASE AGREEMENT", { size: 14, bold: true, center: true });
-    write("\n");
-    write(`This Asset Purchase Agreement is made as of ${formData.effectiveDate || "[Date]"}, between ${formData.sellerName || "[Seller]"} ("Seller") and ${formData.buyerName || "[Buyer]"} ("Buyer").`);
-    write("\n1. Purchase of Assets", { size: 12, bold: true });
-    write(`Seller agrees to sell to Buyer the assets described in Exhibit A: ${formData.assetsSummary || "[Summary]"}. Details: ${formData.exhibitADetails}`);
-    
-    write("\n2. Purchase Price", { size: 12, bold: true });
-    write(`Total Price: $${formData.purchasePrice}. Deposit: $${formData.depositAmount}. Balance: $${formData.balanceAmount}.`);
-    
-    write("\n3. Closing", { size: 12, bold: true });
-    write(`Closing Date: ${formData.closingDate}. Escrow: ${formData.escrowAccount}.`);
-    write(`Delivery Locations: ${formData.deliveryLocations}.`);
-
-    write("\n4. Representations", { size: 12, bold: true });
-    write(`Seller Reps: ${formData.sellerRepsSummary}`);
-    write(`Tax Status: ${formData.taxRepresentation}`);
-    write(`Litigation: ${formData.litigationNotes}`);
-
-    write("\n5. Signatures", { size: 12, bold: true });
-    write(`Seller: ${formData.sellerSignatureName} (${formData.sellerSignatureDate})`);
-    write(`Buyer: ${formData.buyerSignatureName} (${formData.buyerSignatureDate})`);
-
-    doc.save(`Asset_Purchase_${formData.sellerName.replace(/\s+/g, "_")}.pdf`);
-    setIsGenerating(false);
-  };
-
-  // 3. Define the Wizard Steps
-  const steps = [
-    {
-      label: "Parties & Assets",
-      content: (
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/asset-purchase-agreement-info')}
-            className="text-orange-600 border-orange-200 mb-4"
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            Learn More
-          </Button>
-          <div><Label>Effective Date</Label><Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} /></div>
-          <div><Label>Seller Name</Label><Input name="sellerName" value={formData.sellerName} onChange={handleChange} /></div>
-          <div><Label>Seller Address</Label><Textarea name="sellerAddress" value={formData.sellerAddress} onChange={handleChange} /></div>
-          <div><Label>Buyer Name</Label><Input name="buyerName" value={formData.buyerName} onChange={handleChange} /></div>
-          <div><Label>Buyer Address</Label><Textarea name="buyerAddress" value={formData.buyerAddress} onChange={handleChange} /></div>
-          <div><Label>Assets Summary</Label><Textarea name="assetsSummary" value={formData.assetsSummary} onChange={handleChange} /></div>
-          <div><Label>Exhibit A Details</Label><Textarea name="exhibitADetails" value={formData.exhibitADetails} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Financials",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Purchase Price ($)</Label><Input name="purchasePrice" value={formData.purchasePrice} onChange={handleChange} /></div>
-          <div><Label>Deposit Amount ($)</Label><Input name="depositAmount" value={formData.depositAmount} onChange={handleChange} /></div>
-          <div><Label>Balance Amount ($)</Label><Input name="balanceAmount" value={formData.balanceAmount} onChange={handleChange} /></div>
-          <div><Label>Escrow Account</Label><Input name="escrowAccount" value={formData.escrowAccount} onChange={handleChange} /></div>
-          <div><Label>Closing Date</Label><Input name="closingDate" value={formData.closingDate} onChange={handleChange} /></div>
-          <div><Label>Delivery Locations</Label><Textarea name="deliveryLocations" value={formData.deliveryLocations} onChange={handleChange} /></div>
-          <div><Label>Title Locations</Label><Input name="titleLocations" value={formData.titleLocations} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Representations",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Inventory Date</Label><Input name="conditionInventoryDate" value={formData.conditionInventoryDate} onChange={handleChange} /></div>
-          <div><Label>Seller Reps Summary</Label><Textarea name="sellerRepsSummary" value={formData.sellerRepsSummary} onChange={handleChange} /></div>
-          <div><Label>Tax Notes</Label><Textarea name="taxRepresentation" value={formData.taxRepresentation} onChange={handleChange} /></div>
-          <div><Label>Insurance Notes</Label><Textarea name="insuranceNotes" value={formData.insuranceNotes} onChange={handleChange} /></div>
-          <div><Label>Litigation Notes</Label><Textarea name="litigationNotes" value={formData.litigationNotes} onChange={handleChange} /></div>
-          <div><Label>Environmental Notes</Label><Textarea name="environmentalNotes" value={formData.environmentalNotes} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Legal & Signatures",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Indemnification Notes</Label><Textarea name="indemnificationNotes" value={formData.indemnificationNotes} onChange={handleChange} /></div>
-          <div><Label>Governing Law</Label><Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} /></div>
-          <hr className="my-4" />
-          <div className="grid grid-cols-2 gap-4">
-            <div><Label>Seller Signature Name</Label><Input name="sellerSignatureName" value={formData.sellerSignatureName} onChange={handleChange} /></div>
-            <div><Label>Date</Label><Input name="sellerSignatureDate" value={formData.sellerSignatureDate} onChange={handleChange} /></div>
-            <div><Label>Buyer Signature Name</Label><Input name="buyerSignatureName" value={formData.buyerSignatureName} onChange={handleChange} /></div>
-            <div><Label>Date</Label><Input name="buyerSignatureDate" value={formData.buyerSignatureDate} onChange={handleChange} /></div>
-          </div>
-        </div>
-      )
-    }
-  ];
-
+export default function AssetPurchase() {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Asset Purchase Agreement</h2>
-      <FormWizard steps={steps} onFinish={generatePDF} />
-      {isGenerating && <p className="text-center text-sm text-gray-500 mt-2">Generating PDF...</p>}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Asset Purchase"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="assetpurchase"
+    />
   );
 }

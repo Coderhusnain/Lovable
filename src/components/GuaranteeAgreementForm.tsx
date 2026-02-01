@@ -1,337 +1,506 @@
-import React, { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import jsPDF from "jspdf";
-import { toast } from "sonner";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  day: string;
-  month: string;
-  year: string;
-  creditorName: string;
-  creditorAddress: string;
-  guarantorName: string;
-  guarantorAddress: string;
-  debtorName: string;
-  terminationDaysNumber: string;
-  terminationDaysWords: string;
-  securityText: string;
-  pledgeDate: string;
-  securityAgreementDate: string;
-  mortgageDate: string;
-  collateralAssignmentDate: string;
-  governingState: string;
-  creditorSignerName: string;
-  creditorSignerTitle: string;
-  creditorSignerDate: string;
-  guarantorSignerName: string;
-  guarantorSignerTitle: string;
-  guarantorSignerDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const defaultFormData: FormData = {
-  day: "",
-  month: "",
-  year: "",
-  creditorName: "",
-  creditorAddress: "",
-  guarantorName: "",
-  guarantorAddress: "",
-  debtorName: "",
-  terminationDaysNumber: "",
-  terminationDaysWords: "",
-  securityText: "",
-  pledgeDate: "",
-  securityAgreementDate: "",
-  mortgageDate: "",
-  collateralAssignmentDate: "",
-  governingState: "",
-  creditorSignerName: "",
-  creditorSignerTitle: "",
-  creditorSignerDate: "",
-  guarantorSignerName: "",
-  guarantorSignerTitle: "",
-  guarantorSignerDate: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Guarantee Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("guarantee_agreement.pdf");
 };
 
-
-const fieldGroups = [
-  [
-    { name: "day", label: "Day", type: "input" },
-    { name: "month", label: "Month", type: "input" },
-    { name: "year", label: "Year", type: "input" },
-  ],
-  [
-    { name: "creditorName", label: "Creditor - Full Legal Name", type: "input" },
-    { name: "creditorAddress", label: "Creditor - Address", type: "textarea" },
-    { name: "guarantorName", label: "Guarantor - Full Legal Name", type: "input" },
-  ],
-  [
-    { name: "guarantorAddress", label: "Guarantor - Address", type: "textarea" },
-    { name: "debtorName", label: "Debtor - Name (for recital)", type: "input" },
-    { name: "terminationDaysNumber", label: "Termination - Days (number)", type: "input" },
-  ],
-  [
-    { name: "terminationDaysWords", label: "Termination - Days (words)", type: "input" },
-    { name: "securityText", label: "Security text (replaces checkbox section; paste exact text you want)", type: "textarea" },
-    { name: "pledgeDate", label: "Pledge Agreement Date", type: "input" },
-  ],
-  [
-    { name: "securityAgreementDate", label: "Security Agreement Date", type: "input" },
-    { name: "mortgageDate", label: "Mortgage Date", type: "input" },
-    { name: "collateralAssignmentDate", label: "Collateral Assignment Date", type: "input" },
-  ],
-  [
-    { name: "governingState", label: "Governing State", type: "input" },
-    { name: "creditorSignerName", label: "Creditor - Signer Name", type: "input" },
-    { name: "creditorSignerTitle", label: "Creditor - Title (if applicable)", type: "input" },
-  ],
-  [
-    { name: "creditorSignerDate", label: "Creditor - Date", type: "input" },
-    { name: "guarantorSignerName", label: "Guarantor - Signer Name", type: "input" },
-    { name: "guarantorSignerTitle", label: "Guarantor - Title (if applicable)", type: "input" },
-  ],
-  [
-    { name: "guarantorSignerDate", label: "Guarantor - Date", type: "input" },
-  ],
-];
-
-const GuaranteeAgreementForm: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>(defaultFormData);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const filled = (template: string, replacement: string) => {
-    if (!replacement || replacement.trim() === "") return template;
-    return template.replace(/_{3,}|\[.*?\]/, replacement);
-  };
-
-  const onFinish = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF({ unit: "pt", format: "letter" });
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 40;
-      const lineHeight = 14;
-      let currentY = margin;
-
-      const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont("times", isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 720) {
-            doc.addPage();
-            currentY = margin;
-          }
-          if (isCenter) {
-            const tw = (doc.getStringUnitWidth(line) * fontSize) / doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
-
-      const paragraphs: string[] = [];
-
-      paragraphs.push("GUARANTEE AGREEMENT");
-      paragraphs.push(
-        filled(
-          `This Guarantee Agreement (\u201cAgreement\u201d or \u201cGuaranty\u201d) is made and entered into on this ${formData.day || "___"} day of ${formData.month || "_______"}, ${formData.year || "-------"} (\u201cEffective Date\u201d), by and between:`,
-          ""
-        )
-      );
-      paragraphs.push(
-        filled(
-          `[Name of Creditor], having its principal place of business at ${formData.creditorAddress || "________________________"} (hereinafter referred to as the \u201cCreditor\u201d),`,
-          formData.creditorName
-        )
-      );
-      paragraphs.push("and");
-      paragraphs.push(
-        filled(
-          `[Name of Guarantor], residing or having its principal place of business at ${formData.guarantorAddress || "________________________"} (hereinafter referred to as the \u201cGuarantor\u201d).`,
-          formData.guarantorName
-        )
-      );
-      paragraphs.push("(Each individually referred to as a \u201cParty\u201d and collectively as the \u201cParties\u201d.)");
-      paragraphs.push("");
-      paragraphs.push("RECITALS");
-      paragraphs.push(
-        filled(
-          `WHEREAS, [Name of Debtor] (\u201cDebtor\u201d) has entered or proposes to enter into a certain contractual arrangement with the Creditor, a copy of which is attached hereto and incorporated herein as Exhibit A (\u201cUnderlying Agreement\u201d);`,
-          formData.debtorName
-        )
-      );
-      paragraphs.push(
-        "AND WHEREAS, the Creditor has required, as a condition to entering into or continuing the said contractual relationship with the Debtor, that the Guarantor execute and deliver this Guaranty as security for the due performance and payment by the Debtor of all its obligations and liabilities to the Creditor, whether presently existing or hereafter arising;"
-      );
-      paragraphs.push(
-        "NOW, THEREFORE, in consideration of the foregoing and of other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Guarantor hereby agrees as follows:"
-      );
-      // Section 1
-      paragraphs.push("1. OBLIGATIONS OF THE GUARANTOR");
-      paragraphs.push(
-        "1.1 Absolute and Unconditional Guarantee\nThe Guarantor hereby absolutely, unconditionally, and irrevocably guarantees to the Creditor the prompt and full payment and performance of all obligations, indebtedness, and liabilities of the Debtor to the Creditor, whether now existing or hereafter incurred, whether direct or indirect, secured or unsecured, absolute or contingent, liquidated or unliquidated, and whether arising voluntarily or involuntarily, or jointly or severally with others."
-      );
-      paragraphs.push(
-        "1.2 Continuing Nature of Guarantee\nIt is expressly understood that this Guaranty constitutes a continuing guarantee, extending to and covering all existing and future obligations of the Debtor until this Guaranty is duly terminated in accordance with the provisions herein."
-      );
-      paragraphs.push(
-        "1.3 No Limitation by Enforcement\nThe liability of the Guarantor shall not be affected, diminished, or discharged by reason of any inability, failure, or omission by the Creditor to enforce its rights against the Debtor or any other person, nor by the invalidity or unenforceability of any obligation of the Debtor."
-      );
-      paragraphs.push(
-        "1.4 Reliance\nThe Guarantor acknowledges that this Guaranty is executed to induce the Creditor to enter into or continue its contractual relationship with the Debtor, and that the Creditor will rely upon this Guaranty as a continuing assurance of the Debtor’s performance."
-      );
-      // Section 2
-      paragraphs.push("2. DURATION");
-      paragraphs.push(
-        filled(
-          `2.1 Term\nThis Guaranty shall remain in full force and effect until the expiration of ${formData.terminationDaysNumber || "____"} (${formData.terminationDaysWords || "___"}) days after written notice of termination is received by the Creditor from the Guarantor (\u201cTermination Notice\u201d).`,
-          ""
-        )
-      );
-      paragraphs.push(
-        "2.2 Obligations Survive Termination\nAny obligations, debts, or liabilities of the Debtor existing or arising prior to the effective date of termination shall continue to be fully guaranteed by the Guarantor, notwithstanding the issuance of such Termination Notice."
-      );
-      paragraphs.push(
-        "2.3 Effectiveness of Termination\nTermination shall not be effective until all obligations of the Debtor incurred prior thereto are fully paid, satisfied, and discharged to the Creditor’s satisfaction."
-      );
-      // Section 3
-      paragraphs.push("3. NOTICE OF DEFAULT");
-      paragraphs.push(
-        "3.1 Notification Requirement\nThe Creditor shall provide written notice to the Guarantor of any default by the Debtor in performing its commitments or obligations under the Underlying Agreement prior to enforcing any rights under this Guaranty."
-      );
-      paragraphs.push(
-        "3.2 No Obligation for Further Advances\nThe Creditor shall not be obligated to notify the Guarantor of any subsequent advances, extensions of credit, or renewals granted to the Debtor."
-      );
-      paragraphs.push(
-        "3.3 Extension of Credit without Consent\nThe Creditor shall not extend any additional credit or enter into new financial arrangements with the Debtor without obtaining the prior written consent of the Guarantor. Any violation of this clause shall render this Guaranty null and void, and the Guarantor shall be fully discharged from liability hereunder."
-      );
-      // Section 4
-      paragraphs.push("4. CREDITOR PROVISIONS AND SECURITY");
-      paragraphs.push(
-        "4.1 Waiver of Subrogation and Rights Against Debtor\nUntil all obligations of the Debtor have been satisfied in full, the Guarantor waives any right of subrogation and any right to claim against the Debtor or any collateral securing the Debtor’s obligations."
-      );
-      paragraphs.push(
-        "4.2 Assignment of Debtor’s Indebtedness to Guarantor\nAny debt owed by the Debtor to the Guarantor shall be subordinated and assigned to the Creditor. If requested by the Creditor, such debt shall be collected and remitted by the Guarantor as trustee for the Creditor, without affecting the Guarantor’s obligations under this Agreement."
-      );
-      paragraphs.push(
-        "4.3 Creditor’s Right to Modify or Release Security\nThe Guarantor agrees that the Creditor may, without prior notice to or consent from the Guarantor: (a) alter the terms of the Debtor’s obligations; (b) extend time for payment or performance; (c) release or substitute any collateral security; or (d) compromise or settle any claim. Such actions shall not release or reduce the Guarantor’s liability under this Guaranty."
-      );
-      paragraphs.push(
-        "4.4 Requirement for Consent to New Contracts\nThis Guaranty shall become null and void if the Creditor enters into, renews, or modifies any agreement with the Debtor without obtaining the Guarantor’s prior written consent."
-      );
-      paragraphs.push(
-        "4.5 Financial Disclosure\nThe Guarantor shall provide the Creditor with reasonable access to its financial statements or information concerning its financial condition upon written request. The Creditor shall have no obligation to advise or inform the Guarantor regarding the Debtor’s financial condition."
-      );
-      paragraphs.push(
-        filled(
-          `4.6 Security for Guaranty\nThis Guaranty is:\n☐ Unsecured, or\n☐ Secured by the following instruments (check as applicable):`,
-          formData.securityText
-        )
-      );
-      paragraphs.push(
-        filled(
-          `•Pledge Agreement dated ${formData.pledgeDate || "__________"};\n•Security Agreement dated ${formData.securityAgreementDate || "__________"};\n•Mortgage dated ${formData.mortgageDate || "__________"};\n•Collateral Assignment dated ${formData.collateralAssignmentDate || "__________"}.`,
-          ""
-        )
-      );
-      // Section 5
-      paragraphs.push("5. FINAL PROVISIONS");
-      paragraphs.push(
-        "5.1 Entire Agreement\nThis Guaranty constitutes the entire agreement between the Parties with respect to its subject matter and supersedes all prior oral or written understandings, representations, or agreements."
-      );
-      paragraphs.push(
-        "5.2 Amendments\nNo modification or amendment of this Guaranty shall be valid unless made in writing and signed by both Parties."
-      );
-      paragraphs.push(
-        "5.3 Severability\nIf any provision of this Guaranty is held invalid or unenforceable by a court of competent jurisdiction, such provision shall be limited to the minimum extent necessary so that the remaining provisions shall continue in full force and effect."
-      );
-      paragraphs.push(
-        "5.4 Waiver\nFailure of either Party to enforce any right or provision of this Guaranty shall not constitute a waiver of such right or provision and shall not affect its enforceability thereafter."
-      );
-      paragraphs.push(
-        filled(
-          `5.5 Governing Law\nThis Guaranty shall be governed by and construed in accordance with the laws of the State of ${formData.governingState || "__________"}, without regard to its conflict-of-law principles.`,
-          ""
-        )
-      );
-      paragraphs.push(
-        "5.6 Acknowledgment of Receipt\nThe Guarantor hereby acknowledges having received a true and complete copy of this Guaranty and fully understands its terms, rights, and obligations."
-      );
-      // Section 6
-      paragraphs.push("6. EXECUTION");
-      paragraphs.push(
-        "IN WITNESS WHEREOF, the Parties have duly executed this Guarantee Agreement as of the day and year first above written."
-      );
-      paragraphs.push(
-        filled(
-          `CREDITOR\nName: ${formData.creditorSignerName || "__________________________"}\nTitle: ${formData.creditorSignerTitle || "__________________________"}\nSignature: ________________________\nDate: ${formData.creditorSignerDate || "__________________________"}`,
-          ""
-        )
-      );
-      paragraphs.push(
-        filled(
-          `GUARANTOR\nName: ${formData.guarantorSignerName || "__________________________"}\nTitle (if applicable): ${formData.guarantorSignerTitle || "__________________________"}\nSignature: ________________________\nDate: ${formData.guarantorSignerDate || "__________________________"}`,
-          ""
-        )
-      );
-      paragraphs.forEach((p) => {
-        addText(p);
-        currentY += 6;
-      });
-      doc.save("guarantee-agreement.pdf");
-      toast.success("Guarantee Agreement PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Guarantee Agreement PDF");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  // Build steps for FormWizard
-  const steps = fieldGroups.map((fields, idx) => ({
-    label: `Step ${idx + 1}`,
-    content: (
-      <div className="space-y-4">
-        {fields.map((field) => (
-          <div key={field.name} className="space-y-2">
-            <Label>{field.label}</Label>
-            {field.type === "input" ? (
-              <Input
-                value={formData[field.name as keyof FormData] as string}
-                onChange={(e) => handleInputChange(field.name as keyof FormData, e.target.value)}
-              />
-            ) : (
-              <Textarea
-                value={formData[field.name as keyof FormData] as string}
-                onChange={(e) => handleInputChange(field.name as keyof FormData, e.target.value)}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    ),
-  }));
-
+export default function GuaranteeAgreement() {
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Guarantee Agreement</h2>
-      <FormWizard steps={steps} onFinish={onFinish} />
-      {isGeneratingPDF && <div>Generating PDF...</div>}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Guarantee Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="guaranteeagreement"
+    />
   );
-};
-
-export default GuaranteeAgreementForm;
+}

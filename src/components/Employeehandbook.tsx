@@ -1,261 +1,471 @@
-import React, { useState } from "react";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-interface FormData {
-  companyName: string;
-  companyAddress: string;
-  effectiveDate: string;
-  employeeSignature: string;
-}
 
-const EmployeeHandbookGenerator: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    companyName: "",
-    companyAddress: "",
-    effectiveDate: "",
-    employeeSignature: "",
-  });
-
-  const generatePDF = async () => {
-    try {
-      const doc = new jsPDF({ unit: "pt", format: "letter" });
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 40;
-      const lineHeight = 16;
-      let currentY = margin;
-
-      const addText = (
-        text: string,
-        fontSize = 11,
-        isBold = false,
-        isCenter = false
-      ) => {
-        doc.setFontSize(fontSize);
-        doc.setFont("times", isBold ? "bold" : "normal");
-        const textWidth = pageWidth - margin * 2;
-        const lines = doc.splitTextToSize(text, textWidth);
-        lines.forEach((line: string) => {
-          if (currentY > 720) {
-            doc.addPage();
-            currentY = margin;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
           }
-          if (isCenter) {
-            const tw =
-              (doc.getStringUnitWidth(line) * fontSize) /
-              doc.internal.scaleFactor;
-            const tx = (pageWidth - tw) / 2;
-            doc.text(line, tx, currentY);
-          } else {
-            doc.text(line, margin, currentY);
-          }
-          currentY += lineHeight;
-        });
-      };
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this document?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Document Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and details of this document",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-      // Title
-      addText("EMPLOYEE HANDBOOK", 16, true, true);
-      currentY += 10;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Employee Handbook", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("DOCUMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  
+  doc.save("employee_handbook.pdf");
+};
 
-      addText(formData.companyName || "[Company Name]", 12, true, true);
-      addText(formData.companyAddress || "[Company Address]", 12, true, true);
-      addText(
-        `Effective Date: ${formData.effectiveDate || "[Insert Date]"}`,
-        12,
-        true,
-        true
-      );
-      currentY += 20;
-
-      // Full Handbook text (pixel-to-pixel, placeholders dynamic)
-      const handbookText = `
-Section 1 – Introduction
-Welcome
-Welcome to ${formData.companyName || "[Company Name]"} (“the Company”). We are pleased to have you join our team and contribute to our shared mission and values. This Handbook is intended to provide you with important information regarding the Company’s policies, procedures, benefits, and expectations.
-
-Purpose of the Handbook
-This Employee Handbook (“Handbook”) serves as a general guide to the Company’s workplace rules, policies, and employee benefits. It applies to all employees of the Company, regardless of position, unless otherwise stated. Compliance with the policies set forth herein is a condition of continued employment.
-This Handbook supersedes and replaces all prior oral or written policies, procedures, rules, or benefits previously communicated to employees, whether formal or informal, express or implied.
-The Company reserves the sole and absolute discretion to amend, modify, rescind, delete, or supplement any provision of this Handbook at any time, with or without notice, except for the policy of employment-at-will, which may only be modified in a written agreement signed by both the employee and an authorized representative of the Company.
-This Handbook is not an express or implied contract of employment. Nothing contained herein shall alter the at-will employment relationship or create any contractual rights to continued employment.
-
-Changes in Policy
-Due to the evolving nature of our business, the Company expressly reserves the right to revise, modify, or eliminate any policies, procedures, work rules, or benefits described in this Handbook. Only the Chief Executive Officer or an authorized executive officer may approve changes to the at-will employment status, and such changes must be documented in a signed written agreement.
-
-Employment-At-Will
-Employment with the Company is on an at-will basis unless otherwise expressly provided in a duly executed written employment agreement. This means that either the employee or the Company may terminate the employment relationship at any time, with or without cause, and with or without notice, subject only to applicable federal, state, and local laws.
-
-Section 2 – Employment Policies
-Employee Classifications
-For purposes of compensation, benefits, and compliance with wage and hour laws, employees are classified as follows:
-Exempt Employees – Those whose positions meet the requirements of the Fair Labor Standards Act (FLSA) and applicable state law for exemption from overtime.
-Non-Exempt Employees – Those whose positions do not meet exemption criteria and who are therefore entitled to overtime pay in accordance with applicable law.
-Full-Time Employees – Employees regularly scheduled to work [number] or more hours per week.
-Part-Time Employees – Employees regularly scheduled to work fewer than [number] hours per week.
-Temporary Employees – Employees engaged for a fixed term or specific project with no guarantee of continued employment.
-Independent Contractors/Consultants – Individuals retained under contract to perform services and who are not employees of the Company.
-
-Equal Employment Opportunity (EEO) and ADA Compliance
-The Company is committed to providing equal employment opportunities to all qualified individuals and prohibits discrimination based on race, color, religion, sex, sexual orientation, gender identity or expression, age, national origin, disability, veteran status, or any other protected category under federal, state, or local law.
-The Company will provide reasonable accommodations to qualified individuals with disabilities in accordance with the Americans with Disabilities Act (ADA) and applicable state law, unless such accommodations would impose an undue hardship on the Company.
-
-Confidentiality
-Employees may be entrusted with confidential, proprietary, or trade secret information belonging to the Company. Employees are prohibited from using or disclosing such information except as required in the performance of their duties or as authorized in writing by the Company. This obligation continues after employment ends.
-
-Employment of Minors
-The Company complies with all applicable child labor laws, including those under the FLSA, and will not employ individuals under the legal minimum working age.
-
-Employment of Relatives
-The Company may restrict or prohibit the employment of immediate family members in circumstances where it may present a conflict of interest, create supervisory/subordinate relationships, or otherwise disrupt business operations.
-
-Introductory Period
-The first [number] days of employment constitute an introductory or probationary period, during which performance and suitability for continued employment will be evaluated.
-
-Personnel Records and Employee References
-Personnel files are the property of the Company. Employees may review their own records in accordance with applicable law. Only authorized personnel may provide employment references.
-
-Privacy
-While the Company respects employee privacy, employees should have no expectation of privacy in any Company property, including offices, desks, lockers, vehicles, or electronic systems.
-
-Immigration Law Compliance
-In accordance with the Immigration Reform and Control Act, all employees must complete the Form I-9 and provide documentation verifying their eligibility to work in the United States.
-
-Political Neutrality
-Employees may engage in lawful political activities outside of work but may not use Company resources, time, or branding for political purposes.
-
-Section 3 – Hours of Work and Payroll Practices
-Pay Periods & Paydays – Employees are paid on a bi-weekly schedule unless otherwise specified.
-Overtime – Non-exempt employees are entitled to overtime pay for hours worked over 40 in a workweek, or as otherwise provided by state law.
-Rest & Meal Periods – Provided in accordance with applicable federal and state law.
-Timekeeping – Accurate recording of hours worked is mandatory. Falsifying time records is grounds for immediate termination.
-Payroll Deductions – Deductions will be made for taxes, insurance premiums, retirement contributions, and other authorized purposes.
-Wage Garnishment – The Company will comply with court-ordered wage garnishments.
-Direct Deposit – Direct deposit is encouraged but optional, unless otherwise required by law.
-
-Section 4 – Standards of Conduct and Employee Performance
-Anti-Harassment & Discrimination – Strictly prohibited; employees must report violations promptly.
-Attendance – Reliable attendance is essential; excessive absenteeism may result in discipline.
-Dress Code – Employees must dress appropriately for their position, with consideration for safety and professionalism.
-Pet Policy – Only registered service animals are permitted; advance notice to a supervisor is required.
-Safety – Compliance with OSHA and other safety regulations is mandatory.
-Substance Abuse – Possession or use of illegal drugs on Company property is prohibited. Alcohol permitted only at approved events.
-Workplace Searches – The Company reserves the right to search any property on its premises.
-Internet, Email, and Computer Use – Company technology is for business use only; personal use is restricted.
-Cell Phone Use – Personal calls should be limited to break times; must not interfere with work.
-
-Section 5 – Benefits and Services
-Workers’ Compensation – Provided in accordance with law.
-Social Security (FICA) – Employer and employee contributions as required.
-Unemployment Insurance – Provided as required by law.
-
-Section 6 – Leaves of Absence and Time Off
-Family & Medical Leave – Granted as required by applicable law; the Company may voluntarily approve unpaid leave requests.
-Workers’ Compensation Leave – Available in cases of job-related injury.
-Jury Duty – Paid or unpaid leave as required by law; employees must notify management immediately upon receipt of a summons.
-
-Acknowledgement
-I acknowledge that I have received and read the Employee Handbook, understand its provisions, and agree to comply with all policies contained herein.
-Employee Signature: ${formData.employeeSignature || "_________________"}
-Date: ${formData.effectiveDate || "___________________"}
-`;
-
-      addText(handbookText, 11, false, false);
-
-      doc.save("employee-handbook.pdf");
-      toast.success("Employee Handbook PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Employee Handbook PDF");
-    }
-  };
-
- const renderStep = () => {
+export default function EmployeeHandbook() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-         
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="companyName">Company Name</Label>
-          <Input
-            id="companyName"
-            value={formData.companyName}
-            onChange={(e) =>
-              setFormData({ ...formData, companyName: e.target.value })
-            }
-            placeholder="Enter company name"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="companyAddress">Company Address</Label>
-          <Input
-            id="companyAddress"
-            value={formData.companyAddress}
-            onChange={(e) =>
-              setFormData({ ...formData, companyAddress: e.target.value })
-            }
-            placeholder="Enter company address"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="effectiveDate">Effective Date</Label>
-          <Input
-            id="effectiveDate"
-            type="date"
-            value={formData.effectiveDate}
-            onChange={(e) =>
-              setFormData({ ...formData, effectiveDate: e.target.value })
-            }
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="employeeSignature">Employee Signature</Label>
-          <Input
-            id="employeeSignature"
-            value={formData.employeeSignature}
-            onChange={(e) =>
-              setFormData({ ...formData, employeeSignature: e.target.value })
-            }
-            placeholder="Type full name as signature"
-          />
-        </div>
-
-        <div className="flex justify-end pt-4">
-          <Button onClick={generatePDF} className="flex items-center gap-2">
-            Generate PDF
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+    <FormWizard
+      steps={steps}
+      title="Employee Handbook"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="employeehandbook"
+    />
   );
-};
-
-return (
-  <div className="max-w-3xl mx-auto p-6 bg-gray-50">
-    <div className="mb-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">
-        Employee Handbook
-      </h1>
-      <p className="text-gray-600">
-        Fill in the details below and generate a handbook PDF.
-      </p>
-    </div>
-
-    {renderStep()}
-  </div>
-);
-
-};
-
-export default EmployeeHandbookGenerator;
+}

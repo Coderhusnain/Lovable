@@ -1,1077 +1,506 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText } from "lucide-react";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import CountryStateAPI from 'countries-states-cities';
-import UserInfoStep from "@/components/UserInfoStep";
 
-// Define section structure
-interface Section {
-  id: string;
-  title: string;
-  description?: string;
-  questions: string[];
-  nextSectionId?: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-// Define the question type interface
-interface Question {
-  id: string;
-  type: 'text' | 'select' | 'textarea' | 'confirmation' | 'date' | 'number';
-  text: string;
-  options?: string[];
-  nextQuestionId?: Record<string, string>;
-  defaultNextId?: string;
-}
-
-// Define interfaces for the countries-states-cities data structure
-interface CountryData {
-  id: number;
-  name: string;
-  iso3: string;
-  iso2: string;
-  phone_code: string;
-  capital: string;
-  currency: string;
-  native: string;
-  region: string;
-  subregion: string;
-  emoji: string;
-}
-
-interface StateData {
-  id: number;
-  name: string;
-  country_id: number;
-  country_code: string;
-  state_code: string;
-}
-
-// Country to states/provinces mapping using comprehensive database with proper ID relationships
-const getAllCountries = (): CountryData[] => {
-  return CountryStateAPI.getAllCountries();
-};
-
-const getStatesByCountry = (countryId: number): StateData[] => {
-  return CountryStateAPI.getStatesOfCountry(countryId);
-};
-
-// Helper functions to get display names from IDs
-const getCountryName = (countryId: string): string => {
-  const country = CountryStateAPI.getAllCountries().find(c => c.id.toString() === countryId);
-  return country?.name || `Country ID: ${countryId}`;
-};
-
-const getStateName = (countryId: string, stateId: string): string => {
-  const country = CountryStateAPI.getAllCountries().find(c => c.id.toString() === countryId);
-  if (!country) return `State ID: ${stateId}`;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
   
-  const states = CountryStateAPI.getStatesOfCountry(country.id);
-  const state = states.find(s => s.id.toString() === stateId);
-  return state?.name || `State ID: ${stateId}`;
-};
-
-// Sections definition - grouping questions by category
-const sections: Record<string, Section> = {
-  'location_selection': {
-    id: 'location_selection',
-    title: 'Location Selection',
-    description: 'Select the country and state where this rent increase agreement will be executed',
-    questions: ['country', 'state'],
-    nextSectionId: 'agreement_date'
-  },
-  'agreement_date': {
-    id: 'agreement_date',
-    title: 'Agreement Date',
-    description: 'Enter the effective date of this rent increase agreement',
-    questions: ['effective_date'],
-    nextSectionId: 'landlord_info'
-  },
-  'landlord_info': {
-    id: 'landlord_info',
-    title: 'Landlord Information',
-    description: 'Enter the landlord\'s contact details',
-    questions: ['landlord_name', 'landlord_address', 'landlord_city_state_zip', 'landlord_email', 'landlord_phone'],
-    nextSectionId: 'tenant_info'
-  },
-  'tenant_info': {
-    id: 'tenant_info',
-    title: 'Tenant Information',
-    description: 'Enter the tenant\'s information',
-    questions: ['tenant_name', 'premises_address'],
-    nextSectionId: 'original_lease'
-  },
-  'original_lease': {
-    id: 'original_lease',
-    title: 'Original Lease Details',
-    description: 'Information about the existing lease agreement',
-    questions: ['original_lease_date', 'current_rent', 'current_due_day'],
-    nextSectionId: 'rent_increase'
-  },
-  'rent_increase': {
-    id: 'rent_increase',
-    title: 'Rent Increase Details',
-    description: 'Details about the new rent amount and terms',
-    questions: ['increase_effective_date', 'new_rent_amount', 'new_due_day'],
-    nextSectionId: 'confirmation'
-  },
-  'confirmation': {
-    id: 'confirmation',
-    title: 'Confirmation',
-    description: 'Review and confirm your information',
-    questions: ['confirmation'],
-    nextSectionId: 'user_info_step'
-  },
-  'user_info_step': {
-    id: 'user_info_step',
-    title: 'User Information',
-    description: 'Enter your information to generate the document',
-    questions: []
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Rent Increase", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
   }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("rent_increase.pdf");
 };
 
-// Define the question flow
-const questions: Record<string, Question> = {
-  'country': {
-    id: 'country',
-    type: 'select',
-    text: 'Select your country:',
-    options: getAllCountries().map(country => `${country.id}|${country.name}`),
-    defaultNextId: 'state'
-  },
-  'state': {
-    id: 'state',
-    type: 'select',
-    text: 'Select your state/province:',
-    options: [], // Will be populated dynamically
-    defaultNextId: 'effective_date'
-  },
-  'effective_date': {
-    id: 'effective_date',
-    type: 'date',
-    text: 'Effective Date of this Rent Increase Agreement:',
-    defaultNextId: 'landlord_name'
-  },
-  'landlord_name': {
-    id: 'landlord_name',
-    type: 'text',
-    text: 'Landlord\'s Full Legal Name:',
-    defaultNextId: 'landlord_address'
-  },
-  'landlord_address': {
-    id: 'landlord_address',
-    type: 'text',
-    text: 'Landlord\'s Street Address:',
-    defaultNextId: 'landlord_city_state_zip'
-  },
-  'landlord_city_state_zip': {
-    id: 'landlord_city_state_zip',
-    type: 'text',
-    text: 'Landlord\'s City, State, Zip Code:',
-    defaultNextId: 'landlord_email'
-  },
-  'landlord_email': {
-    id: 'landlord_email',
-    type: 'text',
-    text: 'Landlord\'s Email Address (optional):',
-    defaultNextId: 'landlord_phone'
-  },
-  'landlord_phone': {
-    id: 'landlord_phone',
-    type: 'text',
-    text: 'Landlord\'s Phone Number:',
-    defaultNextId: 'tenant_name'
-  },
-  'tenant_name': {
-    id: 'tenant_name',
-    type: 'text',
-    text: 'Tenant\'s Full Legal Name(s):',
-    defaultNextId: 'premises_address'
-  },
-  'premises_address': {
-    id: 'premises_address',
-    type: 'text',
-    text: 'Premises Address (Street Address of the Rented Property):',
-    defaultNextId: 'original_lease_date'
-  },
-  'original_lease_date': {
-    id: 'original_lease_date',
-    type: 'date',
-    text: 'Original Lease Agreement Date:',
-    defaultNextId: 'current_rent'
-  },
-  'current_rent': {
-    id: 'current_rent',
-    type: 'number',
-    text: 'Current Monthly Rent Amount ($):',
-    defaultNextId: 'current_due_day'
-  },
-  'current_due_day': {
-    id: 'current_due_day',
-    type: 'number',
-    text: 'Current Rent Due Day (1-31):',
-    defaultNextId: 'increase_effective_date'
-  },
-  'increase_effective_date': {
-    id: 'increase_effective_date',
-    type: 'date',
-    text: 'Effective Date of Rent Increase:',
-    defaultNextId: 'new_rent_amount'
-  },
-  'new_rent_amount': {
-    id: 'new_rent_amount',
-    type: 'number',
-    text: 'New Monthly Rent Amount ($):',
-    defaultNextId: 'new_due_day'
-  },
-  'new_due_day': {
-    id: 'new_due_day',
-    type: 'number',
-    text: 'New Rent Due Day (1-31):',
-    defaultNextId: 'confirmation'
-  },
-  'confirmation': {
-    id: 'confirmation',
-    type: 'confirmation',
-    text: 'Thank you for providing the information. We will generate your Rent Increase Agreement based on your answers.',
-  }
-};
-
-const RentIncreaseForm = () => {
-  const navigate = useNavigate();
-  const [currentSectionId, setCurrentSectionId] = useState<string>('location_selection');
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [sectionHistory, setSectionHistory] = useState<string[]>(['location_selection']);
-  const [isComplete, setIsComplete] = useState(false);
-  const [datePickerStates, setDatePickerStates] = useState<Record<string, boolean>>({});
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  
-  const currentSection = sections[currentSectionId];
-
-  const handleNext = () => {
-    try {
-      const nextSectionId = currentSection?.nextSectionId;
-      
-      if (!nextSectionId) {
-        setIsComplete(true);
-        return;
-      }
-      
-      // Validate that the next section exists
-      if (sections[nextSectionId]) {
-        setSectionHistory([...sectionHistory, nextSectionId]);
-        setCurrentSectionId(nextSectionId);
-      } else {
-        console.error(`Next section ${nextSectionId} does not exist`);
-        toast.error("Navigation error. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error in handleNext:", error);
-      toast.error("An error occurred. Please try again.");
-    }
-  };
-  
-  const handleBack = () => {
-    if (sectionHistory.length > 1) {
-      const newHistory = [...sectionHistory];
-      newHistory.pop();
-      setSectionHistory(newHistory);
-      setCurrentSectionId(newHistory[newHistory.length - 1]);
-    }
-  };
-  
-  const handleAnswer = (questionId: string, answer: string) => {
-    setAnswers({
-      ...answers,
-      [questionId]: answer
-    });
-  };
-
-  const setDatePickerOpen = (questionId: string, isOpen: boolean) => {
-    setDatePickerStates({
-      ...datePickerStates,
-      [questionId]: isOpen
-    });
-  };
-  
-  const renderQuestionInput = (questionId: string) => {
-    const question = questions[questionId];
-    
-    switch (question.type) {
-      case 'text':
-        return (
-          <div className="mb-2">
-            <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-              {question.text}
-            </Label>
-            <Input
-              id={questionId}
-              value={answers[questionId] || ''}
-              onChange={(e) => handleAnswer(questionId, e.target.value)}
-              placeholder="Type your answer"
-              className="mt-1 text-black w-full bg-white"
-            />
-          </div>
-        );
-      case 'number':
-        return (
-          <div className="mb-2">
-            <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-              {question.text}
-            </Label>
-            <Input
-              id={questionId}
-              type="number"
-              value={answers[questionId] || ''}
-              onChange={(e) => handleAnswer(questionId, e.target.value)}
-              placeholder="Enter number"
-              className="mt-1 text-black w-full bg-white"
-            />
-          </div>
-        );
-      case 'textarea':
-        return (
-          <div className="mb-2">
-            <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-              {question.text}
-            </Label>
-            <Textarea
-              id={questionId}
-              value={answers[questionId] || ''}
-              onChange={(e) => handleAnswer(questionId, e.target.value)}
-              placeholder="Type your answer"
-              className="mt-1 text-black w-full bg-white"
-              rows={3}
-            />
-          </div>
-        );
-      case 'date':
-        return (
-          <div className="mb-2">
-            <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-              {question.text}
-            </Label>
-            <Popover 
-              open={datePickerStates[questionId] || false} 
-              onOpenChange={(open) => setDatePickerOpen(questionId, open)}
-            >
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal mt-1 text-black bg-white",
-                    !answers[questionId] && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {answers[questionId] ? format(new Date(answers[questionId]), "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-white" align="start">
-                <Calendar
-                  mode="single"
-                  selected={answers[questionId] ? new Date(answers[questionId]) : undefined}
-                  onSelect={(date) => {
-                    if (date) {
-                      handleAnswer(questionId, date.toISOString());
-                      setDatePickerOpen(questionId, false);
-                    }
-                  }}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        );
-      case 'select':
-        if (questionId === 'country') {
-          return (
-            <div className="mb-2">
-              <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-                {question.text}
-              </Label>
-              <Select
-                value={answers[questionId] || ''}
-                onValueChange={(value) => {
-                  handleAnswer(questionId, value);
-                  // Reset state when country changes
-                  if (answers.state) {
-                    handleAnswer('state', '');
-                  }
-                }}
-              >
-                <SelectTrigger className="mt-1 text-black w-full bg-white">
-                  <SelectValue placeholder="Select a country" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {getAllCountries().map((country) => (
-                    <SelectItem key={country.id} value={`${country.id}`}>
-                      {country.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          );
-        } else if (questionId === 'state') {
-          const selectedCountryId = answers.country;
-          const states = selectedCountryId ? getStatesByCountry(parseInt(selectedCountryId)) : [];
-          
-          return (
-            <div className="mb-2">
-              <Label htmlFor={questionId} className="block text-sm font-medium text-black mb-1">
-                {question.text}
-              </Label>
-              <Select
-                value={answers[questionId] || ''}
-                onValueChange={(value) => handleAnswer(questionId, value)}
-                disabled={!selectedCountryId}
-              >
-                <SelectTrigger className="mt-1 text-black w-full bg-white">
-                  <SelectValue placeholder={selectedCountryId ? "Select a state/province" : "Select a country first"} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {states.map((state) => (
-                    <SelectItem key={state.id} value={`${state.id}`}>
-                      {state.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          );
-        }
-        break;
-      case 'confirmation':
-        return (
-          <div className="mt-2 text-center">
-            <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
-            <p className="mt-2 text-black">
-              {question.text}
-            </p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const renderSectionQuestions = () => {
-    if (currentSectionId === 'user_info_step') {
-      return (
-        <UserInfoStep
-          onBack={handleBack}
-          onGenerate={generatePDF}
-          documentType="Rent Increase Agreement"
-          isGenerating={isGeneratingPDF}
-        />
-      );
-    }
-    
-    return currentSection.questions.map(questionId => renderQuestionInput(questionId));
-  };
-
-  const canAdvance = () => {
-    if (currentSectionId === 'confirmation') return true;
-    if (currentSectionId === 'user_info_step') return false; // Handled by UserInfoStep component
-    
-    // Special validation for different sections
-    if (currentSectionId === 'location_selection') {
-      return answers.country && answers.state;
-    }
-    if (currentSectionId === 'agreement_date') {
-      return answers.effective_date;
-    }
-    if (currentSectionId === 'landlord_info') {
-      return answers.landlord_name && answers.landlord_address && answers.landlord_city_state_zip && answers.landlord_phone;
-    }
-    if (currentSectionId === 'tenant_info') {
-      return answers.tenant_name && answers.premises_address;
-    }
-    if (currentSectionId === 'original_lease') {
-      return answers.original_lease_date && answers.current_rent && answers.current_due_day;
-    }
-    if (currentSectionId === 'rent_increase') {
-      return answers.increase_effective_date && answers.new_rent_amount && answers.new_due_day;
-    }
-    
-    // Default validation
-    return true;
-  };
-
-  const generateRentIncreasePDF = () => {
-    try {
-      console.log("Generating Rent Increase Agreement PDF...");
-      const doc = new jsPDF();
-      
-      // Title
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(16);
-      doc.text("RENT INCREASE AGREEMENT", 105, 20, { align: "center" });
-      
-      // Reset to normal font
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(11);
-      
-      let y = 35;
-      const lineHeight = 6;
-      const pageHeight = 280;
-      
-      // Introduction
-      const effectiveDate = answers.effective_date ? format(new Date(answers.effective_date), "d") : '___';
-      const effectiveMonth = answers.effective_date ? format(new Date(answers.effective_date), "MMMM") : '_______';
-      const effectiveYear = answers.effective_date ? format(new Date(answers.effective_date), "yyyy") : '20__';
-      
-      const introText = `This Rent Increase Agreement ("Agreement") is entered into and made effective as of the ${effectiveDate} day of ${effectiveMonth}, ${effectiveYear},`;
-      
-      const introLines = doc.splitTextToSize(introText, 170);
-      introLines.forEach((line: string) => {
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight;
-      
-      doc.setFont("helvetica", "bold");
-      doc.text("By and Between:", 15, y);
-      y += lineHeight + 5;
-      
-      doc.setFont("helvetica", "normal");
-      doc.text(`Landlord: ${answers.landlord_name || '[Full Legal Name of Landlord]'}`, 15, y);
-      y += lineHeight;
-      doc.text(`Address: ${answers.landlord_address || '[Street Address]'}, ${answers.landlord_city_state_zip || '[City, State, Zip Code]'}`, 15, y);
-      y += lineHeight;
-      if (answers.landlord_email) {
-        doc.text(`Email: ${answers.landlord_email}`, 15, y);
-        y += lineHeight;
-      } else {
-        doc.text("Email: [Email Address] (if applicable)", 15, y);
-        y += lineHeight;
-      }
-      doc.text(`Phone: ${answers.landlord_phone || '[Phone Number]'}`, 15, y);
-      y += lineHeight + 5;
-      
-      doc.setFont("helvetica", "bold");
-      doc.text("AND", 15, y);
-      y += lineHeight + 5;
-      
-      doc.setFont("helvetica", "normal");
-      doc.text(`Tenant: ${answers.tenant_name || '[Full Legal Name of Tenant(s)]'}`, 15, y);
-      y += lineHeight;
-      doc.text(`Premises Address: ${answers.premises_address || '[Street Address of the Rented Premises]'}`, 15, y);
-      y += lineHeight + 5;
-      
-      doc.text('Collectively referred to as the "Parties."', 15, y);
-      y += lineHeight + 10;
-      
-      // RECITALS
-      doc.setFont("helvetica", "bold");
-      doc.text("RECITALS", 15, y);
-      y += lineHeight + 5;
-      
-      doc.setFont("helvetica", "normal");
-      
-      // WHEREAS clause 1
-      const originalLeaseDate = answers.original_lease_date ? format(new Date(answers.original_lease_date), "MMMM d, yyyy") : '__________';
-      const recital1 = `WHEREAS, the Parties entered into a Lease Agreement dated ${originalLeaseDate} (the "Lease") regarding the rental of the premises located at ${answers.premises_address || '[Full Premises Address]'} (the "Premises");`;
-      
-      const recital1Lines = doc.splitTextToSize(recital1, 170);
-      recital1Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 3;
-      
-      // WHEREAS clause 2
-      const currentRent = answers.current_rent || '[Current Rent Amount]';
-      const currentDueDay = answers.current_due_day || '___';
-      const recital2 = `WHEREAS, pursuant to the Lease, the Tenant is currently paying a monthly rent of $${currentRent}, payable on or before the ${currentDueDay} day of each month;`;
-      
-      const recital2Lines = doc.splitTextToSize(recital2, 170);
-      recital2Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 3;
-      
-      // WHEREAS clause 3
-      const recital3 = "WHEREAS, the Landlord now wishes to increase the rent, and the Tenant agrees to such increase, under the terms set forth herein;";
-      
-      const recital3Lines = doc.splitTextToSize(recital3, 170);
-      recital3Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 5;
-      
-      // NOW THEREFORE
-      const nowTherefore = "NOW, THEREFORE, in consideration of the mutual covenants contained herein, the Parties agree as follows:";
-      
-      const nowThereforeLines = doc.splitTextToSize(nowTherefore, 170);
-      nowThereforeLines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 1: RENT INCREASE
-      doc.setFont("helvetica", "bold");
-      doc.text("1. RENT INCREASE", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const increaseEffectiveDate = answers.increase_effective_date ? format(new Date(answers.increase_effective_date), "MMMM d, yyyy") : '[Effective Date]';
-      const newRentAmount = answers.new_rent_amount || '[New Rent Amount]';
-      const section1Text = `Effective as of ${increaseEffectiveDate}, the monthly rent due from the Tenant to the Landlord shall be increased to $${newRentAmount} per month.`;
-      
-      const section1Lines = doc.splitTextToSize(section1Text, 170);
-      section1Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 2: PAYMENT TERMS
-      doc.setFont("helvetica", "bold");
-      doc.text("2. PAYMENT TERMS", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const newDueDay = answers.new_due_day || '___';
-      const section2Text = `The increased rent amount shall be payable in advance on or before the ${newDueDay} day of each calendar month, in accordance with the terms of the original Lease.`;
-      
-      const section2Lines = doc.splitTextToSize(section2Text, 170);
-      section2Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 3: NO OTHER MODIFICATIONS
-      doc.setFont("helvetica", "bold");
-      doc.text("3. NO OTHER MODIFICATIONS", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const section3Text = "Except as expressly amended herein, all other terms, covenants, and conditions of the original Lease shall remain in full force and effect and are hereby ratified and confirmed by the Parties.";
-      
-      const section3Lines = doc.splitTextToSize(section3Text, 170);
-      section3Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 4: BINDING EFFECT
-      doc.setFont("helvetica", "bold");
-      doc.text("4. BINDING EFFECT", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const section4Text = "This Agreement shall be binding upon and inure to the benefit of the Parties hereto and their respective heirs, legal representatives, successors, and permitted assigns.";
-      
-      const section4Lines = doc.splitTextToSize(section4Text, 170);
-      section4Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 5: ENTIRE AGREEMENT
-      doc.setFont("helvetica", "bold");
-      doc.text("5. ENTIRE AGREEMENT", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const section5Text = "This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes any prior negotiations, discussions, or agreements relating to the subject matter herein.";
-      
-      const section5Lines = doc.splitTextToSize(section5Text, 170);
-      section5Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 10;
-      
-      // Section 6: GOVERNING LAW
-      doc.setFont("helvetica", "bold");
-      doc.text("6. GOVERNING LAW", 15, y);
-      y += lineHeight + 3;
-      
-      doc.setFont("helvetica", "normal");
-      const governingState = answers.state ? getStateName(answers.country || '', answers.state) : '[Insert State]';
-      const section6Text = `This Agreement shall be governed by and construed in accordance with the laws of the State of ${governingState}.`;
-      
-      const section6Lines = doc.splitTextToSize(section6Text, 170);
-      section6Lines.forEach((line: string) => {
-        if (y > pageHeight - 20) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.text(line, 15, y);
-        y += lineHeight;
-      });
-      y += lineHeight + 15;
-      
-      // Signatures
-      if (y > pageHeight - 120) {
-        doc.addPage();
-        y = 20;
-      }
-      
-      doc.setFont("helvetica", "bold");
-      doc.text("IN WITNESS WHEREOF, the Parties have executed this Agreement as of the date first above written.", 15, y);
-      y += lineHeight + 15;
-      
-      doc.text("LANDLORD:", 15, y);
-      y += lineHeight + 10;
-      
-      doc.setFont("helvetica", "normal");
-      doc.text("Signature: ___________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Name: ______________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Date: _______________________________", 15, y);
-      y += lineHeight + 15;
-      
-      doc.setFont("helvetica", "bold");
-      doc.text("TENANT(S):", 15, y);
-      y += lineHeight + 10;
-      
-      doc.setFont("helvetica", "normal");
-      doc.text("Signature: ___________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Name: ______________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Date: _______________________________", 15, y);
-      y += lineHeight + 10;
-      
-      doc.text("Signature: ___________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Name: ______________________________", 15, y);
-      y += lineHeight + 5;
-      doc.text("Date: _______________________________", 15, y);
-      
-      // Save the PDF
-      const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
-      const filename = `rent_increase_agreement_${timestamp}.pdf`;
-      console.log("Saving PDF with filename:", filename);
-      
-      doc.save(filename);
-      
-      toast.success("Rent Increase Agreement successfully generated!");
-      return doc;
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Rent Increase Agreement");
-      return null;
-    }
-  };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const maxWidth = pageWidth - 2 * margin;
-      let y = 20;
-
-      // Helper function to add text with word wrapping
-      const addText = (text: string, fontSize = 11, isBold = false) => {
-        doc.setFontSize(fontSize);
-        doc.setFont("helvetica", isBold ? "bold" : "normal");
-        const lines = doc.splitTextToSize(text, maxWidth);
-        doc.text(lines, margin, y);
-        y += (lines.length * fontSize * 0.4) + 3;
-      };
-
-      const addSpace = (space = 5) => {
-        y += space;
-      };
-
-      // Title
-      addText("RENT INCREASE AGREEMENT", 16, true);
-      addSpace();
-
-      // Agreement date
-      if (answers.effective_date) {
-        const formattedDate = format(new Date(answers.effective_date), 'MMMM d, yyyy');
-        addText(`This Rent Increase Agreement is entered into on ${formattedDate}.`);
-      }
-      addSpace();
-
-      // Parties
-      addText("PARTIES", 12, true);
-      addText(`Landlord: ${answers.landlord_name || '[LANDLORD NAME]'}`);
-      addText(`Address: ${answers.landlord_address || '[LANDLORD ADDRESS]'}, ${answers.landlord_city_state_zip || '[CITY, STATE ZIP]'}`);
-      if (answers.landlord_email) {
-        addText(`Email: ${answers.landlord_email}`);
-      }
-      if (answers.landlord_phone) {
-        addText(`Phone: ${answers.landlord_phone}`);
-      }
-      addSpace();
-
-      addText(`Tenant: ${answers.tenant_name || '[TENANT NAME]'}`);
-      addText(`Premises: ${answers.premises_address || '[PREMISES ADDRESS]'}`);
-      addSpace();
-
-      // Original lease information
-      addText("ORIGINAL LEASE INFORMATION", 12, true);
-      if (answers.original_lease_date) {
-        const originalDate = format(new Date(answers.original_lease_date), 'MMMM d, yyyy');
-        addText(`Original Lease Date: ${originalDate}`);
-      }
-      addText(`Current Monthly Rent: $${answers.current_rent || '[CURRENT RENT]'}`);
-      addText(`Current Due Day: ${answers.current_due_day || '[DUE DAY]'} of each month`);
-      addSpace();
-
-      // Rent increase details
-      addText("RENT INCREASE DETAILS", 12, true);
-      if (answers.increase_effective_date) {
-        const increaseDate = format(new Date(answers.increase_effective_date), 'MMMM d, yyyy');
-        addText(`Effective Date of Increase: ${increaseDate}`);
-      }
-      addText(`New Monthly Rent: $${answers.new_rent_amount || '[NEW RENT AMOUNT]'}`);
-      addText(`New Due Day: ${answers.new_due_day || '[NEW DUE DAY]'} of each month`);
-      addSpace();
-
-      // Terms
-      addText("TERMS AND CONDITIONS", 12, true);
-      addText("1. This agreement serves as an amendment to the original lease agreement.");
-      addText("2. All other terms and conditions of the original lease remain in full force and effect.");
-      addText("3. This rent increase shall take effect on the date specified above.");
-      addText("4. The tenant acknowledges receipt of this notice and agrees to the new rental amount.");
-      addSpace();
-
-      // Signatures
-      addText("SIGNATURES", 12, true);
-      addText("Landlord: _______________________ Date: _______");
-      addSpace(10);
-      addText("Tenant: _______________________ Date: _______");
-
-      doc.save('rent-increase-agreement.pdf');
-      toast.success("Rent Increase Agreement PDF generated successfully!");
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error("Failed to generate document");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const renderFormSummary = () => {
-    return (
-      <div className="space-y-2 text-black">
-        <div className="border rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2">Rent Increase Agreement Summary</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium text-sm">Agreement Information</h4>
-              <p><strong>Country:</strong> {answers.country ? getCountryName(answers.country) : 'Not provided'}</p>
-              <p><strong>State/Province:</strong> {answers.state ? getStateName(answers.country || '', answers.state) : 'Not provided'}</p>
-              <p><strong>Effective Date:</strong> {answers.effective_date ? format(new Date(answers.effective_date), 'PPP') : 'Not provided'}</p>
-            </div>
-            
-            <div>
-              <h4 className="font-medium text-sm">Landlord Information</h4>
-              <p><strong>Name:</strong> {answers.landlord_name || 'Not provided'}</p>
-              <p><strong>Address:</strong> {answers.landlord_address || 'Not provided'}</p>
-              <p><strong>City, State, Zip:</strong> {answers.landlord_city_state_zip || 'Not provided'}</p>
-              <p><strong>Email:</strong> {answers.landlord_email || 'Not provided'}</p>
-              <p><strong>Phone:</strong> {answers.landlord_phone || 'Not provided'}</p>
-            </div>
-            
-            <div>
-              <h4 className="font-medium text-sm">Tenant Information</h4>
-              <p><strong>Name:</strong> {answers.tenant_name || 'Not provided'}</p>
-              <p><strong>Premises:</strong> {answers.premises_address || 'Not provided'}</p>
-            </div>
-            
-            <div>
-              <h4 className="font-medium text-sm">Rent Details</h4>
-              <p><strong>Original Lease Date:</strong> {answers.original_lease_date ? format(new Date(answers.original_lease_date), 'PPP') : 'Not provided'}</p>
-              <p><strong>Current Rent:</strong> ${answers.current_rent || 'Not provided'}</p>
-              <p><strong>New Rent:</strong> ${answers.new_rent_amount || 'Not provided'}</p>
-              <p><strong>Increase Effective:</strong> {answers.increase_effective_date ? format(new Date(answers.increase_effective_date), 'PPP') : 'Not provided'}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-4 bg-green-50 dark:bg-green-900/10">
-          <p className="text-center mb-2">
-            By generating this document, you confirm the accuracy of the information provided. 
-            This document will serve as your official Rent Increase Agreement.
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  if (isComplete) {
-    return (
-      <div className="bg-gray-50 py-2 min-h-0">
-        <Card className="max-w-4xl mx-auto bg-white px-4 my-2 rounded-lg shadow-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl text-green-600">Rent Increase Agreement</CardTitle>
-            <CardDescription>
-              Review your Rent Increase Agreement details below before generating the final document.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {renderFormSummary()}
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button 
-              variant="outline"
-              onClick={() => {
-                setAnswers({});
-                setSectionHistory(['location_selection']);
-                setCurrentSectionId('location_selection');
-                setIsComplete(false);
-              }}
-              className="mt-2"
-            >
-              Start Over
-            </Button>
-            <Button 
-              onClick={generateRentIncreasePDF}
-            >
-              Generate Rent Increase Agreement
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
-
-  // Safety check for currentSection
-  if (!currentSection) {
-    return (
-      <div className="bg-gray-50 py-2 min-h-0">
-        <Card className="max-w-4xl mx-auto bg-white px-4 my-2 rounded-lg shadow-sm">
-          <CardContent className="text-center p-4">
-            <p className="text-red-500">An error occurred. Please refresh the page.</p>
-            <Button 
-              onClick={() => {
-                setCurrentSectionId('location_selection');
-                setSectionHistory(['location_selection']);
-              }}
-              className="mt-2"
-            >
-              Start Over
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
+export default function RentIncrease() {
   return (
-    <div className="bg-gray-50 py-2 min-h-0">
-      <Card className="max-w-4xl mx-auto bg-white px-4 my-2 rounded-lg shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">{currentSection.title}</CardTitle>
-          <CardDescription>
-            {currentSection.description}
-            {currentSectionId === 'location_selection' && (
-              <div className="mt-3 flex left-0">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate('/rent-increase-info')}
-                  className="text-orange-600 border-orange-600 hover:bg-orange-50"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  Learn More About Rent Increase Agreement
-                </Button>
-              </div>
-            )}
-            <div className="mt-2 text-sm">
-              Step {sectionHistory.length} of {Object.keys(sections).length}
-            </div>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-black">
-          <div className="grid grid-cols-1 gap-y-2">
-            {renderSectionQuestions()}
-          </div>
-        </CardContent>
-        {currentSectionId !== 'user_info_step' && (
-          <CardFooter className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-              disabled={sectionHistory.length <= 1}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back
-            </Button>
-            <Button 
-              onClick={() => handleNext()}
-              disabled={!canAdvance()}
-            >
-              {currentSectionId === 'confirmation' ? (
-                <>
-                  Next <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              ) : (
-                <>
-                  Next <ArrowRight className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        )}
-      </Card>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Rent Increase"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="rentincrease"
+    />
   );
-};
-
-export default RentIncreaseForm;
+}

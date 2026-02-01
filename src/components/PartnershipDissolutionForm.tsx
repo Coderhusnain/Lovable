@@ -1,331 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  partnershipName: string;
-  partner1Name: string;
-  partner1Address: string;
-  partner1CityStateZip: string;
-  partner2Name: string;
-  partner2Address: string;
-  partner2CityStateZip: string;
-  partnershipAgreementDate: string;
-  businessActivity: string;
-  dissolutionEffectiveDate: string;
-  accountingFirm: string;
-  distributionFormula: string;
-  liquidatingPartner: string;
-  publicationCounties: string;
-  jurisdiction: string;
-  signPartner1Name: string;
-  signPartner1Date: string;
-  signPartner2Name: string;
-  signPartner2Date: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function PartnershipDissolutionForm() {
-  const [formData, setFormData] = useState<FormData>({
-    effectiveDate: "",
-    partnershipName: "",
-    partner1Name: "",
-    partner1Address: "",
-    partner1CityStateZip: "",
-    partner2Name: "",
-    partner2Address: "",
-    partner2CityStateZip: "",
-    partnershipAgreementDate: "",
-    businessActivity: "",
-    dissolutionEffectiveDate: "",
-    accountingFirm: "",
-    distributionFormula: "",
-    liquidatingPartner: "",
-    publicationCounties: "",
-    jurisdiction: "",
-    signPartner1Name: "",
-    signPartner1Date: "",
-    signPartner2Name: "",
-    signPartner2Date: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Partnership Dissolution", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("partnership_dissolution.pdf");
+};
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-
-    write("PARTNERSHIP DISSOLUTION AGREEMENT", 14, true, true);
-    write("\n");
-
-    write(
-      `This Partnership Dissolution Agreement (the "Agreement") is made and entered into as of ${
-        formData.effectiveDate || "__________"
-      }, by and between the following partners (collectively, the "Partners"):`
-    );
-
-    write("\n");
-    write(`Partner 1: ${formData.partner1Name || "[Partner Name 1]"}`);
-    write(`Address: ${formData.partner1Address || ""} ${formData.partner1CityStateZip || ""}`);
-    write("\n");
-    write(`Partner 2: ${formData.partner2Name || "[Partner Name 2]"}`);
-    write(`Address: ${formData.partner2Address || ""} ${formData.partner2CityStateZip || ""}`);
-
-    write("\n");
-    write("1. INTRODUCTION", 12, true);
-    write(`1.1 Description of Partnership`);
-    write(
-      `The Partners have heretofore conducted business as ${formData.partnershipName || "[Partnership Name]"}, with principal business address at [address], engaged in ${formData.businessActivity ||
-        "[business activity]"}.`
-    );
-    write("\n");
-    write("1.2 Partnership Agreement");
-    write(
-      `The Partners previously entered into a written partnership agreement dated ${formData.partnershipAgreementDate ||
-        "__________"} (the "Partnership Agreement"), which is attached hereto as Exhibit A and incorporated herein by reference.`
-    );
-    write("\n");
-    write("1.3 Intention to Dissolve");
-    write("The Partners now desire to dissolve the Partnership and liquidate its affairs pursuant to a plan under which all assets will be sold and the net proceeds, after payment of liabilities, will be distributed as set forth below.");
-
-    write("\n");
-    write("2. DISSOLUTION AND TERMINATION", 12, true);
-    write(
-      `2.1 Effective Date of Dissolution\nThe Partnership shall be dissolved effective at the close of business on ${formData.dissolutionEffectiveDate ||
-        "__________"} (the "Effective Date"). The Partners shall promptly wind up and liquidate the Partnership’s affairs.`
-    );
-    write("\n");
-    write("2.2 Termination of Business");
-    write("Except for actions necessary to wind up the affairs, no Partner shall transact further business, incur obligations, or bind the Partnership after the Effective Date.");
-    write("\n");
-    write("2.3 Statement of Dissolution");
-    write("The Partners shall file a statement of dissolution with the appropriate governmental authorities and record the statement where required.");
-    write("\n");
-    write("2.4 Notice of Dissolution");
-    write(
-      `The Partners shall publish notice of the dissolution at least once in a newspaper of general circulation in the counties: ${formData.publicationCounties ||
-        "[list counties]"} where the Partnership regularly conducted business.`
-    );
-
-    write("\n");
-    write("3. LIQUIDATION OF ASSETS AND ACCOUNTS", 12, true);
-    write("3.1 Accounting");
-    write(
-      `Immediately following dissolution, an accounting shall be conducted by ${formData.accountingFirm || "[Accounting Firm/Partner Name]"} of all assets, liabilities, and net worth as of the Effective Date.`
-    );
-    write("\n");
-    write("3.2 Disclosure");
-    write("Each Partner represents that no Partner has incurred any undisclosed liability chargeable to the Partnership.");
-    write("\n");
-    write("3.3 Settling Accounts");
-    write(
-      `Upon completion of the accounting, all liabilities shall be satisfied in accordance with applicable law. The remaining assets, after payment of liabilities, shall be distributed as follows: ${formData.distributionFormula ||
-        "[distribution formula]"}`
-    );
-    write("\n");
-    write("3.4 Appointment of Liquidating Partner");
-    write(`The Partners appoint ${formData.liquidatingPartner || "[Partner Name/Designated Liquidator]"} as Liquidating Partner to carry out the liquidation in accordance with this Agreement.`);
-    write("\n");
-    write("3.5 Inspection of Books and Records");
-    write("All Partners shall have the right to inspect and review the books, records, and accounts of the Partnership during liquidation.");
-
-    write("\n");
-    write("4. CONSTRUCTION PROVISIONS", 12, true);
-    write(`4.1 Governing Law\nThis Agreement shall be governed by and construed in accordance with the laws of ${formData.jurisdiction ||
-      "[State/Country]"}.`);
-    write("\n");
-    write("4.2 Headings");
-    write("Headings are provided for convenience only and shall not affect interpretation.");
-    write("\n");
-    write("4.3 Binding Effect");
-    write("This Agreement shall be binding upon the Partners and their respective heirs, executors, administrators, legal representatives, successors, and permitted assigns.");
-    write("\n");
-    write("4.4 Strict Construction");
-    write("This Agreement shall not be construed strictly against any Partner.");
-
-    write("\n");
-    write("5. GENERAL CLAUSES", 12, true);
-    write("5.1 Severability");
-    write("If any provision is held invalid or unenforceable, the remaining provisions shall remain valid.");
-    write("\n");
-    write("5.2 Execution in Counterparts");
-    write("This Agreement may be executed in one or more counterparts.");
-    write("\n");
-    write("5.3 Entire Agreement");
-    write("This Agreement constitutes the entire understanding of the Partners with respect to dissolution and winding up.");
-    write("\n");
-    write("5.4 Waiver");
-    write("The failure of any Partner to enforce a provision shall not constitute a waiver.");
-    write("\n");
-    write("5.5 Amendment");
-    write("This Agreement may be amended only by a written instrument signed by all Partners.");
-    write("\n");
-    write("5.6 Survival of Representations and Warranties");
-    write("All representations and warranties contained herein shall survive the dissolution and winding-up.");
-
-    write("\n");
-    write("6. SIGNATORIES", 12, true);
-    write("IN WITNESS WHEREOF, the Partners have executed this Partnership Dissolution Agreement as of the date first written above.");
-    write("\n");
-    write(`${formData.partner1Name || "[Partner Name 1]"}`);
-    write("Signature: ___________________________");
-    write("Date: " + (formData.signPartner1Date || "_____________________"));
-    write("\n");
-    write(`${formData.partner2Name || "[Partner Name 2]"}`);
-    write("Signature: ___________________________");
-    write("Date: " + (formData.signPartner2Date || "_____________________"));
-
-    doc.save("Partnership_Dissolution_Agreement.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold">Parties & Introduction</h3>
-              </div>
-              <Label>Agreement Date (Effective Date)</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <Label>Partnership Name</Label>
-              <Input name="partnershipName" value={formData.partnershipName} onChange={handleChange} />
-
-              <Label>Business Activity / Description</Label>
-              <Textarea name="businessActivity" value={formData.businessActivity} onChange={handleChange} />
-
-              <Label>Partnership Agreement Date</Label>
-              <Input name="partnershipAgreementDate" value={formData.partnershipAgreementDate} onChange={handleChange} />
-
-              <hr />
-
-              <h4 className="font-medium">Partner 1</h4>
-              <Label>Name</Label>
-              <Input name="partner1Name" value={formData.partner1Name} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="partner1Address" value={formData.partner1Address} onChange={handleChange} />
-              <Label>City / State / ZIP</Label>
-              <Input name="partner1CityStateZip" value={formData.partner1CityStateZip} onChange={handleChange} />
-
-              <hr />
-
-              <h4 className="font-medium">Partner 2</h4>
-              <Label>Name</Label>
-              <Input name="partner2Name" value={formData.partner2Name} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="partner2Address" value={formData.partner2Address} onChange={handleChange} />
-              <Label>City / State / ZIP</Label>
-              <Input name="partner2CityStateZip" value={formData.partner2CityStateZip} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Dissolution & Liquidation</h3>
-              <Label>Dissolution Effective Date</Label>
-              <Input name="dissolutionEffectiveDate" value={formData.dissolutionEffectiveDate} onChange={handleChange} />
-
-              <Label>Accounting Firm / Accountant</Label>
-              <Input name="accountingFirm" value={formData.accountingFirm} onChange={handleChange} />
-
-              <Label>Distribution Formula / Allocation</Label>
-              <Textarea name="distributionFormula" value={formData.distributionFormula} onChange={handleChange} />
-
-              <Label>Liquidating Partner (Name)</Label>
-              <Input name="liquidatingPartner" value={formData.liquidatingPartner} onChange={handleChange} />
-
-              <Label>Publication Counties (for dissolution notice)</Label>
-              <Input name="publicationCounties" value={formData.publicationCounties} onChange={handleChange} />
-
-              <Label>Governing Law / Jurisdiction</Label>
-              <Input name="jurisdiction" value={formData.jurisdiction} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatures</h3>
-              <Label>Partner 1 - Signatory Name</Label>
-              <Input name="signPartner1Name" value={formData.signPartner1Name} onChange={handleChange} />
-              <Label>Partner 1 - Date</Label>
-              <Input name="signPartner1Date" value={formData.signPartner1Date} onChange={handleChange} />
-
-              <Label>Partner 2 - Signatory Name</Label>
-              <Input name="signPartner2Name" value={formData.signPartner2Name} onChange={handleChange} />
-              <Label>Partner 2 - Date</Label>
-              <Input name="signPartner2Date" value={formData.signPartner2Date} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function PartnershipDissolution() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Partnership Dissolution Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Partnership Dissolution"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="partnershipdissolution"
+    />
   );
 }

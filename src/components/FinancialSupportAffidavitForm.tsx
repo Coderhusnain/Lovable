@@ -1,1229 +1,506 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, Calendar as CalendarIcon, FileText, Plus, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import CountryStateAPI from 'countries-states-cities';
-import UserInfoStep from "./UserInfoStep";
 
-// Define section structure
-interface Section {
-  id: string;
-  title: string;
-  description?: string;
-  questions: string[];
-  nextSectionId?: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-// Define the question type interface
-interface Question {
-  id: string;
-  type: 'text' | 'select' | 'textarea' | 'confirmation' | 'date' | 'number' | 'party' | 'income' | 'deductions' | 'expenses' | 'debts' | 'assets';
-  text: string;
-  options?: string[];
-  nextQuestionId?: Record<string, string>;
-  defaultNextId?: string;
-}
-
-// Define interfaces for data structures
-interface CountryData {
-  id: number;
-  name: string;
-  iso3: string;
-  iso2: string;
-  phone_code: string;
-  capital: string;
-  currency: string;
-  native: string;
-  region: string;
-  subregion: string;
-  emoji: string;
-}
-
-interface StateData {
-  id: number;
-  name: string;
-  country_id: number;
-  country_code: string;
-  state_code: string;
-}
-
-interface IncomeSource {
-  source: string;
-  description: string;
-  income: string;
-}
-
-interface Deduction {
-  type: string;
-  amount: string;
-}
-
-interface Expense {
-  expense: string;
-  description: string;
-  averageCost: string;
-}
-
-interface Debt {
-  lender: string;
-  description: string;
-  totalDebt: string;
-  monthlyPayment: string;
-}
-
-interface Asset {
-  asset: string;
-  description: string;
-  value: string;
-}
-
-interface Party {
-  name: string;
-  address: string;
-  phone?: string;
-  city?: string;
-  state?: string;
-}
-
-// Helper functions
-const getAllCountries = (): CountryData[] => {
-  return CountryStateAPI.getAllCountries();
-};
-
-const getStatesByCountry = (countryId: number): StateData[] => {
-  return CountryStateAPI.getStatesOfCountry(countryId);
-};
-
-const getCountryName = (countryId: string): string => {
-  const country = CountryStateAPI.getAllCountries().find(c => c.id.toString() === countryId);
-  return country?.name || `Country ID: ${countryId}`;
-};
-
-const getStateName = (countryId: string, stateId: string): string => {
-  const country = CountryStateAPI.getAllCountries().find(c => c.id.toString() === countryId);
-  if (!country) return `State ID: ${stateId}`;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
   
-  const states = CountryStateAPI.getStatesOfCountry(country.id);
-  const state = states.find(s => s.id.toString() === stateId);
-  return state?.name || `State ID: ${stateId}`;
-};
-
-// Sections definition
-const sections: Record<string, Section> = {
-  'location_selection': {
-    id: 'location_selection',
-    title: 'Location Selection',
-    description: 'Select the country and state/province where this Affidavit of Financial Support will be executed',
-    questions: ['country', 'state'],
-    nextSectionId: 'affiant_info'
-  },
-  'affiant_info': {
-    id: 'affiant_info',
-    title: 'Affiant Information',
-    description: 'Enter details of the person making the affidavit (affiant)',
-    questions: ['affiant_info', 'employment_status'],
-    nextSectionId: 'income_info'
-  },
-  'income_info': {
-    id: 'income_info',
-    title: 'Income Information',
-    description: 'Enter details about gross monthly income from all sources',
-    questions: ['income_sources'],
-    nextSectionId: 'deductions_info'
-  },
-  'deductions_info': {
-    id: 'deductions_info',
-    title: 'Monthly Deductions',
-    description: 'Enter details about monthly deductions from income',
-    questions: ['deductions'],
-    nextSectionId: 'expenses_info'
-  },
-  'expenses_info': {
-    id: 'expenses_info',
-    title: 'Monthly Expenses',
-    description: 'Enter details about average monthly household expenses',
-    questions: ['expenses'],
-    nextSectionId: 'debts_info'
-  },
-  'debts_info': {
-    id: 'debts_info',
-    title: 'Debts Information',
-    description: 'Enter details about current debts and monthly payments',
-    questions: ['debts'],
-    nextSectionId: 'assets_info'
-  },
-  'assets_info': {
-    id: 'assets_info',
-    title: 'Assets Information',
-    description: 'Enter details about assets owned',
-    questions: ['assets'],
-    nextSectionId: 'governing_law'
-  },
-  'governing_law': {
-    id: 'governing_law',
-    title: 'Governing Law',
-    description: 'Specify the jurisdiction that will govern this affidavit',
-    questions: ['governing_jurisdiction'],
-    nextSectionId: 'confirmation'
-  },
-  'confirmation': {
-    id: 'confirmation',
-    title: 'Review and Confirmation',
-    description: 'Review all information before generating your Affidavit of Financial Support',
-    questions: ['confirmation'],
-    nextSectionId: 'user_info'
-  },
-  'user_info': {
-    id: 'user_info',
-    title: 'Contact Information',
-    description: 'Enter your contact information to generate the document',
-    questions: []
-  }
-};
-
-// Questions definition
-const questions: Record<string, Question> = {
-  'country': {
-    id: 'country',
-    type: 'select',
-    text: 'In which country will this Affidavit of Financial Support be executed?',
-    options: getAllCountries().map(country => `${country.id}:${country.name}`),
-    defaultNextId: 'state'
-  },
-  'state': {
-    id: 'state',
-    type: 'select',
-    text: 'In which state/province will this Affidavit of Financial Support be executed?',
-    options: []
-  },
-  'affiant_info': {
-    id: 'affiant_info',
-    type: 'party',
-    text: 'Enter the affiant\'s information'
-  },
-  'employment_status': {
-    id: 'employment_status',
-    type: 'select',
-    text: 'What is your current employment status?',
-    options: ['Employed', 'Unemployed', 'Self-employed', 'Retired', 'Student', 'Other']
-  },
-  'income_sources': {
-    id: 'income_sources',
-    type: 'income',
-    text: 'Enter all sources of gross monthly income'
-  },
-  'deductions': {
-    id: 'deductions',
-    type: 'deductions',
-    text: 'Enter your monthly deductions'
-  },
-  'expenses': {
-    id: 'expenses',
-    type: 'expenses',
-    text: 'Enter your average monthly household expenses'
-  },
-  'debts': {
-    id: 'debts',
-    type: 'debts',
-    text: 'Enter information about your current debts'
-  },
-  'assets': {
-    id: 'assets',
-    type: 'assets',
-    text: 'Enter information about assets you own'
-  },
-  'governing_jurisdiction': {
-    id: 'governing_jurisdiction',
-    type: 'select',
-    text: 'Which jurisdiction\'s laws will govern this Affidavit of Financial Support?',
-    options: getAllCountries().map(country => `${country.id}:${country.name}`)
-  },
-  'confirmation': {
-    id: 'confirmation',
-    type: 'confirmation',
-    text: 'Please review all the information you have provided and confirm that it is accurate.'
-  }
-};
-
-const FinancialSupportAffidavitForm = () => {
-  const navigate = useNavigate();
-  const [currentSectionId, setCurrentSectionId] = useState<string>('location_selection');
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [sectionHistory, setSectionHistory] = useState<string[]>(['location_selection']);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [affiant, setAffiant] = useState<Party>({ name: '', address: '', phone: '', city: '', state: '' });
-  const [incomeSources, setIncomeSources] = useState<IncomeSource[]>([{ source: '', description: '', income: '' }]);
-  const [deductions, setDeductions] = useState<Deduction[]>([
-    { type: 'Federal, State, and Local income tax', amount: '' },
-    { type: 'FICA or self-employment taxes', amount: '' },
-    { type: 'Medicare payments', amount: '' },
-    { type: 'Mandatory union dues', amount: '' },
-    { type: 'Mandatory retirement payments', amount: '' },
-    { type: 'Health insurance payments', amount: '' },
-    { type: 'Child Support', amount: '' },
-    { type: 'Alimony', amount: '' }
-  ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ expense: '', description: '', averageCost: '' }]);
-  const [debts, setDebts] = useState<Debt[]>([{ lender: '', description: '', totalDebt: '', monthlyPayment: '' }]);
-  const [assets, setAssets] = useState<Asset[]>([{ asset: '', description: '', value: '' }]);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Financial Support Affidavit", 105, y, { align: "center" });
+  y += 15;
   
-  const currentSection = sections[currentSectionId];
-
-  // Helper function to get available states for selected country
-  const getStatesForCountry = (countryAnswer: string): string[] => {
-    if (!countryAnswer) return [];
-    const countryId = parseInt(countryAnswer.split(':')[0]);
-    const states = getStatesByCountry(countryId);
-    return states.map(state => `${state.id}:${state.name}`);
-  };
-
-  // Update state options when country is selected
-  const updateStateOptions = (countryAnswer: string) => {
-    const stateOptions = getStatesForCountry(countryAnswer);
-    questions['state'].options = stateOptions;
-  };
-
-  const handleAnswerChange = (questionId: string, value: string) => {
-    setAnswers(prev => ({ ...prev, [questionId]: value }));
-    
-    // Update state options when country changes
-    if (questionId === 'country') {
-      updateStateOptions(value);
-      // Reset state selection when country changes
-      setAnswers(prev => ({ ...prev, state: '' }));
-    }
-  };
-
-  const handlePartyChange = (field: string, value: string) => {
-    setAffiant(prev => ({ ...prev, [field]: value }));
-  };
-
-  const canAdvance = (): boolean => {
-    const currentQuestions = currentSection.questions;
-    
-    for (const questionId of currentQuestions) {
-      const question = questions[questionId];
-      
-      if (question.type === 'party') {
-        if (!affiant.name || !affiant.address) return false;
-      } else if (question.type === 'income') {
-        if (incomeSources.length === 0 || !incomeSources[0].source) return false;
-      } else if (question.type === 'deductions') {
-        // For deductions, check if at least one deduction has an amount
-        const hasAnyDeduction = deductions.some(deduction => deduction.amount && parseFloat(deduction.amount) > 0);
-        if (!hasAnyDeduction) return false;
-      } else if (question.type === 'expenses') {
-        // For expenses, check if at least one expense is filled
-        const hasAnyExpense = expenses.some(expense => expense.expense && expense.averageCost && parseFloat(expense.averageCost) > 0);
-        if (!hasAnyExpense) return false;
-      } else if (question.type === 'debts') {
-        // For debts, check if at least one debt is filled
-        const hasAnyDebt = debts.some(debt => debt.lender && debt.totalDebt && parseFloat(debt.totalDebt) > 0);
-        if (!hasAnyDebt) return false;
-      } else if (question.type === 'assets') {
-        // For assets, check if at least one asset is filled
-        const hasAnyAsset = assets.some(asset => asset.asset && asset.value && parseFloat(asset.value) > 0);
-        if (!hasAnyAsset) return false;
-      } else if (question.type === 'confirmation') {
-        return answers[questionId] === 'confirmed';
-      } else if (questionId === 'state') {
-        // Special handling for state - only require if country is selected and states are available
-        const countrySelected = answers['country'];
-        if (countrySelected) {
-          const stateOptions = getStatesForCountry(countrySelected);
-          // If there are no states for the country, don't require state selection
-          if (stateOptions.length > 0 && !answers[questionId]) return false;
-          // If there are no states, this passes validation
-        } else {
-          // If no country is selected yet, can't validate state
-          return false;
-        }
-      } else {
-        if (!answers[questionId]) return false;
-      }
-    }
-    return true;
-  };
-
-  const handleNext = () => {
-    if (!canAdvance()) return;
-
-    if (currentSectionId === 'confirmation') {
-      const nextSectionId = currentSection.nextSectionId;
-      if (nextSectionId) {
-        setCurrentSectionId(nextSectionId);
-        setSectionHistory(prev => [...prev, nextSectionId]);
-      }
-      return;
-    }
-
-    const nextSectionId = currentSection.nextSectionId;
-    if (nextSectionId) {
-      setCurrentSectionId(nextSectionId);
-      setSectionHistory(prev => [...prev, nextSectionId]);
-    } else {
-      setIsComplete(true);
-    }
-  };
-
-  const handleBack = () => {
-    if (sectionHistory.length > 1) {
-      const newHistory = sectionHistory.slice(0, -1);
-      setSectionHistory(newHistory);
-      setCurrentSectionId(newHistory[newHistory.length - 1]);
-    }
-  };
-
-  const calculateTotals = () => {
-    const totalIncome = incomeSources.reduce((sum, income) => sum + (parseFloat(income.income) || 0), 0);
-    const totalDeductions = deductions.reduce((sum, deduction) => sum + (parseFloat(deduction.amount) || 0), 0);
-    const netIncome = totalIncome - totalDeductions;
-    const totalExpenses = expenses.reduce((sum, expense) => sum + (parseFloat(expense.averageCost) || 0), 0);
-    const totalAssets = assets.reduce((sum, asset) => sum + (parseFloat(asset.value) || 0), 0);
-    
-    return { totalIncome, totalDeductions, netIncome, totalExpenses, totalAssets };
-  };
-
-  const generatePDF = async () => {
-    setIsGeneratingPDF(true);
-    const doc = new jsPDF();
-    const { totalIncome, totalDeductions, netIncome, totalExpenses, totalAssets } = calculateTotals();
-    
-    // Title
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text("AFFIDAVIT OF FINANCIAL SUPPORT", 105, 30, { align: "center" });
-    
-    let yPosition = 60;
-    
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    
-    // Affiant statement
-    doc.text(`I, ${affiant.name}, being duly sworn, do depose and say:`, 20, yPosition);
-    yPosition += 15;
-    
-    const employmentStatus = answers.employment_status || 'Not specified';
-    if (employmentStatus === 'Unemployed') {
-      doc.text(`I am unemployed.`, 20, yPosition);
-    } else {
-      doc.text(`I am currently ${employmentStatus.toLowerCase()}.`, 20, yPosition);
-    }
-    yPosition += 20;
-    
-    // Income Sources
     doc.setFont("helvetica", "bold");
-    doc.text("1. Gross Monthly Income from All Sources:", 20, yPosition);
-    yPosition += 15;
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
     
+    doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    incomeSources.forEach((income) => {
-      if (income.source) {
-        doc.text(`Source: ${income.source}`, 20, yPosition);
-        yPosition += 10;
-        doc.text(`Description: ${income.description}`, 20, yPosition);
-        yPosition += 10;
-        doc.text(`Income: $${income.income}`, 20, yPosition);
-        yPosition += 15;
-      }
-    });
-    
-    // Monthly Deductions
-    doc.setFont("helvetica", "bold");
-    doc.text("2. Total Present Monthly Deductions:", 20, yPosition);
-    yPosition += 15;
-    
-    doc.setFont("helvetica", "normal");
-    deductions.forEach((deduction) => {
-      if (deduction.amount) {
-        doc.text(`• ${deduction.type}: $${deduction.amount}`, 20, yPosition);
-        yPosition += 10;
-      }
-    });
-    yPosition += 10;
-    
-    doc.setFont("helvetica", "bold");
-    doc.text(`Present Net Monthly Income: $${netIncome.toFixed(2)}`, 20, yPosition);
-    yPosition += 20;
-    
-    // Check if we need a new page
-    if (yPosition > 250) {
-      doc.addPage();
-      yPosition = 30;
-    }
-    
-    // Monthly Expenses
-    doc.text("Average Monthly Expenses:", 20, yPosition);
-    yPosition += 15;
-    
-    doc.setFont("helvetica", "normal");
-    expenses.forEach((expense) => {
-      if (expense.expense) {
-        doc.text(`Expense: ${expense.expense}`, 20, yPosition);
-        yPosition += 10;
-        doc.text(`Description: ${expense.description}`, 20, yPosition);
-        yPosition += 10;
-        doc.text(`Average Cost: $${expense.averageCost}`, 20, yPosition);
-        yPosition += 15;
-      }
-    });
-    
-    // Debts
-    if (debts.some(debt => debt.lender)) {
-      doc.setFont("helvetica", "bold");
-      doc.text("Debts:", 20, yPosition);
-      yPosition += 15;
-      
-      doc.setFont("helvetica", "normal");
-      debts.forEach((debt) => {
-        if (debt.lender) {
-          doc.text(`Lender: ${debt.lender}`, 20, yPosition);
-          yPosition += 10;
-          doc.text(`Description: ${debt.description}`, 20, yPosition);
-          yPosition += 10;
-          doc.text(`Total Debt: $${debt.totalDebt}`, 20, yPosition);
-          yPosition += 10;
-          doc.text(`Monthly Payment: $${debt.monthlyPayment}`, 20, yPosition);
-          yPosition += 15;
-        }
-      });
-    }
-    
-    // Assets
-    if (assets.some(asset => asset.asset)) {
-      doc.setFont("helvetica", "bold");
-      doc.text("Assets Owned:", 20, yPosition);
-      yPosition += 15;
-      
-      doc.setFont("helvetica", "normal");
-      assets.forEach((asset) => {
-        if (asset.asset) {
-          doc.text(`Asset: ${asset.asset}`, 20, yPosition);
-          yPosition += 10;
-          doc.text(`Description: ${asset.description}`, 20, yPosition);
-          yPosition += 10;
-          doc.text(`Value: $${asset.value}`, 20, yPosition);
-          yPosition += 15;
-        }
-      });
-    }
-    
-    // Summary
-    if (yPosition > 220) {
-      doc.addPage();
-      yPosition = 30;
-    }
-    
-    doc.setFont("helvetica", "bold");
-    doc.text("Summary:", 20, yPosition);
-    yPosition += 15;
-    
-    doc.setFont("helvetica", "normal");
-    doc.text(`Total Present Net Monthly Income: $${netIncome.toFixed(2)}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`Total Monthly Expenses: $${totalExpenses.toFixed(2)}`, 20, yPosition);
-    yPosition += 10;
-    doc.text(`Total Assets: $${totalAssets.toFixed(2)}`, 20, yPosition);
-    yPosition += 20;
-    
-    doc.text("The undersigned certifies that the information and statements in this", 20, yPosition);
-    yPosition += 10;
-    doc.text("affidavit are true and complete.", 20, yPosition);
-    yPosition += 30;
-    
-    // Signature lines
-    doc.text("Affiant's Name: ___________________________________", 20, yPosition);
-    yPosition += 15;
-    doc.text("Affiant's Signature: ________________________________", 20, yPosition);
-    yPosition += 15;
-    doc.text("Date: ___________________", 20, yPosition);
-    yPosition += 25;
-    
-    // Notary section
-    doc.text("Subscribed and sworn to (or affirmed) before me on this ____ day of", 20, yPosition);
-    yPosition += 10;
-    doc.text("______, 2025, by " + affiant.name + ",", 20, yPosition);
-    yPosition += 10;
-    doc.text("who is personally known to me or has provided satisfactory proof of identity.", 20, yPosition);
-    yPosition += 20;
-    
-    doc.text("Signature of Notary Public: ___________________________", 20, yPosition);
-    yPosition += 15;
-    doc.text("Name of Notary Public: _______________________________", 20, yPosition);
-    yPosition += 15;
-    doc.text("My Commission Expires: _____________________________", 20, yPosition);
-    yPosition += 15;
-    doc.text("Notary Seal:", 20, yPosition);
-    
-    // New page for instructions
-    doc.addPage();
-    yPosition = 30;
-    
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("Make It Legal", 20, yPosition);
-    yPosition += 20;
-    
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text(`This Affidavit should be signed in front of a notary public by ${affiant.name}.`, 20, yPosition);
-    yPosition += 10;
-    doc.text("Once signed in front of a notary, this document should be delivered to the", 20, yPosition);
-    yPosition += 10;
-    doc.text("appropriate court for filing.", 20, yPosition);
-    yPosition += 20;
-    
     doc.setFont("helvetica", "bold");
-    doc.text("Copies", 20, yPosition);
-    yPosition += 15;
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
     
+    doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("The original Affidavit should be filed with the Clerk of Court or delivered", 20, yPosition);
-    yPosition += 10;
-    doc.text("to the requesting business.", 20, yPosition);
-    yPosition += 15;
-    
-    doc.text("The Affiant should maintain a copy of the Affidavit. Your copy should be", 20, yPosition);
-    yPosition += 10;
-    doc.text("kept in a safe place.", 20, yPosition);
-    yPosition += 20;
-    
-    doc.setFont("helvetica", "bold");
-    doc.text("Additional Assistance", 20, yPosition);
-    yPosition += 15;
-    
-    doc.setFont("helvetica", "normal");
-    doc.text("If you are unsure or have questions regarding this Affidavit or need", 20, yPosition);
-    yPosition += 10;
-    doc.text("additional assistance with special situations or circumstances, use", 20, yPosition);
-    yPosition += 10;
-    doc.text("Legalgram's Find A Lawyer search engine to find a lawyer in your area", 20, yPosition);
-    yPosition += 10;
-    doc.text("to assist you in this matter.", 20, yPosition);
-    
-    doc.save('affidavit-of-financial-support.pdf');
-    toast.success("Affidavit of Financial Support PDF generated successfully!");
-  };
-
-  const renderSectionQuestions = () => {
-    const currentQuestions = currentSection.questions;
-    
-    return currentQuestions.map(questionId => {
-      const question = questions[questionId];
-      
-      if (question.type === 'select') {
-        if (questionId === 'state') {
-          updateStateOptions(answers['country'] || '');
-        }
-        
-        return (
-          <div key={questionId} className="space-y-2">
-            <Label htmlFor={questionId} className="text-sm font-medium">{question.text}</Label>
-            <Select
-              value={answers[questionId] || ''}
-              onValueChange={(value) => handleAnswerChange(questionId, value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Please select..." />
-              </SelectTrigger>
-              <SelectContent>
-                {(question.options || []).map((option) => {
-                  // Handle options with "id:name" format (like countries/states) vs plain strings (like employment status)
-                  if (option.includes(':')) {
-                    const [id, name] = option.split(':');
-                    return (
-                      <SelectItem key={id} value={option}>
-                        {name}
-                      </SelectItem>
-                    );
-                  } else {
-                    // For simple string options like employment status
-                    return (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    );
-                  }
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        );
-      } else if (question.type === 'party') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor={`${questionId}_name`}>Full Name</Label>
-                <Input
-                  id={`${questionId}_name`}
-                  placeholder="Enter full name"
-                  value={affiant.name}
-                  onChange={(e) => handlePartyChange('name', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor={`${questionId}_address`}>Street Address</Label>
-                <Input
-                  id={`${questionId}_address`}
-                  placeholder="Enter street address"
-                  value={affiant.address}
-                  onChange={(e) => handlePartyChange('address', e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor={`${questionId}_city`}>City</Label>
-                  <Input
-                    id={`${questionId}_city`}
-                    placeholder="Enter city"
-                    value={affiant.city}
-                    onChange={(e) => handlePartyChange('city', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor={`${questionId}_state`}>State/Province</Label>
-                  <Input
-                    id={`${questionId}_state`}
-                    placeholder="Enter state/province"
-                    value={affiant.state}
-                    onChange={(e) => handlePartyChange('state', e.target.value)}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor={`${questionId}_phone`}>Phone Number</Label>
-                <Input
-                  id={`${questionId}_phone`}
-                  placeholder="Enter phone number"
-                  value={affiant.phone}
-                  onChange={(e) => handlePartyChange('phone', e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        );
-      } else if (question.type === 'income') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            {incomeSources.map((income, index) => (
-              <div key={index} className="border p-4 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium">Income Source {index + 1}</h4>
-                  {incomeSources.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newIncomeSources = incomeSources.filter((_, i) => i !== index);
-                        setIncomeSources(newIncomeSources);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <Label>Source</Label>
-                    <Input
-                      placeholder="e.g., Employment, Business"
-                      value={income.source}
-                      onChange={(e) => {
-                        const newIncomeSources = [...incomeSources];
-                        newIncomeSources[index].source = e.target.value;
-                        setIncomeSources(newIncomeSources);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Input
-                      placeholder="Detailed description"
-                      value={income.description}
-                      onChange={(e) => {
-                        const newIncomeSources = [...incomeSources];
-                        newIncomeSources[index].description = e.target.value;
-                        setIncomeSources(newIncomeSources);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Monthly Income</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={income.income}
-                      onChange={(e) => {
-                        const newIncomeSources = [...incomeSources];
-                        newIncomeSources[index].income = e.target.value;
-                        setIncomeSources(newIncomeSources);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIncomeSources([...incomeSources, { source: '', description: '', income: '' }])}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Income Source
-            </Button>
-          </div>
-        );
-      } else if (question.type === 'deductions') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            <div className="space-y-3">
-              {deductions.map((deduction, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <Label className="flex-1">{deduction.type}:</Label>
-                  <div className="w-32">
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={deduction.amount}
-                      onChange={(e) => {
-                        const newDeductions = [...deductions];
-                        newDeductions[index].amount = e.target.value;
-                        setDeductions(newDeductions);
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      } else if (question.type === 'expenses') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            {expenses.map((expense, index) => (
-              <div key={index} className="border p-4 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium">Expense {index + 1}</h4>
-                  {expenses.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newExpenses = expenses.filter((_, i) => i !== index);
-                        setExpenses(newExpenses);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <Label>Expense</Label>
-                    <Input
-                      placeholder="e.g., Rent, Food, Utilities"
-                      value={expense.expense}
-                      onChange={(e) => {
-                        const newExpenses = [...expenses];
-                        newExpenses[index].expense = e.target.value;
-                        setExpenses(newExpenses);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Input
-                      placeholder="Additional details"
-                      value={expense.description}
-                      onChange={(e) => {
-                        const newExpenses = [...expenses];
-                        newExpenses[index].description = e.target.value;
-                        setExpenses(newExpenses);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Average Cost</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={expense.averageCost}
-                      onChange={(e) => {
-                        const newExpenses = [...expenses];
-                        newExpenses[index].averageCost = e.target.value;
-                        setExpenses(newExpenses);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setExpenses([...expenses, { expense: '', description: '', averageCost: '' }])}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Expense
-            </Button>
-          </div>
-        );
-      } else if (question.type === 'debts') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            {debts.map((debt, index) => (
-              <div key={index} className="border p-4 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium">Debt {index + 1}</h4>
-                  {debts.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newDebts = debts.filter((_, i) => i !== index);
-                        setDebts(newDebts);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <Label>Lender</Label>
-                    <Input
-                      placeholder="Name of lender/creditor"
-                      value={debt.lender}
-                      onChange={(e) => {
-                        const newDebts = [...debts];
-                        newDebts[index].lender = e.target.value;
-                        setDebts(newDebts);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Input
-                      placeholder="Type of debt"
-                      value={debt.description}
-                      onChange={(e) => {
-                        const newDebts = [...debts];
-                        newDebts[index].description = e.target.value;
-                        setDebts(newDebts);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Total Debt</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={debt.totalDebt}
-                      onChange={(e) => {
-                        const newDebts = [...debts];
-                        newDebts[index].totalDebt = e.target.value;
-                        setDebts(newDebts);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Monthly Payment</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={debt.monthlyPayment}
-                      onChange={(e) => {
-                        const newDebts = [...debts];
-                        newDebts[index].monthlyPayment = e.target.value;
-                        setDebts(newDebts);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setDebts([...debts, { lender: '', description: '', totalDebt: '', monthlyPayment: '' }])}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Debt
-            </Button>
-          </div>
-        );
-      } else if (question.type === 'assets') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            {assets.map((asset, index) => (
-              <div key={index} className="border p-4 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <h4 className="font-medium">Asset {index + 1}</h4>
-                  {assets.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newAssets = assets.filter((_, i) => i !== index);
-                        setAssets(newAssets);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <Label>Asset</Label>
-                    <Input
-                      placeholder="e.g., House, Car, Savings"
-                      value={asset.asset}
-                      onChange={(e) => {
-                        const newAssets = [...assets];
-                        newAssets[index].asset = e.target.value;
-                        setAssets(newAssets);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Input
-                      placeholder="Additional details"
-                      value={asset.description}
-                      onChange={(e) => {
-                        const newAssets = [...assets];
-                        newAssets[index].description = e.target.value;
-                        setAssets(newAssets);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <Label>Value</Label>
-                    <Input
-                      type="number"
-                      placeholder="0.00"
-                      value={asset.value}
-                      onChange={(e) => {
-                        const newAssets = [...assets];
-                        newAssets[index].value = e.target.value;
-                        setAssets(newAssets);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setAssets([...assets, { asset: '', description: '', value: '' }])}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Asset
-            </Button>
-          </div>
-        );
-      } else if (question.type === 'confirmation') {
-        return (
-          <div key={questionId} className="space-y-4">
-            <Label className="text-sm font-medium">{question.text}</Label>
-            <div className="space-y-2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={answers[questionId] === 'confirmed'}
-                  onChange={(e) => handleAnswerChange(questionId, e.target.checked ? 'confirmed' : '')}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">I confirm that all information provided is accurate and complete.</span>
-              </label>
-            </div>
-          </div>
-        );
-      }
-      
-      return null;
-    });
-  };
-
-  const renderFormSummary = () => {
-    const countryName = answers.country ? getCountryName(answers.country.split(':')[0]) : '';
-    const stateName = answers.state ? getStateName(answers.country?.split(':')[0] || '', answers.state.split(':')[0]) : '';
-    const { totalIncome, totalDeductions, netIncome, totalExpenses, totalAssets } = calculateTotals();
-    
-    return (
-      <div className="space-y-4 text-sm">
-        <div>
-          <strong>Jurisdiction:</strong> {stateName}, {countryName}
-        </div>
-        <div>
-          <strong>Affiant:</strong> {affiant.name}<br />
-          <strong>Address:</strong> {affiant.address}, {affiant.city}, {affiant.state}<br />
-          <strong>Phone:</strong> {affiant.phone}<br />
-          <strong>Employment Status:</strong> {answers.employment_status || 'Not specified'}
-        </div>
-        <div>
-          <strong>Financial Summary:</strong><br />
-          Gross Monthly Income: ${totalIncome.toFixed(2)}<br />
-          Total Deductions: ${totalDeductions.toFixed(2)}<br />
-          Net Monthly Income: ${netIncome.toFixed(2)}<br />
-          Total Monthly Expenses: ${totalExpenses.toFixed(2)}<br />
-          Total Assets: ${totalAssets.toFixed(2)}
-        </div>
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-center mb-2">
-            By generating this document, you confirm the accuracy of the information provided. 
-            This document will serve as your official Affidavit of Financial Support.
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  if (currentSectionId === 'user_info') {
-    return (
-      <UserInfoStep
-        onBack={handleBack}
-        onGenerate={generatePDF}
-        documentType="Affidavit of Financial Support"
-        isGenerating={isGeneratingPDF}
-      />
-    );
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
   }
-
-  if (isComplete) {
-    return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-6 h-6 text-green-600" />
-          </div>
-          <CardTitle className="text-green-800">Affidavit Complete!</CardTitle>
-          <CardDescription>
-            Your Affidavit of Financial Support has been completed successfully.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center space-y-4">
-          <Button 
-            onClick={generatePDF}
-            className="bg-green-600 hover:bg-green-700 text-white"
-            disabled={isGeneratingPDF}
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            {isGeneratingPDF ? "Generating..." : "Download PDF"}
-          </Button>
-          <div>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setCurrentSectionId('location_selection');
-                setSectionHistory(['location_selection']);
-                setAnswers({});
-                setAffiant({ name: '', address: '', phone: '', city: '', state: '' });
-                setIncomeSources([{ source: '', description: '', income: '' }]);
-                setDeductions([
-                  { type: 'Federal, State, and Local income tax', amount: '' },
-                  { type: 'FICA or self-employment taxes', amount: '' },
-                  { type: 'Medicare payments', amount: '' },
-                  { type: 'Mandatory union dues', amount: '' },
-                  { type: 'Mandatory retirement payments', amount: '' },
-                  { type: 'Health insurance payments', amount: '' },
-                  { type: 'Child Support', amount: '' },
-                  { type: 'Alimony', amount: '' }
-                ]);
-                setExpenses([{ expense: '', description: '', averageCost: '' }]);
-                setDebts([{ lender: '', description: '', totalDebt: '', monthlyPayment: '' }]);
-                setAssets([{ asset: '', description: '', value: '' }]);
-                setIsComplete(false);
-              }}
-            >
-              Start Over
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
   }
+  
+  doc.save("financial_support_affidavit.pdf");
+};
 
+export default function FinancialSupportAffidavit() {
   return (
-    <div className="bg-gray-50 min-h-0 bg-white rounded-lg shadow-sm p-4">
-      <Card className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-xl">{currentSection.title}</CardTitle>
-        <CardDescription>
-          {currentSection.description}
-          <div className="mt-2 text-sm">
-            Step {sectionHistory.length} of {Object.keys(sections).length}
-          </div>
-        </CardDescription>
-        {currentSectionId === 'location_selection' && (
-          <div className="mt-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/financial-support-affidavit-info')}
-              className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:border-orange-300"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Learn More About Financial Support Affidavits
-            </Button>
-          </div>
-        )}
-      </CardHeader>
-      <CardContent className="text-black">
-        <div className="grid grid-cols-1 gap-y-2">
-          {renderSectionQuestions()}
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button 
-          variant="outline" 
-          onClick={handleBack}
-          disabled={sectionHistory.length <= 1}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back
-        </Button>
-        <Button 
-          onClick={() => handleNext()}
-          disabled={!canAdvance()}
-        >
-          {currentSectionId === 'confirmation' ? (
-            <>
-              Complete <Send className="w-4 h-4 ml-2" />
-            </>
-          ) : (
-            <>
-              Next <ArrowRight className="w-4 h-4 ml-2" />
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </Card>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Financial Support Affidavit"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="financialsupportaffidavit"
+    />
   );
-};
-
-export default FinancialSupportAffidavitForm;
+}

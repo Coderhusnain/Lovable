@@ -1,0 +1,311 @@
+{
+  "summary": {
+    "total": 7253,
+    "passed": 7193,
+    "failed": 60,
+    "passRate": "99.17%",
+    "duration": "0.10s"
+  },
+  "results": [
+    {
+      "name": "FormWizard: Has FormWizard import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has jsPDF import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has steps array",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has Jurisdiction step",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has country field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has state field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has effectiveDate field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has party1Name field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has generatePDF function",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has default export",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has steps prop on FormWizard",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has title prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has onGenerate prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has documentType prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has at least 10 granular steps (found 0)",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: No obvious syntax errors",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has FormWizard import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has jsPDF import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has Jurisdiction step",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has country field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has state field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has effectiveDate field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has party1Name field",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has generatePDF function",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Returns FormWizard",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has steps prop on FormWizard",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has title prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has onGenerate prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has documentType prop",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has at least 10 granular steps (found 0)",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has TypeScript typing",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Migration 20250724080456-a3915cf8-286d-4a7f-ab62-a944c871d32c.sql: Has posts table",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Migration 20250724080456-a3915cf8-286d-4a7f-ab62-a944c871d32c.sql: Has comments table",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page CopyrightRequestInfo: Has default export",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page CopyrightRequestInfo: Has React component",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page CopyrightRequestInfo: Returns JSX",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page DocumentDetail: Returns JSX",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page SoftwareLicenseInfo: Has default export",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page SoftwareLicenseInfo: Has React component",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "Page SoftwareLicenseInfo: Returns JSX",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has jsPDF import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has generatePDF function",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Creates PDF document",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has doc.text calls",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has doc.save call",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Sets font size",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has party information",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has jsPDF import",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has generatePDF function",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Creates PDF document",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has doc.text calls",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has doc.save call",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Sets font size",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has party information",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has typed steps array",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has Record<string, string> for values",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "FormWizard: Has required fields typed",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has typed steps array",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has Record<string, string> for values",
+      "status": "FAIL",
+      "details": ""
+    },
+    {
+      "name": "GranularFormWizard: Has required fields typed",
+      "status": "FAIL",
+      "details": ""
+    }
+  ]
+}

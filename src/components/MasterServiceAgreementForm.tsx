@@ -1,623 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
 import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  agreementDate: string;
-  place: string;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-  masterName: string;
-  masterAddress: string;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Master Service Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("master_service_agreement.pdf");
+};
 
-  servantName: string;
-  servantRelationOf: string; // e.g., son/daughter/wife of ...
-  servantAddress: string;
-
-  employmentPlaceAddress: string;
-
-  dutiesList: string;
-  conductList: string;
-
-  remunerationAmount: string;
-  remunerationDay: string;
-  remunerationDetails: string;
-
-  prohibitedList: string;
-
-  termYears: string;
-  terminationNoticeDays: string;
-  immediateTerminationNote: string;
-
-  miscNotes: string;
-  governingLaw: string;
-
-  acknowledgmentNote: string;
-
-  masterSignName: string;
-  masterSignCNIC: string;
-  masterSignDate: string;
-
-  servantSignName: string;
-  servantSignCNIC: string;
-  servantSignDate: string;
-
-  witness1Name: string;
-  witness1CNIC: string;
-  witness1SignatureDate: string;
-
-  witness2Name: string;
-  witness2CNIC: string;
-  witness2SignatureDate: string;
-}
-
-export default function MasterServiceAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: "23rd day of June 2025",
-    place: "Islamabad",
-
-    masterName: "",
-    masterAddress: "",
-
-    servantName: "",
-    servantRelationOf: "son/daughter/wife of __________________",
-    servantAddress: "",
-
-    employmentPlaceAddress: "[Full Residential Address]",
-
-    dutiesList:
-      "• Cleaning and maintenance of the house\n• Washing clothes and dishes\n• Cooking or assisting in food preparation\n• elderly care\n• Grocery shopping or errands, if instructed;\n• Any other related domestic tasks assigned by the Master",
-
-    conductList:
-      "• To maintain discipline, honesty, and confidentiality in all matters pertaining to the household;\n• Not to invite or allow any guest or outsider to enter the premises without the prior consent of the Master;\n• To refrain from causing any damage to the property and from engaging in any unlawful or illegal activity;\n• Not to allow entry into the premises of any individual, including the Servant’s son, who is involved in or facing any criminal charges or proceedings;\n• Not to leave the premises of the house without the prior permission or approval of the Master;\n• To behave respectfully and courteously towards the Master at all times, and to refrain from any form of misconduct or misbehavior;\n• Not to use the address of the Master’s residence for any purpose, including but not limited to correspondence, legal documentation, or as proof of residence, nor to represent any affiliation or connection with the Master or the premises without express written permission.",
-
-    remunerationAmount: "[mentioned amount]",
-    remunerationDay: "5th",
-    remunerationDetails:
-      "It includes salary, a portion of house to stay including free electricity as well as gas utilities.",
-
-    prohibitedList:
-      "• Theft or misuse of the Master’s belongings;\n• Physical or verbal abuse;\n• Use or possession of intoxicating substances;\n• Bringing outsiders without permission;\n• Misrepresentation of identity or use of false documents.",
-
-    termYears: "2",
-    terminationNoticeDays: "30",
-    immediateTerminationNote:
-      "The Master reserves the right to terminate the Agreement immediately in case of misconduct, breach of trust, or violation of any term of this Agreement.",
-
-    miscNotes:
-      "• This Agreement constitutes the entire understanding between the Parties.\n• Any modification must be in writing and signed by both Parties.\n• This Agreement shall be governed by the laws of state.",
-
-    governingLaw: "state",
-
-    acknowledgmentNote:
-      "The Servant acknowledges that she has read, understood, and voluntarily agreed to the terms and conditions of this Agreement and signs it in full acceptance thereof.",
-
-    masterSignName: "",
-    masterSignCNIC: "",
-    masterSignDate: "",
-
-    servantSignName: "",
-    servantSignCNIC: "",
-    servantSignDate: "",
-
-    witness1Name: "",
-    witness1CNIC: "",
-    witness1SignatureDate: "",
-
-    witness2Name: "",
-    witness2CNIC: "",
-    witness2SignatureDate: "",
-  });
-
-  const steps = [
-    {
-      label: "Step 1",
-      content: (
-        <>
-          <Label>Agreement Date</Label>
-          <Input
-            name="agreementDate"
-            value={formData.agreementDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, agreementDate: e.target.value }))
-            }
-            required
-          />
-          <Label>Place (city)</Label>
-          <Input
-            name="place"
-            value={formData.place}
-            onChange={(e) => setFormData((prev) => ({ ...prev, place: e.target.value }))}
-            required
-          />
-          <Label>Master Full Name</Label>
-          <Input
-            name="masterName"
-            value={formData.masterName}
-            onChange={(e) => setFormData((prev) => ({ ...prev, masterName: e.target.value }))}
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.agreementDate && formData.place && formData.masterName),
-    },
-    {
-      label: "Step 2",
-      content: (
-        <>
-          <Label>Master Address</Label>
-          <Input
-            name="masterAddress"
-            value={formData.masterAddress}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, masterAddress: e.target.value }))
-            }
-            required
-          />
-          <Label>Servant Full Name</Label>
-          <Input
-            name="servantName"
-            value={formData.servantName}
-            onChange={(e) => setFormData((prev) => ({ ...prev, servantName: e.target.value }))}
-            required
-          />
-          <Label>Servant (son/daughter/wife of)</Label>
-          <Input
-            name="servantRelationOf"
-            value={formData.servantRelationOf}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, servantRelationOf: e.target.value }))
-            }
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.masterAddress && formData.servantName && formData.servantRelationOf),
-    },
-    {
-      label: "Step 3",
-      content: (
-        <>
-          <Label>Servant Address</Label>
-          <Input
-            name="servantAddress"
-            value={formData.servantAddress}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, servantAddress: e.target.value }))
-            }
-            required
-          />
-          <Label>Employment Place Address</Label>
-          <Input
-            name="employmentPlaceAddress"
-            value={formData.employmentPlaceAddress}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, employmentPlaceAddress: e.target.value }))
-            }
-            required
-          />
-          <Label>Duties (each bullet on new line)</Label>
-          <textarea
-            name="dutiesList"
-            value={formData.dutiesList}
-            onChange={(e) => setFormData((prev) => ({ ...prev, dutiesList: e.target.value }))}
-            required
-            className="w-full p-2 border rounded"
-            rows={6}
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.servantAddress && formData.employmentPlaceAddress && formData.dutiesList),
-    },
-    {
-      label: "Step 4",
-      content: (
-        <>
-          <Label>Code of Conduct (each bullet on new line)</Label>
-          <textarea
-            name="conductList"
-            value={formData.conductList}
-            onChange={(e) => setFormData((prev) => ({ ...prev, conductList: e.target.value }))}
-            required
-            className="w-full p-2 border rounded"
-            rows={8}
-          />
-          <Label>Monthly Amount (e.g., US $300)</Label>
-          <Input
-            name="remunerationAmount"
-            value={formData.remunerationAmount}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, remunerationAmount: e.target.value }))
-            }
-            required
-          />
-          <Label>Payment Day (e.g., 5th)</Label>
-          <Input
-            name="remunerationDay"
-            value={formData.remunerationDay}
-            onChange={(e) => setFormData((prev) => ({ ...prev, remunerationDay: e.target.value }))}
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.conductList && formData.remunerationAmount && formData.remunerationDay),
-    },
-    {
-      label: "Step 5",
-      content: (
-        <>
-          <Label>Remuneration Details</Label>
-          <textarea
-            name="remunerationDetails"
-            value={formData.remunerationDetails}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, remunerationDetails: e.target.value }))
-            }
-            required
-            className="w-full p-2 border rounded"
-            rows={3}
-          />
-          <Label>Prohibited Conduct (each bullet on new line)</Label>
-          <textarea
-            name="prohibitedList"
-            value={formData.prohibitedList}
-            onChange={(e) => setFormData((prev) => ({ ...prev, prohibitedList: e.target.value }))}
-            required
-            className="w-full p-2 border rounded"
-            rows={6}
-          />
-          <Label>Term (years)</Label>
-          <Input
-            name="termYears"
-            value={formData.termYears}
-            onChange={(e) => setFormData((prev) => ({ ...prev, termYears: e.target.value }))}
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.remunerationDetails && formData.prohibitedList && formData.termYears),
-    },
-    {
-      label: "Step 6",
-      content: (
-        <>
-          <Label>Termination Notice Days</Label>
-          <Input
-            name="terminationNoticeDays"
-            value={formData.terminationNoticeDays}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, terminationNoticeDays: e.target.value }))
-            }
-            required
-          />
-          <Label>Immediate Termination Note</Label>
-          <textarea
-            name="immediateTerminationNote"
-            value={formData.immediateTerminationNote}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, immediateTerminationNote: e.target.value }))
-            }
-            required
-            className="w-full p-2 border rounded"
-            rows={3}
-          />
-          <Label>Miscellaneous Notes</Label>
-          <textarea
-            name="miscNotes"
-            value={formData.miscNotes}
-            onChange={(e) => setFormData((prev) => ({ ...prev, miscNotes: e.target.value }))}
-            required
-            className="w-full p-2 border rounded"
-            rows={4}
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.terminationNoticeDays && formData.immediateTerminationNote && formData.miscNotes),
-    },
-    {
-      label: "Step 7",
-      content: (
-        <>
-          <Label>Governing Law (state)</Label>
-          <Input
-            name="governingLaw"
-            value={formData.governingLaw}
-            onChange={(e) => setFormData((prev) => ({ ...prev, governingLaw: e.target.value }))}
-            required
-          />
-          <Label>Acknowledgment Text</Label>
-          <textarea
-            name="acknowledgmentNote"
-            value={formData.acknowledgmentNote}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, acknowledgmentNote: e.target.value }))
-            }
-            required
-            className="w-full p-2 border rounded"
-            rows={3}
-          />
-        </>
-      ),
-      validate: () => Boolean(formData.governingLaw && formData.acknowledgmentNote),
-    },
-    {
-      label: "Step 8",
-      content: (
-        <>
-          <Label>Master - Name</Label>
-          <Input
-            name="masterSignName"
-            value={formData.masterSignName}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, masterSignName: e.target.value }))
-            }
-            required
-          />
-          <Label>Master - CNIC No.</Label>
-          <Input
-            name="masterSignCNIC"
-            value={formData.masterSignCNIC}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, masterSignCNIC: e.target.value }))
-            }
-            required
-          />
-          <Label>Master - Date</Label>
-          <Input
-            name="masterSignDate"
-            value={formData.masterSignDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, masterSignDate: e.target.value }))
-            }
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.masterSignName && formData.masterSignCNIC && formData.masterSignDate),
-    },
-    {
-      label: "Step 9",
-      content: (
-        <>
-          <Label>Servant - Name</Label>
-          <Input
-            name="servantSignName"
-            value={formData.servantSignName}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, servantSignName: e.target.value }))
-            }
-            required
-          />
-          <Label>Servant - CNIC No.</Label>
-          <Input
-            name="servantSignCNIC"
-            value={formData.servantSignCNIC}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, servantSignCNIC: e.target.value }))
-            }
-            required
-          />
-          <Label>Servant - Date</Label>
-          <Input
-            name="servantSignDate"
-            value={formData.servantSignDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, servantSignDate: e.target.value }))
-            }
-            required
-          />
-        </>
-      ),
-      validate: () =>
-        Boolean(formData.servantSignName && formData.servantSignCNIC && formData.servantSignDate),
-    },
-    {
-      label: "Step 10",
-      content: (
-        <>
-          <Label>Witness 1 - Name</Label>
-          <Input
-            name="witness1Name"
-            value={formData.witness1Name}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness1Name: e.target.value }))
-            }
-          />
-          <Label>Witness 1 - CNIC No.</Label>
-          <Input
-            name="witness1CNIC"
-            value={formData.witness1CNIC}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness1CNIC: e.target.value }))
-            }
-          />
-          <Label>Witness 1 - Date</Label>
-          <Input
-            name="witness1SignatureDate"
-            value={formData.witness1SignatureDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness1SignatureDate: e.target.value }))
-            }
-          />
-        </>
-      ),
-      validate: () => true,
-    },
-    {
-      label: "Step 11",
-      content: (
-        <>
-          <Label>Witness 2 - Name</Label>
-          <Input
-            name="witness2Name"
-            value={formData.witness2Name}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness2Name: e.target.value }))
-            }
-          />
-          <Label>Witness 2 - CNIC No.</Label>
-          <Input
-            name="witness2CNIC"
-            value={formData.witness2CNIC}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness2CNIC: e.target.value }))
-            }
-          />
-          <Label>Witness 2 - Date</Label>
-          <Input
-            name="witness2SignatureDate"
-            value={formData.witness2SignatureDate}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, witness2SignatureDate: e.target.value }))
-            }
-          />
-        </>
-      ),
-      validate: () => true,
-    },
-  ];
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 18;
-    const lineHeight = 8;
-    let currentY = margin;
-
-    const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("times", isBold ? "bold" : "normal");
-      const textWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line: string) => {
-        if (currentY > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          currentY = margin;
-        }
-        if (isCenter) {
-          const tw = (doc.getStringUnitWidth(line) * fontSize) / doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // === MASTER SERVICE AGREEMENT CONTENT (verbatim with placeholders) ===
-    addText("MASTER SERVICE AGREEMENT", 14, true, true);
-    addText("\n");
-    addText(
-      `This Agreement is made on this ${formData.agreementDate || "__________"}, at ${formData.place || "__________"}, by and between:`
-    );
-    addText(
-      `Party One, residing at ${formData.masterAddress || "[Full Residential Address]"}, hereinafter referred to as the "Master",`
-    );
-    addText("\n                                                           AND\n");
-    addText(
-      `Party Two, ${formData.servantRelationOf || "son/daughter/wife of __________________"}, residing at ${formData.servantAddress || "[Full Residential Address]"}, hereinafter referred to as the “Servant”`
-    );
-    addText("Collectively referred to as the \"Parties\".");
-    addText("\n");
-
-    addText("Purpose of the Agreement", 12, true);
-    addText(
-      "The Master agrees to employ the Servant as a domestic worker, responsible for carrying out general household duties and safeguarding the Master’s premises. In consideration thereof, the Master shall provide a designated portion of the residence within the premises for the Servant’s accommodation, subject to the terms and conditions stipulated in this Agreement."
-    );
-    addText("\n");
-
-    addText("Place of Employment", 12, true);
-    addText("The Servant is employed at the residence of the Master located at:");
-    addText(`${formData.employmentPlaceAddress || "[Full Residential Address]"}`);
-    addText("\n");
-
-    addText("Duties and Responsibilities", 12, true);
-    addText("The Servant agreed to perform the following duties:");
-    addText(formData.dutiesList);
-    addText("\n");
-
-    addText("Code of Conduct", 12, true);
-    addText("The Servant agreed and undertook as follows:");
-    addText(formData.conductList);
-    addText("\n");
-
-    addText("Remuneration", 12, true);
-    addText(
-      `The Master is paying the Servant a monthly package of ${formData.remunerationAmount || "[mentioned amount]"} on ${formData.remunerationDay || "5th"} of each month. ${formData.remunerationDetails}`
-    );
-    addText("\n");
-
-    addText("Prohibited Conduct", 12, true);
-    addText("The following actions are strictly prohibited and may result in immediate termination:");
-    addText(formData.prohibitedList);
-    addText("\n");
-
-    addText("Duration and Termination", 12, true);
-    addText(
-      `This agreement shall be valid for a period of ${formData.termYears || "two (02) years"} from the date of signing and may be renewed with mutual consent.`
-    );
-    addText(`• Either party may terminate this agreement with ${formData.terminationNoticeDays || "30"} days notice or salary in lieu thereof.`);
-    addText(`• ${formData.immediateTerminationNote}`);
-    addText("\n");
-
-    addText("Miscellaneous", 12, true);
-    addText(formData.miscNotes);
-    addText("\n");
-
-    addText("Acknowledgment", 12, true);
-    addText(formData.acknowledgmentNote);
-    addText("\n");
-
-    addText("IN WITNESS WHEREOF, the Parties hereto have executed this Agreement on the day, month, and year first written above.", 11);
-    addText("\n");
-
-    addText("MASTER", 12, true);
-    addText(`Name: ${formData.masterSignName || "__________________________"}`);
-    addText(`Signature: _________________________`);
-    addText(`CNIC No.: ${formData.masterSignCNIC || "________________"}`);
-    addText("\n");
-
-    addText("SERVANT", 12, true);
-    addText(`Name: ${formData.servantSignName || "__________________________"}`);
-    addText(`Signature: _________________________`);
-    addText(`CNIC No.: ${formData.servantSignCNIC || "________________"}`);
-    addText("\n");
-
-    addText("1.WITNESSES", 12, true);
-    addText(`Name: ${formData.witness1Name || "________________________"}`);
-    addText(`Signature: _______________________`);
-    addText(`CNIC No.: ${formData.witness1CNIC || "__________________"}`);
-    addText("\n");
-
-    addText("2.WITNESSES", 12, true);
-    addText(`Name: ${formData.witness2Name || "________________________"}`);
-    addText(`Signature: _______________________`);
-    addText(`CNIC No.: ${formData.witness2CNIC || "__________________"}`);
-    addText("\n");
-
-    // Save file
-    doc.save("Master_Service_Agreement.pdf");
-  };
-
+export default function MasterServiceAgreement() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      <FormWizard
-        steps={steps}
-        onFinish={() => {
-          generatePDF();
-        }}
-      />
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Master Service Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="masterserviceagreement"
+    />
   );
 }

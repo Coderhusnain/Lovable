@@ -1,360 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  ownerName: string;
-  ownerAddress: string;
-  managerName: string;
-  managerAddress: string;
-  propertyDescription: string;
-  startDate: string;
-  feePercent: string;
-  additionalCompensation: string;
-  shortfallDays: string;
-  endDate: string;
-  terminationNoticeDays: string;
-  indemnification: string;
-  insuranceDetails: string;
-  defaultNoticeDays: string;
-  governingLaw: string;
-  signOwnerName: string;
-  signOwnerDate: string;
-  signManagerName: string;
-  signManagerDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function PropertyManagerAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    effectiveDate: "",
-    ownerName: "",
-    ownerAddress: "",
-    managerName: "",
-    managerAddress: "",
-    propertyDescription: "",
-    startDate: "",
-    feePercent: "",
-    additionalCompensation: "",
-    shortfallDays: "15",
-    endDate: "",
-    terminationNoticeDays: "30",
-    indemnification: "",
-    insuranceDetails: "",
-    defaultNoticeDays: "30",
-    governingLaw: "",
-    signOwnerName: "",
-    signOwnerDate: "",
-    signManagerName: "",
-    signManagerDate: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Property Manager Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("property_manager_agreement.pdf");
+};
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-
-    write("PROPERTY MANAGER AGREEMENT", 14, true, true);
-    write("\n");
-
-    // Insert the full agreement text exactly as provided, substituting fields where appropriate
-    write(
-      `This Property Manager Agreement (“Agreement”) is entered into and made effective as of the ${
-        formData.effectiveDate || "___ day of ________, 20"
-      }, by and between\n\n${formData.ownerName || "[Owner Name]"}, of ${formData.ownerAddress || "[Owner Address]"} (hereinafter the “Owner”),\nAnd\n${formData.managerName || "[Manager Name]"}, of ${formData.managerAddress || "[Manager Address]"} (hereinafter the “Manager”).\nThe Owner and Manager may be collectively referred to as the “Parties.”`
-    );
-
-    write("\n");
-
-    write("RECITALS", 12, true);
-    write(
-      "WHEREAS, the Manager is experienced in the operation and management of real property and possesses the necessary personnel and resources to manage real estate competently;"
-    );
-    write(
-      "WHEREAS, the Owner desires to retain the Manager to provide property management services for the real estate owned by the Owner, and the Manager agrees to provide such services on the terms set forth herein."
-    );
-    write(
-      "NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the Parties agree as follows:" 
-    );
-
-    write("\n");
-    write("1. Description of the Property", 12, true);
-    write(`This Agreement applies to the management of the following property(ies) (the “Property”):\n${formData.propertyDescription || "[Insert Property Address(es) and Description]"}`);
-
-    write("\n");
-    write("2. Responsibilities of the Manager", 12, true);
-    write("The Manager shall serve as an independent contractor and the Owner’s exclusive agent in managing the Property beginning on " + (formData.startDate || "[Start Date]") + ". The Manager’s duties shall include, but are not limited to:");
-
-    write("a. Collection and Disbursement of Rents");
-    write(
-      "The Manager shall collect all rents as they become due and provide monthly accounting statements detailing rents received and expenses paid. Net income, after deduction of authorized disbursements, shall be remitted to the Owner by mail or as otherwise directed by the Owner, on or before the ___ day of each month, subject to timely rent receipt from tenants."
-    );
-
-    write("b. Maintenance and Labor");
-    write(
-      "The Manager shall arrange for and oversee maintenance, repairs, and improvements to the Property, and may hire and supervise employees and contractors as required."
-    );
-
-    write("c. Leasing and Legal Proceedings");
-    write(
-      "The Manager shall advertise vacancies, screen and select tenants, set market rents, negotiate leases, sign, renew, or terminate rental agreements, and pursue legal actions for rent recovery or damage to the Property. The Manager may settle or compromise claims where appropriate."
-    );
-
-    write("\n");
-    write("3. Authority Granted", 12, true);
-    write("The Owner grants the Manager full authority to perform all acts reasonably necessary to carry out the responsibilities described in this Agreement, as if performed by the Owner personally.");
-
-    write("\n");
-    write("4. Fair Housing Compliance", 12, true);
-    write("The Manager shall comply with all applicable federal, state, and local laws, including the Fair Housing Act, and shall not discriminate based on race, color, religion, sex, national origin, disability, or familial status.");
-
-    write("\n");
-    write("5. Compensation", 12, true);
-    write(
-      `The Manager shall be entitled to retain ${formData.feePercent || "___%"} of monthly gross rental collections as compensation. Additional compensation for services not described in this Agreement shall be agreed upon in writing by the Parties. The Manager may deduct actual out-of-pocket expenses incurred in the course of management and must provide itemized monthly statements detailing all income and expenditures.\nIf rent collections are insufficient to cover fees and expenses in a given month, the Owner shall remit the shortfall within ${formData.shortfallDays || "15"} days of receiving written notice from the Manager.`
-    );
-
-    write("\n");
-    write("6. Independent Contractor", 12, true);
-    write("The Manager shall perform all duties as an independent contractor and not as an employee of the Owner. The Manager shall be responsible for all taxes, benefits, and obligations as required by law.");
-
-    write("\n");
-    write("7. Standard of Performance", 12, true);
-    write("The Manager shall perform its duties with reasonable diligence and in accordance with generally accepted industry standards, providing services consistent with those of reputable property managers in the community.");
-
-    write("\n");
-    write("8. Term and Termination", 12, true);
-    write(
-      `This Agreement shall terminate automatically on ${formData.endDate || "[End Date]"}, unless earlier terminated by either party with at least ${formData.terminationNoticeDays || "___"} days written notice. Either party may terminate this Agreement without cause, provided such notice is properly given.`
-    );
-
-    write("\n");
-    write("9. Indemnification", 12, true);
-    write(formData.indemnification || "The Manager shall indemnify, defend, and hold harmless the Owner from and against any and all claims, liabilities, damages, losses, and expenses (including reasonable attorney’s fees) arising from the negligent or willful acts or omissions of the Manager, its agents, employees, or representatives.");
-
-    write("\n");
-    write("10. Insurance", 12, true);
-    write(formData.insuranceDetails || "The Manager shall maintain General Liability and Errors & Omissions insurance and shall provide proof of such coverage to the Owner upon request. The Owner shall include the Manager as an additional insured under the Owner’s Public Liability Insurance Policy.");
-
-    write("\n");
-    write("11. Default", 12, true);
-    write("The following shall constitute a material default:");
-    write("• Failure to make required payments;");
-    write("• Bankruptcy or insolvency of either party;");
-    write("• Property of either party becoming subject to seizure or assignment;");
-    write("• Failure to perform services in a timely or proper manner.");
-
-    write("\n");
-    write("12. Remedies for Default", 12, true);
-    write(
-      `If a default occurs, the non-defaulting party may terminate this Agreement upon ${formData.defaultNoticeDays || "___"} days written notice, provided the default is not cured within the notice period. The notice must specify the nature of the breach with reasonable detail.`
-    );
-
-    write("\n");
-    write("13. Force Majeure", 12, true);
-    write(
-      "Neither party shall be liable for delay or failure to perform obligations due to causes beyond their reasonable control, including but not limited to acts of God, pandemics, civil unrest, war, labor strikes, or governmental orders. Affected obligations shall be suspended until performance becomes possible."
-    );
-
-    write("\n");
-    write("14. Dispute Resolution", 12, true);
-    write("The Parties agree to attempt resolution of disputes through informal negotiations. If unsuccessful, the matter shall be submitted to mediation in accordance with applicable rules. If mediation fails, the Parties may pursue available legal remedies.");
-
-    write("\n");
-    write("15. Confidentiality", 12, true);
-    write("The Manager shall not disclose any confidential or proprietary information belonging to the Owner, either during the term of this Agreement or thereafter. All records and data shall be returned to the Owner upon termination.");
-
-    write("\n");
-    write("16. Return of Property", 12, true);
-    write("Upon termination of this Agreement, the Manager shall promptly return to the Owner all materials, documentation, keys, and property relating to the management of the Property.");
-
-    write("\n");
-    write("17. Notices", 12, true);
-    write("All notices shall be in writing and deemed effective upon delivery by personal service, certified mail, or courier to the address of each party stated herein, or to such other address as may be designated in writing.");
-
-    write("\n");
-    write("18. Entire Agreement", 12, true);
-    write("This Agreement represents the entire understanding between the Parties and supersedes all prior or contemporaneous agreements. No oral representations or warranties shall be binding unless reduced to writing and signed by both Parties.");
-
-    write("\n");
-    write("19. Amendment", 12, true);
-    write("This Agreement may only be modified by a written instrument executed by both Parties.");
-
-    write("\n");
-    write("20. Severability", 12, true);
-    write("If any provision is deemed invalid or unenforceable, the remainder of this Agreement shall remain in full force and effect.");
-
-    write("\n");
-    write("21. Waiver", 12, true);
-    write("The failure of either party to enforce any provision shall not be construed as a waiver of future enforcement of that provision or any other provision.");
-
-    write("\n");
-    write("22. Governing Law", 12, true);
-    write(`This Agreement shall be governed and interpreted in accordance with the laws of the State of ${formData.governingLaw || "[Insert State]"}.`);
-
-    write("\n");
-    write("23. Signatures", 12, true);
-    write("IN WITNESS WHEREOF, the Parties have executed this Agreement as of the date first written above.");
-    write("OWNER:");
-    write("Signature: ___________________________");
-    write("Name: " + (formData.signOwnerName || "____________________________"));
-    write("Date: " + (formData.signOwnerDate || "_____________________"));
-    write("\n");
-    write("MANAGER:");
-    write("Signature: ___________________________");
-    write("Name: " + (formData.signManagerName || "____________________________"));
-    write("Date: " + (formData.signManagerDate || "_____________________"));
-
-    doc.save("Property_Manager_Agreement.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="font-semibold">Parties & Property</h3>
-              </div>
-              <Label>Agreement Date (Effective Date)</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <Label>Owner Name</Label>
-              <Input name="ownerName" value={formData.ownerName} onChange={handleChange} />
-              <Label>Owner Address</Label>
-              <Textarea name="ownerAddress" value={formData.ownerAddress} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Manager Name</Label>
-              <Input name="managerName" value={formData.managerName} onChange={handleChange} />
-              <Label>Manager Address</Label>
-              <Textarea name="managerAddress" value={formData.managerAddress} onChange={handleChange} />
-
-              <Label>Property Description / Addresses</Label>
-              <Textarea name="propertyDescription" value={formData.propertyDescription} onChange={handleChange} />
-
-              <Label>Management Start Date</Label>
-              <Input name="startDate" value={formData.startDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Compensation & Terms</h3>
-              <Label>Manager Fee (% of gross rent)</Label>
-              <Input name="feePercent" value={formData.feePercent} onChange={handleChange} />
-
-              <Label>Additional Compensation Details</Label>
-              <Textarea name="additionalCompensation" value={formData.additionalCompensation} onChange={handleChange} />
-
-              <Label>Shortfall Payment Days</Label>
-              <Input name="shortfallDays" value={formData.shortfallDays} onChange={handleChange} />
-
-              <Label>Agreement End Date</Label>
-              <Input name="endDate" value={formData.endDate} onChange={handleChange} />
-
-              <Label>Termination Notice Days</Label>
-              <Input name="terminationNoticeDays" value={formData.terminationNoticeDays} onChange={handleChange} />
-
-              <Label>Indemnification Text</Label>
-              <Textarea name="indemnification" value={formData.indemnification} onChange={handleChange} />
-
-              <Label>Insurance Requirements / Details</Label>
-              <Textarea name="insuranceDetails" value={formData.insuranceDetails} onChange={handleChange} />
-
-              <Label>Default Cure Notice Days</Label>
-              <Input name="defaultNoticeDays" value={formData.defaultNoticeDays} onChange={handleChange} />
-
-              <Label>Governing Law / State</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatures</h3>
-              <Label>Owner - Signatory Name</Label>
-              <Input name="signOwnerName" value={formData.signOwnerName} onChange={handleChange} />
-              <Label>Owner - Date</Label>
-              <Input name="signOwnerDate" value={formData.signOwnerDate} onChange={handleChange} />
-
-              <Label>Manager - Signatory Name</Label>
-              <Input name="signManagerName" value={formData.signManagerName} onChange={handleChange} />
-              <Label>Manager - Date</Label>
-              <Input name="signManagerDate" value={formData.signManagerDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function PropertyManagerAgreement() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Property Manager Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Property Manager Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="propertymanageragreement"
+    />
   );
 }

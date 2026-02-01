@@ -1,472 +1,471 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { FileText, Download, ArrowRight, ArrowLeft, Phone } from "lucide-react";
-import { Country, State, City } from 'country-state-city';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import LegalDisclaimer from "@/components/LegalDisclaimer";
-import { toast } from "sonner";
-import jsPDF from 'jspdf';
-import UserInfoStep from "@/components/UserInfoStep";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  // Tenant Information
-  tenantName: string;
-  leaseDate: string;
-  propertyAddress: string;
-  depositDate: string;
-  securityDepositAmount: string;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this document?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Document Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and details of this document",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
+
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
   
-  // Deduction Details
-  deductionReason: string;
-  deductionAmount: string;
-  remainingBalance: string;
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Security Deposit Return Letter", 105, y, { align: "center" });
+  y += 15;
   
-  // Response Requirements
-  responseDays: string;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
   
-  // Landlord Information
-  landlordSignature: string;
-  landlordName: string;
-  landlordTitle: string;
-  letterDate: string;
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
   
-  // Location Selection
-  selectedCountry: string;
-  selectedState: string;
-  selectedCity: string;
-}
-
-const SecurityDepositReturnLetter = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    tenantName: '',
-    leaseDate: '',
-    propertyAddress: '',
-    depositDate: '',
-    securityDepositAmount: '',
-    deductionReason: '',
-    deductionAmount: '',
-    remainingBalance: '',
-    responseDays: '',
-    landlordSignature: '',
-    landlordName: '',
-    landlordTitle: '',
-    letterDate: '',
-    selectedCountry: '',
-    selectedState: '',
-    selectedCity: ''
-  });
-
-  const countries = Country.getAllCountries();
-  const states = formData.selectedCountry ? State.getStatesOfCountry(formData.selectedCountry) : [];
-  const cities = formData.selectedState ? City.getCitiesOfState(formData.selectedCountry, formData.selectedState) : [];
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleCountryChange = (countryCode: string) => {
-    const country = countries.find(c => c.isoCode === countryCode);
-    setFormData(prev => ({
-      ...prev,
-      selectedCountry: countryCode,
-      selectedState: '',
-      selectedCity: ''
-    }));
-  };
-
-  const handleStateChange = (stateCode: string) => {
-    const state = states.find(s => s.isoCode === stateCode);
-    setFormData(prev => ({
-      ...prev,
-      selectedState: stateCode,
-      selectedCity: ''
-    }));
-  };
-
-  const handleCityChange = (cityName: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedCity: cityName
-    }));
-  };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    
-    try {
-      const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20;
-    const lineHeight = 6;
-    let yPosition = margin;
-
-    // Helper function to add text with word wrapping
-    const addText = (text: string, fontSize: number = 10, isBold: boolean = false) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("helvetica", isBold ? "bold" : "normal");
-      
-      const lines = doc.splitTextToSize(text, pageWidth - 2 * margin);
-      lines.forEach((line: string) => {
-        if (yPosition > doc.internal.pageSize.height - margin) {
-          doc.addPage();
-          yPosition = margin;
-        }
-        doc.text(line, margin, yPosition);
-        yPosition += lineHeight;
-      });
-    };
-
-    // Title
-    addText("Re: Return of Security Deposit", 14, true);
-    yPosition += 10;
-
-    // Letter content with substituted values
-    const letterText = `Dear ${formData.tenantName || '[Tenant\'s Name]'},
-
-This letter pertains to the lease agreement dated ${formData.leaseDate || '[Insert Date]'}, under which you leased the property located at ${formData.propertyAddress || '[Insert Full Address]'} (the "Premises"). On ${formData.depositDate || '[Insert Date]'}, you paid a security deposit in the amount of $${formData.securityDepositAmount || '[Insert Amount]'}.
-
-Upon inspection of the Premises following the termination of the lease, the following deductions have been made from your security deposit:
-
-Reason for Deduction:
-${formData.deductionReason || '[Insert Reason]'}
-
-Amount Deducted: $${formData.deductionAmount || '[Insert Amount]'}
-
-As a result of the above deduction(s), the remaining balance of your security deposit is $${formData.remainingBalance || '0.00'}, which is enclosed with this letter ${formData.remainingBalance === '0.00' || !formData.remainingBalance ? '[or, if nothing is returned: "Accordingly, no balance remains to be returned."]' : ''}.
-
-If you dispute any of the deductions listed above, you must submit your objection in writing to the address listed above within ${formData.responseDays || '[Insert Number]'} days of receipt of this letter. Failure to respond within this time period may be deemed a waiver of any objection.
-
-By my signature below, I certify that this notice has been sent to your last known mailing address.
-
-Sincerely,
-
-${formData.landlordSignature || '[Signature]'}
-
-${formData.landlordName || '[Printed Name]'}
-
-${formData.landlordTitle || '[Title or Role, if applicable]'}
-
-${formData.letterDate || '[Date]'}`;
-
-    addText(letterText);
-
-    // Save the PDF
-    doc.save('Security_Deposit_Return_Letter.pdf');
-    toast.success("PDF generated successfully!");
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    toast.error("Failed to generate document");
-  } finally {
-    setIsGeneratingPDF(false);
-  }
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("DOCUMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  
+  doc.save("security_deposit_return_letter.pdf");
 };
 
-  const nextStep = () => {
-    if (currentStep < 5) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 1: Location Selection</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="country">Country</Label>
-                <Select value={formData.selectedCountry} onValueChange={handleCountryChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.isoCode} value={country.isoCode}>
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="state">State</Label>
-                <Select value={formData.selectedState} onValueChange={handleStateChange} disabled={!formData.selectedCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {states.map((state) => (
-                      <SelectItem key={state.isoCode} value={state.isoCode}>
-                        {state.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="city">City</Label>
-                <Select value={formData.selectedCity} onValueChange={handleCityChange} disabled={!formData.selectedState}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select City" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cities.map((city) => (
-                      <SelectItem key={city.name} value={city.name}>
-                        {city.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 2: Tenant & Lease Information</h3>
-            
-            <div>
-              <Label htmlFor="tenantName">Tenant's Name</Label>
-              <Input
-                id="tenantName"
-                value={formData.tenantName}
-                onChange={(e) => handleInputChange('tenantName', e.target.value)}
-                placeholder="Enter tenant's full name"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="leaseDate">Lease Agreement Date</Label>
-                <Input
-                  type="date"
-                  id="leaseDate"
-                  value={formData.leaseDate}
-                  onChange={(e) => handleInputChange('leaseDate', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="depositDate">Security Deposit Date</Label>
-                <Input
-                  type="date"
-                  id="depositDate"
-                  value={formData.depositDate}
-                  onChange={(e) => handleInputChange('depositDate', e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="propertyAddress">Property Address</Label>
-              <Textarea
-                id="propertyAddress"
-                value={formData.propertyAddress}
-                onChange={(e) => handleInputChange('propertyAddress', e.target.value)}
-                placeholder="Enter complete property address"
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="securityDepositAmount">Original Security Deposit Amount ($)</Label>
-              <Input
-                id="securityDepositAmount"
-                value={formData.securityDepositAmount}
-                onChange={(e) => handleInputChange('securityDepositAmount', e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 3: Deduction Details</h3>
-            
-            <div>
-              <Label htmlFor="deductionReason">Reason for Deduction</Label>
-              <Textarea
-                id="deductionReason"
-                value={formData.deductionReason}
-                onChange={(e) => handleInputChange('deductionReason', e.target.value)}
-                placeholder="Describe the reason for the security deposit deduction"
-                rows={4}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="deductionAmount">Amount Deducted ($)</Label>
-                <Input
-                  id="deductionAmount"
-                  value={formData.deductionAmount}
-                  onChange={(e) => handleInputChange('deductionAmount', e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-              <div>
-                <Label htmlFor="remainingBalance">Remaining Balance ($)</Label>
-                <Input
-                  id="remainingBalance"
-                  value={formData.remainingBalance}
-                  onChange={(e) => handleInputChange('remainingBalance', e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="responseDays">Response Period (days)</Label>
-              <Input
-                id="responseDays"
-                value={formData.responseDays}
-                onChange={(e) => handleInputChange('responseDays', e.target.value)}
-                placeholder="e.g., 30"
-              />
-            </div>
-          </div>
-        );
-
-      case 4:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-4">Step 4: Landlord Information</h3>
-            
-            <div>
-              <Label htmlFor="landlordName">Landlord's Printed Name</Label>
-              <Input
-                id="landlordName"
-                value={formData.landlordName}
-                onChange={(e) => handleInputChange('landlordName', e.target.value)}
-                placeholder="Enter landlord's full name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="landlordTitle">Title or Role (optional)</Label>
-              <Input
-                id="landlordTitle"
-                value={formData.landlordTitle}
-                onChange={(e) => handleInputChange('landlordTitle', e.target.value)}
-                placeholder="e.g., Property Manager, Owner"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="landlordSignature">Signature (type name for digital signature)</Label>
-              <Input
-                id="landlordSignature"
-                value={formData.landlordSignature}
-                onChange={(e) => handleInputChange('landlordSignature', e.target.value)}
-                placeholder="Type name for digital signature"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="letterDate">Letter Date</Label>
-              <Input
-                type="date"
-                id="letterDate"
-                value={formData.letterDate}
-                onChange={(e) => handleInputChange('letterDate', e.target.value)}
-              />
-            </div>
-          </div>
-        );
-
-      case 5:
-        return (
-          <UserInfoStep
-            onBack={prevStep}
-            onGenerate={generatePDF}
-            documentType="Security Deposit Return Letter"
-            isGenerating={isGeneratingPDF}
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
+export default function SecurityDepositReturnLetter() {
   return (
-    <div className="bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <FileText className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Security Deposit Return Letter</h1>
-          </div>
-          <p className="text-gray-600 mb-4">
-            Create a professional letter for returning security deposits with deduction details
-          </p>
-          
-          {/* Professional Legal Services Disclaimer */}
-          <LegalDisclaimer />
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Security Deposit Return Letter Form</span>
-              <span className="text-sm font-normal text-gray-500">
-                Step {currentStep} of 5
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderStepContent()}
-
-            {currentStep !== 5 && (
-              <div className="flex justify-between mt-8">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
-
-                {currentStep < 4 ? (
-                  <Button type="button" onClick={nextStep}>
-                    Next
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                ) : (
-                  <Button type="button" onClick={nextStep}>
-                    Next
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Security Deposit Return Letter"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="securitydepositreturnletter"
+    />
   );
-};
-
-export default SecurityDepositReturnLetter;
+}

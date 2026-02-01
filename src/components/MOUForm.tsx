@@ -1,290 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  partnerAName: string;
-  partnerAAddress: string;
-  partnerBName: string;
-  partnerBAddress: string;
-  effectiveDate: string;
-  projectName: string;
-  purposeSummary: string;
-  partnerAServices: string;
-  partnerBServices: string;
-  resourcesA: string;
-  resourcesB: string;
-  communicationStrategy: string;
-  liabilityClause: string;
-  disputeGroupMembers: string;
-  termStart: string;
-  termEnd: string;
-  governingLaw: string;
-  noticeAddressA: string;
-  noticeAddressB: string;
-  additionalClauses: string;
-  signPartnerAName: string;
-  signPartnerADate: string;
-  signPartnerBName: string;
-  signPartnerBDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function MOUForm() {
-  const [formData, setFormData] = useState<FormData>({
-    partnerAName: "",
-    partnerAAddress: "",
-    partnerBName: "",
-    partnerBAddress: "",
-    effectiveDate: "",
-    projectName: "",
-    purposeSummary: "",
-    partnerAServices: "",
-    partnerBServices: "",
-    resourcesA: "",
-    resourcesB: "",
-    communicationStrategy: "",
-    liabilityClause: "No liability shall arise between the Partners as a result of this Memorandum.",
-    disputeGroupMembers: "CEO of Partner A; CEO of Partner B; Independent representative",
-    termStart: "",
-    termEnd: "",
-    governingLaw: "",
-    noticeAddressA: "",
-    noticeAddressB: "",
-    additionalClauses: "Non-binding; Termination by written notice; Assignment requires consent; Amendment in writing; Severability; Supersession.",
-    signPartnerAName: "",
-    signPartnerADate: "",
-    signPartnerBName: "",
-    signPartnerBDate: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("M O U", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("m_o_u.pdf");
+};
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-
-    write("MEMORANDUM OF UNDERSTANDING (MOU)", 14, true, true);
-    write("\n");
-
-    write(`This Memorandum of Understanding (the \"Memorandum\") is made and entered into on ${formData.effectiveDate || "[date]"}, by and between ${formData.partnerAName || "[Partner A]"}, having its principal office at ${formData.partnerAAddress || "[address]"} (\"Partner A\"), and ${formData.partnerBName || "[Partner B]"}, having its principal office at ${formData.partnerBAddress || "[address]"} (\"Partner B\").`);
-
-    write("\n");
-    write("RECITALS", 12, true);
-    write(`WHEREAS, the Partners desire to enter into an understanding pursuant to which they shall collaborate, coordinate, and cooperate in connection with the Project;`);
-    write(`AND WHEREAS, the Partners intend through this Memorandum to set forth their working arrangements and mutual expectations in preparation for the negotiation of any future binding agreement regarding the Project;`);
-
-    write("\n");
-    write("1. Purpose", 12, true);
-    write(formData.purposeSummary || "The purpose of this Memorandum is to establish the framework for any future binding agreement between the Partners with respect to the Project.");
-
-    write("\n");
-    write("2. Obligations of the Partners", 12, true);
-    write("The Partners acknowledge that this Memorandum does not create a legally binding contract, but each Partner agrees to act in the spirit of collaboration, demonstrating leadership, financial commitment, administrative diligence, and managerial support.");
-    write("2.1 Services to be Rendered:");
-    write(`Partner A: ${formData.partnerAServices || "[Partner A services]"}`);
-    write(`Partner B: ${formData.partnerBServices || "[Partner B services]"}`);
-
-    write("\n");
-    write("3. Cooperation", 12, true);
-    write("The Partners agree to cooperate fully in the execution of the Project, including collaborative planning, coordination of resources, and participation in relevant Project meetings and activities.");
-
-    write("\n");
-    write("4. Resources", 12, true);
-    write(`Partner A shall provide: ${formData.resourcesA || "[financial, material, labor resources]"}`);
-    write(`Partner B shall provide: ${formData.resourcesB || "[financial, material, labor resources]"}`);
-
-    write("\n");
-    write("5. Communication Strategy", 12, true);
-    write(formData.communicationStrategy || "All communications, marketing, and public relations activities shall be consistent with the objectives of the Project and require the prior express agreement of both Partners.");
-
-    write("\n");
-    write("6. Liability", 12, true);
-    write(formData.liabilityClause || "No liability shall arise between the Partners as a result of this Memorandum.");
-
-    write("\n");
-    write("7. Dispute Resolution", 12, true);
-    write("In the event of any dispute during negotiation of a binding agreement relating to the Project:");
-    write(`Dispute Resolution Group members: ${formData.disputeGroupMembers || "[CEO A; CEO B; Independent representative]"}`);
-    write("Decisions made by the Dispute Resolution Group shall be final and binding. If no resolution is reached, neither Partner shall be obligated to enter into any binding contract.");
-
-    write("\n");
-    write("8. Term", 12, true);
-    write(`The term of this Memorandum shall commence on ${formData.termStart || "[start date]"} and continue until ${formData.termEnd || "[end date]"}, unless extended by mutual written agreement of all Partners.`);
-
-    write("\n");
-    write("9. Notice", 12, true);
-    write(`Any notice shall be delivered to:\nPartner A: ${formData.noticeAddressA || formData.partnerAAddress || "[address]"}\nPartner B: ${formData.noticeAddressB || formData.partnerBAddress || "[address]"}`);
-
-    write("\n");
-    write("10. Governing Law", 12, true);
-    write(`This Memorandum shall be governed by and construed in accordance with the laws of ${formData.governingLaw || "[State]"}.`);
-
-    write("\n");
-    write("11. Additional Clauses", 12, true);
-    write(formData.additionalClauses || "Non-binding; Termination by written notice; Assignment requires consent; Amendment in writing; Severability; Supersession.");
-
-    write("\n");
-    write("12. Understanding Between Partners", 12, true);
-    write("Each Partner shall work collaboratively to advance the Project. This Memorandum does not restrict the Partners from entering into similar arrangements with other entities.");
-
-    write("\n");
-    write("13. Signatories", 12, true);
-    write("IN WITNESS WHEREOF, the Partners have executed this Memorandum of Understanding as of the date first written above.");
-    write(`Partner A: ${formData.partnerAName || "[Partner A]"}`);
-    write(`Name/Title: ${formData.signPartnerAName || "[Name]"}    Date: ${formData.signPartnerADate || "[date]"}`);
-    write(`\nPartner B: ${formData.partnerBName || "[Partner B]"}`);
-    write(`Name/Title: ${formData.signPartnerBName || "[Name]"}    Date: ${formData.signPartnerBDate || "[date]"}`);
-
-    doc.save("MOU.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Partners & Project</h3>
-              <Label>Partner A - Name</Label>
-              <Input name="partnerAName" value={formData.partnerAName} onChange={handleChange} />
-              <Label>Partner A - Address</Label>
-              <Textarea name="partnerAAddress" value={formData.partnerAAddress} onChange={handleChange} />
-
-              <Label>Partner B - Name</Label>
-              <Input name="partnerBName" value={formData.partnerBName} onChange={handleChange} />
-              <Label>Partner B - Address</Label>
-              <Textarea name="partnerBAddress" value={formData.partnerBAddress} onChange={handleChange} />
-
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <Label>Project Name / Summary</Label>
-              <Textarea name="projectName" value={formData.projectName} onChange={handleChange} />
-
-              <Label>Purpose Summary</Label>
-              <Textarea name="purposeSummary" value={formData.purposeSummary} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Services, Resources & Governance</h3>
-              <Label>Partner A - Services</Label>
-              <Textarea name="partnerAServices" value={formData.partnerAServices} onChange={handleChange} />
-
-              <Label>Partner B - Services</Label>
-              <Textarea name="partnerBServices" value={formData.partnerBServices} onChange={handleChange} />
-
-              <Label>Partner A - Resources</Label>
-              <Textarea name="resourcesA" value={formData.resourcesA} onChange={handleChange} />
-
-              <Label>Partner B - Resources</Label>
-              <Textarea name="resourcesB" value={formData.resourcesB} onChange={handleChange} />
-
-              <Label>Communication Strategy</Label>
-              <Textarea name="communicationStrategy" value={formData.communicationStrategy} onChange={handleChange} />
-
-              <Label>Dispute Resolution Group Members</Label>
-              <Input name="disputeGroupMembers" value={formData.disputeGroupMembers} onChange={handleChange} />
-
-              <Label>Term Start</Label>
-              <Input name="termStart" value={formData.termStart} onChange={handleChange} />
-              <Label>Term End</Label>
-              <Input name="termEnd" value={formData.termEnd} onChange={handleChange} />
-
-              <Label>Governing Law / Jurisdiction</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-
-              <Label>Additional Clauses</Label>
-              <Textarea name="additionalClauses" value={formData.additionalClauses} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Notices & Signatories</h3>
-              <Label>Notice Address - Partner A</Label>
-              <Textarea name="noticeAddressA" value={formData.noticeAddressA} onChange={handleChange} />
-              <Label>Notice Address - Partner B</Label>
-              <Textarea name="noticeAddressB" value={formData.noticeAddressB} onChange={handleChange} />
-
-              <Label>Partner A - Signatory Name & Title</Label>
-              <Input name="signPartnerAName" value={formData.signPartnerAName} onChange={handleChange} />
-              <Label>Partner A - Sign Date</Label>
-              <Input name="signPartnerADate" value={formData.signPartnerADate} onChange={handleChange} />
-
-              <Label>Partner B - Signatory Name & Title</Label>
-              <Input name="signPartnerBName" value={formData.signPartnerBName} onChange={handleChange} />
-              <Label>Partner B - Sign Date</Label>
-              <Input name="signPartnerBDate" value={formData.signPartnerBDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function MOU() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>Back</Button>
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">MOU PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="M O U"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="mou"
+    />
   );
 }

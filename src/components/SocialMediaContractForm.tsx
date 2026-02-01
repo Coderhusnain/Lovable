@@ -1,333 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
+
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
   
-  companyName: string;
-  companyLocation: string;
-  scopeApplicability: string;
-  approvalProcess: string;
-  blockingPolicy: string;
-  bloggingGuidelines: string;
-  onlineSocialNetworking: string;
-  socialVideo: string;
-  forumsPolicy: string;
-  reviewAmendment: string;
-  violations: string;
-  confidentiality: string;
-  ownership: string;
-  transparency: string;
-  discrimination: string;
-  companySignName: string;
-  companySignTitle: string;
-  companySignDate: string;
-  employeeSignName: string;
-  employeeSignDate: string;
-}
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Social Media Contract", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("social_media_contract.pdf");
+};
 
-export default function SocialMediaContractForm() {
-  const [formData, setFormData] = useState<FormData>({
-    effectiveDate: "",
-    companyName: "",
-    companyLocation: "",
-    scopeApplicability: "",
-    approvalProcess: "",
-    blockingPolicy: "",
-    bloggingGuidelines: "",
-    onlineSocialNetworking: "",
-    socialVideo: "",
-    forumsPolicy: "",
-    reviewAmendment: "",
-    violations: "",
-    confidentiality: "",
-    ownership: "",
-    transparency: "",
-    discrimination: "",
-    companySignName: "",
-    companySignTitle: "",
-    companySignDate: "",
-    employeeSignName: "",
-    employeeSignDate: "",
-  });
-
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      if (text === undefined || text === null) text = "";
-      if (text.trim() === "") {
-        y += size * 0.8;
-        return;
-      }
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-
-    // Verbatim Social Media Contract text with substituted fields where appropriate
-    write("SOCIAL MEDIA CONTRACT", 14, true, true);
-    write("This Social Media Contract (\u201cContract\u201d) has been adopted by " + (formData.companyName || "___") + " (\u201cCompany\u201d) of " + (formData.companyLocation || "___, ___, ___") + ", to optimize employee social media interaction in a manner that conforms with the Company\u2019s policies and enhances professional communication, sharing, and collaboration with a wider audience.");
-
-    write("Social media, which should be broadly understood for purposes of this Contract, includes, without limitation, multimedia, social networking websites, user rating services, blogs, microblogs, wikis, chat rooms, electronic newsletters, or online forums for both professional and personal use, and other sites and services that permit users to share information with others.");
-
-    write("These guidelines are intended to assist employees with making appropriate decisions when engaging with social media tools. Employees should become familiar with any applicable employee policies and employee handbooks in conjunction with this Contract.");
-
-    write("\n");
-    write("1. SCOPE AND APPLICABILITY", 12, true);
-    write("This Contract applies to all of the Company\u2019s employees, contractors, and personnel acting in an official capacity on behalf of the Company when using social media for business purposes on the Company\u2019s internal \u201cIntranet\u201d (if applicable) or Internet.");
-    write("These policies apply only to work-related sites, issues, and interactions and are not intended to infringe upon personal online interaction outside of work.");
-    write((formData.scopeApplicability && formData.scopeApplicability + "") || "The Company acknowledges that protected speech cannot be censored; however, legally protected activity does not include personal complaints or offensive, demeaning, defamatory, abusive, or inappropriate remarks that may create a hostile work environment. The Company reserves the right to request that certain subjects be avoided and that certain posts be deleted if deemed inappropriate.");
-
-    write("\n");
-    write("2. GENERAL POLICIES", 12, true);
-    write("2.1 Approval");
-    write((formData.approvalProcess && formData.approvalProcess + "") || "Before beginning any social media project, employees must obtain approval from the appropriate Company agent(s) to use social media, social networking, or related services or tools to directly support or enhance activities undertaken in an official capacity by the Company.");
-
-    write("\n");
-    write("2.2 Policy on Blocking Social Media Sites");
-    write((formData.blockingPolicy && formData.blockingPolicy + "") || "The Company has chosen not to block social media sites. Employees accessing such sites are solely accountable for their actions online and should remain aware of potential security risks while using good judgment.");
-
-    write("\n");
-    write("3. CODE OF CONDUCT", 12, true);
-    write("3.1 Blogging");
-    write((formData.bloggingGuidelines && formData.bloggingGuidelines + "") || "Company-related blogs may be created or maintained only with permission from appropriate managers or supervisors. Personal blogs may not be worked on during business hours.");
-    write("Employees should:");
-    write("• provide worthwhile information and perspective,");
-    write("• engage in appropriate discussions,");
-    write("• include links to relevant blogs, articles, or posts.");
-    write("Employees commenting on any aspect of the Company must clearly identify themselves and include a disclaimer that their views are personal and not the views of the Company.");
-    write("Company logos or trademarks may not be used unless permission is granted. Confidentiality requirements apply to all posts. Employees should consult supervisors if unsure whether content is appropriate.");
-
-    write("\n");
-    write("3.2 Online Social Networking");
-    write((formData.onlineSocialNetworking && formData.onlineSocialNetworking + "") || "The Company maintains a presence on social networking sites to provide information, build contacts, and foster open dialogue. Employees authorized to post on behalf of the Company will be identified as ___.");
-    write("Personal social networking may be accessed during business hours only for professional purposes and only if it does not interfere with duties or productivity.");
-
-    write("\n");
-    write("3.4 Social Video (YouTube)");
-    write((formData.socialVideo && formData.socialVideo + "") || "The Company is not currently active on social video sites.");
-
-    write("\n");
-    write("3.5 Online Forums and Discussion Boards");
-    write((formData.forumsPolicy && formData.forumsPolicy + "") || "Employees may not discuss non-public information in any online forum, including those with privacy controls. Disclosure of sensitive, proprietary, or classified information is prohibited. Violations may result in disciplinary action.");
-
-    write("\n");
-    write("4. REVIEWING AND AMENDING THE TERMS", 12, true);
-    write((formData.reviewAmendment && formData.reviewAmendment + "") || "The proper Company agents may review this Contract periodically. The Company may revise and update this Contract to account for new or evolving social media platforms and trends that may affect the Company.");
-
-    write("\n");
-    write("5. VIOLATIONS", 12, true);
-    write((formData.violations && formData.violations + "") || "Any employee who violates this Contract may face disciplinary action, including termination, regardless of whether a law was violated. Employees are personally responsible and legally liable for the content they publish online.");
-    write("Employees may be sued for:");
-    write("• failing to disclose their relationship with the Company,");
-    write("• knowingly spreading false information,");
-    write("• posting defamatory, pornographic, proprietary, harassing, libelous, or hostile content.");
-
-    write("\n");
-    write("6. CONFIDENTIALITY", 12, true);
-    write((formData.confidentiality && formData.confidentiality + "") || "Employees must not disclose confidential or proprietary information belonging to the Company or to third parties. Information designated \u201cInternal Use Only\u201d or intended solely for internal consumption must not be shared on social media.");
-    write("Confidential information includes, but is not limited to:");
-    write("• business strategies,");
-    write("• trademarks,");
-    write("• upcoming product releases,");
-    write("• sales or financial information,");
-    write("• workforce size,");
-    write("• any non-public information.");
-    write("Employees must:");
-    write("• identify copyrighted materials,");
-    write("• obtain posting permission when needed,");
-    write("• give credit to original authors.");
-
-    write("\n");
-    write("7. OWNERSHIP", 12, true);
-    write((formData.ownership && formData.ownership + "") || "Employees must distinguish between content belonging to the Company and content belonging to the employee.");
-    write("• Posts created during nonworking hours unrelated to the Company typically belong to the employee.");
-    write("• Employees may \u201cquote\u201d or \u201crepost,\u201d but may not represent others\u2019 work as their own.");
-    write("• Copyright, privacy, and other offline laws apply online.");
-    write("Any social media contacts, including \u201cfollowers\u201d or \u201cfriends,\u201d acquired through accounts created on behalf of the Company are the property of the Company.");
-
-    write("\n");
-    write("8. TRANSPARENCY AND DISCLOSURES", 12, true);
-    write((formData.transparency && formData.transparency + "") || "Employees publicly sharing information about clients, partners, or other organizations must disclose their relationship with such parties.");
-    write("Employees may not discuss organizations or products online in exchange for money.");
-    write("Employees receiving products or services for review must disclose the benefit received.");
-
-    write("\n");
-    write("9. ONLINE DISCRIMINATION AND HARASSMENT", 12, true);
-    write((formData.discrimination && formData.discrimination + "") || "The Company prohibits all forms of online discrimination or harassment, including conduct based on race, creed, religion, color, age, disability, pregnancy, marital status, parental status, veteran or military status, domestic violence victim status, national origin, political affiliation, sex, genetic characteristics, or any other legally protected status.");
-    write("This list is not exhaustive. Local laws may provide additional protections.");
-
-    write("\n");
-    write("10. SIGNATORIES", 12, true);
-    write("IN WITNESS WHEREOF, the parties have executed this Social Media Contract as of the dates set forth below.");
-    write("For the Company:");
-    write(`Name: ${formData.companySignName || "___________________________"}`);
-    write(`Title: ${formData.companySignTitle || "____________________________"}`);
-    write(`Date: ${formData.companySignDate || "____________________________"}`);
-    write("For the Employee:");
-    write(`Name: ${formData.employeeSignName || "___________________________"}`);
-    write(`Date: ${formData.employeeSignDate || "____________________________"}`);
-
-    doc.save("Social_Media_Contract.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Commencement & Parties</h3>
-              <Label>Effective Date</Label>
-              <Input type="date" name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <Label className="pt-2">Company Name</Label>
-              <Input name="companyName" value={formData.companyName} onChange={handleChange} />
-              <Label>Company Location (city, state, country)</Label>
-              <Input name="companyLocation" value={formData.companyLocation} onChange={handleChange} />
-
-              <Label className="pt-2">Scope & Applicability (override)</Label>
-              <Textarea name="scopeApplicability" value={formData.scopeApplicability} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Policies & Code of Conduct</h3>
-              <Label>Approval Process</Label>
-              <Textarea name="approvalProcess" value={formData.approvalProcess} onChange={handleChange} />
-
-              <Label className="pt-2">Blocking Policy</Label>
-              <Textarea name="blockingPolicy" value={formData.blockingPolicy} onChange={handleChange} />
-
-              <Label className="pt-2">Blogging Guidelines</Label>
-              <Textarea name="bloggingGuidelines" value={formData.bloggingGuidelines} onChange={handleChange} />
-
-              <Label className="pt-2">Online Social Networking</Label>
-              <Textarea name="onlineSocialNetworking" value={formData.onlineSocialNetworking} onChange={handleChange} />
-
-              <Label className="pt-2">Social Video (YouTube)</Label>
-              <Textarea name="socialVideo" value={formData.socialVideo} onChange={handleChange} />
-
-              <Label className="pt-2">Forums & Discussion Boards</Label>
-              <Textarea name="forumsPolicy" value={formData.forumsPolicy} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Review, Violations & Confidentiality</h3>
-              <Label>Reviewing & Amendment Notes</Label>
-              <Textarea name="reviewAmendment" value={formData.reviewAmendment} onChange={handleChange} />
-
-              <Label className="pt-2">Violations (override)</Label>
-              <Textarea name="violations" value={formData.violations} onChange={handleChange} />
-
-              <Label className="pt-2">Confidentiality</Label>
-              <Textarea name="confidentiality" value={formData.confidentiality} onChange={handleChange} />
-
-              <Label className="pt-2">Ownership</Label>
-              <Textarea name="ownership" value={formData.ownership} onChange={handleChange} />
-
-              <Label className="pt-2">Transparency & Disclosures</Label>
-              <Textarea name="transparency" value={formData.transparency} onChange={handleChange} />
-
-              <Label className="pt-2">Online Discrimination & Harassment</Label>
-              <Textarea name="discrimination" value={formData.discrimination} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatories</h3>
-              <Label>Company Signatory - Name</Label>
-              <Input name="companySignName" value={formData.companySignName} onChange={handleChange} />
-              <Label>Company Signatory - Title</Label>
-              <Input name="companySignTitle" value={formData.companySignTitle} onChange={handleChange} />
-              <Label>Company Signatory - Date</Label>
-              <Input type="date" name="companySignDate" value={formData.companySignDate} onChange={handleChange} />
-
-              <hr />
-
-              <Label>Employee Signatory - Name</Label>
-              <Input name="employeeSignName" value={formData.employeeSignName} onChange={handleChange} />
-              <Label>Employee Signatory - Date</Label>
-              <Input type="date" name="employeeSignDate" value={formData.employeeSignDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
-
+export default function SocialMediaContract() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 4 ? (
-          <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Social Media Contract PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Social Media Contract"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="socialmediacontract"
+    />
   );
 }

@@ -1,362 +1,506 @@
 import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-const steps = [
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Parties",
+    label: "Jurisdiction",
     fields: [
-      { name: "vendor", label: "Vendor", type: "text", required: true },
-      { name: "client", label: "Client", type: "text", required: true },
-      { name: "serviceDescription", label: "Service Description", type: "textarea", required: true },
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
     ],
   },
   {
     label: "Agreement Details",
     fields: [
-      { name: "agreementDate", label: "Agreement Date", type: "date", required: true },
-      { name: "paymentTerms", label: "Payment Terms", type: "text" },
-      { name: "term", label: "Term", type: "text" },
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
     ],
   },
   {
     label: "Additional Terms",
     fields: [
-      { name: "additionalTerms", label: "Additional Terms", type: "textarea" },
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
     ],
   },
-];
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-import React from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, FileText, CheckCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { jsPDF } from "jspdf";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import CountryStateAPI from 'countries-states-cities';
-import { generateGuidePDF } from "@/utils/generateGuidePDF";
-
-// ...rest of the VendorAgreementForm implementation (no duplicate export default)...
-
-// Legacy code removed
-
-interface UserInfoStepProps {
-  onBack: () => void;
-  onGenerate: () => void;
-  documentType: string;
-  isGenerating: boolean;
-}
-
-const UserInfoStep: React.FC<UserInfoStepProps> = ({ onBack, onGenerate, documentType, isGenerating }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  const canGenerate = !!(name && email);
-
-  return (
-    <div className="space-y-4">
-      <div className="border rounded-lg p-4 space-y-3">
-        <h3 className="font-semibold">{documentType} Requestor Info</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div>
-            <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>Back</Button>
-        <Button onClick={() => onGenerate()} disabled={!canGenerate || isGenerating}>
-          {isGenerating ? "Generating..." : "Generate"}
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-
-interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
-interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }
-
-const getAllCountries = (): CountryData[] => CountryStateAPI.getAllCountries();
-const getStatesByCountry = (countryId: number): StateData[] => CountryStateAPI.getStatesOfCountry(countryId);
-const getStateName = (countryId: string, stateId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); if (!c) return stateId; const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId); return s?.name || stateId; };
-
-interface FormData {
-  country: string; state: string; effectiveDate: string;
-  vendorName: string; vendorCompany: string; vendorAddress: string; vendorPhone: string; vendorEmail: string;
-  clientName: string; clientCompany: string; clientAddress: string; clientPhone: string; clientEmail: string;
-  eventDate: string; eventLocation: string; eventType: string;
-  boothSize: string; boothNumber: string;
-  productsServices: string;
-  setupTime: string; teardownTime: string; eventStartTime: string; eventEndTime: string;
-  boothFee: string; commissionRate: string; paymentDue: string;
-  electricityNeeded: boolean; tableChairsNeeded: boolean;
-  insuranceRequired: boolean; liabilityInsurance: string;
-  cancellationPolicy: string;
-  additionalNotes: string;
-}
-
-const VendorAgreementForm = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    country: '', state: '', effectiveDate: '',
-    vendorName: '', vendorCompany: '', vendorAddress: '', vendorPhone: '', vendorEmail: '',
-    clientName: '', clientCompany: '', clientAddress: '', clientPhone: '', clientEmail: '',
-    eventDate: '', eventLocation: '', eventType: '',
-    boothSize: '', boothNumber: '',
-    productsServices: '',
-    setupTime: '', teardownTime: '', eventStartTime: '', eventEndTime: '',
-    boothFee: '', commissionRate: '', paymentDue: 'before event',
-    electricityNeeded: false, tableChairsNeeded: false,
-    insuranceRequired: true, liabilityInsurance: '1000000',
-    cancellationPolicy: '14',
-    additionalNotes: ''
-  });
-
-  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'country') setFormData(prev => ({ ...prev, state: '' }));
-  };
-
-  const getStatesForCountry = (country: string): string[] => {
-    if (!country) return [];
-    return getStatesByCountry(parseInt(country.split(':')[0])).map(s => `${s.id}:${s.name}`);
-  };
-
-  const canAdvance = (): boolean => {
-    switch (currentStep) {
-      case 1: return !!(formData.country && formData.state && formData.effectiveDate);
-      case 2: return !!(formData.vendorName && formData.clientName);
-      case 3: return !!(formData.eventDate && formData.eventLocation && formData.productsServices);
-      case 4: return !!(formData.boothFee);
-      case 5: return true;
-      default: return false;
-    }
-  };
-
-  const handleNext = () => { if (!canAdvance()) return; if (currentStep < 5) setCurrentStep(currentStep + 1); else setIsComplete(true); };
-  const handleBack = () => { if (currentStep > 1) setCurrentStep(currentStep - 1); };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const lh = 7; let y = 20;
-      const checkPage = (n: number = 25) => { if (y > 270 - n) { doc.addPage(); y = 20; } };
-
-      doc.setFont("helvetica", "bold"); doc.setFontSize(16);
-      doc.text("VENDOR AGREEMENT", pageWidth / 2, y, { align: "center" });
-      y += lh * 2;
-
-      doc.setFont("helvetica", "normal"); doc.setFontSize(11);
-      const intro = `This Vendor Agreement ("Agreement") is made and entered into as of ${formData.effectiveDate || '__________'} ("Effective Date"), by and between:`;
-      doc.splitTextToSize(intro, 180).forEach((line: string) => { doc.text(line, 15, y); y += lh; });
-      y += lh;
-
-      doc.setFont("helvetica", "bold"); doc.text("Vendor:", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Name: ${formData.vendorName || '__________'}`, 20, y); y += lh;
-      if (formData.vendorCompany) { doc.text(`Company: ${formData.vendorCompany}`, 20, y); y += lh; }
-      doc.text(`Address: ${formData.vendorAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.vendorPhone || '__________'} | Email: ${formData.vendorEmail || '__________'}`, 20, y); y += lh * 2;
-
-      doc.setFont("helvetica", "bold"); doc.text("Event Organizer:", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Name: ${formData.clientName || '__________'}`, 20, y); y += lh;
-      if (formData.clientCompany) { doc.text(`Company: ${formData.clientCompany}`, 20, y); y += lh; }
-      doc.text(`Address: ${formData.clientAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.clientPhone || '__________'} | Email: ${formData.clientEmail || '__________'}`, 20, y); y += lh * 2;
-
-      const sections = [
-        { title: "1. EVENT DETAILS", content: `Event Date: ${formData.eventDate || '__________'}\nEvent Type: ${formData.eventType || '__________'}\nLocation: ${formData.eventLocation || '__________'}` },
-        { title: "2. BOOTH INFORMATION", content: `Booth Size: ${formData.boothSize || '__________'}\n${formData.boothNumber ? `Booth Number: ${formData.boothNumber}` : ''}\nElectricity Required: ${formData.electricityNeeded ? 'Yes' : 'No'}\nTables/Chairs Needed: ${formData.tableChairsNeeded ? 'Yes' : 'No'}` },
-        { title: "3. PRODUCTS/SERVICES", content: formData.productsServices || 'Products/services to be offered as discussed.' },
-        { title: "4. SCHEDULE", content: `Setup Time: ${formData.setupTime || 'As designated by Organizer'}\nEvent Start: ${formData.eventStartTime || '__________'}\nEvent End: ${formData.eventEndTime || '__________'}\nTeardown: ${formData.teardownTime || 'Immediately following event'}` },
-        { title: "5. FEES AND PAYMENT", content: `Booth Fee: $${formData.boothFee || '__________'}\n${formData.commissionRate ? `Commission: ${formData.commissionRate}% of sales` : ''}\nPayment Due: ${formData.paymentDue || 'Before event'}` },
-        { title: "6. VENDOR RESPONSIBILITIES", content: "Vendor agrees to: Set up and maintain booth in professional manner, Comply with all applicable laws and regulations, Maintain proper licenses and permits, Staff booth during all event hours, Clean and vacate booth space after event, Carry appropriate insurance coverage." },
-        { title: "7. ORGANIZER RESPONSIBILITIES", content: "Organizer agrees to: Provide designated booth space, Provide agreed-upon amenities (electricity, tables, etc.), Market the event to attract attendees, Maintain safe event environment, Provide Vendor with event rules and guidelines." },
-        { title: "8. INSURANCE", content: formData.insuranceRequired ? `Vendor shall maintain general liability insurance of at least $${formData.liabilityInsurance || '1,000,000'} and provide proof of insurance upon request.` : "Insurance requirements as discussed." },
-        { title: "9. CONDUCT", content: "Vendor shall conduct business in professional manner, comply with all event rules, and not interfere with other vendors. Organizer reserves right to remove Vendor for inappropriate conduct." },
-        { title: "10. CANCELLATION", content: `Vendor cancellation: ${formData.cancellationPolicy || '14'} days notice required for full refund. Less notice may result in partial or no refund.\nOrganizer cancellation: Full refund of booth fees.` },
-        { title: "11. LIABILITY", content: "Vendor assumes full responsibility for their merchandise, equipment, and activities. Organizer is not liable for theft, damage, or loss of Vendor property." },
-        { title: "12. GOVERNING LAW", content: `This Agreement shall be governed by the laws of ${formData.state ? getStateName(formData.country.split(':')[0], formData.state.split(':')[0]) : '__________'}.` }
-      ];
-
-      sections.forEach(s => {
-        checkPage(30);
-        doc.setFont("helvetica", "bold"); doc.text(s.title, 15, y); y += lh;
-        doc.setFont("helvetica", "normal");
-        doc.splitTextToSize(s.content, 180).forEach((line: string) => { checkPage(); doc.text(line, 15, y); y += lh; });
-        y += 3;
-      });
-
-      if (formData.additionalNotes) {
-        checkPage(30);
-        doc.setFont("helvetica", "bold"); doc.text("13. ADDITIONAL TERMS", 15, y); y += lh;
-        doc.setFont("helvetica", "normal");
-        doc.splitTextToSize(formData.additionalNotes, 180).forEach((line: string) => { checkPage(); doc.text(line, 15, y); y += lh; });
-        y += 3;
-      }
-
-      checkPage(50);
-      doc.setFont("helvetica", "bold"); doc.text("SIGNATURES", 15, y); y += lh * 2;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Vendor: ${formData.vendorName || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y); y += lh * 2;
-      doc.text(`Event Organizer: ${formData.clientName || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y);
-
-      const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
-      doc.save(`vendor_agreement_${timestamp}.pdf`);
-      const guidePDF = generateGuidePDF({ documentId: "vendor-agreement", documentTitle: "Vendor Agreement" });
-      setTimeout(() => guidePDF.save(`vendor_guide_${timestamp}.pdf`), 500);
-      toast.success("Vendor Agreement and Guide PDF generated!");
-    } catch (error) { console.error("Error:", error); toast.error("Failed to generate PDF"); }
-    finally { setIsGeneratingPDF(false); }
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Country</Label><Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getAllCountries().map((c) => (<SelectItem key={c.id} value={`${c.id}:${c.name}`}>{c.name}</SelectItem>))}</SelectContent></Select></div>
-              <div><Label>State/Province</Label><Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getStatesForCountry(formData.country).map((s) => (<SelectItem key={s} value={s}>{s.split(':')[1]}</SelectItem>))}</SelectContent></Select></div>
-            </div>
-            <div><Label>Agreement Date</Label><Input type="date" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} /></div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Vendor Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Vendor Name *</Label><Input value={formData.vendorName} onChange={(e) => handleInputChange('vendorName', e.target.value)} /></div>
-                <div><Label>Business Name</Label><Input value={formData.vendorCompany} onChange={(e) => handleInputChange('vendorCompany', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.vendorAddress} onChange={(e) => handleInputChange('vendorAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.vendorPhone} onChange={(e) => handleInputChange('vendorPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.vendorEmail} onChange={(e) => handleInputChange('vendorEmail', e.target.value)} /></div>
-              </div>
-            </div>
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Event Organizer Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Organizer Name *</Label><Input value={formData.clientName} onChange={(e) => handleInputChange('clientName', e.target.value)} /></div>
-                <div><Label>Organization Name</Label><Input value={formData.clientCompany} onChange={(e) => handleInputChange('clientCompany', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} /></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Phone</Label><Input value={formData.clientPhone} onChange={(e) => handleInputChange('clientPhone', e.target.value)} /></div>
-                <div><Label>Email</Label><Input type="email" value={formData.clientEmail} onChange={(e) => handleInputChange('clientEmail', e.target.value)} /></div>
-              </div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Event Date *</Label><Input type="date" value={formData.eventDate} onChange={(e) => handleInputChange('eventDate', e.target.value)} /></div>
-              <div><Label>Event Type</Label><Select value={formData.eventType} onValueChange={(v) => handleInputChange('eventType', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent><SelectItem value="Trade Show">Trade Show</SelectItem><SelectItem value="Festival">Festival</SelectItem><SelectItem value="Farmers Market">Farmers Market</SelectItem><SelectItem value="Craft Fair">Craft Fair</SelectItem><SelectItem value="Food Festival">Food Festival</SelectItem><SelectItem value="Convention">Convention</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent></Select></div>
-            </div>
-            <div><Label>Event Location *</Label><Textarea placeholder="Venue name and address" value={formData.eventLocation} onChange={(e) => handleInputChange('eventLocation', e.target.value)} /></div>
-            <div><Label>Products/Services to be Offered *</Label><Textarea placeholder="Describe what you will be selling or offering..." value={formData.productsServices} onChange={(e) => handleInputChange('productsServices', e.target.value)} rows={3} /></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Booth Size</Label><Input placeholder="e.g., 10x10 ft" value={formData.boothSize} onChange={(e) => handleInputChange('boothSize', e.target.value)} /></div>
-              <div><Label>Booth Number</Label><Input value={formData.boothNumber} onChange={(e) => handleInputChange('boothNumber', e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div><Label>Setup Time</Label><Input type="time" value={formData.setupTime} onChange={(e) => handleInputChange('setupTime', e.target.value)} /></div>
-              <div><Label>Event Start</Label><Input type="time" value={formData.eventStartTime} onChange={(e) => handleInputChange('eventStartTime', e.target.value)} /></div>
-              <div><Label>Event End</Label><Input type="time" value={formData.eventEndTime} onChange={(e) => handleInputChange('eventEndTime', e.target.value)} /></div>
-              <div><Label>Teardown Time</Label><Input type="time" value={formData.teardownTime} onChange={(e) => handleInputChange('teardownTime', e.target.value)} /></div>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Booth Fee ($) *</Label><Input type="number" value={formData.boothFee} onChange={(e) => handleInputChange('boothFee', e.target.value)} /></div>
-              <div><Label>Commission Rate (%)</Label><Input type="number" placeholder="Optional" value={formData.commissionRate} onChange={(e) => handleInputChange('commissionRate', e.target.value)} /></div>
-            </div>
-            <div><Label>Payment Due</Label><Select value={formData.paymentDue} onValueChange={(v) => handleInputChange('paymentDue', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="upon signing">Upon Signing</SelectItem><SelectItem value="before event">Before Event</SelectItem><SelectItem value="day of event">Day of Event</SelectItem><SelectItem value="after event">After Event</SelectItem></SelectContent></Select></div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2"><Checkbox id="electricity" checked={formData.electricityNeeded} onCheckedChange={(c) => handleInputChange('electricityNeeded', !!c)} /><Label htmlFor="electricity">Electricity needed</Label></div>
-              <div className="flex items-center space-x-2"><Checkbox id="tables" checked={formData.tableChairsNeeded} onCheckedChange={(c) => handleInputChange('tableChairsNeeded', !!c)} /><Label htmlFor="tables">Tables/chairs needed</Label></div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="insurance" checked={formData.insuranceRequired} onCheckedChange={(c) => handleInputChange('insuranceRequired', !!c)} />
-              <Label htmlFor="insurance">Insurance required</Label>
-              {formData.insuranceRequired && <div className="flex-1 ml-4"><Label>Minimum Coverage ($)</Label><Input type="number" value={formData.liabilityInsurance} onChange={(e) => handleInputChange('liabilityInsurance', e.target.value)} /></div>}
-            </div>
-            <div><Label>Cancellation Notice (days)</Label><Select value={formData.cancellationPolicy} onValueChange={(v) => handleInputChange('cancellationPolicy', v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="7">7 days</SelectItem><SelectItem value="14">14 days</SelectItem><SelectItem value="30">30 days</SelectItem></SelectContent></Select></div>
-            <div><Label>Additional Notes</Label><Textarea value={formData.additionalNotes} onChange={(e) => handleInputChange('additionalNotes', e.target.value)} /></div>
-          </div>
-        );
-      case 5:
-        return <UserInfoStep onBack={handleBack} onGenerate={() => setIsComplete(true)} documentType="Vendor Agreement" isGenerating={isGeneratingPDF} />;
-      default: return null;
-    }
-  };
-
-  if (isComplete) {
-    return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2"><CheckCircle className="h-6 w-6" />Vendor Agreement Ready</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="border rounded-lg p-4 text-black">
-            <h3 className="font-semibold mb-4">Summary</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div><p><strong>Vendor:</strong> {formData.vendorName}</p><p><strong>Organizer:</strong> {formData.clientName}</p><p><strong>Event Date:</strong> {formData.eventDate}</p></div>
-              <div><p><strong>Event Type:</strong> {formData.eventType}</p><p><strong>Booth Fee:</strong> ${formData.boothFee}</p><p><strong>Booth Size:</strong> {formData.boothSize}</p></div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between p-6 bg-gray-50">
-          <Button variant="outline" onClick={() => setIsComplete(false)}><ArrowLeft className="mr-2 h-4 w-4" />Edit</Button>
-          <Button onClick={generatePDF} disabled={isGeneratingPDF} className="bg-teal-500 hover:bg-teal-600">{isGeneratingPDF ? "Generating..." : "Generate PDF"}<FileText className="ml-2 h-4 w-4" /></Button>
-        </CardFooter>
-      </Card>
-    );
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Vendor Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
   }
-
-  const stepTitles = ["", "Location", "Parties", "Event Details", "Fees & Terms", "Your Info"];
-  return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-t-lg">
-        <CardTitle>Vendor Agreement</CardTitle>
-        <CardDescription className="text-teal-100">Step {currentStep} of 5: {stepTitles[currentStep]}</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">{renderStep()}</CardContent>
-      <CardFooter className="flex justify-between p-6 bg-gray-50">
-        <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-        <Button onClick={handleNext} disabled={!canAdvance()} className="bg-teal-500 hover:bg-teal-600">{currentStep === 5 ? "Complete" : "Next"}{currentStep === 5 ? <Send className="ml-2 h-4 w-4" /> : <ArrowRight className="ml-2 h-4 w-4" />}</Button>
-      </CardFooter>
-    </Card>
-  );
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("vendor_agreement.pdf");
 };
 
-export default VendorAgreementForm;
+export default function VendorAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Vendor Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="vendoragreement"
+    />
+  );
+}

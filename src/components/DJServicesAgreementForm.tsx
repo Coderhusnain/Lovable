@@ -1,250 +1,506 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import CountryStateAPI from 'countries-states-cities';
-import UserInfoStep from "@/components/UserInfoStep";
-import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
-interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
-interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const getAllCountries = (): CountryData[] => CountryStateAPI.getAllCountries();
-const getStatesByCountry = (countryId: number): StateData[] => CountryStateAPI.getStatesOfCountry(countryId);
-const getStateName = (countryId: string, stateId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); if (!c) return stateId; const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId); return s?.name || stateId; };
-
-interface FormData {
-  country: string; state: string; effectiveDate: string;
-  clientName: string; clientAddress: string; clientPhone: string; clientEmail: string;
-  djName: string; djAddress: string; djPhone: string; djEmail: string;
-  eventDate: string; eventLocation: string; eventStartTime: string; eventEndTime: string; eventType: string;
-  totalFee: string; depositAmount: string; depositDueDate: string; balanceDueDate: string;
-  musicPreferences: string; doNotPlayList: string; announcements: string;
-  equipmentIncluded: string; additionalServices: string;
-  cancellationDays: string;
-}
-
-const DJServicesAgreementForm = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    country: '', state: '', effectiveDate: '',
-    clientName: '', clientAddress: '', clientPhone: '', clientEmail: '',
-    djName: '', djAddress: '', djPhone: '', djEmail: '',
-    eventDate: '', eventLocation: '', eventStartTime: '', eventEndTime: '', eventType: '',
-    totalFee: '', depositAmount: '', depositDueDate: '', balanceDueDate: '',
-    musicPreferences: '', doNotPlayList: '', announcements: '',
-    equipmentIncluded: '', additionalServices: '',
-    cancellationDays: '14'
-  });
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (field === 'country') setFormData(prev => ({ ...prev, state: '' }));
-  };
-
-  const getStatesForCountry = (country: string): string[] => {
-    if (!country) return [];
-    return getStatesByCountry(parseInt(country.split(':')[0])).map(s => `${s.id}:${s.name}`);
-  };
-
-  const canAdvance = (): boolean => {
-    switch (currentStep) {
-      case 1: return !!(formData.country && formData.state && formData.effectiveDate);
-      case 2: return !!(formData.clientName && formData.clientAddress && formData.djName && formData.djAddress);
-      case 3: return !!(formData.eventDate && formData.eventLocation && formData.eventStartTime && formData.eventEndTime);
-      case 4: return !!(formData.totalFee && formData.depositAmount);
-      case 5: return true;
-      default: return false;
-    }
-  };
-
-  const handleNext = () => { if (!canAdvance()) return; if (currentStep < 5) setCurrentStep(currentStep + 1); else setIsComplete(true); };
-  const handleBack = () => { if (currentStep > 1) setCurrentStep(currentStep - 1); };
-
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const lh = 7; let y = 20;
-      const checkPage = (n: number = 25) => { if (y > 270 - n) { doc.addPage(); y = 20; } };
-
-      doc.setFont("helvetica", "bold"); doc.setFontSize(16);
-      doc.text("DJ SERVICES AGREEMENT", pageWidth / 2, y, { align: "center" });
-      y += lh * 2;
-
-      doc.setFont("helvetica", "normal"); doc.setFontSize(11);
-      const intro = `This DJ Services Agreement ("Agreement") is made and entered into as of ${formData.effectiveDate || '__________'} ("Effective Date"), by and between:`;
-      doc.splitTextToSize(intro, 180).forEach((line: string) => { doc.text(line, 15, y); y += lh; });
-      y += lh;
-
-      doc.setFont("helvetica", "bold"); doc.text("Client:", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Name: ${formData.clientName || '__________'}`, 20, y); y += lh;
-      doc.text(`Address: ${formData.clientAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.clientPhone || '__________'} | Email: ${formData.clientEmail || '__________'}`, 20, y); y += lh * 2;
-
-      doc.setFont("helvetica", "bold"); doc.text("DJ/Provider:", 15, y); y += lh;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Name: ${formData.djName || '__________'}`, 20, y); y += lh;
-      doc.text(`Address: ${formData.djAddress || '__________'}`, 20, y); y += lh;
-      doc.text(`Phone: ${formData.djPhone || '__________'} | Email: ${formData.djEmail || '__________'}`, 20, y); y += lh * 2;
-
-      const sections = [
-        { title: "1. EVENT DETAILS", content: `Event Type: ${formData.eventType || 'Private Event'}\nDate: ${formData.eventDate || '__________'}\nLocation: ${formData.eventLocation || '__________'}\nStart Time: ${formData.eventStartTime || '__________'}\nEnd Time: ${formData.eventEndTime || '__________'}` },
-        { title: "2. SERVICES PROVIDED", content: "The DJ agrees to provide professional disc jockey services including: Music selection and mixing, Sound system setup and operation, MC/announcement services as requested, Professional lighting (if included), Setup and breakdown of equipment." },
-        { title: "3. EQUIPMENT", content: `Equipment included: ${formData.equipmentIncluded || 'Professional DJ equipment, speakers, microphone, and lighting as standard package.'}` },
-        { title: "4. MUSIC PREFERENCES", content: `Preferred genres/songs: ${formData.musicPreferences || 'To be discussed'}\nDo Not Play List: ${formData.doNotPlayList || 'None specified'}\nSpecial Announcements: ${formData.announcements || 'None specified'}` },
-        { title: "5. PAYMENT TERMS", content: `Total Fee: $${formData.totalFee || '__________'}\nDeposit Required: $${formData.depositAmount || '__________'} (due by ${formData.depositDueDate || 'upon signing'})\nBalance Due: By ${formData.balanceDueDate || 'event date'}\nPayment methods accepted: Cash, Check, or Electronic Transfer` },
-        { title: "6. CANCELLATION POLICY", content: `Client cancellation with less than ${formData.cancellationDays || '14'} days notice: Deposit is non-refundable.\nDJ cancellation: Full refund of all payments received, DJ will make reasonable efforts to find replacement.` },
-        { title: "7. LIABILITY", content: "The DJ shall not be held liable for any injury to guests or damage to property except as directly caused by DJ's gross negligence. Client is responsible for providing a safe environment for equipment setup." },
-        { title: "8. FORCE MAJEURE", content: "Neither party shall be liable for failure to perform due to circumstances beyond their control including natural disasters, government actions, or venue closures." },
-        { title: "9. GOVERNING LAW", content: `This Agreement shall be governed by the laws of ${formData.state ? getStateName(formData.country.split(':')[0], formData.state.split(':')[0]) : '__________'}.` }
-      ];
-
-      sections.forEach(s => {
-        checkPage(30);
-        doc.setFont("helvetica", "bold"); doc.text(s.title, 15, y); y += lh;
-        doc.setFont("helvetica", "normal");
-        doc.splitTextToSize(s.content, 180).forEach((line: string) => { checkPage(); doc.text(line, 15, y); y += lh; });
-        y += 3;
-      });
-
-      checkPage(50);
-      doc.setFont("helvetica", "bold"); doc.text("SIGNATURES", 15, y); y += lh * 2;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Client: ${formData.clientName || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y); y += lh * 2;
-      doc.text(`DJ: ${formData.djName || '__________'}`, 15, y); y += lh;
-      doc.text("Signature: ____________________________ Date: ____________", 15, y);
-
-      const timestamp = format(new Date(), 'yyyyMMdd_HHmmss');
-      doc.save(`dj_services_agreement_${timestamp}.pdf`);
-      const guidePDF = generateGuidePDF({ documentId: "dj-services-agreement", documentTitle: "DJ Services Agreement" });
-      setTimeout(() => guidePDF.save(`dj_services_guide_${timestamp}.pdf`), 500);
-      toast.success("DJ Services Agreement and Guide PDF generated!");
-    } catch (error) { console.error("Error:", error); toast.error("Failed to generate PDF"); }
-    finally { setIsGeneratingPDF(false); }
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Country</Label><Select value={formData.country} onValueChange={(v) => handleInputChange('country', v)}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getAllCountries().map((c) => (<SelectItem key={c.id} value={`${c.id}:${c.name}`}>{c.name}</SelectItem>))}</SelectContent></Select></div>
-              <div><Label>State/Province</Label><Select value={formData.state} onValueChange={(v) => handleInputChange('state', v)} disabled={!formData.country}><SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger><SelectContent>{getStatesForCountry(formData.country).map((s) => (<SelectItem key={s} value={s}>{s.split(':')[1]}</SelectItem>))}</SelectContent></Select></div>
-            </div>
-            <div><Label>Effective Date</Label><Input type="date" value={formData.effectiveDate} onChange={(e) => handleInputChange('effectiveDate', e.target.value)} /></div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">Client Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Full Name</Label><Input value={formData.clientName} onChange={(e) => handleInputChange('clientName', e.target.value)} /></div>
-                <div><Label>Phone</Label><Input value={formData.clientPhone} onChange={(e) => handleInputChange('clientPhone', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.clientAddress} onChange={(e) => handleInputChange('clientAddress', e.target.value)} /></div>
-              <div><Label>Email</Label><Input type="email" value={formData.clientEmail} onChange={(e) => handleInputChange('clientEmail', e.target.value)} /></div>
-            </div>
-            <div className="border rounded-lg p-4 space-y-3">
-              <h3 className="font-semibold">DJ Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div><Label>Name/Business Name</Label><Input value={formData.djName} onChange={(e) => handleInputChange('djName', e.target.value)} /></div>
-                <div><Label>Phone</Label><Input value={formData.djPhone} onChange={(e) => handleInputChange('djPhone', e.target.value)} /></div>
-              </div>
-              <div><Label>Address</Label><Textarea value={formData.djAddress} onChange={(e) => handleInputChange('djAddress', e.target.value)} /></div>
-              <div><Label>Email</Label><Input type="email" value={formData.djEmail} onChange={(e) => handleInputChange('djEmail', e.target.value)} /></div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div><Label>Event Type</Label><Select value={formData.eventType} onValueChange={(v) => handleInputChange('eventType', v)}><SelectTrigger><SelectValue placeholder="Select event type..." /></SelectTrigger><SelectContent><SelectItem value="Wedding">Wedding</SelectItem><SelectItem value="Birthday Party">Birthday Party</SelectItem><SelectItem value="Corporate Event">Corporate Event</SelectItem><SelectItem value="Anniversary">Anniversary</SelectItem><SelectItem value="Graduation">Graduation</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent></Select></div>
-            <div><Label>Event Date</Label><Input type="date" value={formData.eventDate} onChange={(e) => handleInputChange('eventDate', e.target.value)} /></div>
-            <div><Label>Event Location</Label><Textarea placeholder="Full venue address" value={formData.eventLocation} onChange={(e) => handleInputChange('eventLocation', e.target.value)} /></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Start Time</Label><Input type="time" value={formData.eventStartTime} onChange={(e) => handleInputChange('eventStartTime', e.target.value)} /></div>
-              <div><Label>End Time</Label><Input type="time" value={formData.eventEndTime} onChange={(e) => handleInputChange('eventEndTime', e.target.value)} /></div>
-            </div>
-            <div><Label>Music Preferences</Label><Textarea placeholder="Preferred genres, specific songs, etc." value={formData.musicPreferences} onChange={(e) => handleInputChange('musicPreferences', e.target.value)} /></div>
-            <div><Label>Do Not Play List</Label><Textarea placeholder="Songs or genres to avoid" value={formData.doNotPlayList} onChange={(e) => handleInputChange('doNotPlayList', e.target.value)} /></div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Total Fee ($)</Label><Input type="number" value={formData.totalFee} onChange={(e) => handleInputChange('totalFee', e.target.value)} /></div>
-              <div><Label>Deposit Amount ($)</Label><Input type="number" value={formData.depositAmount} onChange={(e) => handleInputChange('depositAmount', e.target.value)} /></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><Label>Deposit Due Date</Label><Input type="date" value={formData.depositDueDate} onChange={(e) => handleInputChange('depositDueDate', e.target.value)} /></div>
-              <div><Label>Balance Due Date</Label><Input type="date" value={formData.balanceDueDate} onChange={(e) => handleInputChange('balanceDueDate', e.target.value)} /></div>
-            </div>
-            <div><Label>Equipment Included</Label><Textarea placeholder="List equipment provided" value={formData.equipmentIncluded} onChange={(e) => handleInputChange('equipmentIncluded', e.target.value)} /></div>
-            <div><Label>Cancellation Notice (Days)</Label><Input type="number" value={formData.cancellationDays} onChange={(e) => handleInputChange('cancellationDays', e.target.value)} /></div>
-          </div>
-        );
-      case 5:
-        return <UserInfoStep onBack={handleBack} onGenerate={() => setIsComplete(true)} documentType="DJ Services Agreement" isGenerating={isGeneratingPDF} />;
-      default: return null;
-    }
-  };
-
-  if (isComplete) {
-    return (
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2"><CheckCircle className="h-6 w-6" />DJ Services Agreement Ready</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="border rounded-lg p-4 text-black">
-            <h3 className="font-semibold mb-4">Summary</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div><p><strong>Client:</strong> {formData.clientName}</p><p><strong>DJ:</strong> {formData.djName}</p><p><strong>Event:</strong> {formData.eventType}</p></div>
-              <div><p><strong>Date:</strong> {formData.eventDate}</p><p><strong>Fee:</strong> ${formData.totalFee}</p><p><strong>Deposit:</strong> ${formData.depositAmount}</p></div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between p-6 bg-gray-50">
-          <Button variant="outline" onClick={() => setIsComplete(false)}><ArrowLeft className="mr-2 h-4 w-4" />Edit</Button>
-          <Button onClick={generatePDF} disabled={isGeneratingPDF} className="bg-orange-500 hover:bg-orange-600">{isGeneratingPDF ? "Generating..." : "Generate PDF"}<FileText className="ml-2 h-4 w-4" /></Button>
-        </CardFooter>
-      </Card>
-    );
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("D J Services Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
   }
-
-  const stepTitles = ["", "Location", "Parties", "Event Details", "Payment", "Your Info"];
-  return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
-        <CardTitle>DJ Services Agreement</CardTitle>
-        <CardDescription className="text-orange-100">Step {currentStep} of 5: {stepTitles[currentStep]}</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6">{renderStep()}</CardContent>
-      <CardFooter className="flex justify-between p-6 bg-gray-50">
-        <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>
-        <Button onClick={handleNext} disabled={!canAdvance()} className="bg-orange-500 hover:bg-orange-600">{currentStep === 5 ? "Complete" : "Next"}{currentStep === 5 ? <Send className="ml-2 h-4 w-4" /> : <ArrowRight className="ml-2 h-4 w-4" />}</Button>
-      </CardFooter>
-    </Card>
-  );
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("d_j_services_agreement.pdf");
 };
 
-export default DJServicesAgreementForm;
+export default function DJServicesAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="D J Services Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="djservicesagreement"
+    />
+  );
+}

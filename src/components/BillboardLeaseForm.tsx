@@ -1,197 +1,506 @@
-import React, { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import jsPDF from "jspdf";
-import { toast } from "sonner"; // Assuming you use sonner or similar
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-// 1. Define the Data Structure
-interface FormData {
-  agreementDate: string;
-  landlordName: string;
-  billboardOwnerName: string;
-  landlordAddress: string;
-  billboardOwnerAddress: string;
-  physicalAddress: string;
-  legalDescription: string;
-  startDate: string;
-  endDate: string;
-  numberOfBillboards: string;
-  yearlyRent: string;
-  monthlyRent: string;
-  paymentAddress: string;
-  maintenanceDays: string;
-  curePeriodDays: string;
-  billboardOwnerNoticeDays: string;
-  governingState: string;
-  landlordSignature: string;
-  landlordSignatureDate: string;
-  billboardOwnerSignature: string;
-  billboardOwnerSignatureDate: string;
-  notaryName: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const initialFormData: FormData = {
-  agreementDate: "",
-  landlordName: "",
-  billboardOwnerName: "",
-  landlordAddress: "",
-  billboardOwnerAddress: "",
-  physicalAddress: "",
-  legalDescription: "",
-  startDate: "",
-  endDate: "",
-  numberOfBillboards: "one",
-  yearlyRent: "",
-  monthlyRent: "",
-  paymentAddress: "",
-  maintenanceDays: "30",
-  curePeriodDays: "30",
-  billboardOwnerNoticeDays: "60",
-  governingState: "",
-  landlordSignature: "",
-  landlordSignatureDate: "",
-  billboardOwnerSignature: "",
-  billboardOwnerSignatureDate: "",
-  notaryName: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Billboard Lease", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("billboard_lease.pdf");
 };
 
-export default function BillboardLeaseForm() {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  // Helper to update state
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // 2. PDF Generation Logic (Moved from the old file into onFinish)
-  const generatePDF = () => {
-    setIsGenerating(true);
-    const doc = new jsPDF();
-    let y = 20;
-    const margin = 20;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const maxLineWidth = pageWidth - margin * 2;
-    const fontSize = 12;
-
-    const addText = (text: string, size = 12, isBold = false) => {
-      doc.setFontSize(size);
-      doc.setFont("helvetica", isBold ? "bold" : "normal");
-      const lines = doc.splitTextToSize(text || "", maxLineWidth);
-      doc.text(lines, margin, y);
-      y += (lines.length * size * 0.4) + 6;
-    };
-
-    // --- PDF CONTENT ---
-    addText("BILLBOARD LEASE AGREEMENT", 16, true);
-    
-    addText(`This Billboard Lease Agreement ("Agreement") is made and entered into as of ${formData.agreementDate}, by and between ${formData.landlordName}, having a principal address at ${formData.landlordAddress} ("Landlord"), and ${formData.billboardOwnerName}, having a principal address at ${formData.billboardOwnerAddress} ("Billboard Owner").`);
-    
-    addText("1. Lease", 12, true);
-    addText(`Landlord hereby leases to Billboard Owner a portion of the property located at ${formData.physicalAddress}, legally described as ${formData.legalDescription}.`);
-    
-    addText("2. Term", 12, true);
-    addText(`The term shall commence on ${formData.startDate} and expire on ${formData.endDate}.`);
-    
-    addText("3. Rent", 12, true);
-    addText(`Rent is $${formData.yearlyRent} per year, payable in monthly installments of $${formData.monthlyRent}. Payments sent to: ${formData.paymentAddress}.`);
-    
-    addText("4. Use of Premises", 12, true);
-    addText(`Billboard Owner may maintain ${formData.numberOfBillboards} billboard(s) on the Premises.`);
-    
-    if (y > 250) { doc.addPage(); y = 20; }
-    
-    addText("5. Maintenance", 12, true);
-    addText(`Billboard Owner must maintain the Display. Failure to repair within ${formData.maintenanceDays} days of notice constitutes a breach.`);
-
-    addText("6. Termination", 12, true);
-    addText(`Landlord may terminate if breach is not cured within ${formData.curePeriodDays} days. Billboard Owner may terminate with ${formData.billboardOwnerNoticeDays} days notice if laws restrict usage.`);
-
-    addText("7. Governing Law", 12, true);
-    addText(`Governed by the laws of the State of ${formData.governingState}.`);
-
-    addText("IN WITNESS WHEREOF, the parties have executed this Agreement:", 12, true);
-    addText(`Landlord: ${formData.landlordSignature} (Date: ${formData.landlordSignatureDate})`);
-    addText(`Billboard Owner: ${formData.billboardOwnerSignature} (Date: ${formData.billboardOwnerSignatureDate})`);
-    
-    addText(`Notarized by: ${formData.notaryName}`);
-
-    doc.save("Billboard_Lease_Agreement.pdf");
-    setIsGenerating(false);
-    toast.success("PDF Generated Successfully!");
-  };
-
-  // 3. Wizard Steps Configuration
-  const steps = [
-    {
-      label: "Parties & Date",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Agreement Date</Label><Input type="date" name="agreementDate" value={formData.agreementDate} onChange={handleChange} /></div>
-          <div><Label>Landlord Name</Label><Input name="landlordName" value={formData.landlordName} onChange={handleChange} /></div>
-          <div><Label>Landlord Address</Label><Textarea name="landlordAddress" value={formData.landlordAddress} onChange={handleChange} /></div>
-          <div><Label>Billboard Owner Name</Label><Input name="billboardOwnerName" value={formData.billboardOwnerName} onChange={handleChange} /></div>
-          <div><Label>Billboard Owner Address</Label><Textarea name="billboardOwnerAddress" value={formData.billboardOwnerAddress} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Property & Term",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Physical Address</Label><Input name="physicalAddress" value={formData.physicalAddress} onChange={handleChange} /></div>
-          <div><Label>Legal Description</Label><Textarea name="legalDescription" value={formData.legalDescription} onChange={handleChange} placeholder="Lot number, block, subdivision..." /></div>
-          <div><Label>Lease Start Date</Label><Input type="date" name="startDate" value={formData.startDate} onChange={handleChange} /></div>
-          <div><Label>Lease End Date</Label><Input type="date" name="endDate" value={formData.endDate} onChange={handleChange} /></div>
-          <div><Label>Number of Billboards</Label><Input name="numberOfBillboards" value={formData.numberOfBillboards} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Rent & Payment",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Yearly Rent ($)</Label><Input name="yearlyRent" value={formData.yearlyRent} onChange={handleChange} /></div>
-          <div><Label>Monthly Rent ($)</Label><Input name="monthlyRent" value={formData.monthlyRent} onChange={handleChange} /></div>
-          <div><Label>Payment Address</Label><Textarea name="paymentAddress" value={formData.paymentAddress} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Terms & Conditions",
-      content: (
-        <div className="space-y-3">
-          <div><Label>Maintenance Response (Days)</Label><Input name="maintenanceDays" value={formData.maintenanceDays} onChange={handleChange} /></div>
-          <div><Label>Breach Cure Period (Days)</Label><Input name="curePeriodDays" value={formData.curePeriodDays} onChange={handleChange} /></div>
-          <div><Label>Owner Notice Period (Days)</Label><Input name="billboardOwnerNoticeDays" value={formData.billboardOwnerNoticeDays} onChange={handleChange} /></div>
-          <div><Label>Governing State</Label><Input name="governingState" value={formData.governingState} onChange={handleChange} /></div>
-        </div>
-      )
-    },
-    {
-      label: "Signatures",
-      content: (
-        <div className="space-y-3">
-           <div className="grid grid-cols-2 gap-4">
-             <div><Label>Landlord Signature</Label><Input name="landlordSignature" value={formData.landlordSignature} onChange={handleChange} /></div>
-             <div><Label>Date</Label><Input type="date" name="landlordSignatureDate" value={formData.landlordSignatureDate} onChange={handleChange} /></div>
-             <div><Label>Owner Signature</Label><Input name="billboardOwnerSignature" value={formData.billboardOwnerSignature} onChange={handleChange} /></div>
-             <div><Label>Date</Label><Input type="date" name="billboardOwnerSignatureDate" value={formData.billboardOwnerSignatureDate} onChange={handleChange} /></div>
-           </div>
-           <div><Label>Notary Public Name</Label><Input name="notaryName" value={formData.notaryName} onChange={handleChange} /></div>
-        </div>
-      )
-    }
-  ];
-
+export default function BillboardLease() {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Billboard Lease Agreement</h2>
-      <FormWizard steps={steps} onFinish={generatePDF} />
-      {isGenerating && <p className="text-center text-sm text-gray-500 mt-2">Generating PDF...</p>}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Billboard Lease"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="billboardlease"
+    />
   );
 }

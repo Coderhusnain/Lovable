@@ -1,394 +1,506 @@
-import React, { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import jsPDF from "jspdf";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  // Referral Agreement
-  buyerName: string;
-  buyerAddress: string;
-  referrerName: string;
-  referrerAddress: string;
-  industry: string;
-  complianceNotes: string;
-  termEndDate: string;
-  terminationNoticeDays: string;
-  exclusivity: string;
-  feesPercent: string;
-  feeCalculationNotes: string;
-  invoicePaymentDays: string;
-  paymentMethods: string;
-  nonCircumventionNotes: string;
-  confidentialityNotes: string;
-  disputeResolution: string;
-  governingLawReferral: string;
-  attorneysFeesClause: string;
-  // Warranty Agreement
-  warrantyEffectiveDate: string;
-  manufacturerName: string;
-  manufacturerAddress: string;
-  customerName: string;
-  customerAddress: string;
-  productName: string;
-  productType: string;
-  modelNumber: string;
-  serialNumber: string;
-  warrantyPeriod: string;
-  warrantyStartDate: string;
-  warrantyScope: string;
-  warrantyExclusions: string;
-  warrantyVoidConditions: string;
-  warrantyServiceProcedure: string;
-  warrantyRemedies: string;
-  warrantyAdr: string;
-  warrantyGoverningLaw: string;
-  // Signatories
-  buyerSignName: string;
-  buyerSignDesignation: string;
-  buyerSignDate: string;
-  referrerSignName: string;
-  referrerSignDesignation: string;
-  referrerSignDate: string;
-  manufacturerSignName: string;
-  manufacturerSignDesignation: string;
-  manufacturerSignDate: string;
-  customerSignName: string;
-  customerSignDesignation: string;
-  customerSignDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const initialFormData: FormData = {
-  effectiveDate: "",
-  buyerName: "",
-  buyerAddress: "",
-  referrerName: "",
-  referrerAddress: "",
-  industry: "",
-  complianceNotes: "",
-  termEndDate: "",
-  terminationNoticeDays: "",
-  exclusivity: "",
-  feesPercent: "",
-  feeCalculationNotes: "",
-  invoicePaymentDays: "30",
-  paymentMethods: "",
-  nonCircumventionNotes: "",
-  confidentialityNotes: "",
-  disputeResolution: "",
-  governingLawReferral: "",
-  attorneysFeesClause: "",
-  warrantyEffectiveDate: "",
-  manufacturerName: "",
-  manufacturerAddress: "",
-  customerName: "",
-  customerAddress: "",
-  productName: "",
-  productType: "",
-  modelNumber: "",
-  serialNumber: "",
-  warrantyPeriod: "",
-  warrantyStartDate: "",
-  warrantyScope: "",
-  warrantyExclusions: "",
-  warrantyVoidConditions: "",
-  warrantyServiceProcedure: "",
-  warrantyRemedies: "",
-  warrantyAdr: "",
-  warrantyGoverningLaw: "",
-  buyerSignName: "",
-  buyerSignDesignation: "",
-  buyerSignDate: "",
-  referrerSignName: "",
-  referrerSignDesignation: "",
-  referrerSignDate: "",
-  manufacturerSignName: "",
-  manufacturerSignDesignation: "",
-  manufacturerSignDate: "",
-  customerSignName: "",
-  customerSignDesignation: "",
-  customerSignDate: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Referral And Warranty", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("referral_and_warranty.pdf");
 };
 
-export default function ReferralAndWarrantyForm() {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
-  const updateFormData = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  // Split fields into steps of max 3 fields per step
-  const fields: Array<{ name: keyof FormData; label: string; type?: string }> = [
-    { name: "effectiveDate", label: "Effective Date", type: "date" },
-    { name: "buyerName", label: "Buyer Name" },
-    { name: "buyerAddress", label: "Buyer Address" },
-    { name: "referrerName", label: "Referrer Name" },
-    { name: "referrerAddress", label: "Referrer Address" },
-    { name: "industry", label: "Industry" },
-    { name: "complianceNotes", label: "Legal Compliance / Notes" },
-    { name: "termEndDate", label: "Term End Date", type: "date" },
-    { name: "terminationNoticeDays", label: "Termination Notice (days)" },
-    { name: "exclusivity", label: "Exclusivity" },
-    { name: "feesPercent", label: "Referral Fee (%)" },
-    { name: "feeCalculationNotes", label: "Fee Calculation Notes" },
-    { name: "invoicePaymentDays", label: "Invoice Payment Days" },
-    { name: "paymentMethods", label: "Payment Methods" },
-    { name: "nonCircumventionNotes", label: "Non-circumvention" },
-    { name: "confidentialityNotes", label: "Confidentiality" },
-    { name: "disputeResolution", label: "Dispute Resolution" },
-    { name: "governingLawReferral", label: "Governing Law (Referral)" },
-    { name: "attorneysFeesClause", label: "Attorneys' Fees Clause" },
-    { name: "warrantyEffectiveDate", label: "Warranty Effective Date", type: "date" },
-    { name: "manufacturerName", label: "Manufacturer Name" },
-    { name: "manufacturerAddress", label: "Manufacturer Address" },
-    { name: "customerName", label: "Customer Name" },
-    { name: "customerAddress", label: "Customer Address" },
-    { name: "productName", label: "Product Name" },
-    { name: "productType", label: "Product Type" },
-    { name: "modelNumber", label: "Model Number" },
-    { name: "serialNumber", label: "Serial Number" },
-    { name: "warrantyPeriod", label: "Warranty Period" },
-    { name: "warrantyStartDate", label: "Warranty Start Date", type: "date" },
-    { name: "warrantyScope", label: "Scope of Warranty" },
-    { name: "warrantyExclusions", label: "Exclusions" },
-    { name: "warrantyVoidConditions", label: "Void Conditions" },
-    { name: "warrantyServiceProcedure", label: "Service Procedure" },
-    { name: "warrantyRemedies", label: "Buyer Remedies" },
-    { name: "warrantyAdr", label: "Warranty ADR / Governing Law" },
-    { name: "warrantyGoverningLaw", label: "Warranty Governing Law" },
-    { name: "buyerSignName", label: "Buyer Signatory Name" },
-    { name: "buyerSignDesignation", label: "Buyer Signatory Designation" },
-    { name: "buyerSignDate", label: "Buyer Signatory Date", type: "date" },
-    { name: "referrerSignName", label: "Referrer Signatory Name" },
-    { name: "referrerSignDesignation", label: "Referrer Signatory Designation" },
-    { name: "referrerSignDate", label: "Referrer Signatory Date", type: "date" },
-    { name: "manufacturerSignName", label: "Manufacturer Signatory Name" },
-    { name: "manufacturerSignDesignation", label: "Manufacturer Signatory Designation" },
-    { name: "manufacturerSignDate", label: "Manufacturer Signatory Date", type: "date" },
-    { name: "customerSignName", label: "Customer Signatory Name" },
-    { name: "customerSignDesignation", label: "Customer Signatory Designation" },
-    { name: "customerSignDate", label: "Customer Signatory Date", type: "date" },
-  ];
-
-  const steps = [];
-  for (let i = 0; i < fields.length; i += 3) {
-    steps.push({
-      label: `Step ${steps.length + 1}`,
-      content: (
-        <div className="space-y-4">
-          {fields.slice(i, i + 3).map((field) => (
-            <div key={field.name}>
-              <label>{field.label}</label>
-              {field.type === "textarea" ? (
-                <textarea
-                  value={formData[field.name] as string}
-                  onChange={e => updateFormData(field.name, e.target.value)}
-                />
-              ) : (
-                <input
-                  type={field.type || "text"}
-                  value={formData[field.name] as string}
-                  onChange={e => updateFormData(field.name, e.target.value)}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      )
-    });
-  }
-
-  // PDF generation logic moved to onFinish
-  const onFinish = () => {
-    setIsGeneratingPDF(true);
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      if (text === undefined || text === null) text = "";
-      if (text.trim() === "") {
-        y += size * 0.8;
-        return;
-      }
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-    // ...existing code for PDF generation (copy from previous generatePDF)...
-    write("REFERRAL FEE AGREEMENT", 14, true, true);
-    write("");
-    write("This Referral Fee Agreement (\"Agreement\") is made and entered into on [-------] (the \"Effective Date\"), by and between [-------], of [--------] (hereinafter referred to as the \"Buyer\"), and [------], of [-------] (hereinafter referred to as the \"Referrer\").");
-    write("");
-    write("RECITALS");
-    write("WHEREAS, the Buyer intends to purchase certain goods;");
-    write("WHEREAS, the Referrer possesses contacts and industry connections within the [-------] industry and is willing to act as an intermediary for the purpose of introducing potential sellers to the Buyer;");
-    write("NOW, THEREFORE, in consideration of the mutual covenants, representations, and undertakings contained herein, and for other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:");
-    write("");
-    write("1. LEGAL COMPLIANCE", 12, true);
-    write("The Referrer shall comply with all applicable laws, rules, and regulations governing the [BLANK] industry. Where licensing and/or certification is required under applicable law, the Referrer shall be fully responsible for obtaining and maintaining such licensing and certifications. The Buyer acknowledges that the Referrer does / does not hold the required licensing and/or certification, as applicable.");
-    write("");
-    write("2. TERM", 12, true);
-    write("This Agreement shall commence on the Effective Date and shall remain in full force and effect until [BLANK] (the \"Termination Date\"), unless earlier terminated in accordance with the provisions of this Agreement. The Termination Date may be extended or modified by mutual written agreement of the Parties.");
-    write("");
-    write("3. TERMINATION", 12, true);
-    write("Either Party may terminate this Agreement prior to the Termination Date, with or without cause, by providing not less than [--------] days' written notice to the other Party (\"Early Termination\"). Upon Early Termination, the Referrer shall be entitled to receive a pro-rated payment for Services duly performed up to the effective date of termination. Notice delivered via email shall constitute valid notice for the purposes of this clause.");
-    write("");
-    write("4. EXCLUSIVITY", 12, true);
-    write("During the term of this Agreement, the Referrer shall have the exclusive right to introduce prospective sellers to the Buyer, provided such sellers were not previously known to or engaged by the Buyer prior to such introduction.");
-    write("");
-    write("5. RELATIONSHIP OF THE PARTIES", 12, true);
-    write("The Referrer shall act as an independent contractor and nothing herein shall be deemed to create any partnership, joint venture, agency, or employer-employee relationship between the Parties. The Referrer shall be solely responsible for all taxes, contributions, and statutory obligations arising out of its activities under this Agreement. Upon reasonable request, the Referrer shall provide proof of workers' compensation and general liability insurance coverage.");
-    write("");
-    write("6. FEES AND PAYMENT", 12, true);
-    write("This Agreement contemplates an introduction-only arrangement.");
-    write("The Referrer's fee shall be calculated as [------]% of the net value of goods purchased by the Buyer as a direct result of an introduction made by the Referrer. \"Net Value\" shall exclude value-added tax (VAT), postage, packaging, insurance, refunds, and any payments not honoured by a financial institution.");
-    write("Upon becoming entitled to the Referrer's fee, the Referrer shall issue an invoice to the Buyer. Payment shall be made within thirty (30) days from the date of the invoice.");
-    write("Acceptable methods of payment shall include: [-------].");
-    write("");
-    write("7. NON-CIRCUMVENTION", 12, true);
-    write("During the term of this Agreement, the Buyer shall not directly or indirectly engage in any transaction with any seller introduced by the Referrer with the intent of avoiding payment of the Referrer's commission. In the event of such circumvention, the Referrer shall remain fully entitled to its commission or referral fee in respect of such transaction.");
-    write("");
-    write("8. CONFIDENTIALITY", 12, true);
-    write("The Referrer agrees to keep strictly confidential all proprietary, commercial, and sensitive information of the Buyer and shall not, whether directly or indirectly, disclose or use such Confidential Information for any purpose other than the performance of this Agreement. Confidential Information includes, but is not limited to, business strategies, customer data, pricing structures, and trade secrets. This obligation shall survive termination or expiry of this Agreement.");
-    write("");
-    write("9. ENTIRE AGREEMENT", 12, true);
-    write("This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior or contemporaneous agreements, representations, negotiations, or understandings, whether written or oral.");
-    write("");
-    write("10. SEVERABILITY", 12, true);
-    write("If any provision of this Agreement is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be severed and the remaining provisions shall continue in full force and effect, provided the essential purpose of this Agreement is not defeated.");
-    write("");
-    write("11. FORCE MAJEURE", 12, true);
-    write("Neither Party shall be liable for failure or delay in performance of its obligations under this Agreement where such failure arises due to events beyond its reasonable control, including but not limited to acts of God, pandemics, natural disasters, governmental actions, wars, riots, strikes, or other similar events (\"Force Majeure\"). The affected Party shall promptly notify the other Party and shall use reasonable efforts to resume performance as soon as practicable.");
-    write("");
-    write("12. ALTERNATIVE DISPUTE RESOLUTION", 12, true);
-    write("The Parties shall endeavour to resolve any dispute arising out of or relating to this Agreement through amicable negotiations. Failing such resolution, the dispute shall be referred to mediation in accordance with the applicable statutory mediation rules.");
-    write("");
-    write("13. AMENDMENT", 12, true);
-    write("This Agreement may only be amended or modified by a written instrument executed and signed by both Parties.");
-    write("");
-    write("14. WAIVER", 12, true);
-    write("Failure by either Party to enforce any provision of this Agreement shall not constitute a waiver of such provision or of the right to enforce it at a later time.");
-    write("");
-    write("15. GOVERNING LAW", 12, true);
-    write("This Agreement shall be governed by and construed in accordance with the laws of [------].");
-    write("");
-    write("16. ATTORNEYS' FEES", 12, true);
-    write("In the event of any legal action or proceeding arising out of this Agreement, the prevailing Party shall be entitled to recover reasonable legal fees and costs in addition to any other relief awarded.");
-    write("");
-    write("WARRANTY AGREEMENT (REWRITTEN EXTRACT)", 14, true, true);
-    write("This document sets forth a refined and legally structured summary of the principal terms and conditions governing the Warranty Agreement.");
-    write("");
-    write("I. GENERAL AGREEMENT DETAILS", 12, true);
-    write("This Warranty Agreement (\"Agreement\") is made and entered into as of [BLANK] (the \"Effective Date\"), by and between [BLANK], having its principal place of business at [BLANK] (hereinafter referred to as the \"Manufacturer\"), and [BLANK], residing at [BLANK] (hereinafter referred to as the \"Customer\").");
-    write("Covered Product");
-    write("The product covered under this Agreement (the \"Covered Product\") is described as follows:");
-    write("•Product Name: [BLANK]");
-    write("•Product Type: [BLANK]");
-    write("•Model Number: [BLANK]");
-    write("•Serial Number: [BLANK]");
-    write("Warranty Coverage");
-    write("The Manufacturer warrants that the Covered Product shall be free from defects in material and workmanship for a period of [BLANK] commencing from [BLANK] (the \"Warranty Period\"). This warranty shall apply exclusively to the original purchaser and any successive purchaser during the Warranty Period, subject to the terms and limitations herein.");
-    write("");
-    write("II. SCOPE OF WARRANTY AND EXCLUSIONS", 12, true);
-    write("Scope of Warranty");
-    write("This warranty strictly covers manufacturing defects arising from faulty materials or workmanship under normal and intended use of the Covered Product.");
-    write("Exclusions");
-    write("This warranty shall not apply to, and expressly excludes, any defects or damages resulting from:");
-    write("•Misuse, abuse, negligence, or accident;");
-    write("•Unauthorized alterations, modifications, or repairs;");
-    write("•Normal wear and tear arising from ordinary usage.");
-    write("Conditions Rendering Warranty Void");
-    write("This warranty shall be deemed null and void if the Covered Product has been:");
-    write("•Altered, serviced, or repaired by any person not authorized by the Manufacturer;");
-    write("•Used for purposes inconsistent with or contrary to its intended function;");
-    write("•Exposed to environmental conditions or operational settings not recommended by the Manufacturer.");
-    write("");
-    write("III. OBTAINING WARRANTY SERVICE", 12, true);
-    write("1. Customer Obligations");
-    write("In order to obtain warranty service, the Customer must, within the Warranty Period:");
-    write("•Promptly notify the Manufacturer of any defect or malfunction;");
-    write("•Provide valid proof of purchase upon request; and");
-    write("•Return the Covered Product for inspection when so required by the Manufacturer.");
-    write("2. Procedure for Warranty Service");
-    write("(a) In-Home Repairs (Large Appliances)");
-    write("Where in-home service is applicable, the Customer shall notify [BLANK] by contacting the toll-free number [BLANK] immediately upon discovery of any defect, malfunction, or non-conformity. An authorised service technician shall attend the Customer's premises to repair or replace the defective component within [BLANK] days from receipt of such notification.");
-    write("(b) Products Returned by Mail");
-    write("Where the Covered Product is returned by post, the Customer is advised to dispatch the product via insured shipment and return receipt requested. The Manufacturer shall not be liable for any loss, damage, or misplacement occurring during transit.");
-    write("");
-    write("IV. BUYER REMEDIES", 12, true);
-    write("Upon confirmation of a covered defect, the Manufacturer shall, at its sole discretion, elect to:");
-    write("•Repair the Covered Product using new or refurbished components; or");
-    write("•Replace the Covered Product with a product of equivalent specification; or");
-    write("•Refund the original purchase price to the Customer.");
-    write("");
-    write("V. DISPUTE RESOLUTION AND LEGAL PROVISIONS", 12, true);
-    write("1. Alternative Dispute Resolution (ADR)");
-    write("The Parties shall endeavour to resolve any dispute, controversy, or claim arising out of or relating to this Agreement through amicable negotiations. Failing such resolution, the Parties agree to attempt settlement in good faith through mediation in accordance with applicable statutory mediation rules.");
-    write("2. Severability");
-    write("If any provision of this Agreement is held by a court of competent jurisdiction to be invalid, illegal, or unenforceable, such provision shall be severed or limited to the minimum extent necessary, and the remaining provisions shall continue in full force and effect.");
-    write("3. Limitation of Liability");
-    write("Under no circumstances shall the Manufacturer be liable for any indirect, incidental, consequential, special, or exemplary damages arising out of or related to this Agreement, including but not limited to loss of profits, revenue, business interruption, or third-party claims, even if advised of the possibility of such damages.");
-    write("4. Governing Law");
-    write("This Agreement shall be governed by and construed in accordance with the laws of [BLANK], without regard to its conflict of law principles.");
-    write("5. Entire Agreement");
-    write("This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior negotiations, representations, agreements, or understandings, whether oral or written.");
-    write("");
-    write("IN WITNESS WHEREOF, the Parties hereto have executed this Warranty Agreement as of the Effective Date first written above.");
-    write("Manufacturer: __________________________");
-    write("Authorised Signatory");
-    write("Customer: __________________________");
-    write("Signature");
-    write("Date: __________________________");
-    write("");
-    write("17. SIGNATORIES", 12, true);
-    write("IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above.");
-    write("Authorized Signatory (Buyer)    Authorized Signatory (Referrer)");
-    write("Name: _________________________    Name: _________________________");
-    write("Designation: __________________    Designation: __________________");
-    write("Signature: _____________________    Signature: _____________________");
-    write("Date: __________________________    Date: __________________________");
-    // Signatures (form fields)
-    write("");
-    write(`Buyer Signatory: ${formData.buyerSignName || ""}`);
-    write(`Designation: ${formData.buyerSignDesignation || ""}`);
-    write(`Date: ${formData.buyerSignDate || ""}`);
-    write("");
-    write(`Referrer Signatory: ${formData.referrerSignName || ""}`);
-    write(`Designation: ${formData.referrerSignDesignation || ""}`);
-    write(`Date: ${formData.referrerSignDate || ""}`);
-    write("");
-    write(`Manufacturer Signatory: ${formData.manufacturerSignName || ""}`);
-    write(`Designation: ${formData.manufacturerSignDesignation || ""}`);
-    write(`Date: ${formData.manufacturerSignDate || ""}`);
-    write("");
-    write(`Customer Signatory: ${formData.customerSignName || ""}`);
-    write(`Designation: ${formData.customerSignDesignation || ""}`);
-    write(`Date: ${formData.customerSignDate || ""}`);
-    doc.save("Referral_and_Warranty_Agreement.pdf");
-    setIsGeneratingPDF(false);
-  };
-
+export default function ReferralAndWarranty() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Referral & Warranty Agreement</h2>
-      <FormWizard steps={steps} onFinish={onFinish} />
-      {isGeneratingPDF && <div>Generating PDF...</div>}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Referral And Warranty"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="referralandwarranty"
+    />
   );
 }

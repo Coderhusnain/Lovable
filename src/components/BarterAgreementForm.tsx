@@ -1,236 +1,506 @@
-import React, { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import jsPDF from "jspdf";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  offerorName: string;
-  offerorAddress: string;
-  offereeName: string;
-  offereeAddress: string;
-  offerorGoodsDesc: string;
-  offerorGoodsCondition: string;
-  offereeGoodsDesc: string;
-  offereeGoodsCondition: string;
-  exchangeDeadline: string;
-  deliveryLocation: string;
-  anticipatedChargesNote: string;
-  terminationCompensationNote: string;
-  valuationAcceptanceNote: string;
-  mutualRepsWarranties: string;
-  indemnificationNote: string;
-  adrNote: string;
-  furtherAssurancesNote: string;
-  assignmentNote: string;
-  noticesOfferorAddress: string;
-  noticesOffereeAddress: string;
-  governingLaw: string;
-  offerorSignName: string;
-  offerorSignDate: string;
-  offereeSignName: string;
-  offereeSignDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const initialFormData: FormData = {
-  effectiveDate: "",
-  offerorName: "",
-  offerorAddress: "",
-  offereeName: "",
-  offereeAddress: "",
-  offerorGoodsDesc: "",
-  offerorGoodsCondition: "",
-  offereeGoodsDesc: "",
-  offereeGoodsCondition: "",
-  exchangeDeadline: "",
-  deliveryLocation: "",
-  anticipatedChargesNote: "Each Party undertakes to disclose any anticipated charges, costs, or fees prior to commencement.",
-  terminationCompensationNote: "Terminating Party shall fairly compensate the non-terminating Party for goods/services provided up to termination.",
-  valuationAcceptanceNote: "Each Party acknowledges and accepts the valuation assigned to the other Party’s Bartered Goods as final and binding.",
-  mutualRepsWarranties:
-    "Each Party represents that it has full capacity, the goods are transferable, free of liens/encumbrances, and do not infringe third-party rights.",
-  indemnificationNote:
-    "Each Party agrees to indemnify, defend, and hold harmless the other Party from third-party claims arising from breach or misrepresentation.",
-  adrNote: "The Parties shall first attempt amicable negotiation; failing that, the dispute shall be submitted to mediation per applicable rules.",
-  furtherAssurancesNote: "The Parties agree to execute additional documents and take further actions reasonably required to give effect to this Agreement.",
-  assignmentNote: "Neither Party may assign rights or obligations without prior written consent of the other Party.",
-  noticesOfferorAddress: "",
-  noticesOffereeAddress: "",
-  governingLaw: "",
-  offerorSignName: "",
-  offerorSignDate: "",
-  offereeSignName: "",
-  offereeSignDate: "",
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Barter Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("barter_agreement.pdf");
 };
 
-export default function BarterAgreementForm() {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-
-  const updateFormData = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  // Split fields into steps of max 3 fields per step
-  const fields: Array<{ name: keyof FormData; label: string; type?: string }> = [
-    { name: "effectiveDate", label: "Effective Date", type: "date" },
-    { name: "offerorName", label: "Offeror Name" },
-    { name: "offerorAddress", label: "Offeror Address" },
-    { name: "offereeName", label: "Offeree Name" },
-    { name: "offereeAddress", label: "Offeree Address" },
-    { name: "offerorGoodsDesc", label: "Offeror Goods Description" },
-    { name: "offerorGoodsCondition", label: "Offeror Goods Condition" },
-    { name: "offereeGoodsDesc", label: "Offeree Goods Description" },
-    { name: "offereeGoodsCondition", label: "Offeree Goods Condition" },
-    { name: "exchangeDeadline", label: "Exchange Deadline" },
-    { name: "deliveryLocation", label: "Delivery Location" },
-    { name: "anticipatedChargesNote", label: "Anticipated Charges Note" },
-    { name: "terminationCompensationNote", label: "Termination Compensation Note" },
-    { name: "valuationAcceptanceNote", label: "Valuation Acceptance Note" },
-    { name: "mutualRepsWarranties", label: "Mutual Representations & Warranties" },
-    { name: "indemnificationNote", label: "Mutual Indemnification" },
-    { name: "adrNote", label: "Dispute Resolution / ADR" },
-    { name: "furtherAssurancesNote", label: "Further Assurances" },
-    { name: "assignmentNote", label: "Assignment" },
-    { name: "noticesOfferorAddress", label: "Notices - Offeror Address" },
-    { name: "noticesOffereeAddress", label: "Notices - Offeree Address" },
-    { name: "governingLaw", label: "Governing Law / Jurisdiction" },
-    { name: "offerorSignName", label: "Offeror - Signatory Name" },
-    { name: "offerorSignDate", label: "Offeror - Date", type: "date" },
-    { name: "offereeSignName", label: "Offeree - Signatory Name" },
-    { name: "offereeSignDate", label: "Offeree - Date", type: "date" },
-  ];
-
-  const steps = [];
-  for (let i = 0; i < fields.length; i += 3) {
-    steps.push({
-      label: `Step ${steps.length + 1}`,
-      content: (
-        <div className="space-y-4">
-          {fields.slice(i, i + 3).map((field) => (
-            <div key={field.name}>
-              <label>{field.label}</label>
-              {field.type === "textarea" ? (
-                <textarea
-                  value={formData[field.name] as string}
-                  onChange={e => updateFormData(field.name, e.target.value)}
-                />
-              ) : (
-                <input
-                  type={field.type || "text"}
-                  value={formData[field.name] as string}
-                  onChange={e => updateFormData(field.name, e.target.value)}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      )
-    });
-  }
-
-  // PDF generation logic moved to onFinish
-  const onFinish = () => {
-    setIsGeneratingPDF(true);
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const state = { y: 40 };
-    const writeText = (doc: jsPDF, text: string, state: { y: number }, opts?: { size?: number; bold?: boolean; center?: boolean }) => {
-      const margin = 40;
-      const pageW = doc.internal.pageSize.getWidth();
-      const maxW = pageW - margin * 2;
-      const size = opts?.size ?? 11;
-      doc.setFont("times", opts?.bold ? ("bold" as any) : ("normal" as any));
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (state.y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          state.y = margin;
-        }
-        if (opts?.center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, state.y);
-        } else {
-          doc.text(line, margin, state.y);
-        }
-        state.y += size * 1.3;
-      });
-    };
-    // ...existing code for PDF generation (copy from previous generatePDF)...
-    writeText(doc, "BARTER AGREEMENT", state, { size: 14, bold: true, center: true });
-    writeText(doc, "\n", state);
-    writeText(
-      doc,
-      `This Barter Agreement ("Agreement") is made and entered into as of ${formData.effectiveDate || "[---------]"} (the "Effective Date"), by and between:\n${formData.offerorName || "[---------]"}, having its address at ${formData.offerorAddress || "[-------]"} ("Offeror"),\nAND\n${formData.offereeName || "[---------]"}, having its address at ${formData.offereeAddress || "[-------]"} ("Offeree").\nThe Offeror and the Offeree may hereinafter be referred to individually as a "Party" and collectively as the "Parties".`,
-      state
-    );
-    writeText(doc, "\n1. Bartered Goods", state, { size: 12, bold: true });
-    writeText(doc, "1.1 Goods Offered by the Offeror", state);
-    writeText(doc, `Description: ${formData.offerorGoodsDesc || "[----------]"}`, state);
-    writeText(doc, `Condition: ${formData.offerorGoodsCondition || "[------------]"}`, state);
-    writeText(doc, "\n1.2 Goods Offered by the Offeree", state);
-    writeText(doc, `Description: ${formData.offereeGoodsDesc || "[---------]"}`, state);
-    writeText(doc, `Condition: ${formData.offereeGoodsCondition || "[-----------]"}`, state);
-    writeText(doc, "\nThe above goods shall collectively be referred to as the \"Bartered Goods\".", state);
-    writeText(doc, "\n2. Delivery and Exchange", state, { size: 12, bold: true });
-    writeText(
-      doc,
-      `The Parties agree that the delivery and exchange of the Bartered Goods shall take place on or before ${formData.exchangeDeadline || "[----------------]"}, at such location and in such manner as may be mutually agreed in writing. Each Party undertakes to deliver its respective Bartered Goods in the condition expressly stated herein and in accordance with the agreed schedule.`,
-      state
-    );
-    writeText(doc, `Each Party further agrees to disclose any anticipated charges, costs, or fees prior to the commencement of any exchange of goods and/or services under this Agreement.`, state);
-    if (formData.anticipatedChargesNote) writeText(doc, `\nNote: ${formData.anticipatedChargesNote}`, state);
-    writeText(doc, "\n3. Delivery Schedule", state, { size: 12, bold: true });
-    writeText(doc, `The Parties shall strictly adhere to the delivery schedule mutually agreed upon and shall ensure that the Bartered Goods conform to the descriptions and conditions specified in this Agreement at the time of delivery.`, state);
-    writeText(doc, "\n4. Termination", state, { size: 12, bold: true });
-    writeText(doc, `${formData.terminationCompensationNote}`, state);
-    writeText(doc, "\n5. Agreement Freely Entered Into", state, { size: 12, bold: true });
-    writeText(doc, "Each Party represents and warrants that it has freely, voluntarily, and lawfully entered into this Agreement and undertakes to comply fully with its terms and conditions.", state);
-    writeText(doc, "\n6. Finality of Valuation", state, { size: 12, bold: true });
-    writeText(doc, formData.valuationAcceptanceNote, state);
-    writeText(doc, "\n7. Mutual Representations and Warranties", state, { size: 12, bold: true });
-    writeText(
-      doc,
-      `Each Party hereby represents and warrants that:\n\na) It has full legal capacity, authority, and power to enter into and perform this Agreement;\n\nb) The Bartered Goods offered by it are lawfully owned and transferable, free from all liens, encumbrances, claims, and third-party interests;\n\nc) The Bartered Goods do not infringe any intellectual property rights, proprietary rights, statutory protections, or legal rights of any third party;\n\nd) All information provided in this Agreement is true, accurate, and complete to the best of its knowledge.`,
-      state
-    );
-    writeText(doc, "\n8. Mutual Indemnification", state, { size: 12, bold: true });
-    writeText(doc, formData.indemnificationNote || "Each Party agrees to indemnify, defend, and hold harmless the other Party...", state);
-    writeText(doc, "\n9. Alternative Dispute Resolution", state, { size: 12, bold: true });
-    writeText(doc, formData.adrNote, state);
-    writeText(doc, "\n10. Further Assurances", state, { size: 12, bold: true });
-    writeText(doc, formData.furtherAssurancesNote, state);
-    writeText(doc, "\n11. Assignment", state, { size: 12, bold: true });
-    writeText(doc, formData.assignmentNote, state);
-    writeText(doc, "\n12. Notices", state, { size: 12, bold: true });
-    writeText(
-      doc,
-      `Any notice required or permitted under this Agreement shall be deemed duly given if delivered personally or sent by registered or certified mail, return receipt requested, to the address stated above or to such other address as may be notified in writing by a Party.\n\nOfferor Notices Address: ${formData.noticesOfferorAddress || "[Offeror address for notices]"}\n\nOfferee Notices Address: ${formData.noticesOffereeAddress || "[Offeree address for notices]"}`,
-      state
-    );
-    writeText(doc, "\n13. Entire Agreement", state, { size: 12, bold: true });
-    writeText(doc, "This Agreement constitutes the entire understanding between the Parties concerning the subject matter hereof and supersedes all prior negotiations, discussions, representations, or agreements, whether oral or written.", state);
-    writeText(doc, "\n14. Waiver", state, { size: 12, bold: true });
-    writeText(doc, "Failure by either Party to enforce any provision of this Agreement shall not constitute a waiver of that provision or any other provision, nor shall it affect the right to enforce such provision at a later time.", state);
-    writeText(doc, "\n15. Severability", state, { size: 12, bold: true });
-    writeText(doc, "If any provision of this Agreement is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be deemed modified to the minimum extent necessary to render it enforceable, and the remaining provisions shall remain in full force and effect.", state);
-    writeText(doc, "\n16. Governing Law", state, { size: 12, bold: true });
-  writeText(doc, `This Agreement shall be governed by and construed in accordance with the laws of ${formData.governingLaw || "[--------]"}.`, state);
-    writeText(doc, "\n17. Execution and Signatures", state, { size: 12, bold: true });
-    writeText(
-      doc,
-      `IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above.\n\nFor the Offeror:\nSignature: __________________________\nName: ${formData.offerorSignName || "__________________"}\nDate: ${formData.offerorSignDate || "__________________"}\n\nFor the Offeree:\nSignature: __________________________\nName: ${formData.offereeSignName || "__________________"}\nDate: ${formData.offereeSignDate || "__________________"}`,
-      state
-    );
-    doc.save("Barter_Agreement.pdf");
-    setIsGeneratingPDF(false);
-  };
-
+export default function BarterAgreement() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Barter Agreement</h2>
-      <FormWizard steps={steps} onFinish={onFinish} />
-      {isGeneratingPDF && <div>Generating PDF...</div>}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Barter Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="barteragreement"
+    />
   );
 }

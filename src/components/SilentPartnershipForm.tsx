@@ -1,308 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
-// Icon suggestion: import { EyeOff } from "lucide-react";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  effectiveDate: string;
-  partnershipName: string;
-  principalAddress: string;
-  term: string;
-  generalPartnerName: string;
-  generalPartnerAddress: string;
-  generalPartnerCityStateZip: string;
-  silentPartnerName: string;
-  silentPartnerAddress: string;
-  silentPartnerCityStateZip: string;
-  contributionsDeadline: string;
-  generalPartnerPercent: string;
-  silentPartnerPercent: string;
-  governingLaw: string;
-  signGeneralName: string;
-  signGeneralDate: string;
-  signSilentName: string;
-  signSilentDate: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function SilentPartnershipForm() {
-  const [formData, setFormData] = useState<FormData>({
-    effectiveDate: "",
-    partnershipName: "",
-    principalAddress: "",
-    term: "",
-    generalPartnerName: "",
-    generalPartnerAddress: "",
-    generalPartnerCityStateZip: "",
-    silentPartnerName: "",
-    silentPartnerAddress: "",
-    silentPartnerCityStateZip: "",
-    contributionsDeadline: "",
-    generalPartnerPercent: "",
-    silentPartnerPercent: "",
-    governingLaw: "",
-    signGeneralName: "",
-    signGeneralDate: "",
-    signSilentName: "",
-    signSilentDate: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Silent Partnership", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("silent_partnership.pdf");
+};
 
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const maxW = pageW - margin * 2;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageW - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += size * 1.3;
-      });
-    };
-
-    write("SILENT PARTNERSHIP AGREEMENT", 14, true, true);
-    write("\n");
-
-    write(
-      `This Silent Partnership Agreement (the "Agreement") is made and entered into as of ${formData.effectiveDate ||
-        "[Effective Date]"}, by and between the following parties (collectively, the "Partners"):`
-    );
-    write("\n");
-    write(
-      `• ${formData.generalPartnerName || "[General Partner Name]"}, residing at ${formData.generalPartnerAddress ||
-        "[-----]"}, City of ${formData.generalPartnerCityStateZip || "[--------]"}, State of [------], ZIP Code [-----]; and`
-    );
-    write(
-      `• ${formData.silentPartnerName || "[Silent Partner Name]"}, residing at ${formData.silentPartnerAddress ||
-        "[-------]"}, City of ${formData.silentPartnerCityStateZip || "[------]"}, State of [-----], ZIP Code [--------].`
-    );
-    write("\n");
-    write(`The Partners desire to establish a business partnership in accordance with the terms and conditions set forth herein.`);
-    write("\n\n");
-
-    write("I. GENERAL PROVISIONS", 12, true);
-    write("1.1 Preamble");
-    write(
-      "The Partners wish to enter into a business venture, wherein the Silent Partner(s) shall participate in the Partnership without active management or control, in accordance with the terms of this Agreement."
-    );
-    write("\n");
-    write("1.2 Partnership Name, Place, and Business");
-    write(`The business shall be conducted under the name ${formData.partnershipName || "[Partnership Name]"} (the "Partnership"). The Partnership shall operate in compliance with all applicable federal, state, and local laws. The principal place of business of the Partnership shall be ${formData.principalAddress || "[Address]"}.`);
-    write("\n");
-    write("1.3 Term");
-    write(
-      `The Partnership shall commence on the Effective Date and shall continue in full force and effect until ${formData.term ||
-        "[Date or Event of Termination]"}, unless earlier dissolved in accordance with this Agreement or by operation of law.`
-    );
-
-    write("\n\n");
-    write("II. PARTNER CONTRIBUTIONS, INTERESTS, AND AUTHORITY", 12, true);
-    write("2.1 Contributions");
-    write(`Each Partner shall make an initial capital contribution in the amount agreed upon, which shall be submitted no later than ${formData.contributionsDeadline || "[Date]"}.`);
-    write("\n");
-    write("2.2 Interest on Contributions");
-    write("No Partner’s contribution to the capital of the Partnership shall bear interest. All interest or other income earned on such contributions shall be credited to the Partnership’s capital account.");
-    write("\n");
-    write("2.3 Ownership Interest and Authority");
-    write("The Partners shall own the Partnership as follows:");
-    write(`• ${formData.generalPartnerName || "[General Partner]"} – ${formData.generalPartnerPercent || "[●]"}%`);
-    write(`• ${formData.silentPartnerName || "[Silent Partner]"} – ${formData.silentPartnerPercent || "[●]"}%`);
-    write("Except as otherwise expressly provided in this Agreement, the General Partner(s) shall have full authority to manage and control the business operations, while the Silent Partner(s) shall have no right to participate in the management or day-to-day decision-making of the Partnership.");
-
-    write("\n\n");
-    write("III. DUTIES AND LIABILITIES", 12, true);
-    write("3.1 Duties of the General Partner(s)");
-    write("The General Partner(s) shall be solely responsible for the management, operation, and control of the Partnership, including but not limited to:");
-    write("• Hiring and managing personnel;");
-    write("• Entering into contracts and agreements;");
-    write("• Purchasing and selling goods or services;");
-    write("• Maintaining accounting and financial records; and");
-    write("• Implementing all policies necessary for the operation of the Partnership.");
-    write("\n");
-    write("3.2 Duties of the Silent Partner(s)");
-    write("The Silent Partner(s) shall:");
-    write("• Remain \"silent\" in all managerial, operational, and decision-making matters of the Partnership;");
-    write("• Be free to engage in other business ventures or partnerships outside the Partnership;");
-    write("• Not be personally liable for any debts, obligations, or liabilities of the Partnership except as required by law.");
-    write("\n");
-    write("3.3 Profits and Losses");
-    write("All Partners, including the Silent Partner(s), shall share in all profits, losses, income, deductions, and credits of the Partnership in proportion to their ownership interests, unless otherwise agreed in writing. Profits and losses shall be computed in accordance with generally accepted accounting principles consistently applied.");
-    write("\n");
-    write("3.4 Limited Liability");
-    write("Subject to applicable provisions of the Uniform Limited Partnership Act or other governing law, the Silent Partner(s) shall have no personal liability for any debts, obligations, or liabilities of the Partnership.");
-
-    write("\n\n");
-    write("IV. LEGAL AND GOVERNING CLAUSES", 12, true);
-    write("4.1 Entire Agreement");
-    write("This Agreement contains the entire understanding and agreement of the Partners with respect to the Silent Partnership and supersedes all prior agreements, understandings, or representations, whether written or oral.");
-    write("\n");
-    write("4.2 Waivers");
-    write("No waiver of any term, covenant, or obligation under this Agreement shall be valid unless in writing and signed by the Partner(s) to be bound. Failure to enforce any provision shall not constitute a waiver of the right to enforce such provision in the future.");
-    write("\n");
-    write("4.3 Severability");
-    write("If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall remain in full force and effect.");
-    write("\n");
-    write("4.4 Counterparts");
-    write("This Agreement may be executed in one or more counterparts, each of which shall be deemed an original and all of which together shall constitute one and the same instrument.");
-    write("\n");
-    write("4.5 Dispute Resolution");
-    write("All Partners agree to submit any disputes arising under this Agreement to mediation prior to commencing any litigation. If the dispute is not resolved in mediation, the Partners may pursue legal remedies as permitted under the law.");
-    write("\n");
-    write("4.6 Jurisdiction");
-    write(`This Agreement shall be governed by and construed in accordance with the laws of the State of ${formData.governingLaw || "[State]"}, and all disputes shall be subject to the exclusive jurisdiction of the courts of that State.`);
-
-    write("\n\n");
-    write("V. EXECUTION", 12, true);
-    write("IN WITNESS WHEREOF, the Partners have executed this Silent Partnership Agreement as of the Effective Date, intending to be legally bound.");
-    write("\n\n");
-    write(`${formData.generalPartnerName || "[General Partner Name]"}`);
-    write("Signature: ___________________________");
-    write("Date: " + (formData.signGeneralDate || "________________"));
-    write("\n\n");
-    write(`${formData.silentPartnerName || "[Silent Partner Name]"}`);
-    write("Signature: ___________________________");
-    write("Date: " + (formData.signSilentDate || "________________"));
-
-    doc.save("Silent_Partnership_Agreement.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3">
-                {/* <EyeOff className="w-6 h-6" /> */}
-                <h3 className="font-semibold">Parties & Agreement</h3>
-              </div>
-
-              <Label>Effective Date</Label>
-              <Input name="effectiveDate" value={formData.effectiveDate} onChange={handleChange} />
-
-              <Label>Partnership Name</Label>
-              <Input name="partnershipName" value={formData.partnershipName} onChange={handleChange} />
-
-              <Label>Principal Place of Business (Address)</Label>
-              <Textarea name="principalAddress" value={formData.principalAddress} onChange={handleChange} />
-
-              <Label>Term / Event of Termination</Label>
-              <Input name="term" value={formData.term} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Partners & Contributions</h3>
-
-              <h4 className="font-medium">General Partner</h4>
-              <Label>Name</Label>
-              <Input name="generalPartnerName" value={formData.generalPartnerName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="generalPartnerAddress" value={formData.generalPartnerAddress} onChange={handleChange} />
-              <Label>City / State / ZIP</Label>
-              <Input name="generalPartnerCityStateZip" value={formData.generalPartnerCityStateZip} onChange={handleChange} />
-
-              <hr />
-
-              <h4 className="font-medium">Silent Partner</h4>
-              <Label>Name</Label>
-              <Input name="silentPartnerName" value={formData.silentPartnerName} onChange={handleChange} />
-              <Label>Address</Label>
-              <Textarea name="silentPartnerAddress" value={formData.silentPartnerAddress} onChange={handleChange} />
-              <Label>City / State / ZIP</Label>
-              <Input name="silentPartnerCityStateZip" value={formData.silentPartnerCityStateZip} onChange={handleChange} />
-
-              <Label>Contributions Deadline</Label>
-              <Input name="contributionsDeadline" value={formData.contributionsDeadline} onChange={handleChange} />
-
-              <Label>Ownership - General Partner (%)</Label>
-              <Input name="generalPartnerPercent" value={formData.generalPartnerPercent} onChange={handleChange} />
-              <Label>Ownership - Silent Partner (%)</Label>
-              <Input name="silentPartnerPercent" value={formData.silentPartnerPercent} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Legal, Jurisdiction & Signatures</h3>
-
-              <Label>Governing Law / State</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-
-              <hr />
-
-              <Label>General Partner - Signatory Name</Label>
-              <Input name="signGeneralName" value={formData.signGeneralName} onChange={handleChange} />
-              <Label>General Partner - Date</Label>
-              <Input name="signGeneralDate" value={formData.signGeneralDate} onChange={handleChange} />
-
-              <Label>Silent Partner - Signatory Name</Label>
-              <Input name="signSilentName" value={formData.signSilentName} onChange={handleChange} />
-              <Label>Silent Partner - Date</Label>
-              <Input name="signSilentDate" value={formData.signSilentDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function SilentPartnership() {
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-        {step < 3 ? (
-          <Button onClick={() => setStep((s) => Math.min(3, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Silent Partnership Agreement PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Silent Partnership"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="silentpartnership"
+    />
   );
 }

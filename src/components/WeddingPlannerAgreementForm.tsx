@@ -1,314 +1,506 @@
-import { useState } from "react";
 import { FormWizard } from "./FormWizard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Send, CheckCircle, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-import { format } from "date-fns";
-import { toast } from "sonner";
-import CountryStateAPI from 'countries-states-cities';
-import UserInfoStep from "@/components/UserInfoStep";
-import { generateGuidePDF } from "@/utils/generateGuidePDF";
 
-interface CountryData { id: number; name: string; iso3: string; iso2: string; phone_code: string; capital: string; currency: string; native: string; region: string; subregion: string; emoji: string; }
-interface StateData { id: number; name: string; country_id: number; country_code: string; state_code: string; }
-
-const getAllCountries = (): CountryData[] => CountryStateAPI.getAllCountries();
-const getStatesByCountry = (countryId: number): StateData[] => CountryStateAPI.getStatesOfCountry(countryId);
-const getStateName = (countryId: string, stateId: string): string => { const c = getAllCountries().find(c => c.id.toString() === countryId); if (!c) return stateId; const s = getStatesByCountry(c.id).find(s => s.id.toString() === stateId); return s?.name || stateId; };
-
-interface FormData {
-  country: string; state: string; effectiveDate: string;
-  clientName1: string; clientName2: string; clientAddress: string; clientPhone: string; clientEmail: string;
-}
-
-// Refactor in progress: FormWizard integration will be added next
-
-const fields = [
-  // Step 1: Location
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    name: "country",
-    label: "Country",
-    type: "select",
-    options: getAllCountries().map((c) => ({ value: `${c.id}:${c.name}`, label: c.name })),
-    required: true,
-  },
-  {
-    name: "state",
-    label: "State/Province",
-    type: "select",
-    options: [], // Will be dynamically set in FormWizard based on country
-    required: true,
-    dependsOn: "country",
-  },
-  {
-    name: "effectiveDate",
-    label: "Agreement Date",
-    type: "date",
-    required: true,
-  },
-  // Step 2: Parties
-  { name: "clientName1", label: "Partner 1 Name", type: "text", required: true },
-  { name: "clientName2", label: "Partner 2 Name", type: "text" },
-  { name: "clientAddress", label: "Client Address", type: "textarea", required: true },
-  { name: "clientPhone", label: "Client Phone", type: "text" },
-  { name: "clientEmail", label: "Client Email", type: "email" },
-  { name: "plannerName", label: "Planner Name", type: "text", required: true },
-  { name: "plannerCompany", label: "Planner Company", type: "text" },
-  { name: "plannerAddress", label: "Planner Address", type: "textarea" },
-  { name: "plannerPhone", label: "Planner Phone", type: "text" },
-  { name: "plannerEmail", label: "Planner Email", type: "email" },
-  // Step 3: Wedding Details
-  { name: "weddingDate", label: "Wedding Date", type: "date", required: true },
-  { name: "ceremonyLocation", label: "Ceremony Location", type: "textarea" },
-  { name: "receptionLocation", label: "Reception Location", type: "textarea" },
-  { name: "estimatedGuests", label: "Estimated Number of Guests", type: "number" },
-  // Step 4: Services & Payment
-  {
-    name: "packageType",
-    label: "Package Type",
-    type: "select",
-    options: [
-      { value: "Full Planning", label: "Full Planning" },
-      { value: "Partial Planning", label: "Partial Planning" },
-      { value: "Day-Of Coordination", label: "Day-Of Coordination" },
-      { value: "Custom", label: "Custom Package" },
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
     ],
   },
   {
-    name: "servicesIncluded",
-    label: "Services Included",
-    type: "checkbox-group",
-    options: [
-      "Venue selection and booking",
-      "Vendor coordination (caterer, florist, photographer, etc.)",
-      "Budget planning and management",
-      "Timeline and schedule creation",
-      "Guest list management",
-      "Invitation design coordination",
-      "Ceremony coordination",
-      "Reception coordination",
-      "Rehearsal coordination",
-      "Day-of coordination",
-      "Transportation arrangements",
-      "Accommodation arrangements",
-    ].map((s) => ({ value: s, label: s })),
-    required: true,
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
   },
-  { name: "totalFee", label: "Total Fee ($)", type: "number", required: true },
-  { name: "depositAmount", label: "Deposit Amount ($)", type: "number", required: true },
-  { name: "depositDueDate", label: "Deposit Due Date", type: "date" },
-  { name: "paymentSchedule", label: "Payment Schedule", type: "text" },
-  { name: "additionalNotes", label: "Additional Notes", type: "textarea" },
-  { name: "cancellationDays", label: "Cancellation Days", type: "number", default: 30 },
-];
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const initialValues = {
-  country: "",
-  state: "",
-  effectiveDate: "",
-  clientName1: "",
-  clientName2: "",
-  clientAddress: "",
-  clientPhone: "",
-  clientEmail: "",
-  plannerName: "",
-  plannerCompany: "",
-  plannerAddress: "",
-  plannerPhone: "",
-  plannerEmail: "",
-  weddingDate: "",
-  ceremonyLocation: "",
-  receptionLocation: "",
-  estimatedGuests: "",
-  packageType: "Full Planning",
-  servicesIncluded: [],
-  totalFee: "",
-  depositAmount: "",
-  depositDueDate: "",
-  paymentSchedule: "",
-  additionalNotes: "",
-  cancellationDays: 30,
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Wedding Planner Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("wedding_planner_agreement.pdf");
 };
 
-import React from "react";
-
-const WeddingPlannerAgreementForm = () => {
-  // State for all form values
-  const [values, setValues] = useState(initialValues);
-
-  // Step definitions (max 3 fields per step)
-  const steps = [
-    {
-      label: "Location",
-      content: (
-        <>
-          {/* Country */}
-          <Label>Country</Label>
-          <select
-            value={values.country}
-            onChange={e => {
-              setValues(v => ({ ...v, country: e.target.value, state: "" }));
-            }}
-            className="block w-full mb-4 border rounded p-2"
-          >
-            <option value="">Select...</option>
-            {getAllCountries().map(c => (
-              <option key={c.id} value={`${c.id}:${c.name}`}>{c.name}</option>
-            ))}
-          </select>
-          {/* State/Province */}
-          <Label>State/Province</Label>
-          <select
-            value={values.state}
-            onChange={e => setValues(v => ({ ...v, state: e.target.value }))}
-            disabled={!values.country}
-            className="block w-full mb-4 border rounded p-2"
-          >
-            <option value="">Select...</option>
-            {values.country && getStatesByCountry(parseInt(values.country.split(":")[0])).map(s => (
-              <option key={s.id} value={`${s.id}:${s.name}`}>{s.name}</option>
-            ))}
-          </select>
-          {/* Agreement Date */}
-          <Label>Agreement Date</Label>
-          <Input type="date" value={values.effectiveDate} onChange={e => setValues(v => ({ ...v, effectiveDate: e.target.value }))} />
-        </>
-      ),
-      validate: () => !!(values.country && values.state && values.effectiveDate),
-    },
-    {
-      label: "Parties",
-      content: (
-        <>
-          <Label>Partner 1 Name *</Label>
-          <Input value={values.clientName1} onChange={e => setValues(v => ({ ...v, clientName1: e.target.value }))} />
-          <Label>Partner 2 Name</Label>
-          <Input value={values.clientName2} onChange={e => setValues(v => ({ ...v, clientName2: e.target.value }))} />
-          <Label>Client Address *</Label>
-          <Textarea value={values.clientAddress} onChange={e => setValues(v => ({ ...v, clientAddress: e.target.value }))} />
-        </>
-      ),
-      validate: () => !!values.clientName1 && !!values.clientAddress,
-    },
-    {
-      label: "Contact Info",
-      content: (
-        <>
-          <Label>Client Phone</Label>
-          <Input value={values.clientPhone} onChange={e => setValues(v => ({ ...v, clientPhone: e.target.value }))} />
-          <Label>Client Email</Label>
-          <Input type="email" value={values.clientEmail} onChange={e => setValues(v => ({ ...v, clientEmail: e.target.value }))} />
-          <Label>Planner Name *</Label>
-          <Input value={values.plannerName} onChange={e => setValues(v => ({ ...v, plannerName: e.target.value }))} />
-        </>
-      ),
-      validate: () => !!values.plannerName,
-    },
-    {
-      label: "Planner Details",
-      content: (
-        <>
-          <Label>Planner Company</Label>
-          <Input value={values.plannerCompany} onChange={e => setValues(v => ({ ...v, plannerCompany: e.target.value }))} />
-          <Label>Planner Address</Label>
-          <Textarea value={values.plannerAddress} onChange={e => setValues(v => ({ ...v, plannerAddress: e.target.value }))} />
-          <Label>Planner Phone</Label>
-          <Input value={values.plannerPhone} onChange={e => setValues(v => ({ ...v, plannerPhone: e.target.value }))} />
-          <Label>Planner Email</Label>
-          <Input type="email" value={values.plannerEmail} onChange={e => setValues(v => ({ ...v, plannerEmail: e.target.value }))} />
-        </>
-      ),
-    },
-    {
-      label: "Wedding Details",
-      content: (
-        <>
-          <Label>Wedding Date *</Label>
-          <Input type="date" value={values.weddingDate} onChange={e => setValues(v => ({ ...v, weddingDate: e.target.value }))} />
-          <Label>Ceremony Location</Label>
-          <Textarea value={values.ceremonyLocation} onChange={e => setValues(v => ({ ...v, ceremonyLocation: e.target.value }))} />
-          <Label>Reception Location</Label>
-          <Textarea value={values.receptionLocation} onChange={e => setValues(v => ({ ...v, receptionLocation: e.target.value }))} />
-          <Label>Estimated Number of Guests</Label>
-          <Input type="number" value={values.estimatedGuests} onChange={e => setValues(v => ({ ...v, estimatedGuests: e.target.value }))} />
-        </>
-      ),
-      validate: () => !!values.weddingDate,
-    },
-    {
-      label: "Services & Payment",
-      content: (
-        <>
-          <Label>Package Type</Label>
-          <select
-            value={values.packageType}
-            onChange={e => setValues(v => ({ ...v, packageType: e.target.value }))}
-            className="block w-full mb-4 border rounded p-2"
-          >
-            <option value="Full Planning">Full Planning</option>
-            <option value="Partial Planning">Partial Planning</option>
-            <option value="Day-Of Coordination">Day-Of Coordination</option>
-            <option value="Custom">Custom Package</option>
-          </select>
-          <Label>Services Included *</Label>
-          <div className="mb-2">
-            {[
-              "Venue selection and booking",
-              "Vendor coordination (caterer, florist, photographer, etc.)",
-              "Budget planning and management",
-              "Timeline and schedule creation",
-              "Guest list management",
-              "Invitation design coordination",
-              "Ceremony coordination",
-              "Reception coordination",
-              "Rehearsal coordination",
-              "Day-of coordination",
-              "Transportation arrangements",
-              "Accommodation arrangements",
-            ].map((s) => (
-              <div key={s} className="flex items-center space-x-2">
-                <Checkbox
-                  id={s}
-                  checked={values.servicesIncluded.includes(s)}
-                  onCheckedChange={() => {
-                    setValues(v => ({
-                      ...v,
-                      servicesIncluded: v.servicesIncluded.includes(s)
-                        ? v.servicesIncluded.filter(x => x !== s)
-                        : [...v.servicesIncluded, s],
-                    }));
-                  }}
-                />
-                <Label htmlFor={s} className="text-sm cursor-pointer">{s}</Label>
-              </div>
-            ))}
-          </div>
-          <Label>Total Fee ($) *</Label>
-          <Input type="number" value={values.totalFee} onChange={e => setValues(v => ({ ...v, totalFee: e.target.value }))} />
-          <Label>Deposit Amount ($) *</Label>
-          <Input type="number" value={values.depositAmount} onChange={e => setValues(v => ({ ...v, depositAmount: e.target.value }))} />
-          <Label>Deposit Due Date</Label>
-          <Input type="date" value={values.depositDueDate} onChange={e => setValues(v => ({ ...v, depositDueDate: e.target.value }))} />
-          <Label>Payment Schedule</Label>
-          <Input value={values.paymentSchedule} onChange={e => setValues(v => ({ ...v, paymentSchedule: e.target.value }))} />
-          <Label>Additional Notes</Label>
-          <Textarea value={values.additionalNotes} onChange={e => setValues(v => ({ ...v, additionalNotes: e.target.value }))} />
-          <Label>Cancellation Days</Label>
-          <Input type="number" value={values.cancellationDays} onChange={e => setValues(v => ({ ...v, cancellationDays: Number(e.target.value) }))} />
-        </>
-      ),
-      validate: () => !!values.totalFee && !!values.depositAmount && values.servicesIncluded.length > 0,
-    },
-  ];
-
-  return <FormWizard steps={steps} onFinish={() => {/* TODO: PDF generation */}} />;
-};
-
-export default WeddingPlannerAgreementForm;
+export default function WeddingPlannerAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Wedding Planner Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="weddingplanneragreement"
+    />
+  );
+}

@@ -1,768 +1,506 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Building2, Download, ArrowRight, ArrowLeft } from "lucide-react";
-import { Country, State, City } from 'country-state-city';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-import jsPDF from 'jspdf';
-import UserInfoStep from "@/components/UserInfoStep";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  // Agreement Date and Parties
-  agreementDate: string;
-  landlordName: string;
-  landlordAddress: string;
-  tenantName: string;
-  tenantAddress: string;
-
-  // Property Details
-  legalDescription: string;
-  propertyAddress: string;
-  city: string;
-  state: string;
-  zipCode: string;
-
-  // Lease Terms
-  startDate: string;
-  endDate: string;
-  monthlyRent: string;
-  paymentAddress: string;
-  securityDeposit: string;
-
-  // Tenant Obligations
-  tenantSpecificObligations: string;
-
-  // Default and Late Payment Terms
-  financialDefaultDays: string;
-  otherBreachDays: string;
-  lateFeeGracePeriod: string;
-  lateFeeAmount: string;
-
-  // Notices
-  landlordNoticeAddress: string;
-  tenantNoticeAddress: string;
-
-  // Governing Law
-  governingState: string;
-}
-
-const WarehouseLeaseForm = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('US');
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: '',
-    landlordName: '',
-    landlordAddress: '',
-    tenantName: '',
-    tenantAddress: '',
-    legalDescription: '',
-    propertyAddress: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    startDate: '',
-    endDate: '',
-    monthlyRent: '',
-    paymentAddress: '',
-    securityDeposit: '',
-    tenantSpecificObligations: '',
-    financialDefaultDays: '30',
-    otherBreachDays: '30',
-    lateFeeGracePeriod: '5',
-    lateFeeAmount: '',
-    landlordNoticeAddress: '',
-    tenantNoticeAddress: '',
-    governingState: '',
-  });
-
-  const countries = Country.getAllCountries();
-  const states = State.getStatesOfCountry(selectedCountry);
-  const cities = selectedState ? City.getCitiesOfState(selectedCountry, selectedState) : [];
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const generatePDF = async (userInfo?: { name: string; email: string; phone: string }) => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20;
-    const lineHeight = 7;
-    let currentY = margin;
-
-    // Helper function to add text with word wrapping
-    const addText = (text: string, fontSize = 11, isBold = false, isCenter = false) => {
-      doc.setFontSize(fontSize);
-      if (isBold) {
-        doc.setFont(undefined, 'bold');
-      } else {
-        doc.setFont(undefined, 'normal');
-      }
-      
-      const textWidth = pageWidth - (2 * margin);
-      const lines = doc.splitTextToSize(text, textWidth);
-      
-      lines.forEach((line: string) => {
-        if (currentY > 270) {
-          doc.addPage();
-          currentY = margin;
-        }
-        
-        if (isCenter) {
-          const textWidth = doc.getStringUnitWidth(line) * fontSize / doc.internal.scaleFactor;
-          const textX = (pageWidth - textWidth) / 2;
-          doc.text(line, textX, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // Title
-    addText('WAREHOUSE LEASE AGREEMENT', 16, true, true);
-    currentY += 5;
-
-    // Introduction
-    addText(`This Warehouse Lease Agreement ("Agreement") is entered into on ${formData.agreementDate || '[Insert Date]'}, by and between`);
-    addText(`${formData.landlordName || '[Insert Landlord\'s Full Name and Address]'} ("Landlord"),`);
-    addText('And');
-    addText(`${formData.tenantName || '[Insert Tenant\'s Full Name and Address]'} ("Tenant").`);
-    addText('Collectively, the Landlord and Tenant shall be referred to as the "Parties."');
-    currentY += 5;
-
-    // 1. Leased Premises
-    addText('1. Leased Premises', 12, true);
-    addText(`Landlord hereby leases to Tenant the property described as ${formData.legalDescription || '[Insert Legal Description]'}, located at ${formData.propertyAddress || '[Insert Address]'}, ${formData.city || '[City]'}, ${formData.state || '[State]'} ${formData.zipCode || '[Zip Code]'} (the "Leased Premises" or "Premises"), for the term and under the terms set forth in this Agreement.`);
-    currentY += 3;
-
-    // 2. Lease Term
-    addText('2. Lease Term', 12, true);
-    addText(`The term of this Lease shall commence on ${formData.startDate || '[Insert Start Date]'} and shall expire on ${formData.endDate || '[Insert End Date]'}, unless earlier terminated in accordance with this Agreement.`);
-    currentY += 3;
-
-    // 3. Rental Payments
-    addText('3. Rental Payments', 12, true);
-    addText(`Tenant agrees to pay to Landlord a monthly rent of $${formData.monthlyRent || '[Insert Amount]'}, payable in advance on or before the first day of each calendar month. Payments shall be made to Landlord at ${formData.paymentAddress || '[Insert Payment Address]'}, or such other address as the Landlord may later designate in writing.`);
-    currentY += 3;
-
-    // 4. Security Deposit
-    addText('4. Security Deposit', 12, true);
-    addText(`Upon execution of this Lease, Tenant shall pay to Landlord a security deposit of $${formData.securityDeposit || '[Insert Amount]'}, to be held in trust by Landlord as security for Tenant's performance of all obligations under this Lease and for the cost of remedying any damages caused to the Premises, beyond reasonable wear and tear.`);
-    currentY += 3;
-
-    // 5. Possession and Surrender
-    addText('5. Possession and Surrender', 12, true);
-    addText('Tenant shall be entitled to possession of the Premises on the Lease commencement date and shall surrender possession at the expiration or earlier termination of the Lease. Tenant agrees to return the Premises in good condition, ordinary wear and tear excepted.');
-    currentY += 3;
-
-    // 6. Permitted Use
-    addText('6. Permitted Use', 12, true);
-    addText('Tenant may use the Premises solely for warehousing, distribution, light industrial activities, and other lawful uses incidental thereto, subject to Landlord\'s written approval for any additional uses, which approval shall not be unreasonably withheld.');
-    currentY += 3;
-
-    // 7. Condition of Premises
-    addText('7. Condition of Premises', 12, true);
-    addText('Tenant acknowledges that it has inspected the Premises or had the opportunity to do so and accepts the Premises in its present "as-is" condition. If the condition of the Premises deteriorates during the Lease term in a manner that materially impairs its use or value, Tenant shall promptly notify Landlord in writing.');
-    currentY += 3;
-
-    // 8. Insurance Obligations
-    addText('8. Insurance Obligations', 12, true);
-    addText('Each party shall maintain insurance appropriate to its interest in the Premises and any personal property located therein. Tenant shall not permit any use that would invalidate such coverage. Proof of insurance shall be provided to the other party upon request.');
-    currentY += 3;
-
-    // 9. Maintenance and Repairs
-    addText('9. Maintenance and Repairs', 12, true);
-    addText(`Landlord shall maintain the Premises in a condition suitable for occupancy, including structural elements, roof, and common areas. Tenant shall be responsible for maintaining and repairing any damage caused by its operations or personnel. Tenant shall also be responsible for: ${formData.tenantSpecificObligations || '[Insert specific obligations, e.g., HVAC, lighting fixtures, etc.]'}.`);
-    currentY += 3;
-
-    // 10. Utilities and Services
-    addText('10. Utilities and Services', 12, true);
-    addText('Landlord shall be responsible for the cost of all utilities and services unless otherwise specified in writing. Tenant shall not cause unreasonable usage or burden on such services.');
-    currentY += 3;
-
-    // 11. Real Estate Taxes
-    addText('11. Real Estate Taxes', 12, true);
-    addText('Landlord shall be solely responsible for the payment of all real estate taxes, assessments, and charges levied against the Premises.');
-    currentY += 3;
-
-    // 12. Termination Due to Sale
-    addText('12. Termination Due to Sale', 12, true);
-    addText('Landlord may terminate this Lease by providing sixty (60) days\' written notice in the event the Premises are sold to a third party.');
-    currentY += 3;
-
-    // 13. Casualty or Condemnation
-    addText('13. Casualty or Condemnation', 12, true);
-    addText('In the event the Premises are damaged or destroyed, Landlord may elect to repair the damage or terminate this Lease upon thirty (30) days\' written notice. In the case of condemnation or if repair is not feasible, either party may terminate this Lease by providing twenty (20) days\' written notice.');
-    currentY += 3;
-
-    // 14. Tenant Default
-    addText('14. Tenant Default', 12, true);
-    addText(`Tenant shall be in default if it fails to comply with any material term of this Lease. Tenant shall have ${formData.financialDefaultDays || '[Insert Number]'} days to cure a financial default and ${formData.otherBreachDays || '[Insert Number]'} days to cure any other breach after receipt of written notice. If the default is not cured, Landlord may pursue legal remedies, including recovery of costs and attorney's fees.`);
-    currentY += 3;
-
-    // 15. Late Payments
-    addText('15. Late Payments', 12, true);
-    addText(`For any rental payment not received within ${formData.lateFeeGracePeriod || '[Insert Number]'} days of the due date, Tenant shall pay a late fee of $${formData.lateFeeAmount || '[Insert Amount]'}.`);
-    currentY += 3;
-
-    // Continue with remaining sections...
-    // 16. Holdover
-    addText('16. Holdover', 12, true);
-    addText('If Tenant remains in possession after Lease termination without written consent, Tenant shall pay rent at 150% of the prior monthly rent and such occupancy shall convert to a month-to-month tenancy.');
-    currentY += 3;
-
-    // Add new page if needed
-    if (currentY > 220) {
-      doc.addPage();
-      currentY = margin;
-    }
-
-    // Continue with remaining sections...
-    const remainingSections = [
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
       {
-        title: '17. Returned Payments',
-        content: 'Tenant shall be charged the maximum amount permitted by law for any payment returned due to insufficient funds.'
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
       },
       {
-        title: '18. Improvements and Alterations',
-        content: 'Tenant shall not undertake any alterations, construction, or remodeling without prior written approval of Landlord, which shall not be unreasonably withheld. Any improvements shall be at Tenant\'s expense. Upon termination, Tenant shall remove any such improvements if requested by Landlord and restore the Premises to its prior condition.'
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
       },
       {
-        title: '19. Access by Landlord',
-        content: 'Landlord may enter the Premises upon reasonable notice and during business hours for inspections, maintenance, or to show the property. In case of emergency, Landlord may enter without notice. During the final 90 days of the Lease, Landlord may display "For Lease" signs and show the Premises to prospective tenants.'
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
       },
       {
-        title: '20. Prohibited Items and Hazardous Materials',
-        content: 'Tenant shall not keep flammable, hazardous, or explosive materials on the Premises without Landlord\'s prior written consent and proof of adequate insurance.'
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
       },
       {
-        title: '21. Mechanics\' Liens',
-        content: 'Tenant shall not permit any liens to be filed against the Premises arising from any work performed or materials provided at Tenant\'s request. Tenant shall promptly discharge any lien filed.'
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
       },
       {
-        title: '22. Subordination',
-        content: 'This Lease is and shall be subordinate to any current or future mortgage placed on the Premises by Landlord.'
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
       },
       {
-        title: '23. Assignment and Subletting',
-        content: 'Tenant shall not assign this Lease, sublet the Premises, or allow third-party use without Landlord\'s prior written consent. Unauthorized transfers shall be voidable at Landlord\'s option.'
-      }
-    ];
-
-    remainingSections.forEach(section => {
-      if (currentY > 250) {
-        doc.addPage();
-        currentY = margin;
-      }
-      addText(section.title, 12, true);
-      addText(section.content);
-      currentY += 3;
-    });
-
-    // Add new page for remaining sections
-    if (currentY > 200) {
-      doc.addPage();
-      currentY = margin;
-    }
-
-    // 24. Notice
-    addText('24. Notice', 12, true);
-    addText('All notices required under this Lease shall be in writing and delivered via personal service or certified mail to the addresses stated below, or any updated address provided in writing:');
-    addText('Landlord:');
-    addText(`${formData.landlordNoticeAddress || '[Insert Full Address]'}`);
-    addText('Tenant:');
-    addText(`${formData.tenantNoticeAddress || '[Insert Full Address]'}`);
-    addText('Notices shall be deemed received three (3) business days after mailing.');
-    currentY += 3;
-
-    // Remaining sections
-    const finalSections = [
-      {
-        title: '25. Governing Law',
-        content: `This Lease shall be governed by and construed in accordance with the laws of the State of ${formData.governingState || '[Insert State]'}.`
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
       },
       {
-        title: '26. Entire Agreement',
-        content: 'This document constitutes the entire agreement between the Parties with respect to the subject matter hereof. No oral statements or prior writings shall be binding unless incorporated herein.'
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
       },
       {
-        title: '27. Amendments',
-        content: 'Any amendments to this Lease must be in writing and signed by both Parties.'
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
       },
       {
-        title: '28. Severability',
-        content: 'If any provision of this Lease is found invalid or unenforceable, the remainder shall remain in full force and effect. If such invalidity can be cured by limiting the clause, it shall be construed accordingly.'
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
       },
       {
-        title: '29. Waiver',
-        content: 'Failure by either Party to enforce any provision shall not constitute a waiver of such provision or the right to enforce it in the future.'
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
       },
       {
-        title: '30. Binding Effect',
-        content: 'This Lease shall be binding upon and inure to the benefit of the Parties and their respective heirs, successors, and permitted assigns.'
-      }
-    ];
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-    finalSections.forEach(section => {
-      if (currentY > 250) {
-        doc.addPage();
-        currentY = margin;
-      }
-      addText(section.title, 12, true);
-      addText(section.content);
-      currentY += 3;
-    });
-
-    // Add new page for execution section
-    if (currentY > 200) {
-      doc.addPage();
-      currentY = margin;
-    }
-
-    // 31. Execution
-    addText('31. Execution', 12, true);
-    addText('IN WITNESS WHEREOF, the Parties have executed this Warehouse Lease Agreement as of the date first above written.');
-    currentY += 10;
-
-    addText('LANDLORD');
-    currentY += 10;
-    addText('Signature: ___________________________');
-    addText('Name: ___________________________');
-    addText('Date: ___________________________');
-    currentY += 10;
-
-    addText('TENANT');
-    currentY += 10;
-    addText('Signature: ___________________________');
-    addText('Name: ___________________________');
-    addText('Date: ___________________________');
-    currentY += 15;
-
-    // Legal information section
-    doc.addPage();
-    currentY = margin;
-
-    addText('Make It Legal', 14, true, true);
-    currentY += 10;
-
-    addText('This Agreement should be signed in front of a notary public by both parties.');
-    addText('Once signed in front of a notary, this document should be delivered to the appropriate court for filing.');
-    currentY += 5;
-
-    addText('Copies', 12, true);
-    addText('The original Agreement should be filed with the Clerk of Court or delivered to the requesting business.');
-    addText('The parties should maintain a copy of the Agreement. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.');
-    currentY += 5;
-
-    addText('Additional Assistance', 12, true);
-    addText('If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.');
-
-    // Save the PDF
-    doc.save('warehouse-lease-agreement.pdf');
-    toast.success("Warehouse Lease Agreement PDF generated successfully!");
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      toast.error("Failed to generate Warehouse Lease Agreement");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  const nextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 5));
-  };
-
-  const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="w-5 h-5" />
-                Location Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
-                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.isoCode} value={country.isoCode}>
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="state">State/Province</Label>
-                <Select value={selectedState} onValueChange={(value) => {
-                  setSelectedState(value);
-                  handleInputChange('state', value);
-                }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {states.map((state) => (
-                      <SelectItem key={state.isoCode} value={state.isoCode}>
-                        {state.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Select value={selectedCity} onValueChange={(value) => {
-                  setSelectedCity(value);
-                  handleInputChange('city', value);
-                }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select city" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cities.map((city) => (
-                      <SelectItem key={city.name} value={city.name}>
-                        {city.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="governingState">Governing State (for legal jurisdiction)</Label>
-                <Select value={formData.governingState} onValueChange={(value) => handleInputChange('governingState', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select governing state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {states.map((state) => (
-                      <SelectItem key={state.isoCode} value={state.name}>
-                        {state.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 2:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Agreement Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="agreementDate">Agreement Date</Label>
-                <Input
-                  id="agreementDate"
-                  type="date"
-                  value={formData.agreementDate}
-                  onChange={(e) => handleInputChange('agreementDate', e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="landlordName">Landlord's Full Name and Address</Label>
-                <Textarea
-                  id="landlordName"
-                  value={formData.landlordName}
-                  onChange={(e) => handleInputChange('landlordName', e.target.value)}
-                  placeholder="Enter landlord's full name and address"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tenantName">Tenant's Full Name and Address</Label>
-                <Textarea
-                  id="tenantName"
-                  value={formData.tenantName}
-                  onChange={(e) => handleInputChange('tenantName', e.target.value)}
-                  placeholder="Enter tenant's full name and address"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="legalDescription">Legal Description of Property</Label>
-                <Textarea
-                  id="legalDescription"
-                  value={formData.legalDescription}
-                  onChange={(e) => handleInputChange('legalDescription', e.target.value)}
-                  placeholder="Enter legal description of the property"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="propertyAddress">Property Address</Label>
-                <Input
-                  id="propertyAddress"
-                  value={formData.propertyAddress}
-                  onChange={(e) => handleInputChange('propertyAddress', e.target.value)}
-                  placeholder="Enter property street address"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="zipCode">Zip Code</Label>
-                <Input
-                  id="zipCode"
-                  value={formData.zipCode}
-                  onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                  placeholder="Enter zip code"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 3:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Lease Terms</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startDate">Lease Start Date</Label>
-                  <Input
-                    id="startDate"
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => handleInputChange('startDate', e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="endDate">Lease End Date</Label>
-                  <Input
-                    id="endDate"
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => handleInputChange('endDate', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="monthlyRent">Monthly Rent Amount ($)</Label>
-                  <Input
-                    id="monthlyRent"
-                    value={formData.monthlyRent}
-                    onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
-                    placeholder="Enter monthly rent amount"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="securityDeposit">Security Deposit Amount ($)</Label>
-                  <Input
-                    id="securityDeposit"
-                    value={formData.securityDeposit}
-                    onChange={(e) => handleInputChange('securityDeposit', e.target.value)}
-                    placeholder="Enter security deposit amount"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="paymentAddress">Payment Address</Label>
-                <Textarea
-                  id="paymentAddress"
-                  value={formData.paymentAddress}
-                  onChange={(e) => handleInputChange('paymentAddress', e.target.value)}
-                  placeholder="Enter address where rent payments should be sent"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tenantSpecificObligations">Tenant's Specific Maintenance Obligations</Label>
-                <Textarea
-                  id="tenantSpecificObligations"
-                  value={formData.tenantSpecificObligations}
-                  onChange={(e) => handleInputChange('tenantSpecificObligations', e.target.value)}
-                  placeholder="e.g., HVAC maintenance, lighting fixtures, floor cleaning, etc."
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 4:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Default Terms & Notice Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="financialDefaultDays">Days to Cure Financial Default</Label>
-                  <Input
-                    id="financialDefaultDays"
-                    value={formData.financialDefaultDays}
-                    onChange={(e) => handleInputChange('financialDefaultDays', e.target.value)}
-                    placeholder="e.g., 30"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="otherBreachDays">Days to Cure Other Breaches</Label>
-                  <Input
-                    id="otherBreachDays"
-                    value={formData.otherBreachDays}
-                    onChange={(e) => handleInputChange('otherBreachDays', e.target.value)}
-                    placeholder="e.g., 30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="lateFeeGracePeriod">Late Fee Grace Period (days)</Label>
-                  <Input
-                    id="lateFeeGracePeriod"
-                    value={formData.lateFeeGracePeriod}
-                    onChange={(e) => handleInputChange('lateFeeGracePeriod', e.target.value)}
-                    placeholder="e.g., 5"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="lateFeeAmount">Late Fee Amount ($)</Label>
-                  <Input
-                    id="lateFeeAmount"
-                    value={formData.lateFeeAmount}
-                    onChange={(e) => handleInputChange('lateFeeAmount', e.target.value)}
-                    placeholder="Enter late fee amount"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="landlordNoticeAddress">Landlord's Notice Address</Label>
-                <Textarea
-                  id="landlordNoticeAddress"
-                  value={formData.landlordNoticeAddress}
-                  onChange={(e) => handleInputChange('landlordNoticeAddress', e.target.value)}
-                  placeholder="Enter full address for sending notices to landlord"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tenantNoticeAddress">Tenant's Notice Address</Label>
-                <Textarea
-                  id="tenantNoticeAddress"
-                  value={formData.tenantNoticeAddress}
-                  onChange={(e) => handleInputChange('tenantNoticeAddress', e.target.value)}
-                  placeholder="Enter full address for sending notices to tenant"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 5:
-        return (
-          <UserInfoStep
-            onGenerate={generatePDF}
-            onBack={prevStep}
-            isGenerating={isGeneratingPDF}
-            documentType="Warehouse Lease Agreement"
-          />
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Warehouse Lease Agreement</h1>
-        <p className="text-gray-600">
-          Create a comprehensive warehouse lease agreement for commercial storage and distribution spaces
-        </p>
-      </div>
-
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm font-medium text-gray-700">
-            Step {currentStep} of 5
-          </div>
-          <div className="text-sm text-gray-500">
-            {currentStep === 1 && "Location Information"}
-            {currentStep === 2 && "Agreement Details"}
-            {currentStep === 3 && "Lease Terms"}
-            {currentStep === 4 && "Default Terms & Notices"}
-            {currentStep === 5 && "User Information"}
-          </div>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / 5) * 100}%` }}
-          ></div>
-        </div>
-      </div>
-
-      {renderStep()}
-
-      {currentStep !== 5 && (
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Previous
-          </Button>
-
-          <div className="flex gap-2">
-            {currentStep < 5 ? (
-              <Button onClick={nextStep} className="flex items-center gap-2">
-                Next
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            ) : null}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Warehouse Lease", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("warehouse_lease.pdf");
 };
 
-export default WarehouseLeaseForm;
+export default function WarehouseLease() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Warehouse Lease"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="warehouselease"
+    />
+  );
+}

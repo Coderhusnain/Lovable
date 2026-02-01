@@ -1,356 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  // Contact Information
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-  // Personal Information
-  dob: string;
-  race: string;
-  sex: string;
-  height: string;
-  weight: string;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Information For Police Report", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("information_for_police_report.pdf");
+};
 
-  // Report Information
-  incidentType: string;
-  dateOfIncident: string;
-  howAware: string;
-  locationOfIncident: string;
-  briefDescription: string;
-
-  // Lost / Stolen Item - Driver's License details
-  dl_nameOnLicense: string;
-  dl_licenseNumber: string;
-  dl_stateOfIssue: string;
-  dl_description: string;
-  dl_issuedOn: string;
-  dl_expiryDate: string;
-
-  // Checklist / Legal notes
-  checklist_makeItLegal: boolean;
-  checklist_signDocument: boolean;
-  checklist_copies: boolean;
-  checklist_additionalAssistance: boolean;
-
-  // Signature / report filer
-  reporterName: string;
-  reporterDate: string;
-}
-
-export default function InformationForPoliceReportForm() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    address: "",
-    phone: "",
-    email: "",
-
-    dob: "",
-    race: "",
-    sex: "",
-    height: "",
-    weight: "",
-
-    incidentType: "Theft - Personal Identification",
-    dateOfIncident: "",
-    howAware: "I became aware of the incident when I attempted to retrieve my driver’s license and found it missing from my wallet. I immediately retraced my steps but could not locate the item. I suspect the theft occurred during the day while I was in a public area.",
-    locationOfIncident: "",
-    briefDescription:
-      "On the above-stated date, I was present at [insert specific location, e.g., “a shopping mall on Main Street”]. At some point during the day, my driver’s license was unlawfully taken from my possession without my knowledge or consent. The item was not misplaced by me, and I believe the loss was due to theft. No witnesses were available at the time of the incident, and no physical confrontation occurred.",
-
-    dl_nameOnLicense: "",
-    dl_licenseNumber: "",
-    dl_stateOfIssue: "",
-    dl_description: "Standard issue driver’s license with a light scratch on the top-left corner.",
-    dl_issuedOn: "",
-    dl_expiryDate: "",
-
-    checklist_makeItLegal: true,
-    checklist_signDocument: true,
-    checklist_copies: true,
-    checklist_additionalAssistance: true,
-
-    reporterName: "",
-    reporterDate: "",
-  });
-
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    if (type === "checkbox") return; // handled separately
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const toggleCheckbox = (key: keyof FormData) => {
-    setFormData((p) => ({ ...p, [key]: !p[key] }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const lineHeight = 13;
-    let y = margin;
-
-    const write = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const maxW = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, maxW);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += lineHeight;
-      });
-    };
-
-    write("INFORMATION FOR POLICE REPORT", 16, true, true);
-    write("\n");
-
-    write("1. CONTACT INFORMATION", 12, true);
-    write(`Name: ${formData.name || "[Insert Full Legal Name]"}`);
-    write(`Address: ${formData.address || "[Insert Residential Address]"}`);
-    write(`Phone Number: ${formData.phone || "[Insert Phone Number]"}`);
-    write(`Email: ${formData.email || "[Insert Email Address]"}`);
-    write("\n");
-
-    write("2. PERSONAL INFORMATION", 12, true);
-    write(`Date of Birth: ${formData.dob || "[Insert Date of Birth]"}`);
-    write(`Race: ${formData.race || "[Insert Race]"}`);
-    write(`Sex: ${formData.sex || "[Insert Sex]"}`);
-    write(`Height: ${formData.height || "[Insert Height]"}`);
-    write(`Weight: ${formData.weight ? `${formData.weight} lbs` : "[Insert Weight] lbs"}`);
-    write("\n");
-
-    write("3. REPORT INFORMATION", 12, true);
-    write(`Type of Incident: ${formData.incidentType}`);
-    write("The undersigned affirms that they have been the victim of the following theft(s):");
-    write(`☒ Driver’s License`);
-    write(`☐ Wallet`);
-    write("\n");
-
-    write(`Date of Incident: ${formData.dateOfIncident || "[Insert Date of Incident]"}`);
-    write("How Did You Become Aware of the Incident:");
-    write(formData.howAware || "");
-    write("\n");
-
-    write(`Location of Incident: ${formData.locationOfIncident || "[Insert Location Where the Incident Occurred]"}`);
-    write("Brief Description of the Incident:");
-    write(formData.briefDescription || "");
-    write("\n");
-
-    write("List of Items Lost or Stolen:", 12, true);
-    write("1. Driver's License");
-    write(`- Name on License: ${formData.dl_nameOnLicense || "[Insert Your Full Name]"}`);
-    write(`- License Number: ${formData.dl_licenseNumber || "[Insert if known]"}`);
-    write(`- State of Issue: ${formData.dl_stateOfIssue || "[Insert State or Jurisdiction]"}`);
-    write(`- Description: ${formData.dl_description || "Standard issue driver's license with a light scratch on the top-left corner."}`);
-    write(`- Issued On: ${formData.dl_issuedOn || "[Insert Date, if known]"}`);
-    write(`- Expiry Date: ${formData.dl_expiryDate || "[Insert Date, if known]"}`);
-    write("\n");
-
-    write("To do Checklist for Police report:", 12, true);
-    write(`Make it legal: ${formData.checklist_makeItLegal ? "☒" : "☐"}`);
-    write(`Sign the document: ${formData.checklist_signDocument ? "☒" : "☐"}`);
-    write(`Copies: ${formData.checklist_copies ? "☒" : "☐"}`);
-    write("The original report should be filed with the Clerk of Court or delivered to the requesting business.");
-    write("The report should maintain a copy. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.");
-    write("\n");
-
-    write("Additional Assistance", 12, true);
-    write("If you are unsure or have questions regarding this report or need additional assistance with special situations or circumstances, use Legalgram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
-    write("\n");
-
-    write("Report Filed By:", 12, true);
-    write(`Name: ${formData.reporterName || "[Insert Full Name]"}`);
-    write(`Date: ${formData.reporterDate || "[Insert Date]"}`);
-
-    doc.save("Information_for_Police_Report.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Contact Information</h3>
-              <Label>Name</Label>
-              <Input name="name" value={formData.name} onChange={handleChange} />
-              <Label>Address</Label>
-              <Input name="address" value={formData.address} onChange={handleChange} />
-              <Label>Phone Number</Label>
-              <Input name="phone" value={formData.phone} onChange={handleChange} />
-              <Label>Email</Label>
-              <Input name="email" value={formData.email} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Personal Information</h3>
-              <Label>Date of Birth</Label>
-              <Input name="dob" value={formData.dob} onChange={handleChange} />
-              <Label>Race</Label>
-              <Input name="race" value={formData.race} onChange={handleChange} />
-              <Label>Sex</Label>
-              <Input name="sex" value={formData.sex} onChange={handleChange} />
-              <Label>Height</Label>
-              <Input name="height" value={formData.height} onChange={handleChange} />
-              <Label>Weight (lbs)</Label>
-              <Input name="weight" value={formData.weight} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Report Information</h3>
-              <Label>Type of Incident</Label>
-              <Input name="incidentType" value={formData.incidentType} onChange={handleChange} />
-              <Label>Date of Incident</Label>
-              <Input name="dateOfIncident" value={formData.dateOfIncident} onChange={handleChange} />
-              <Label>How did you become aware of the incident?</Label>
-              <Textarea name="howAware" value={formData.howAware} onChange={handleChange} />
-              <Label>Location of Incident</Label>
-              <Input name="locationOfIncident" value={formData.locationOfIncident} onChange={handleChange} />
-              <Label>Brief Description of the Incident</Label>
-              <Textarea name="briefDescription" value={formData.briefDescription} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Lost / Stolen Items</h3>
-              <Label>Name on Driver's License</Label>
-              <Input name="dl_nameOnLicense" value={formData.dl_nameOnLicense} onChange={handleChange} />
-              <Label>License Number</Label>
-              <Input name="dl_licenseNumber" value={formData.dl_licenseNumber} onChange={handleChange} />
-              <Label>State of Issue</Label>
-              <Input name="dl_stateOfIssue" value={formData.dl_stateOfIssue} onChange={handleChange} />
-              <Label>Description</Label>
-              <Textarea name="dl_description" value={formData.dl_description} onChange={handleChange} />
-              <Label>Issued On</Label>
-              <Input name="dl_issuedOn" value={formData.dl_issuedOn} onChange={handleChange} />
-              <Label>Expiry Date</Label>
-              <Input name="dl_expiryDate" value={formData.dl_expiryDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Checklist & Legal Notes</h3>
-              <div className="flex items-center gap-3">
-                <input
-                  id="makeItLegal"
-                  type="checkbox"
-                  checked={formData.checklist_makeItLegal}
-                  onChange={() => toggleCheckbox("checklist_makeItLegal")}
-                />
-                <Label htmlFor="makeItLegal">Make it legal</Label>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  id="signDocument"
-                  type="checkbox"
-                  checked={formData.checklist_signDocument}
-                  onChange={() => toggleCheckbox("checklist_signDocument")}
-                />
-                <Label htmlFor="signDocument">Sign the document</Label>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  id="copies"
-                  type="checkbox"
-                  checked={formData.checklist_copies}
-                  onChange={() => toggleCheckbox("checklist_copies")}
-                />
-                <Label htmlFor="copies">Copies / File original with Clerk of Court</Label>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  id="assistance"
-                  type="checkbox"
-                  checked={formData.checklist_additionalAssistance}
-                  onChange={() => toggleCheckbox("checklist_additionalAssistance")}
-                />
-                <Label htmlFor="assistance">Additional Assistance / Find A Lawyer</Label>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Reporter / Sign</h3>
-              <Label>Report Filed By - Name</Label>
-              <Input name="reporterName" value={formData.reporterName} onChange={handleChange} />
-              <Label>Date</Label>
-              <Input name="reporterDate" value={formData.reporterDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function InformationForPoliceReport() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-
-        {step < 6 ? (
-          <Button onClick={() => setStep((s) => Math.min(6, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Information for Police Report PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Information For Police Report"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="informationforpolicereport"
+    />
   );
 }

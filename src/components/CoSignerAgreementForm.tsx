@@ -1,290 +1,506 @@
-import React, { useState } from "react";
-import jsPDF from "jspdf";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { CheckCircle, ArrowLeft, ArrowRight, Loader2, FileText } from "lucide-react";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-// Mock toast for notification - replace with your actual toast import
-const toast = { success: (msg: string) => alert(msg), error: (msg: string) => alert(msg) };
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-const CoSignerAgreementForm = () => {
-  // 1. STATE MANAGEMENT
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
   
-  const [formData, setFormData] = useState({
-    // Step 1: Basics
-    agreementDate: '',
-    landlordName: '',
-    tenantNames: '',
-    coSignerName: '',
-    leaseDate: '',
-    // Step 2: Property
-    propertyAddress: '',
-    propertyCity: '',
-    propertyState: '',
-    propertyZip: '',
-    // Step 3: Co-Signer Details
-    cosignerFullName: '',
-    cosignerResidentialAddress: '',
-    cosignerUnitNumber: '',
-    cosignerCity: '',
-    cosignerState: '',
-    cosignerZip: '',
-    cosignerDriversLicense: '',
-    cosignerDriversState: '',
-    cosignerTelephone: '',
-    // Step 4: Guarantees
-    guaranteeRent: '',
-    guaranteeLateFees: '',
-    guaranteeDamages: '',
-    guaranteeCleaningCharges: '',
-    guaranteeUtilities: '',
-    responsibilityOnDefault: '',
-    durationOfGuarantee: '',
-    postEvictionResponsibility: '',
-    assignmentSublettingNote: '',
-    // Step 5: Notes & Signatures
-    creditAuthorizationNote: '',
-    legalFeesNote: '',
-    entireAgreementNote: '',
-    cosignerSignName: '',
-    cosignerSignDate: '',
-    landlordSignName: '',
-    landlordSignDate: '',
-    tenantSignName: '',
-    tenantSignDate: '',
-    notaryNote: '',
-    copiesNote: '',
-    assistanceNote: ''
-  });
-
-  // 2. HANDLERS
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      setIsComplete(true);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
-  };
-
-  // 3. PDF GENERATION
-  const generatePDF = () => {
-    setIsGeneratingPDF(true);
-    try {
-      const doc = new jsPDF();
-      
-      // Title
-      doc.setFontSize(18);
-      doc.setFont("helvetica", "bold");
-      doc.text("CO-SIGNER AGREEMENT", 105, 20, { align: "center" });
-      
-      let y = 40;
-      doc.setFontSize(11);
-      doc.setFont("helvetica", "normal");
-      
-      const addText = (text: string, isBold = false) => {
-        if (y > 270) { doc.addPage(); y = 20; }
-        doc.setFont("helvetica", isBold ? "bold" : "normal");
-        const lines = doc.splitTextToSize(text, 170);
-        doc.text(lines, 20, y);
-        y += lines.length * 5 + 5;
-      };
-
-      addText(`This Agreement is made on ${formData.agreementDate} attached to the Lease Agreement dated ${formData.leaseDate}.`);
-      
-      addText("1. PARTIES:", true);
-      addText(`Landlord: ${formData.landlordName}`);
-      addText(`Tenant(s): ${formData.tenantNames}`);
-      addText(`Co-Signer: ${formData.coSignerName}`);
-      
-      addText("2. PROPERTY ADDRESS:", true);
-      addText(`${formData.propertyAddress}, ${formData.propertyCity}, ${formData.propertyState} ${formData.propertyZip}`);
-
-      addText("3. CO-SIGNER DETAILS:", true);
-      addText(`Legal Name: ${formData.cosignerFullName}`);
-      addText(`Address: ${formData.cosignerResidentialAddress} ${formData.cosignerUnitNumber ? '#' + formData.cosignerUnitNumber : ''}, ${formData.cosignerCity}, ${formData.cosignerState} ${formData.cosignerZip}`);
-      addText(`Phone: ${formData.cosignerTelephone} | DL: ${formData.cosignerDriversLicense} (${formData.cosignerDriversState})`);
-
-      addText("4. GUARANTEES:", true);
-      addText(`The Co-Signer guarantees the following:\nRent: ${formData.guaranteeRent}\nDamages: ${formData.guaranteeDamages}\nUtilities: ${formData.guaranteeUtilities}`);
-      
-      addText("5. TERMS:", true);
-      addText(`Responsibility on Default: ${formData.responsibilityOnDefault}`);
-      addText(`Duration: ${formData.durationOfGuarantee}`);
-      
-      // Signatures Page
-      doc.addPage();
-      doc.setFontSize(14);
-      doc.text("SIGNATURES", 20, 30);
-      
-      doc.setFontSize(11);
-      doc.text("Co-Signer:", 20, 50);
-      doc.text(`Name: ${formData.cosignerSignName}`, 20, 60);
-      doc.text(`Date: ${formData.cosignerSignDate}`, 120, 60);
-      doc.line(20, 75, 90, 75); // Signature line
-      
-      doc.text("Landlord:", 20, 90);
-      doc.text(`Name: ${formData.landlordSignName}`, 20, 100);
-      doc.text(`Date: ${formData.landlordSignDate}`, 120, 100);
-      doc.line(20, 115, 90, 115);
-
-      doc.save('co-signer-agreement.pdf');
-      toast.success("Document generated successfully!");
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to generate PDF");
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
-  // 4. STEPS CONFIGURATION
-  const steps = [
-    {
-      label: "Agreement Basics",
-      content: (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div><Label>Agreement Date</Label><Input type="date" name="agreementDate" value={formData.agreementDate} onChange={handleChange} /></div>
-            <div><Label>Lease Date</Label><Input type="date" name="leaseDate" value={formData.leaseDate} onChange={handleChange} /></div>
-          </div>
-          <Label>Landlord Name</Label><Input name="landlordName" value={formData.landlordName} onChange={handleChange} />
-          <Label>Tenant Name(s)</Label><Input name="tenantNames" value={formData.tenantNames} onChange={handleChange} />
-          <Label>Co-Signer Name (Short)</Label><Input name="coSignerName" value={formData.coSignerName} onChange={handleChange} />
-        </div>
-      ),
-      validate: () => Boolean(formData.agreementDate && formData.landlordName),
-    },
-    {
-      label: "Property Info",
-      content: (
-        <div className="space-y-4">
-          <Label>Property Address</Label><Input name="propertyAddress" value={formData.propertyAddress} onChange={handleChange} />
-          <div className="grid grid-cols-3 gap-2">
-            <div><Label>City</Label><Input name="propertyCity" value={formData.propertyCity} onChange={handleChange} /></div>
-            <div><Label>State</Label><Input name="propertyState" value={formData.propertyState} onChange={handleChange} /></div>
-            <div><Label>Zip</Label><Input name="propertyZip" value={formData.propertyZip} onChange={handleChange} /></div>
-          </div>
-        </div>
-      ),
-      validate: () => Boolean(formData.propertyAddress && formData.propertyCity),
-    },
-    {
-      label: "Co-Signer Details",
-      content: (
-        <div className="space-y-4">
-          <Label>Full Legal Name</Label><Input name="cosignerFullName" value={formData.cosignerFullName} onChange={handleChange} />
-          <Label>Residential Address</Label><Input name="cosignerResidentialAddress" value={formData.cosignerResidentialAddress} onChange={handleChange} />
-          <div className="grid grid-cols-2 gap-4">
-             <div><Label>Unit #</Label><Input name="cosignerUnitNumber" value={formData.cosignerUnitNumber} onChange={handleChange} /></div>
-             <div><Label>Phone</Label><Input name="cosignerTelephone" value={formData.cosignerTelephone} onChange={handleChange} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-             <div><Label>Driver's License</Label><Input name="cosignerDriversLicense" value={formData.cosignerDriversLicense} onChange={handleChange} /></div>
-             <div><Label>State</Label><Input name="cosignerDriversState" value={formData.cosignerDriversState} onChange={handleChange} /></div>
-          </div>
-        </div>
-      ),
-      validate: () => Boolean(formData.cosignerFullName && formData.cosignerResidentialAddress),
-    },
-    {
-      label: "Guarantees",
-      content: (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-             <div><Label>Guarantee Rent ($)</Label><Input name="guaranteeRent" value={formData.guaranteeRent} onChange={handleChange} /></div>
-             <div><Label>Guarantee Damages ($)</Label><Input name="guaranteeDamages" value={formData.guaranteeDamages} onChange={handleChange} /></div>
-             <div><Label>Cleaning Charges ($)</Label><Input name="guaranteeCleaningCharges" value={formData.guaranteeCleaningCharges} onChange={handleChange} /></div>
-             <div><Label>Utilities ($)</Label><Input name="guaranteeUtilities" value={formData.guaranteeUtilities} onChange={handleChange} /></div>
-          </div>
-          <Label>Responsibility on Default</Label>
-          <Textarea name="responsibilityOnDefault" value={formData.responsibilityOnDefault} onChange={handleChange} />
-        </div>
-      ),
-      validate: () => Boolean(formData.guaranteeRent),
-    },
-    {
-      label: "Final Signatures",
-      content: (
-        <div className="space-y-4">
-          <h4 className="font-semibold text-sm">Signatures</h4>
-          <div className="grid grid-cols-2 gap-4">
-             <div><Label>Co-Signer Name</Label><Input name="cosignerSignName" value={formData.cosignerSignName} onChange={handleChange} /></div>
-             <div><Label>Date</Label><Input type="date" name="cosignerSignDate" value={formData.cosignerSignDate} onChange={handleChange} /></div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-             <div><Label>Landlord Name</Label><Input name="landlordSignName" value={formData.landlordSignName} onChange={handleChange} /></div>
-             <div><Label>Date</Label><Input type="date" name="landlordSignDate" value={formData.landlordSignDate} onChange={handleChange} /></div>
-          </div>
-          <Label>Notary Notes (Optional)</Label>
-          <Textarea name="notaryNote" value={formData.notaryNote} onChange={handleChange} />
-        </div>
-      ),
-      validate: () => Boolean(formData.cosignerSignName && formData.landlordSignName),
-    },
-  ];
-
-  // 5. MAIN RENDER
-  if (isComplete) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg text-center">
-          <CardHeader>
-            <CardTitle className="text-green-600 flex items-center justify-center gap-2">
-              <CheckCircle className="h-6 w-6" /> Agreement Ready
-            </CardTitle>
-            <CardDescription>Review complete. Click below to download.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={generatePDF} disabled={isGeneratingPDF} className="w-full" size="lg">
-              {isGeneratingPDF ? <Loader2 className="animate-spin mr-2" /> : <FileText className="mr-2" />}
-              Download PDF
-            </Button>
-          </CardContent>
-          <CardFooter className="justify-center">
-            <Button variant="ghost" onClick={() => { setIsComplete(false); setCurrentStep(1); }}>Edit Details</Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Co Signer Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
   }
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4 flex justify-center">
-      <Card className="w-full max-w-3xl">
-        <CardHeader>
-          <CardTitle>Co-Signer Agreement</CardTitle>
-          <CardDescription>Step {currentStep} of {steps.length}: {steps[currentStep - 1].label}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {steps[currentStep - 1].content}
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={handleBack} disabled={currentStep === 1}>
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-          </Button>
-          <Button onClick={handleNext} disabled={!steps[currentStep - 1].validate()}>
-            {currentStep === steps.length ? "Finish" : "Next"}
-            {currentStep === steps.length ? <CheckCircle className="h-4 w-4 ml-2" /> : <ArrowRight className="h-4 w-4 ml-2" />}
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
-  );
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("co_signer_agreement.pdf");
 };
 
-export default CoSignerAgreementForm;
+export default function CoSignerAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Co Signer Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="cosigneragreement"
+    />
+  );
+}

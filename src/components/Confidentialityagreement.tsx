@@ -1,331 +1,471 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
 
-interface FormData {
-  agreementDate: string;
-  ownerName: string;
-  ownerAddress: string;
-  recipientName: string;
-  recipientAddress: string;
-  ownerBusinessDescription: string;
-  recipientBusinessDescription: string;
-  termYears: string;
-  governingLawState: string;
-  signatureOwner: string;
-  signatureRecipient: string;
-}
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this document?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Document Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and details of this document",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
 
-export default function ConfidentialityAgreementForm() {
-  const [formData, setFormData] = useState<FormData>({
-    agreementDate: "",
-    ownerName: "",
-    ownerAddress: "",
-    recipientName: "",
-    recipientAddress: "",
-    ownerBusinessDescription: "",
-    recipientBusinessDescription: "",
-    termYears: "",
-    governingLawState: "",
-    signatureOwner: "",
-    signatureRecipient: "",
-  });
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Confidentiality Agreement", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("DOCUMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  
+  doc.save("confidentiality_agreement.pdf");
+};
 
-  const [step, setStep] = useState(1);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF("p", "pt", "a4");
-    const margin = 50;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const lineHeight = 18;
-    let currentY = margin;
-
-    const addText = (
-      text: string,
-      fontSize = 11,
-      isBold = false,
-      isCenter = false
-    ) => {
-      doc.setFontSize(fontSize);
-      doc.setFont("times", isBold ? "bold" : "normal");
-      const textWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, textWidth);
-      lines.forEach((line: string) => {
-        if (currentY > 720) {
-          doc.addPage();
-          currentY = margin;
-        }
-        if (isCenter) {
-          const tw =
-            (doc.getStringUnitWidth(line) * fontSize) /
-            doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, currentY);
-        } else {
-          doc.text(line, margin, currentY);
-        }
-        currentY += lineHeight;
-      });
-    };
-
-    // Build agreement
-    addText("CONFIDENTIALITY AGREEMENT", 14, true, true);
-    addText(
-      `This Confidentiality Agreement (“Agreement”) is made and entered into as of ${formData.agreementDate} (“Effective Date”) by and between:`
-    );
-    addText(
-      `${formData.ownerName}, of ${formData.ownerAddress} (“Owner” or “Disclosing Party”); and`
-    );
-    addText(
-      `${formData.recipientName}, of ${formData.recipientAddress} (“Recipient” or “Receiving Party”).`
-    );
-
-    addText("RECITALS", 12, true);
-    addText(
-      `WHEREAS, the Owner is engaged in the business of ${formData.ownerBusinessDescription};`
-    );
-    addText(
-      `WHEREAS, the Recipient is engaged in the business of ${formData.recipientBusinessDescription};`
-    );
-    addText(
-      "WHEREAS, the Owner possesses certain confidential, proprietary, and trade secret information of substantial commercial value and has agreed to disclose certain of such information to the Recipient solely for the limited purposes contemplated under this Agreement;"
-    );
-    addText(
-      "WHEREAS, the Recipient agrees to receive such information in strict confidence and to use it only in accordance with the terms of this Agreement;"
-    );
-    addText(
-      "NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, and intending to be legally bound, the parties agree as follows:"
-    );
-
-    addText("1. DEFINITION OF CONFIDENTIAL INFORMATION", 12, true);
-    addText("1.1 Meaning");
-    addText(
-      "“Confidential Information” means any and all non-public, proprietary, or confidential data, information, and material, whether in written, oral, electronic, graphic, or other tangible or intangible form, disclosed or made available by the Owner to the Recipient, whether before, on, or after the Effective Date, including without limitation: Business records, operational data, and strategic plans; Financial statements, projections, and budgets; Product designs, specifications, prototypes, and technical data; Software, source code, and algorithms; Customer lists, supplier details, pricing information, and marketing plans; Trade secrets and know-how; Any analyses, compilations, or other documents prepared by the Recipient containing or reflecting such information."
-    );
-    addText("1.2 Exclusions");
-    addText(
-      "Confidential Information shall not include information which: (a) is or becomes publicly available through no breach of this Agreement; (b) is lawfully received by the Recipient from a third party without restriction on disclosure; (c) is independently developed by the Recipient without use of or reference to the Owner’s Confidential Information; (d) is disclosed pursuant to a valid court order, subpoena, or governmental authority, provided that the Recipient promptly notifies the Owner and cooperates in any effort to limit such disclosure; (e) is approved for release in writing by the Owner; or (f) both parties agree in writing is not confidential."
-    );
-
-    addText("2. OBLIGATIONS OF THE RECIPIENT", 12, true);
-    addText("2.1 Non-Disclosure and Non-Use");
-    addText(
-      "The Recipient shall hold all Confidential Information in the strictest confidence, using at least the same degree of care it uses to protect its own confidential information, but in no event less than a reasonable degree of care. The Recipient shall not disclose, publish, or otherwise disseminate Confidential Information to any third party without the prior written consent of the Owner, and shall not use Confidential Information for any purpose other than the limited purpose authorized in writing by the Owner."
-    );
-    addText("2.2 No Copying or Modification");
-    addText(
-      "The Recipient shall not copy, reproduce, summarize, or otherwise duplicate the Confidential Information, in whole or in part, without the prior written approval of the Owner, except as strictly necessary for the permitted purpose."
-    );
-    addText("2.3 Disclosure to Employees/Agents");
-    addText(
-      "Disclosure of Confidential Information shall be limited to employees, contractors, or agents of the Recipient who have a legitimate need to know such information in connection with the permitted purpose, and who are bound by written confidentiality obligations no less restrictive than those contained herein."
-    );
-    addText("2.4 Injunctive Relief");
-    addText(
-      "The Recipient acknowledges that any unauthorized disclosure or use of Confidential Information will cause immediate and irreparable harm to the Owner for which monetary damages may be inadequate. Accordingly, the Owner shall be entitled to seek injunctive relief, without the necessity of posting bond, in addition to any other remedies available at law or in equity."
-    );
-
-    addText("3. RETURN OR DESTRUCTION OF CONFIDENTIAL INFORMATION", 12, true);
-    addText(
-      "Upon the Owner’s written request, the Recipient shall, within five (5) business days: (a) return all documents and tangible materials containing or representing Confidential Information; (b) permanently delete or destroy all electronic copies; and (c) provide a written certification, signed by an authorized representative, confirming compliance with this Section."
-    );
-
-    addText("4. RELATIONSHIP OF THE PARTIES", 12, true);
-    addText(
-      "Nothing in this Agreement shall be construed as obligating either party to enter into any business relationship or transaction. This Agreement shall not create any agency, partnership, joint venture, employment, or fiduciary relationship between the parties."
-    );
-
-    addText("5. NO WARRANTY", 12, true);
-    addText(
-      "The Owner makes no representations or warranties, express or implied, regarding the accuracy or completeness of the Confidential Information, and expressly disclaims any implied warranties of merchantability or fitness for a particular purpose. The Owner shall not be liable for any damages resulting from the Recipient’s use of the Confidential Information."
-    );
-
-    addText("6. NO LICENSE", 12, true);
-    addText(
-      "Except for the limited right to use the Confidential Information for the permitted purpose, no license, ownership interest, or other rights to intellectual property are granted under this Agreement, whether by implication, estoppel, or otherwise. All rights, title, and interest in and to the Confidential Information shall remain vested solely in the Owner."
-    );
-
-    addText("7. TERM AND SURVIVAL", 12, true);
-    addText(
-      `This Agreement shall commence on the Effective Date and continue until terminated by mutual written agreement. The obligations of confidentiality and non-use shall survive for a period of ${formData.termYears} years following the date of disclosure of the Confidential Information, or for such longer period as the information remains confidential and proprietary.`
-    );
-
-    addText("8. MISCELLANEOUS", 12, true);
-    addText(
-      `8.1 Entire Agreement – This Agreement constitutes the entire understanding between the parties regarding the subject matter and supersedes all prior discussions and agreements, whether oral or written.
-8.2 Amendment – This Agreement may only be amended in writing signed by both parties.
-8.3 Assignment – Neither party may assign its rights or delegate its duties under this Agreement without the prior written consent of the other party.
-8.4 Governing Law – This Agreement shall be governed by and construed in accordance with the laws of the State of ${formData.governingLawState}, without regard to conflict of law principles.
-8.5 Severability – If any provision of this Agreement is held invalid or unenforceable, the remaining provisions shall remain in full force and effect.
-8.6 Waiver – Failure to enforce any provision of this Agreement shall not constitute a waiver of any rights hereunder.`
-    );
-
-    addText("IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective Date.", 11, false, true);
-
-    addText("Owner (Disclosing Party):", 11, true);
-    addText(`Name: ${formData.ownerName}`);
-    addText(`Signature: ${formData.signatureOwner}`);
-    addText(`Date: ${formData.agreementDate}`);
-
-    addText("Recipient (Receiving Party):", 11, true);
-    addText(`Name: ${formData.recipientName}`);
-    addText(`Signature: ${formData.signatureRecipient}`);
-    addText(`Date: ${formData.agreementDate}`);
-
-    doc.save("Confidentiality_Agreement.pdf");
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 1: Agreement & Parties</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label>Agreement Date</Label>
-              <Input
-                type="date"
-                name="agreementDate"
-                value={formData.agreementDate}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Owner (Disclosing Party) Name</Label>
-              <Input
-                name="ownerName"
-                value={formData.ownerName}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Owner Address</Label>
-              <Textarea
-                name="ownerAddress"
-                value={formData.ownerAddress}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Recipient (Receiving Party) Name</Label>
-              <Input
-                name="recipientName"
-                value={formData.recipientName}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Recipient Address</Label>
-              <Textarea
-                name="recipientAddress"
-                value={formData.recipientAddress}
-                onChange={handleChange}
-                className="mb-2"
-              />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 2: Business Descriptions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label>Owner Business Description</Label>
-              <Textarea
-                name="ownerBusinessDescription"
-                value={formData.ownerBusinessDescription}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Recipient Business Description</Label>
-              <Textarea
-                name="recipientBusinessDescription"
-                value={formData.recipientBusinessDescription}
-                onChange={handleChange}
-                className="mb-2"
-              />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 3: Terms & Governing Law</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label>Term (Years)</Label>
-              <Input
-                type="number"
-                name="termYears"
-                value={formData.termYears}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Governing Law State</Label>
-              <Input
-                name="governingLawState"
-                value={formData.governingLawState}
-                onChange={handleChange}
-                className="mb-2"
-              />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 4: Signatures</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Label>Owner Signature</Label>
-              <Input
-                name="signatureOwner"
-                value={formData.signatureOwner}
-                onChange={handleChange}
-                className="mb-2"
-              />
-              <Label>Recipient Signature</Label>
-              <Input
-                name="signatureRecipient"
-                value={formData.signatureRecipient}
-                onChange={handleChange}
-                className="mb-2"
-              />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+export default function ConfidentialityAgreement() {
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-4">
-      {renderStep()}
-      <div className="flex justify-between mt-4">
-        {step > 1 && (
-          <Button variant="outline" onClick={() => setStep(step - 1)}>
-            Previous
-          </Button>
-        )}
-        {step < 4 ? (
-          <Button onClick={() => setStep(step + 1)}>Next</Button>
-        ) : (
-          <Button onClick={generatePDF}>Generate PDF</Button>
-        )}
-      </div>
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Confidentiality Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="confidentialityagreement"
+    />
   );
 }

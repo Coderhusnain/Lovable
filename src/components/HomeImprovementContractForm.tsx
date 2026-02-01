@@ -1,496 +1,506 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf";
-
-interface FormData {
-  ownerName: string;
-  ownerAddress: string;
-  contractorName: string;
-  contractorAddress: string;
-  licenseNumber: string;
-
-  projectAddress: string;
-  projectDescription: string;
-
-  contractPrice: string;
-  paymentTermsNotes: string;
-  discountTerms: string;
-  interestRate: string;
-
-  permitsResponsibility: string;
-  utilitiesProvision: string;
-  accessNotes: string;
-  financingNote: string;
-
-  materialsStandardNote: string;
-  materialsNonstandardNote: string;
-
-  hazardousMaterialsNote: string;
-  workAllowancesNote: string;
-  contractChangesNote: string;
-  scopeExclusionsNote: string;
-
-  extraWorkNote: string;
-  plumbingNote: string;
-  electricalNote: string;
-  plasterNote: string;
-  excavationNote: string;
-  termiteNote: string;
-
-  debrisRemovalNote: string;
-  delaysNote: string;
-
-  insuranceNote: string;
-  reconstructionTerminationPercent: string;
-
-  workersCompNote: string;
-  protectionOfPropertyNote: string;
-  guaranteeNote: string;
-  workStoppageNote: string;
-
-  completionNoticeDays: string;
-  noticesNote: string;
-
-  entireAgreementNote: string;
-  governingLaw: string;
-
-  correctiveWorkNote: string;
-  disputeResolutionNote: string;
-  attorneysFeesNote: string;
-
-  ownerSignName: string;
-  ownerSignDate: string;
-  contractorSignName: string;
-  contractorSignDate: string;
-}
-
-export default function HomeImprovementContractForm() {
-  const [formData, setFormData] = useState<FormData>({
-    ownerName: "",
-    ownerAddress: "",
-    contractorName: "",
-    contractorAddress: "",
-    licenseNumber: "",
-
-    projectAddress: "",
-    projectDescription: "",
-
-    contractPrice: "",
-    paymentTermsNotes: "",
-    discountTerms: "",
-    interestRate: "",
-
-    permitsResponsibility: "",
-    utilitiesProvision: "",
-    accessNotes: "",
-    financingNote: "",
-
-    materialsStandardNote: "",
-    materialsNonstandardNote: "",
-
-    hazardousMaterialsNote: "",
-    workAllowancesNote: "",
-    contractChangesNote: "",
-    scopeExclusionsNote: "",
-
-    extraWorkNote: "",
-    plumbingNote: "",
-    electricalNote: "",
-    plasterNote: "",
-    excavationNote: "",
-    termiteNote: "",
-
-    debrisRemovalNote: "",
-    delaysNote: "",
-
-    insuranceNote: "",
-    reconstructionTerminationPercent: "",
-
-    workersCompNote: "",
-    protectionOfPropertyNote: "",
-    guaranteeNote: "",
-    workStoppageNote: "",
-
-    completionNoticeDays: "5",
-    noticesNote: "",
-
-    entireAgreementNote: "",
-    governingLaw: "",
-
-    correctiveWorkNote: "",
-    disputeResolutionNote: "",
-    attorneysFeesNote: "",
-
-    ownerSignName: "",
-    ownerSignDate: "",
-    contractorSignName: "",
-    contractorSignDate: "",
-  });
-
-  const [step, setStep] = useState<number>(1);
-  const [pdfGenerated, setPdfGenerated] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
-
-  const generatePDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    const lineHeight = 12;
-    let y = margin;
-
-    const add = (text: string, size = 11, bold = false, center = false) => {
-      doc.setFont("times", bold ? "bold" : "normal");
-      doc.setFontSize(size);
-      const maxWidth = pageWidth - margin * 2;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      lines.forEach((line) => {
-        if (y > doc.internal.pageSize.getHeight() - margin) {
-          doc.addPage();
-          y = margin;
-        }
-        if (center) {
-          const tw = (doc.getStringUnitWidth(line) * size) / doc.internal.scaleFactor;
-          const tx = (pageWidth - tw) / 2;
-          doc.text(line, tx, y);
-        } else {
-          doc.text(line, margin, y);
-        }
-        y += lineHeight;
-      });
-    };
-
-    add("HOME IMPROVEMENT CONTRACT", 14, true, true);
-    add("\n");
-
-    add("1. Parties and Licensing", 12, true);
-    add(`This Home Improvement Contract (\u201cContract\u201d) is entered into between the Owner (\u201cOwner\u201d) and the Contractor (\u201cContractor\u201d). The Contractor warrants that it holds a valid and current license issued by the appropriate state licensing authority, bearing license number ${formData.licenseNumber || "________________"}.`);
-    add("\n");
-
-    add("2. Project Address and Description", 12, true);
-    add("The Contract specifies the project address as follows:");
-    add(`${formData.projectAddress || "__________________________________________"}`);
-    add("\n");
-    add("A brief description of the work to be performed is described here as");
-    add(`${formData.projectDescription || "............................."}`);
-    add("\n");
-
-    add("3. Payment Terms", 12, true);
-    add(`${formData.paymentTermsNotes || "The Owner shall pay the Contractor the Contract Price in consideration for completion of the services described herein. Payments shall be made upon completion of the agreed work, unless otherwise specified. Discounts shall apply only if payment is made within the time frame stated in this Contract. Invoices not paid when due may accrue interest at the maximum rate permitted by law, and the delinquent party shall be responsible for all collection costs, including reasonable attorneys\u2019 fees. Nonpayment shall constitute a material breach, entitling the non-breaching party to cancel this Contract and pursue all available legal remedies."}`);
-    if (formData.contractPrice) add(`Contract Price: ${formData.contractPrice}`);
-    if (formData.discountTerms) add(`Discount terms: ${formData.discountTerms}`);
-    if (formData.interestRate) add(`Interest rate: ${formData.interestRate}`);
-    add("\n");
-
-    add("4. Drawings, Specifications, and Permits", 12, true);
-    add(`${formData.permitsResponsibility || "All work shall conform to the plans and specifications contained in term 2 of the agreement. The Owner shall be solely responsible for obtaining and paying for all required permits, assessments, and utility connection charges. The Owner shall also identify property boundaries and provide boundary stakes when necessary. Any changes required by governmental authorities shall be at the Owner\u2019s expense unless otherwise agreed in writing."}`);
-    add("\n");
-
-    add("5. Utilities and Property Lines", 12, true);
-    add(`${formData.utilitiesProvision || "The Owner shall provide, at the point of entry to the property, water, sewer, gas, and electric utilities required for the work. The Owner shall also provide access to drinking water, toilet facilities, and electricity for the Contractor\u2019s workers."}`);
-    add("\n");
-
-    add("6. Access to Work", 12, true);
-    add(`${formData.accessNotes || "The Owner shall provide the Contractor and its authorized personnel with reasonable and free access to the worksite, including designated storage space, clear driveways, and a secured site. The Contractor shall not be liable for damage resulting from movement of its vehicles or equipment over the property. Denial of access during working hours shall constitute a breach by the Owner."}`);
-    add("\n");
-
-    add("7. Financing", 12, true);
-    add(`${formData.financingNote || "The Owner shall secure and confirm adequate financing for the full performance of this Contract prior to commencement of the work."}`);
-    add("\n");
-
-    add("8. Materials", 12, true);
-    add("(a) Standard Materials \u2013 The Contractor shall supply materials in accordance with mentioned work. Any substitutions shall be promptly communicated to and approved by the Owner.");
-    add(`${formData.materialsStandardNote || ""}`);
-    add("(b) Nonstandard Materials \u2013 Any deviation from the specified materials shall be authorized only by a written change order signed by both parties.");
-    add(`${formData.materialsNonstandardNote || ""}`);
-    add("\n");
-
-    add("9. Hazardous Materials", 12, true);
-    add(`${formData.hazardousMaterialsNote || "The Contractor shall not be responsible for the removal of hazardous materials unless expressly agreed. If hazardous materials are encountered, work shall cease in the affected area and the Owner shall be notified immediately."}`);
-    add("\n");
-
-    add("10. Work Allowances and Abnormal Conditions", 12, true);
-    add(`${formData.workAllowancesNote || "Reasonable allowances for measurement tolerances shall apply. The Contractor shall not be responsible for concealed or unusual site conditions (e.g., unstable soil, excessive slope) unless expressly assumed in writing. Any such additional work shall be treated as extra work and compensated accordingly."}`);
-    add("\n");
-
-    add("11. Contract Changes", 12, true);
-    add(`${formData.contractChangesNote || "No amendment, modification, or change order shall be valid unless made in writing and signed by both parties."}`);
-    add("\n");
-
-    add("12. Scope of Work", 12, true);
-    add(`${formData.scopeExclusionsNote || "Unless expressly stated otherwise, the work does not include painting preparation, grading, retaining walls, gutter relocation, or similar work. Floor covering selection shall be at the Contractor\u2019s discretion unless otherwise specified."}`);
-    add("\n");
-
-    add("13. Extra Work", 12, true);
-    add(`${formData.extraWorkNote || "No extra work shall be undertaken without the Owner\u2019s prior written consent. Such work shall be billed at agreed rates plus applicable overhead and profit."}`);
-    add("\n");
-
-    add("14. Plumbing", 12, true);
-    add(`${formData.plumbingNote || "No alterations to plumbing, gas, waste, or water lines outside the building\u2019s foundation shall be included unless specifically provided. Work on cesspools or septic systems is excluded unless otherwise agreed."}`);
-    add("\n");
-
-    add("15. Electrical Service", 12, true);
-    add(`${formData.electricalNote || "Unless expressly provided, no major changes to electrical service panels are included. Existing wiring in undisturbed areas shall remain in place; corrections required therein shall constitute extra work."}`);
-    add("\n");
-
-    add("16. Plaster", 12, true);
-    add(`${formData.plasterNote || "Matching existing plaster textures and colors is not guaranteed due to inherent material and application differences."}`);
-    add("\n");
-
-    add("17. Excavation on Filled or Rocky Ground", 12, true);
-    add(`${formData.excavationNote || "Excavation does not include removal of filled or unstable ground unless otherwise agreed. Such work shall be treated as extra work."}`);
-    add("\n");
-
-    add("18. Termite or Dry Rot Work", 12, true);
-    add(`${formData.termiteNote || "Repairs for termite damage or dry rot are excluded unless expressly included in this Contract."}`);
-    add("\n");
-
-    add("19. Removal of Materials and Debris", 12, true);
-    add(`${formData.debrisRemovalNote || "The Contractor shall remove all construction debris and leave the site broom clean upon completion unless otherwise directed by the Owner."}`);
-    add("\n");
-
-    add("20. Delays and Extra Time", 12, true);
-    add(`${formData.delaysNote || "The Contractor shall diligently pursue the work but shall not be liable for delays caused by matters beyond its control, including but not limited to permit delays, financing issues, acts of God, severe weather, labor disputes, material shortages, Owner\u2019s nonpayment, governmental actions, or other force majeure events."}`);
-    add("\n");
-
-    add("21. Damage to Project and Insurance", 12, true);
-    add(`${formData.insuranceNote || "Prior to commencement, the Owner shall obtain fire insurance with course of construction, vandalism, and malicious mischief coverage for no less than the Contract Price, naming the Contractor and subcontractors as additional insureds. If the Owner fails to obtain such coverage, the Contractor may procure it at the Owner\u2019s expense. In the event of damage or destruction, reconstruction shall constitute extra work. If reconstruction costs exceed 20% of the Contract Price, the Owner may terminate this Contract by paying the Contractor for completed work plus overhead and profit."}`);
-    if (formData.reconstructionTerminationPercent)
-      add(`Reconstruction termination threshold: ${formData.reconstructionTerminationPercent}%`);
-    add("\n");
-
-    add("22. Workers\u2019 Compensation", 12, true);
-    add(`${formData.workersCompNote || "The Contractor shall maintain workers\u2019 compensation insurance for its employees. The Owner shall be responsible for insuring against injury to the Owner\u2019s own employees or invitees."}`);
-    add("\n");
-
-    add("23. Protection of Owner\u2019s Property", 12, true);
-    add(`${formData.protectionOfPropertyNote || "The Owner shall remove or adequately protect personal property located at the jobsite. The Contractor shall not be liable for any damage to such items."}`);
-    add("\n");
-
-    add("24. Guarantee of Materials and Workmanship", 12, true);
-    add(`${formData.guaranteeNote || "The Contractor\u2019s guarantee is limited to the extent of the warranties provided by the manufacturers or processors of the materials or equipment used."}`);
-    add("\n");
-
-    add("25. Work Stoppage", 12, true);
-    add(`${formData.workStoppageNote || "If the Owner fails to make any payment when due, the Contractor may suspend work. If work remains suspended for 60 days, the Contractor may demand payment for completed work and stored materials, plus overhead and profit, and thereafter be relieved from further obligations. The Owner shall be responsible for protecting stored materials during any stoppage."}`);
-    add("\n");
-
-    add("26. Completion and Occupancy", 12, true);
-    add(`Within ${formData.completionNoticeDays || "5"} (5) days of completion, the Owner shall execute and record a Notice of Completion. If the Owner fails to do so, the Contractor may execute it on the Owner\u2019s behalf. Occupancy or use of the premises shall be deemed acceptance and completion of the work.`);
-    add("\n");
-
-    add("27. Notices", 12, true);
-    add(`${formData.noticesNote || "Notices under this Contract may be delivered personally or sent by mail or email to the addresses specified herein. Changes of address shall be provided in writing. Notices shall be deemed received one (1) day after mailing."}`);
-    add("\n");
-
-    add("28. Entire Agreement", 12, true);
-    add(`${formData.entireAgreementNote || "This Contract, together with all schedules and written change orders, constitutes the entire agreement between the parties and supersedes all prior oral or written agreements. This Contract shall be governed by the laws of the State of"} ${formData.governingLaw || "__________"}.`);
-    add("\n");
-
-    add("29. Corrective Work", 12, true);
-    add(`${formData.correctiveWorkNote || "Minor corrective work identified after occupancy shall be promptly performed without withholding payment. For corrective work exceeding one percent (1%) of the Contract Price, the Owner may withhold only the portion of payment necessary to complete such work."}`);
-    add("\n");
-
-    add("30. Dispute Resolution", 12, true);
-    add(`${formData.disputeResolutionNote || "Any dispute arising under or in connection with this Contract shall be resolved by binding arbitration under the Construction Industry Arbitration Rules of the American Arbitration Association, unless the parties agree otherwise in writing. The arbitrator\u2019s decision shall be final and enforceable in any court of competent jurisdiction."}`);
-    add("\n");
-
-    add("31. Attorneys\u2019 Fees", 12, true);
-    add(`${formData.attorneysFeesNote || "The prevailing party in any arbitration or legal action shall be entitled to recover reasonable attorneys\u2019 fees and costs."}`);
-    add("\n");
-
-    add("32. Execution", 12, true);
-    add("This Contract shall become effective upon execution by both parties.");
-    add("\n");
-
-    add(`Owner: ${formData.ownerSignName || "___________________________"} (Name, Signature, Date: ${formData.ownerSignDate || "___________"})`);
-    add(`\nContractor: ${formData.contractorSignName || "___________________________"} (Name, Signature, Date: ${formData.contractorSignDate || "___________"})`);
-
-    doc.save("Home_Improvement_Contract.pdf");
-    setPdfGenerated(true);
-  };
-
-  const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Parties & License</h3>
-              <Label>Owner Name</Label>
-              <Input name="ownerName" value={formData.ownerName} onChange={handleChange} />
-              <Label>Owner Address</Label>
-              <Input name="ownerAddress" value={formData.ownerAddress} onChange={handleChange} />
-              <Label>Contractor Name</Label>
-              <Input name="contractorName" value={formData.contractorName} onChange={handleChange} />
-              <Label>Contractor Address</Label>
-              <Input name="contractorAddress" value={formData.contractorAddress} onChange={handleChange} />
-              <Label>License Number</Label>
-              <Input name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 2:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Project</h3>
-              <Label>Project Address</Label>
-              <Input name="projectAddress" value={formData.projectAddress} onChange={handleChange} />
-              <Label>Project Description</Label>
-              <textarea name="projectDescription" value={formData.projectDescription} onChange={handleChange} className="w-full p-2 border rounded" rows={6} />
-            </CardContent>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Payment & Permits</h3>
-              <Label>Contract Price</Label>
-              <Input name="contractPrice" value={formData.contractPrice} onChange={handleChange} />
-              <Label>Payment Terms / Notes</Label>
-              <textarea name="paymentTermsNotes" value={formData.paymentTermsNotes} onChange={handleChange} className="w-full p-2 border rounded" rows={4} />
-              <Label>Discount Terms</Label>
-              <Input name="discountTerms" value={formData.discountTerms} onChange={handleChange} />
-              <Label>Interest Rate</Label>
-              <Input name="interestRate" value={formData.interestRate} onChange={handleChange} />
-              <Label>Permits Responsibility</Label>
-              <textarea name="permitsResponsibility" value={formData.permitsResponsibility} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-            </CardContent>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Site / Materials / Extra Work</h3>
-              <Label>Utilities Provision</Label>
-              <textarea name="utilitiesProvision" value={formData.utilitiesProvision} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Access Notes</Label>
-              <textarea name="accessNotes" value={formData.accessNotes} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Materials - Standard Notes</Label>
-              <textarea name="materialsStandardNote" value={formData.materialsStandardNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Materials - Nonstandard Notes</Label>
-              <textarea name="materialsNonstandardNote" value={formData.materialsNonstandardNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Extra Work Note</Label>
-              <textarea name="extraWorkNote" value={formData.extraWorkNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-            </CardContent>
-          </Card>
-        );
-      case 5:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Specials & Cleanup</h3>
-              <Label>Hazardous Materials Note</Label>
-              <textarea name="hazardousMaterialsNote" value={formData.hazardousMaterialsNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Debris Removal Note</Label>
-              <textarea name="debrisRemovalNote" value={formData.debrisRemovalNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Delays / Force Majeure Note</Label>
-              <textarea name="delaysNote" value={formData.delaysNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-            </CardContent>
-          </Card>
-        );
-      case 6:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Insurance / Warranties</h3>
-              <Label>Insurance Note</Label>
-              <textarea name="insuranceNote" value={formData.insuranceNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Reconstruction Termination %</Label>
-              <Input name="reconstructionTerminationPercent" value={formData.reconstructionTerminationPercent} onChange={handleChange} />
-              <Label>Workers' Compensation Note</Label>
-              <textarea name="workersCompNote" value={formData.workersCompNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Guarantee Note</Label>
-              <textarea name="guaranteeNote" value={formData.guaranteeNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-            </CardContent>
-          </Card>
-        );
-      case 7:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Completion / Notices / Boilerplate</h3>
-              <Label>Completion Notice Days</Label>
-              <Input name="completionNoticeDays" value={formData.completionNoticeDays} onChange={handleChange} />
-              <Label>Notices Note</Label>
-              <textarea name="noticesNote" value={formData.noticesNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Entire Agreement Note</Label>
-              <Input name="entireAgreementNote" value={formData.entireAgreementNote} onChange={handleChange} />
-              <Label>Governing Law</Label>
-              <Input name="governingLaw" value={formData.governingLaw} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      case 8:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Corrective / Dispute / Execution</h3>
-              <Label>Corrective Work Note</Label>
-              <textarea name="correctiveWorkNote" value={formData.correctiveWorkNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-              <Label>Dispute Resolution Note</Label>
-              <textarea name="disputeResolutionNote" value={formData.disputeResolutionNote} onChange={handleChange} className="w-full p-2 border rounded" rows={3} />
-              <Label>Attorneys' Fees Note</Label>
-              <textarea name="attorneysFeesNote" value={formData.attorneysFeesNote} onChange={handleChange} className="w-full p-2 border rounded" rows={2} />
-            </CardContent>
-          </Card>
-        );
-      case 9:
-        return (
-          <Card>
-            <CardContent className="space-y-3">
-              <h3 className="font-semibold">Signatures</h3>
-              <Label>Owner - Name (for signature)</Label>
-              <Input name="ownerSignName" value={formData.ownerSignName} onChange={handleChange} />
-              <Label>Owner - Date</Label>
-              <Input name="ownerSignDate" value={formData.ownerSignDate} onChange={handleChange} />
-
-              <Label>Contractor - Name (for signature)</Label>
-              <Input name="contractorSignName" value={formData.contractorSignName} onChange={handleChange} />
-              <Label>Contractor - Date</Label>
-              <Input name="contractorSignDate" value={formData.contractorSignDate} onChange={handleChange} />
-            </CardContent>
-          </Card>
-        );
-      default:
-        return null;
-    }
-  };
-
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
+
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Jurisdiction",
+    fields: [
+      {
+        name: "country",
+        label: "Which country's laws will govern this document?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "us", label: "United States" },
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "State/Province",
+    fields: [
+      {
+        name: "state",
+        label: "Which state or province?",
+        type: "select",
+        required: true,
+        dependsOn: "country",
+        getOptions: (values) => {
+          if (values.country === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
+        },
+      },
+    ],
+  },
+  {
+    label: "Agreement Date",
+    fields: [
+      {
+        name: "effectiveDate",
+        label: "What is the effective date of this agreement?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "First Party Name",
+    fields: [
+      {
+        name: "party1Name",
+        label: "What is the full legal name of the first party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party1Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "First Party Address",
+    fields: [
+      {
+        name: "party1Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party1City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party1Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "First Party Contact",
+    fields: [
+      {
+        name: "party1Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party1Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Second Party Name",
+    fields: [
+      {
+        name: "party2Name",
+        label: "What is the full legal name of the second party?",
+        type: "text",
+        required: true,
+        placeholder: "Enter full legal name",
+      },
+      {
+        name: "party2Type",
+        label: "Is this party an individual or a business?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "individual", label: "Individual" },
+          { value: "business", label: "Business/Company" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Second Party Address",
+    fields: [
+      {
+        name: "party2Street",
+        label: "Street Address",
+        type: "text",
+        required: true,
+        placeholder: "123 Main Street",
+      },
+      {
+        name: "party2City",
+        label: "City",
+        type: "text",
+        required: true,
+        placeholder: "City",
+      },
+      {
+        name: "party2Zip",
+        label: "ZIP/Postal Code",
+        type: "text",
+        required: true,
+        placeholder: "ZIP Code",
+      },
+    ],
+  },
+  {
+    label: "Second Party Contact",
+    fields: [
+      {
+        name: "party2Email",
+        label: "Email Address",
+        type: "email",
+        required: true,
+        placeholder: "email@example.com",
+      },
+      {
+        name: "party2Phone",
+        label: "Phone Number",
+        type: "tel",
+        required: false,
+        placeholder: "(555) 123-4567",
+      },
+    ],
+  },
+  {
+    label: "Agreement Details",
+    fields: [
+      {
+        name: "description",
+        label: "Describe the purpose and scope of this agreement",
+        type: "textarea",
+        required: true,
+        placeholder: "Provide a detailed description of the agreement terms...",
+      },
+    ],
+  },
+  {
+    label: "Terms & Conditions",
+    fields: [
+      {
+        name: "duration",
+        label: "What is the duration of this agreement?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "1month", label: "1 Month" },
+          { value: "3months", label: "3 Months" },
+          { value: "6months", label: "6 Months" },
+          { value: "1year", label: "1 Year" },
+          { value: "2years", label: "2 Years" },
+          { value: "5years", label: "5 Years" },
+          { value: "indefinite", label: "Indefinite/Ongoing" },
+          { value: "custom", label: "Custom Duration" },
+        ],
+      },
+      {
+        name: "terminationNotice",
+        label: "How much notice is required to terminate?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "immediate", label: "Immediate" },
+          { value: "7days", label: "7 Days" },
+          { value: "14days", label: "14 Days" },
+          { value: "30days", label: "30 Days" },
+          { value: "60days", label: "60 Days" },
+          { value: "90days", label: "90 Days" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Financial Terms",
+    fields: [
+      {
+        name: "paymentAmount",
+        label: "What is the payment amount (if applicable)?",
+        type: "text",
+        required: false,
+        placeholder: "$0.00",
+      },
+      {
+        name: "paymentSchedule",
+        label: "Payment Schedule",
+        type: "select",
+        required: false,
+        options: [
+          { value: "onetime", label: "One-time Payment" },
+          { value: "weekly", label: "Weekly" },
+          { value: "biweekly", label: "Bi-weekly" },
+          { value: "monthly", label: "Monthly" },
+          { value: "quarterly", label: "Quarterly" },
+          { value: "annually", label: "Annually" },
+          { value: "milestone", label: "Milestone-based" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Legal Protections",
+    fields: [
+      {
+        name: "confidentiality",
+        label: "Include confidentiality clause?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "yes", label: "Yes - Include confidentiality provisions" },
+          { value: "no", label: "No - Not needed" },
+        ],
+      },
+      {
+        name: "disputeResolution",
+        label: "How should disputes be resolved?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "mediation", label: "Mediation" },
+          { value: "arbitration", label: "Binding Arbitration" },
+          { value: "litigation", label: "Court Litigation" },
+          { value: "negotiation", label: "Good Faith Negotiation First" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Additional Terms",
+    fields: [
+      {
+        name: "additionalTerms",
+        label: "Any additional terms or special conditions?",
+        type: "textarea",
+        required: false,
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
+      },
+    ],
+  },
+  {
+    label: "Review & Sign",
+    fields: [
+      {
+        name: "party1Signature",
+        label: "First Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "party2Signature",
+        label: "Second Party Signature (Type full legal name)",
+        type: "text",
+        required: true,
+        placeholder: "Type your full legal name as signature",
+      },
+      {
+        name: "witnessName",
+        label: "Witness Name (Optional)",
+        type: "text",
+        required: false,
+        placeholder: "Witness full legal name",
+      },
+    ],
+  },
+] as Array<{ label: string; fields: FieldDef[] }>;
+
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF();
+  let y = 20;
+  
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("Home Improvement Contract", 105, y, { align: "center" });
+  y += 15;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
+  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  y += 10;
+  
+  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+  y += 6;
+  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  y += 6;
+  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  y += 15;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  doc.text(descLines, 20, y);
+  y += descLines.length * 5 + 10;
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", 20, y);
+  y += 8;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  y += 6;
+  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+  y += 6;
+  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+  y += 6;
+  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  y += 15;
+  
+  if (values.paymentAmount) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text("Payment: " + values.paymentAmount, 20, y);
+    y += 6;
+    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
+    y += 15;
+  }
+  
+  if (values.additionalTerms) {
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.text(addLines, 20, y);
+    y += addLines.length * 5 + 15;
+  }
+  
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", 20, y);
+  y += 12;
+  
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("_______________________________", 20, y);
+  doc.text("_______________________________", 110, y);
+  y += 6;
+  doc.text(values.party1Name || "First Party", 20, y);
+  doc.text(values.party2Name || "Second Party", 110, y);
+  y += 6;
+  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
+  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  y += 10;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
+  
+  if (values.witnessName) {
+    y += 15;
+    doc.text("Witness: _______________________________", 20, y);
+    y += 6;
+    doc.text("Name: " + values.witnessName, 20, y);
+  }
+  
+  doc.save("home_improvement_contract.pdf");
+};
+
+export default function HomeImprovementContract() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-4">
-      {renderStep()}
-
-      <div className="flex justify-between pt-4">
-        <Button disabled={step === 1} onClick={() => setStep((s) => Math.max(1, s - 1))}>
-          Back
-        </Button>
-
-        {step < 9 ? (
-          <Button onClick={() => setStep((s) => Math.min(9, s + 1))}>Next</Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={generatePDF}>Generate PDF</Button>
-          </div>
-        )}
-      </div>
-
-      {pdfGenerated && (
-        <Card>
-          <CardContent>
-            <div className="text-green-600 font-semibold">Home Improvement Contract PDF Generated Successfully</div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <FormWizard
+      steps={steps}
+      title="Home Improvement Contract"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="homeimprovementcontract"
+    />
   );
 }
