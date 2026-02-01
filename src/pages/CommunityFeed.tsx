@@ -35,8 +35,8 @@ const CommunityFeed: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-[90vh] bg-gradient-to-br from-blue-100/60 via-indigo-100/60 to-white py-12 px-2 md:px-0">
-      <div className="max-w-3xl mx-auto bg-white/90 rounded-3xl shadow-2xl p-6 md:p-12 border border-blue-200/40 backdrop-blur-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100/60 via-indigo-100/60 to-white flex items-center justify-center py-8">
+      <div className="w-full max-w-3xl bg-white/90 rounded-3xl shadow-2xl p-4 sm:p-8 md:p-12 border border-blue-200/40 backdrop-blur-md mx-2">
         {/* Community Header */}
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
           <div className="flex items-center gap-4">
