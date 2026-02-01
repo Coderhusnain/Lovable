@@ -10,15 +10,28 @@ const CommunityFeed: React.FC = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [dbError, setDbError] = useState<string | null>(null);
 
   // Fetch posts from Supabase
   const fetchPosts = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error && data) setPosts(data);
+    setDbError(null);
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error("Supabase error:", error);
+        setDbError(`Database Error: ${error.message}. Make sure to run the migration SQL in Supabase SQL Editor.`);
+      } else if (data) {
+        setPosts(data);
+      }
+    } catch (err: any) {
+      console.error("Fetch error:", err);
+      setDbError(`Connection Error: ${err.message}`);
+    }
     setLoading(false);
   };
 
@@ -72,6 +85,27 @@ const CommunityFeed: React.FC = () => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
             </svg>
+          </div>
+        ) : dbError ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="bg-red-100 rounded-full p-6 mb-4">
+              <svg className="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-red-600 mb-2">Database Setup Required</h2>
+            <p className="text-red-500 mb-4 text-center max-w-md">{dbError}</p>
+            <div className="bg-gray-100 rounded-lg p-4 text-sm text-gray-700 max-w-lg">
+              <p className="font-semibold mb-2">To fix this:</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Go to your Supabase Dashboard</li>
+                <li>Open SQL Editor</li>
+                <li>Run the migration from: <code className="bg-gray-200 px-1 rounded">supabase/migrations/20250725000000_community_anonymous_access.sql</code></li>
+              </ol>
+            </div>
+            <Button onClick={fetchPosts} className="mt-4 bg-blue-600 hover:bg-blue-700">
+              Retry Connection
+            </Button>
           </div>
         ) : posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
