@@ -33,23 +33,36 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
 
       // 1. Handle Media Upload (if a file is selected)
       if (mediaFile) {
-        const fileExt = mediaFile.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage
-          .from('community-media') // Ensure this bucket exists in your Supabase Storage
-          .upload(fileName, mediaFile);
+        try {
+          // Validate file size (max 5MB)
+          if (mediaFile.size > 5 * 1024 * 1024) {
+            toast.warning("File too large (max 5MB). Posting text only.");
+          } else {
+            const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            
+            const { error: uploadError } = await supabase.storage
+              .from('community-media')
+              .upload(fileName, mediaFile, {
+                cacheControl: '3600',
+                upsert: false
+              });
 
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-          // If bucket doesn't exist, we just skip media upload to prevent crash
-          toast.warning("Could not upload image. Posting text only.");
-        } else {
-          const { data } = supabase.storage
-            .from('community-media')
-            .getPublicUrl(fileName);
-          
-          mediaUrl = data.publicUrl;
-          mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+            if (uploadError) {
+              console.warn("Upload error (storage may not be configured):", uploadError.message);
+              toast.warning("Media upload unavailable. Posting text only.");
+            } else {
+              const { data } = supabase.storage
+                .from('community-media')
+                .getPublicUrl(fileName);
+              
+              mediaUrl = data.publicUrl;
+              mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("Media upload failed:", uploadErr);
+          toast.warning("Could not upload media. Posting text only.");
         }
       }
 
@@ -58,8 +71,8 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
         .from('posts')
         .insert([
           {
-            guest_name: guestName,
-            content: content,
+            guest_name: guestName.trim(),
+            content: content.trim(),
             media_url: mediaUrl,
             media_type: mediaType,
           },
@@ -72,7 +85,7 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
       onClose(); // Close modal
     } catch (error: any) {
       console.error('Error posting:', error);
-      toast.error(error.message || "Failed to post");
+      toast.error(error.message || "Failed to post. Please try again.");
     } finally {
       setLoading(false);
     }
