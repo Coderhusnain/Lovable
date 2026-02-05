@@ -290,7 +290,30 @@ export const familyProtectionDocs = [
   // === LEGAL REPORTS ===
   { id: "InformationForPoliceReportForm", title: "Information For Police Report", description: "Create a comprehensive information for police report", icon: ShieldAlert, category: "Legal Reports", component: InformationForPoliceReportForm },
   { id: "change-of-beneficiary-form", title: "Information For changing beneficiary", description: "Create a comprehensive information for beneficiary changing", icon: UserCheck, category: "Legal Reports", component: ChangeOfBeneficiaryForm },
-
+  { id: "statement-of-claim-against-estate", title: "Statement Of Claim Against Estate", description: "Create a comprehensive statment against estate", icon: FilePlus, category: "Legal Reports", component: StatementOfClaimAgainstEstateForm },
+  { id: "balloon-payment-promissory-note", title: "Balloon Payment Promissory Note", description: "Create a promissory note with installment payments and a final balloon payment", icon: FileText, category: "Legal Reports", component: BalloonPaymentPromissoryNoteForm },
+  { id: "due-on-demand-promissory-note", title: "Promissory Note", description: "Create a comprehensive due on demand promissory note contract", icon: Calculator, category: "Legal Reports", component: DueOnDemandPromissoryNoteForm },
+  { id: "debt-collection-worksheet", title: "Debt collection", description: "Create a comprehensive debt collection worksheet", icon: Calculator, category: "Legal Reports", component: DebtCollectionWorksheetForm },
+  { id: "secured-promissory-note", title: "Secured Promissory note", description: "Create a comprehensive agreement for secured promissory", icon: Calculator, category: "Legal Reports", component: SecuredPromissoryNoteForm },
+  { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Legal Reports", component: InstallmentPromissoryNoteForm },
+  { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Legal Reports", component: IOUForm },
+  { id: "note-payable", title: "Note Pyabale", description: "Create a comprehensive agreement for note payable", icon: Calculator, category: "Legal Reports", component: NotePayableForm },
+  { id: "request-bankcredit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Legal Reports", component: BankCreditReferenceForm },
+  { id: "subordinated-loan-agreement", title: "Subordinated Loan Agreement", description: "Create a comprehensive subordinated loan agreement", icon: Calculator, category:"Legal Reports", component: SubordinatedLoanAgreementForm },
+  { id: "demand-for-money-owed", title: "Demand for Owed Money", description: "Create a comprehensive agreement to Demand for Owed Money", icon: Calculator, category: "Legal Reports", component: DemandForMoneyOwedForm },
+  { id: "demand-for-delivery", title: "Demand For Delivery", description: "Create a comprehensive demand of delivery agreement", icon: FileSignature, category: "Legal Reports", component: DemandForDeliveryForm },
+  { id: "direct-mail-request", title: "Direct mail advertising request", description: "Create a comprehensive direct mail advirtisng request agreement", icon: FileSignature, category: "Legal Reports", component: DirectMailAdvertisingForm },
+  { id: "lottery-pool-contract", title: "Lottery Pool Contract", description: "Create a comprehensiveLottery Pool Contract agreement", icon: FileSignature, category: "Legal Reports", component: LotteryPoolContractForm},
+  { id: "attorney-engagement-letter", title: "Attorney Engagement Letter", description: "Create a formal attorney engagement letter for legal representation", icon: FileText, category: "Legal Reports", component: AttorneyEngagementLetterForm },
+  { id: "complaint-letter-info", title: "Complaint to BBB/Attorney General", description: "Create a formal complaint letter to Attorney Gneral", icon: FileText, category: "Legal Reports", component: ComplaintLetterInfoForm },
+  {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Legal Reports", component: CellPhoneInquiryLetterForm},
+  {id : "reservation-confirmation", title:"Reservations confirmation Letter",description:"Create a formal letter for confirming reservations", icon: FileText, category: "Legal Reports", component: ReservationConfirmationForm},
+  {id : "complaint-demand-refund", title:"Complaint for refund",description:"Create a formal complaint for refund", icon: FileText, category:"Legal Reports", component: FormalComplaintRefundForm},
+  {id : "membership-cancellation-letter", title:"Member Cancellation Request",description:"Create a formal request to cancel membership", icon: FileText, category: "Legal Reports", component: MembershipCancellationLetterForm},
+  {id : "request-remove-personal-information", title:"Request Remove Personal Information ",description:"Create a formal request to remove personal information", icon: FileText, category:"Legal Reports", component: RemovePersonalInfoRequestForm},
+  {id : "security-agreement-info", title:"Security agreement Information",description:"Create a formal agreement of security information", icon: FileText, category: "Legal Reports", component: SecurityAgreementInfoForm},
+  {id : "remove-from-marketing-list", title:"Remove from Marketing List  ",description:"Create a formal agreement to remove information from marketing list", icon: FileText, category: "Legal Reports", component: RemoveFromMarketingListForm},
+  {id : "warranty-repair-request", title:"Warranty Repair Request",description:"Create a formal agreement for Warranty Repair Request", icon: FileText, category:"Legal Reports", component: WarrantyRepairRequestForm},
 ];
 
 export const businessSecurityDocs = [
@@ -316,7 +339,6 @@ export const businessSecurityDocs = [
   // === STOCK & SHARES ===
   { id: "share-purchase-agreement", title: "Share Purchase Agreement", description: "Create a comprehensive share purchase agreement", icon: Building2, category: "Business Formation", component: SharePurchaseAgreementForm },
   { id: "StockPurchaseAgreementForm", title: "Stock Purchase Agreement", description: "Create a comprehensive stock purchase agreement", icon: FilePlus, category: "Business Formation", component: StockPurchaseAgreementForm },
-  { id: "statement-of-claim-against-estate", title: "Statement Of Claim Against Estate", description: "Create a comprehensive statment against estate", icon: FilePlus, category: "Business Formation", component: StatementOfClaimAgainstEstateForm },
 
   
   // === CONFIDENTIALITY ===
@@ -339,7 +361,6 @@ export const businessSecurityDocs = [
 
   // === FINANCIAL ===
   { id: "loan-agreement", title: "Loan Agreement", description: "Create a comprehensive loan agreement", icon: DollarSign, category: "Financial", component: LoanAgreementForm },
-  { id: "balloon-payment-promissory-note", title: "Balloon Payment Promissory Note", description: "Create a promissory note with installment payments and a final balloon payment", icon: FileText, category: "Financial", component: BalloonPaymentPromissoryNoteForm },
   { id: "payment-agreement", title: "Payment Agreement", description: "Create a comprehensive payment agreement", icon: Briefcase, category: "Financial", component: PaymentAgreement },
   { id: "DEBTSETTLEMENTAGREEMENT", title: "Debt Settlement Agreement", description: "Create a comprehensive debt settlement agreement", icon: Briefcase, category: "Financial", component: DEBTSETTLEMENTAGREEMENT },
   { id: "SECURITYAGREEMENT", title: "Security Agreement", description: "Create a comprehensive security agreement", icon: Lock, category: "Financial", component: SECURITYAGREEMENT },
@@ -349,15 +370,7 @@ export const businessSecurityDocs = [
   { id: "FeeAgreementForm", title: "Fee Agreement", description: "Create a comprehensive fee agreement", icon: DollarSign, category: "Financial", component: FeeAgreementForm },
   { id: "royalty-agreement", title: "Royalty Agreement", description: "Create a professional royalty agreement", icon: DollarSign, category: "Financial", component: RoyaltyAgreementForm },
   { id: "AccountingContractForm", title: "Accounting Contract", description: "Create a comprehensive accounting contract", icon: Calculator, category: "Financial", component: AccountingContractForm },
-  { id: "due-on-demand-promissory-note", title: "Promissory Note", description: "Create a comprehensive due on demand promissory note contract", icon: Calculator, category: "Financial", component: DueOnDemandPromissoryNoteForm },
-  { id: "debt-collection-worksheet", title: "Debt collection", description: "Create a comprehensive debt collection worksheet", icon: Calculator, category: "Financial", component: DebtCollectionWorksheetForm },
-  { id: "secured-promissory-note", title: "Secured Promissory note", description: "Create a comprehensive agreement for secured promissory", icon: Calculator, category: "Financial", component: SecuredPromissoryNoteForm },
-  { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Financial", component: InstallmentPromissoryNoteForm },
-  { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Financial", component: IOUForm },
-  { id: "note-payable", title: "Note Pyabale", description: "Create a comprehensive agreement for note payable", icon: Calculator, category: "Financial", component: NotePayableForm },
-  { id: "request-bankcredit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Financial", component: BankCreditReferenceForm },
-  { id: "subordinated-loan-agreement", title: "Subordinated Loan Agreement", description: "Create a comprehensive subordinated loan agreement", icon: Calculator, category: "Financial", component: SubordinatedLoanAgreementForm },
-  { id: "demand-for-money-owed", title: "Demand for Owed Money", description: "Create a comprehensive agreement to Demand for Owed Money", icon: Calculator, category: "Financial", component: DemandForMoneyOwedForm },
+ 
 
   
   // === INTELLECTUAL PROPERTY ===
@@ -390,14 +403,12 @@ export const businessSecurityDocs = [
   { id: "MasterServiceAgreementForm", title: "Master Service Agreement", description: "Create a comprehensive master service agreement", icon: Handshake, category: "Contracts", component: MasterServiceAgreementForm },
   { id: "BarterAgreementForm", title: "Barter Agreement", description: "Create a comprehensive barter agreement", icon: Handshake, category: "Contracts", component: BarterAgreementForm },
   { id: "ConsignmentAgreementForm", title: "Consignment Agreement", description: "Create a comprehensive consignment agreement", icon: Package, category: "Contracts", component: ConsignmentAgreementForm },
-  { id: "WarrantyAgreementForm", title: "Warranty Agreement", description: "Create a comprehensive warranty agreement", icon: ShieldCheck, category: "Contracts", component: WarrantyAgreementForm },
   { id: "ReferralFeeAgreementForm", title: "Referral Fee Agreement", description: "Create a comprehensive referral fee agreement", icon: Handshake, category: "Contracts", component: ReferralFeeAgreementForm },
   { id: "ReferralAndWarrantyForm", title: "Referral & Warranty Agreement", description: "Create a comprehensive referral & warranty agreement", icon: Handshake, category: "Contracts", component: ReferralAndWarrantyForm },
   { id: "JointBidAgreementForm", title: "Joint Bid Agreement", description: "Create a comprehensive joint bid agreement", icon: Handshake, category: "Contracts", component: JointBidAgreementForm },
   { id: "bidproposal-agreement", title: "Bid Proposal Agreement", description: "Create a comprehensive bid proposal agreement", icon: FileSignature, category: "Contracts", component: BidProposalForm },
-  { id: "demand-for-delivery", title: "Demand For Delivery", description: "Create a comprehensive demand of delivery agreement", icon: FileSignature, category: "Contracts", component: DemandForDeliveryForm },
-  { id: "direct-mail-request", title: "Direct mail advertising request", description: "Create a comprehensive direct mail advirtisng request agreement", icon: FileSignature, category: "Contracts", component: DirectMailAdvertisingForm },
-  { id: " lottery-pool-contract", title: "Lottery Pool Contract", description: "Create a comprehensiveLottery Pool Contract agreement", icon: FileSignature, category: "Contracts", component: LotteryPoolContractForm},
+  { id: "WarrantyAgreementForm", title: "Warranty Agreement", description: "Create a comprehensive warranty agreement", icon: ShieldCheck, category: "Contracts", component: WarrantyAgreementForm },
+
 
  
   // === BUSINESS ACQUISITIONS ===
@@ -456,8 +467,7 @@ export const businessSecurityDocs = [
   { id: "retainer-agreement", title: "Retainer Agreement", description: "Create a legal retainer agreement between attorney and client", icon: Scale, category: "Legal Services", component: RetainerAgreementForm },
   { id: "limited-scope-representation-agreement", title: "Limited Scope Representation Agreement", description: "Create a limited scope legal representation agreement", icon: Scale, category: "Legal Services", component: LimitedScopeRepresentationAgreementForm },
   { id: "unbundled-legal-services-agreement", title: "Unbundled Legal Services Agreement", description: "Create an agreement for specific unbundled legal services", icon: Scale, category: "Legal Services", component: UnbundledLegalServicesAgreementForm },
-  { id: "attorney-engagement-letter", title: "Attorney Engagement Letter", description: "Create a formal attorney engagement letter for legal representation", icon: FileText, category: "Legal Services", component: AttorneyEngagementLetterForm },
-  { id: "complaint-letter-info", title: "Complaint to BBB/Attorney General", description: "Create a formal complaint letter to Attorney Gneral", icon: FileText, category: "Legal Services", component: ComplaintLetterInfoForm },
+  
 
 
   // === CONSULTING ===
@@ -502,14 +512,7 @@ export const propertyMattersDocs = [
   { id: "eviction-notice", title: "Eviction Notice", description: "Create a formal notice to terminate a tenancy", icon: FileText, category: "Notices & Letters", component: EvictionNoticeForm },
   { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters", component: SecurityDepositReturnLetter },
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
-  {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Notices & Letters", component: CellPhoneInquiryLetterForm},
-  {id : "reservation-confirmation", title:"Reservations confirmation Letter",description:"Create a formal letter for confirming reservations", icon: FileText, category: "Notices & Letters", component: ReservationConfirmationForm},
-  {id : "complaint-demand-refund", title:"Complaint for refund",description:"Create a formal complaint for refund", icon: FileText, category: "Notices & Letters", component: FormalComplaintRefundForm},
-  {id : "membership-cancellation-letter", title:"Member Cancellation Request",description:"Create a formal request to cancel membership", icon: FileText, category: "Notices & Letters", component: MembershipCancellationLetterForm},
-  {id : "request-remove-personal-information", title:"Request Remove Personal Information ",description:"Create a formal request to remove personal information", icon: FileText, category: "Notices & Letters", component: RemovePersonalInfoRequestForm},
-  {id : "security-agreement-info", title:"Security agreement Information",description:"Create a formal agreement of security information", icon: FileText, category: "Notices & Letters", component: SecurityAgreementInfoForm},
-  {id : "remove-from-marketing-list", title:"Remove from Marketing List  ",description:"Create a formal agreement to remove information from marketing list", icon: FileText, category: "Notices & Letters", component: RemoveFromMarketingListForm},
-  {id : "warranty-repair-request", title:"Warranty Repair Request",description:"Create a formal agreement for Warranty Repair Request", icon: FileText, category: "Notices & Letters", component: WarrantyRepairRequestForm},
+  
 
  
   // === PROPERTY SALES ===

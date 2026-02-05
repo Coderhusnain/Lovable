@@ -120,8 +120,8 @@ const MakeDocument = () => {
       icon: UserCheck,
       component: AffidavitOfMarriageForm
     },
-    { id: "ChangeOfBeneficiaryForm", 
-      title: "Chnaging beneficiary", 
+    { id: "change-of-beneficiary-form", 
+      title: "Changing beneficiary", 
       description:"Information For changing beneficiary",
       content: "Create a comprehensive information for beneficiary changing", 
       icon: UserCheck, 
@@ -166,7 +166,186 @@ const MakeDocument = () => {
       content: 'Create a sworn statement of your financial condition and ability to provide financial support',
       icon: DollarSign,
       component: FinancialSupportAffidavitForm
-    }
+    },
+
+    {
+      id: 'demand-for-delivery',
+      title: 'Demand for Delivery',
+      description: 'Business & Commercial',
+      content: 'Create a comprehensive demand for delivery agreement',
+      icon: FileSignature,
+      component: DemandForDeliveryForm
+    },
+
+    { id: "due-on-demand-promissory-note",
+      title: "Promissory Note",
+      description:"Due on Demand Promissory Note",
+      content: "Create a comprehensive due on demand promissory note contract", 
+      icon: Calculator, 
+      component: DueOnDemandPromissoryNoteForm
+      },
+      { id: "statement-of-claim-against-estate", 
+       title: "Statement Of Claim Against Estate",
+       description:"Statement Of Claim Against Estate",
+        content: "Create a comprehensive statment against estate", 
+        icon: FilePlus, 
+         component: StatementOfClaimAgainstEstateForm },
+ 
+         {
+           id: 'balloon-payment-promissory-note',
+           title: 'Balloon Payment Promissory Note',
+           description: 'Financial & Lending',
+           content: 'Create a promissory note with installment payments and a final balloon payment',
+           icon: DollarSign,
+           component: BalloonPaymentPromissoryNoteForm
+         },
+         { id: "complaint-letter-info",
+          title: "Complaint to BBB/Attorney General", 
+          description:"Complaint to Attorney General",
+          content: "Create a formal complaint letter to Attorney Gneral", 
+          icon: FileText, 
+          component: ComplaintLetterInfoForm 
+         },
+   
+     {
+            id: "direct-mail-request", 
+           title: "Direct mail advertising request",
+           description:"Direct Mail advertising request",
+            content: "Create a comprehensive direct mail advirtisng request agreement", 
+            icon: FileSignature, 
+            component: DirectMailAdvertisingForm },
+   
+            { id: "secured-promissory-note",
+              title: "Secured Promissory note", 
+              description:"Secure Promisssory note",
+              content: "Create a comprehensive agreement for secured promissory",
+               icon: Calculator, 
+               component: SecuredPromissoryNoteForm
+              },
+   
+              { id: "installment-promissory-note", 
+               title: "installment Promissory note", 
+               description:"installment Promissory note",
+               content: "Create a comprehensive agreement for installment promissory note", 
+               icon: Calculator, 
+               component: InstallmentPromissoryNoteForm },
+   
+               { id: "iou", 
+                 title: "IOU", 
+                 description:"Acknowledment of debt",
+                 content: "Create a comprehensive iou agreement acknowledment of debt", 
+                 icon: Calculator,
+                 component: IOUForm 
+               },
+   
+        { id: "note-payable",
+          title: "Note Pyabale", 
+          description:"Note Payable",
+          content: "Create a comprehensive agreement for note payable", 
+          icon: Calculator,
+          component: NotePayableForm 
+         },
+   
+     { id: "lottery-pool-contract", 
+       title: "Lottery Pool Contract", 
+       description:"Lottery Pool Contract",
+       content: "Create a comprehensiveLottery Pool Contract agreement", 
+       icon: FileSignature,
+       component: LotteryPoolContractForm
+     },
+     { id: "request-bankcredit-reference", 
+       title: "Request Bank Credit Reference", 
+       description:"Request Bank credit",
+       content: "Create a comprehensive reference to request bank credit", 
+       icon: Calculator, 
+        component: BankCreditReferenceForm 
+       },
+   
+         { id: "debt-collection-worksheet",
+            title: "Debt collection", 
+            description:"Debt collection",
+            content: "Create a comprehensive debt collection worksheet",
+             icon: Calculator, 
+             component: DebtCollectionWorksheetForm
+          },
+          {
+            id: 'cellphone-inquiry-letter',
+            title: 'Cell Phone Inquiry Letter',
+            description: 'Cellular Service',
+            content: 'Create a formal letter to inquire about or dispute cellular service charges',
+            icon: FileText,
+            component: CellPhoneInquiryLetterForm
+          },
+      
+          {id : "membership-cancellation-letter  ",
+             title:"Member Cancellation Request",
+             description:"Membership cancellation",
+             content:"Create a formal request to cancel membership", 
+             icon: FileText, 
+              component: MembershipCancellationLetterForm},
+      
+      
+          {
+            id : "complaint-demand-refund", 
+            title:"Complaint for refund",
+            description:"Complaint for refund",
+            content:"Create a formal complaint for refund", 
+            icon: FileText, 
+             component: FormalComplaintRefundForm
+            },
+      
+          { id: "subordinated-loan-agreement", 
+            title: "Subordinated Loan Agreement", 
+            description:"Subordinated Loan Agreement",
+            content: "Create a comprehensive subordinated loan agreement", 
+            icon: Calculator, 
+            component: SubordinatedLoanAgreementForm },
+      
+         { id: "demand-for-money-owed",
+           title: "Demand for Owed Money",
+           description:"Demand for Owed Money",
+            content: "Create a comprehensive agreement to Demand for Owed Money", 
+            icon: Calculator, 
+            component: DemandForMoneyOwedForm },
+      
+         {id : "request-remove-personal-information", 
+          title:"Request Remove Personal Information ",
+          description:"Request Remove personal info",
+          content:"Create a formal request to remove personal information",
+           icon: FileText, 
+           component: RemovePersonalInfoRequestForm
+          },
+      
+          {id : "security-agreement-info",
+             title:"Security agreement Information",
+             description:"Security agreement info",
+             content:"Create a formal agreement of security information",
+              icon: FileText,
+              component: SecurityAgreementInfoForm
+            },
+      
+         {id : "remove-from-marketing-list", 
+          title:"Remove from Marketing List  ",
+          description:"Remove from Marketing List ",
+          content:"Create a formal agreement to remove information from marketing list",
+           icon: FileText, 
+           component: RemoveFromMarketingListForm},
+      
+           {id : "warranty-repair-request", 
+            title:"Warranty Repair Request",
+            description:"Warranty Repair Request",
+            content:"Create a formal agreement for Warranty Repair Request", 
+            icon: FileText, 
+            component: WarrantyRepairRequestForm},
+      
+          {
+            id : "reservation-confirmation", 
+            title:"Reservations confirmation Letter",
+            description:"Reservation Confirmation",
+            content:"Create a formal letter for confirming reservations",
+             icon: FileText, 
+              component: ReservationConfirmationForm
+            }
   ];
 
   // Business Security documents  
@@ -235,14 +414,7 @@ const MakeDocument = () => {
       icon: ShoppingCart,
       component: GeneralContractForm
     },
-    {
-      id: 'demand-for-delivery',
-      title: 'Demand for Delivery',
-      description: 'Business & Commercial',
-      content: 'Create a comprehensive demand for delivery agreement',
-      icon: FileSignature,
-      component: DemandForDeliveryForm
-    },
+   
    
     {
       id: 'share-purchase-agreement',
@@ -260,14 +432,7 @@ const MakeDocument = () => {
       icon: DollarSign,
       component: LoanAgreementForm
     },
-    {
-      id: 'balloon-payment-promissory-note',
-      title: 'Balloon Payment Promissory Note',
-      description: 'Financial & Lending',
-      content: 'Create a promissory note with installment payments and a final balloon payment',
-      icon: DollarSign,
-      component: BalloonPaymentPromissoryNoteForm
-    },
+  
     {
       id: 'copyright-assignment',
       title: 'Copyright Assignment',
@@ -293,14 +458,7 @@ const MakeDocument = () => {
       component: DomesticServiceAgreementForm
     },
 
-    { id: "statement-of-claim-against-estate", 
-      title: "Statement Of Claim Against Estate",
-      description:"Statement Of Claim Against Estate",
-       content: "Create a comprehensive statment against estate", 
-       icon: FilePlus, 
-        component: StatementOfClaimAgainstEstateForm },
-
-
+   
     {
       id: 'corporate-bylaws',
       title: 'Corporate Bylaws',
@@ -357,13 +515,7 @@ const MakeDocument = () => {
       icon: Shield,
       component: PatentAssignmentForm
     },
-    { id: "due-on-demand-promissory-note",
-       title: "Promissory Note",
-       description:"Due on Demand Promissory Note",
-       content: "Create a comprehensive due on demand promissory note contract", 
-       icon: Calculator, 
-       component: DueOnDemandPromissoryNoteForm
-       },
+  
 
     {
       id: 'royalty-agreement',
@@ -404,76 +556,7 @@ const MakeDocument = () => {
       content: 'Create a comprehensive lease agreement for renting office space in a commercial building',
       icon: Building2,
       component: OfficeSpaceLeaseForm
-    },
-    { id: "complaint-letter-info",
-       title: "Complaint to BBB/Attorney General", 
-       description:"Complaint to Attorney General",
-       content: "Create a formal complaint letter to Attorney Gneral", 
-       icon: FileText, 
-       component: ComplaintLetterInfoForm 
-      },
-
-  {
-         id: "direct-mail-request", 
-        title: "Direct mail advertising request",
-        description:"Direct Mail advertising request",
-         content: "Create a comprehensive direct mail advirtisng request agreement", 
-         icon: FileSignature, 
-         component: DirectMailAdvertisingForm },
-
-         { id: "secured-promissory-note",
-           title: "Secured Promissory note", 
-           description:"Secure Promisssory note",
-           content: "Create a comprehensive agreement for secured promissory",
-            icon: Calculator, 
-            component: SecuredPromissoryNoteForm
-           },
-
-           { id: "installment-promissory-note", 
-            title: "installment Promissory note", 
-            description:"installment Promissory note",
-            content: "Create a comprehensive agreement for installment promissory note", 
-            icon: Calculator, 
-            component: InstallmentPromissoryNoteForm },
-
-            { id: "iou", 
-              title: "IOU", 
-              description:"Acknowledment of debt",
-              content: "Create a comprehensive iou agreement acknowledment of debt", 
-              icon: Calculator,
-              component: IOUForm 
-            },
-
-     { id: "note-payable",
-       title: "Note Pyabale", 
-       description:"Note Payable",
-       content: "Create a comprehensive agreement for note payable", 
-       icon: Calculator,
-       component: NotePayableForm 
-      },
-
-  { id: "lottery-pool-contract", 
-    title: "Lottery Pool Contract", 
-    description:"Lottery Pool Contract",
-    content: "Create a comprehensiveLottery Pool Contract agreement", 
-    icon: FileSignature,
-    component: LotteryPoolContractForm
-  },
-  { id: "request-bankcredit-reference", 
-    title: "Request Bank Credit Reference", 
-    description:"Request Bank credit",
-    content: "Create a comprehensive reference to request bank credit", 
-    icon: Calculator, 
-     component: BankCreditReferenceForm 
-    },
-
-      { id: "debt-collection-worksheet",
-         title: "Debt collection", 
-         description:"Debt collection",
-         content: "Create a comprehensive debt collection worksheet",
-          icon: Calculator, 
-          component: DebtCollectionWorksheetForm
-       }
+    }
 
   ];
 
@@ -655,84 +738,7 @@ const MakeDocument = () => {
       icon: Shield,
       component: NonDisturbanceAgreement
     },
-    {
-      id: 'cellphone-inquiry-letter',
-      title: 'Cell Phone Inquiry Letter',
-      description: 'Cellular Service',
-      content: 'Create a formal letter to inquire about or dispute cellular service charges',
-      icon: FileText,
-      component: CellPhoneInquiryLetterForm
-    },
-
-    {id : "membership-cancellation-letter  ",
-       title:"Member Cancellation Request",
-       description:"Membership cancellation",
-       content:"Create a formal request to cancel membership", 
-       icon: FileText, 
-        component: MembershipCancellationLetterForm},
-
-
-    {
-      id : "complaint-demand-refund", 
-      title:"Complaint for refund",
-      description:"Complaint for refund",
-      content:"Create a formal complaint for refund", 
-      icon: FileText, 
-       component: FormalComplaintRefundForm
-      },
-
-    { id: "subordinated-loan-agreement", 
-      title: "Subordinated Loan Agreement", 
-      description:"Subordinated Loan Agreement",
-      content: "Create a comprehensive subordinated loan agreement", 
-      icon: Calculator, 
-      component: SubordinatedLoanAgreementForm },
-
-   { id: "demand-for-money-owed",
-     title: "Demand for Owed Money",
-     description:"Demand for Owed Money",
-      content: "Create a comprehensive agreement to Demand for Owed Money", 
-      icon: Calculator, 
-      component: DemandForMoneyOwedForm },
-
-   {id : "request-remove-personal-information", 
-    title:"Request Remove Personal Information ",
-    description:"Request Remove personal info",
-    content:"Create a formal request to remove personal information",
-     icon: FileText, 
-     component: RemovePersonalInfoRequestForm
-    },
-
-    {id : "security-agreement-info",
-       title:"Security agreement Information",
-       description:"Security agreement info",
-       content:"Create a formal agreement of security information",
-        icon: FileText,
-        component: SecurityAgreementInfoForm
-      },
-
-   {id : "remove-from-marketing-list", 
-    title:"Remove from Marketing List  ",
-    description:"Remove from Marketing List ",
-    content:"Create a formal agreement to remove information from marketing list",
-     icon: FileText, 
-     component: RemoveFromMarketingListForm},
-
-     {id : "warranty-repair-request", 
-      title:"Warranty Repair Request",
-      description:"Warranty Repair Request",
-      content:"Create a formal agreement for Warranty Repair Request", 
-      icon: FileText, 
-      component: WarrantyRepairRequestForm},
-
-    {
-      id : "reservation-confirmation", 
-      title:"Reservations confirmation Letter",
-      description:"Reservation Confirmation",
-      content:"Create a formal letter for confirming reservations",
-       icon: FileText, 
-        component: ReservationConfirmationForm
-      }
+    
 
   ];
 
