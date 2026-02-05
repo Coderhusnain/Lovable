@@ -23,11 +23,13 @@ import {
 } from "lucide-react";
 
 
+
 // ============================================================================
 // LAZY IMPORTS - ALL 200+ FORM COMPONENTS
 // ============================================================================
 
 // --- MAIN COMPONENTS FOLDER ---
+const IOUForm = lazy(() => import("@/components/IOUForm"));
 const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
 const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
 const FormalComplaintRefundForm = lazy(() => import("@/components/FormalComplaintRefundForm"));
@@ -338,8 +340,9 @@ export const businessSecurityDocs = [
   { id: "debt-collection-worksheet", title: "Debt collection", description: "Create a comprehensive debt collection worksheet", icon: Calculator, category: "Financial", component: DebtCollectionWorksheetForm },
   { id: "secured-promissory-note", title: "Secured Promissory note", description: "Create a comprehensive agreement for secured promissory", icon: Calculator, category: "Financial", component: SecuredPromissoryNoteForm },
   { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Financial", component: InstallmentPromissoryNoteForm },
+  { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Financial", component: IOUForm },
 
-  
+ 
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
   { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Intellectual Property", component: CopyrightLicenseForm },

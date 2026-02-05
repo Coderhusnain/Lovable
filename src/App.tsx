@@ -124,6 +124,8 @@ import DebtCollectionWorksheetInfo from "./pages/DebtCollectionWorksheetInfo";
 import DirectMailAdvertisingInfo from "./pages/DirectMailAdvertisingInfo";
 import FormalComplaintRefundInfo from "./pages/FormalComplaintRefundInfo";
 import SecuredPromissoryNoteInfo from "./pages/SecuredPromissoryNoteInfo";
+import InstallmentPromissoryNoteInfo from "./pages/InstallmentPromissoryNoteInfo";
+import IOUInfo from "./pages/IOUInfo";
 
 
 
@@ -270,6 +272,10 @@ const App = () => {
                 <Route path="/debt-collection-worksheet-info" element={<DebtCollectionWorksheetInfo/>}/>
                 <Route path="/direct-mail-request-form" element={<Documents/>}/>
                 <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
+                <Route path="/iou-form" element={<Documents/>}/>
+                <Route path="/iou-info" element={<IOUInfo/>}/>
+                <Route path="/installment-promissory-note-form" element={<Documents/>}/>
+                <Route path="/installment-promissory-note-info" element={<InstallmentPromissoryNoteInfo/>}/>
                 <Route path="/secured-promissory-note-form" element={<Documents/>}/>
                 <Route path="/secured-promissory-note-info" element={<SecuredPromissoryNoteInfo/>}/>
                 <Route path="/complaint-demand-refund-form" element={<Documents/>}/>

@@ -76,6 +76,7 @@ const DirectMailAdvertisingForm = lazy(() => import("@/components/DirectMailAdve
 const FormalComplaintRefundForm = lazy(() => import("@/components/FormalComplaintRefundForm"));
 const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
 const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
+const IOUForm = lazy(() => import("@/components/IOUForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -415,6 +416,12 @@ const MakeDocument = () => {
             icon: Calculator, 
             component: InstallmentPromissoryNoteForm },
 
+            { id: "iou", 
+              title: "IOU", 
+              description:"Acknowledment of debt",
+              content: "Create a comprehensive iou agreement acknowledment of debt", 
+              icon: Calculator,
+              component: IOUForm },
 
 
       { id: " debt-collection-worksheet",
