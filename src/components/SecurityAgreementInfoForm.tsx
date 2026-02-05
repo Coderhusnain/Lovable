@@ -392,9 +392,19 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  const DEFAULT_AGREEMENT_TEXT = `
+A Security Agreement is a legally binding contract between a debtor
+and a secured party in which the debtor grants a security interest
+in specific assets (collateral) to secure repayment of a debt or
+performance of obligations.
+`.trim();
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

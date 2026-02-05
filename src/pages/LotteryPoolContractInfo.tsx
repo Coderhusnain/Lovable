@@ -40,7 +40,6 @@ const LotteryPoolContractInfo = () => {
               It defines ownership interests, management responsibilities, and how prizes are claimed
               and distributed.
             </p>
-
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
               <h3 className="font-semibold text-blue-900 mb-2">
                 A Lottery Pool Contract typically includes:

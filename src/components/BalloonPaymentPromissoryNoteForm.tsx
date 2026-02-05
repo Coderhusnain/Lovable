@@ -390,11 +390,20 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("AGREEMENT DETAILS", 20, y);
   y += 8;
   
+  const DEFAULT_AGREEMENT_TEXT = `
+A Balloon Payment Promissory Note is a legally binding agreement in which a borrower promises to repay a loan through regular installment payments followed by a large final payment, known as a balloon payment. This document clearly outlines the loan amount, repayment schedule, interest, and the borrower’s obligation to pay the remaining balance on the due date.
+  `.trim();
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
+
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

@@ -349,6 +349,12 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+const DEFAULT_AGREEMENT_TEXT = `
+A Statement of Claim Against Estate is a legal document filed in probate
+court by a creditor who believes they are owed money by a deceased person’s
+estate. It formally notifies the court and the personal representative of the debt and requests payment from estate assets.
+`.trim();
+
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
@@ -392,7 +398,17 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  const DEFAULT_AGREEMENT_TEXT = `
+  A Statement of Claim Against Estate is a legal document filed in probate
+ court by a creditor who believes they are owed money by a deceased person’s
+estate. It formally notifies the court and the personal representative of
+ debt and requests payment from estate assets.
+  `.trim();
+    const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+  
+  const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
   

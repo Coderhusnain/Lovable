@@ -392,9 +392,20 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  const DEFAULT_AGREEMENT_TEXT = `
+ A Subordinated Loan Agreement is a legally binding agreement among
+a borrower, a senior creditor, and a junior creditor that
+establishes the priority of repayment. Under this agreement, the
+junior creditor agrees that its loan will be repaid only after the
+senior debt has been paid in full.
+`.trim();
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

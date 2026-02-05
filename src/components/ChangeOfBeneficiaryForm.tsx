@@ -349,6 +349,14 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+const DEFAULT_AGREEMENT_TEXT = `
+A Change of Beneficiary Letter is a formal written request submitted by a life insurance
+policy owner to notify the insurer of an update to beneficiary information. This document
+is commonly used when a beneficiary name has changed or needs correction in the
+insurance company records.
+`.trim();
+
+
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
@@ -392,9 +400,20 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  
+  const DEFAULT_AGREEMENT_TEXT = `
+A Change of Beneficiary Letter is a formal written request submitted by a life insurance
+policy owner to notify the insurer of an update to beneficiary information. This document
+is commonly used when a beneficiary name has changed or needs correction in the
+insurance company records.
+`.trim();
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

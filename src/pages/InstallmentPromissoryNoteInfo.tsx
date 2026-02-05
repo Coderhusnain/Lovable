@@ -40,7 +40,6 @@ const InstallmentPromissoryNoteInfo = () => {
               lender over time in fixed installments. It outlines repayment terms,
               interest, default conditions, and legal remedies available to the lender.
             </p>
-
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
               <h3 className="font-semibold text-blue-900 mb-2">
                 An Installment Promissory Note typically includes:

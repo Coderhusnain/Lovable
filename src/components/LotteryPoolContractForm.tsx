@@ -392,7 +392,17 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  const DEFAULT_AGREEMENT_TEXT = `
+ A Lottery Pool Contract is a legally binding agreement among multiple participants
+(“Co-Owners”) who jointly purchase lottery tickets and share any resulting winnings.
+It defines ownership interests, management responsibilities, and how prizes are claimed
+and distributed.
+  `.trim();
+    const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+  
+  const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
   

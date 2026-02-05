@@ -392,7 +392,15 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  const DEFAULT_AGREEMENT_TEXT = `
+A Cell Phone Inquiry Letter is a formal written request sent by a subscriber to a cellular 
+service provider to seek clarification or correction of billing charges. It is commonly used when a billing statement reflects charges that appear inconsistent with the terms of the subscriber’s service agreement.
+  `.trim();
+    const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+  
+  const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
   

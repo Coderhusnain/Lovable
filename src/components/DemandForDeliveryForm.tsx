@@ -392,9 +392,19 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  const DEFAULT_AGREEMENT_TEXT = `
+A Demand for Delivery is a formal written notice sent by a purchaser to a seller or supplier requesting the delivery of goods that were ordered but not delivered within the agreed timeframe. This document serves as an official record that the buyer has notified the seller of the delay and is requesting prompt action.
+  `.trim();
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const fullDescription =values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

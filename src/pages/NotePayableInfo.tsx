@@ -40,7 +40,6 @@ const NotePayableInfo = () => {
               to another party (the Lender). It outlines repayment terms,
               interest, default events, and enforcement rights.
             </p>
-
             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
               <h3 className="font-semibold text-blue-900 mb-2">
                 A Note Payable typically includes:

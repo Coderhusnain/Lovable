@@ -392,9 +392,23 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+     
+  const DEFAULT_AGREEMENT_TEXT = `
+ An Installment Promissory Note is a legally binding document in which
+a borrower formally promises to repay a specific sum of money to a
+lender over time in fixed installments. It outlines repayment terms,
+interest, default conditions, and legal remedies available to the lender.
+  `.trim();
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const fullDescription =values.description 
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description }`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

@@ -392,9 +392,23 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+    
+  const DEFAULT_AGREEMENT_TEXT = `
+An IOU, also known as an Acknowledgment of Debt, is a legally binding
+document in which a borrower formally recognizes owing a specific
+amount of money to a lender and agrees to repay it under defined
+terms. It serves as clear evidence of debt and repayment obligation.
+  `.trim();
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const fullDescription =values.description 
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description }`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

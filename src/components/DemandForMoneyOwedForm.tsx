@@ -392,9 +392,20 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+  const DEFAULT_AGREEMENT_TEXT = `
+A Demand for Money Owed Agreement (commonly called a Demand Letter)
+is a formal written document used to request repayment of money that
+is owed to you. It provides the debtor with official notice that
+payment is due and establishes a deadline before further legal
+action is considered.
+`.trim();
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");

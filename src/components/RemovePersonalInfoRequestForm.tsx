@@ -392,7 +392,17 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  const DEFAULT_AGREEMENT_TEXT = `
+A Request to Remove Personal Information is a formal written notice
+submitted by an individual to an organization requesting the
+deletion of their personal data from the organization’s records,
+systems, and files.
+  `.trim();
+    const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+  
+  const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
   
