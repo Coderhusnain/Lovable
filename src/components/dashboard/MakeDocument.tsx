@@ -73,6 +73,9 @@ const ChangeOfBeneficiaryForm = lazy(() => import("@/components/ChangeOfBenefici
 const ReservationConfirmationForm = lazy(() => import("@/components/ReservationConfirmationForm"));
 const DebtCollectionWorksheetForm = lazy(() => import("@/components/DebtCollectionWorksheetForm"));
 const DirectMailAdvertisingForm = lazy(() => import("@/components/DirectMailAdvertisingForm"));
+const FormalComplaintRefundForm = lazy(() => import("@/components/FormalComplaintRefundForm"));
+const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
+const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -397,6 +400,22 @@ const MakeDocument = () => {
          icon: FileSignature, 
          component: DirectMailAdvertisingForm },
 
+         { id: "secured-promissory-note",
+           title: "Secured Promissory note", 
+           description:"Secure Promisssory note",
+           content: "Create a comprehensive agreement for secured promissory",
+            icon: Calculator, 
+            component: SecuredPromissoryNoteForm
+           },
+
+           { id: "installment-promissory-note", 
+            title: "installment Promissory note", 
+            description:"installment Promissory note",
+            content: "Create a comprehensive agreement for installment promissory note", 
+            icon: Calculator, 
+            component: InstallmentPromissoryNoteForm },
+
+
 
       { id: " debt-collection-worksheet",
          title: "Debt collection", 
@@ -594,6 +613,17 @@ const MakeDocument = () => {
       icon: FileText,
       component: CellPhoneInquiryLetterForm
     },
+
+    {
+      id : "complaint-demand-refund", 
+      title:"Complaint for refund",
+      description:"Complaint for refund",
+      content:"Create a formal complaint for refund", 
+      icon: FileText, 
+       component: FormalComplaintRefundForm
+      },
+
+
     {
       id : "reservation-confirmation", 
       title:"Reservations confirmation Letter",

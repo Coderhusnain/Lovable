@@ -28,6 +28,9 @@ import {
 // ============================================================================
 
 // --- MAIN COMPONENTS FOLDER ---
+const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
+const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
+const FormalComplaintRefundForm = lazy(() => import("@/components/FormalComplaintRefundForm"));
 const DirectMailAdvertisingForm = lazy(() => import("@/components/DirectMailAdvertisingForm"));
 const DebtCollectionWorksheetForm = lazy(() => import("@/components/DebtCollectionWorksheetForm"));
 const ReservationConfirmationForm = lazy(() => import("@/components/ReservationConfirmationForm"));
@@ -333,8 +336,10 @@ export const businessSecurityDocs = [
   { id: "AccountingContractForm", title: "Accounting Contract", description: "Create a comprehensive accounting contract", icon: Calculator, category: "Financial", component: AccountingContractForm },
   { id: "due-on-demand-promissory-note", title: "Promissory Note", description: "Create a comprehensive due on demand promissory note contract", icon: Calculator, category: "Financial", component: DueOnDemandPromissoryNoteForm },
   { id: "debt-collection-worksheet", title: "Debt collection", description: "Create a comprehensive debt collection worksheet", icon: Calculator, category: "Financial", component: DebtCollectionWorksheetForm },
+  { id: "secured-promissory-note", title: "Secured Promissory note", description: "Create a comprehensive agreement for secured promissory", icon: Calculator, category: "Financial", component: SecuredPromissoryNoteForm },
+  { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Financial", component: InstallmentPromissoryNoteForm },
 
- 
+  
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
   { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Intellectual Property", component: CopyrightLicenseForm },
@@ -477,6 +482,9 @@ export const propertyMattersDocs = [
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
   {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Notices & Letters", component: CellPhoneInquiryLetterForm},
   {id : "reservation-confirmation", title:"Reservations confirmation Letter",description:"Create a formal letter for confirming reservations", icon: FileText, category: "Notices & Letters", component: ReservationConfirmationForm},
+  {id : "complaint-demand-refund", title:"Complaint for refund",description:"Create a formal complaint for refund", icon: FileText, category: "Notices & Letters", component: FormalComplaintRefundForm},
+
+  
   // === PROPERTY SALES ===
   { id: "agreement-to-sell", title: "Agreement to Sell", description: "Create a comprehensive agreement to sell for property transactions", icon: FileText, category: "Property Sales", component: AgreementToSellForm },
   { id: "real-estate-agent-agreement", title: "Real Estate Agent Agreement", description: "Create an exclusive listing agreement with a real estate agent", icon: Home, category: "Property Sales", component: RealEstateAgentAgreementForm },

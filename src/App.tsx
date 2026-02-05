@@ -122,6 +122,11 @@ import ChangeOfBeneficiaryInfo from "./pages/ChangeOfBeneficiaryInfo";
 import ReservationConfirmationInfo from "./pages/ReservationConfirmationInfo";
 import DebtCollectionWorksheetInfo from "./pages/DebtCollectionWorksheetInfo";
 import DirectMailAdvertisingInfo from "./pages/DirectMailAdvertisingInfo";
+import FormalComplaintRefundInfo from "./pages/FormalComplaintRefundInfo";
+import SecuredPromissoryNoteInfo from "./pages/SecuredPromissoryNoteInfo";
+
+
+
 // Loading component
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
@@ -265,6 +270,10 @@ const App = () => {
                 <Route path="/debt-collection-worksheet-info" element={<DebtCollectionWorksheetInfo/>}/>
                 <Route path="/direct-mail-request-form" element={<Documents/>}/>
                 <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
+                <Route path="/secured-promissory-note-form" element={<Documents/>}/>
+                <Route path="/secured-promissory-note-info" element={<SecuredPromissoryNoteInfo/>}/>
+                <Route path="/complaint-demand-refund-form" element={<Documents/>}/>
+                <Route path="/complaint-demand-refund-info" element={<FormalComplaintRefundInfo/>}/>
                 <Route path="/reservation-confirmation-form" element={<Documents/>}/>
                 <Route path="/reservation-confirmation-info" element={<ReservationConfirmationInfo/>}/>
                 <Route path="/office-space-lease-info" element={<OfficeSpaceLeaseInfo />} />
