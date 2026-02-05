@@ -29,6 +29,11 @@ import {
 // ============================================================================
 
 // --- MAIN COMPONENTS FOLDER ---
+const WarrantyRepairRequestForm = lazy(() => import("@/components/WarrantyRepairRequestForm"));
+const StatementOfClaimAgainstEstateForm = lazy(() => import("@/components/StatementOfClaimAgainstEstateForm"));
+const RemoveFromMarketingListForm = lazy(() => import("@/components/RemoveFromMarketingListForm"));
+const DemandForMoneyOwedForm = lazy(() => import("@/components/DemandForMoneyOwedForm"));
+const SubordinatedLoanAgreementForm = lazy(() => import("@/components/SubordinatedLoanAgreementForm"));
 const SecurityAgreementInfoForm = lazy(() => import("@/components/SecurityAgreementInfoForm"));
 const RemovePersonalInfoRequestForm = lazy(() => import("@/components/RemovePersonalInfoRequestForm"));
 const BankCreditReferenceForm  = lazy(() => import("@/components/BankCreditReferenceForm"));
@@ -311,7 +316,9 @@ export const businessSecurityDocs = [
   // === STOCK & SHARES ===
   { id: "share-purchase-agreement", title: "Share Purchase Agreement", description: "Create a comprehensive share purchase agreement", icon: Building2, category: "Business Formation", component: SharePurchaseAgreementForm },
   { id: "StockPurchaseAgreementForm", title: "Stock Purchase Agreement", description: "Create a comprehensive stock purchase agreement", icon: FilePlus, category: "Business Formation", component: StockPurchaseAgreementForm },
+  { id: "statement-of-claim-against-estate", title: "Statement Of Claim Against Estate", description: "Create a comprehensive statment against estate", icon: FilePlus, category: "Business Formation", component: StatementOfClaimAgainstEstateForm },
 
+  
   // === CONFIDENTIALITY ===
   { id: "nda", title: "Non-Disclosure Agreement", description: "Create a legally binding confidentiality agreement", icon: Shield, category: "Confidentiality", component: NDAForm },
   { id: "mutual-nda", title: "Mutual Non-Disclosure Agreement", description: "Create a bilateral confidentiality agreement", icon: Handshake, category: "Confidentiality", component: MutualNDAForm },
@@ -349,8 +356,10 @@ export const businessSecurityDocs = [
   { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Financial", component: IOUForm },
   { id: "note-payable", title: "Note Pyabale", description: "Create a comprehensive agreement for note payable", icon: Calculator, category: "Financial", component: NotePayableForm },
   { id: "request-bankcredit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Financial", component: BankCreditReferenceForm },
+  { id: "subordinated-loan-agreement", title: "Subordinated Loan Agreement", description: "Create a comprehensive subordinated loan agreement", icon: Calculator, category: "Financial", component: SubordinatedLoanAgreementForm },
+  { id: "demand-for-money-owed", title: "Demand for Owed Money", description: "Create a comprehensive agreement to Demand for Owed Money", icon: Calculator, category: "Financial", component: DemandForMoneyOwedForm },
 
-
+  
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
   { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Intellectual Property", component: CopyrightLicenseForm },
@@ -499,8 +508,10 @@ export const propertyMattersDocs = [
   {id : "membership-cancellation-letter", title:"Member Cancellation Request",description:"Create a formal request to cancel membership", icon: FileText, category: "Notices & Letters", component: MembershipCancellationLetterForm},
   {id : "request-remove-personal-information", title:"Request Remove Personal Information ",description:"Create a formal request to remove personal information", icon: FileText, category: "Notices & Letters", component: RemovePersonalInfoRequestForm},
   {id : "security-agreement-info", title:"Security agreement Information",description:"Create a formal agreement of security information", icon: FileText, category: "Notices & Letters", component: SecurityAgreementInfoForm},
+  {id : "remove-from-marketing-list", title:"Remove from Marketing List  ",description:"Create a formal agreement to remove information from marketing list", icon: FileText, category: "Notices & Letters", component: RemoveFromMarketingListForm},
+  {id : "warranty-repair-request", title:"Warranty Repair Request",description:"Create a formal agreement for Warranty Repair Request", icon: FileText, category: "Notices & Letters", component: WarrantyRepairRequestForm},
 
-  
+ 
   // === PROPERTY SALES ===
   { id: "agreement-to-sell", title: "Agreement to Sell", description: "Create a comprehensive agreement to sell for property transactions", icon: FileText, category: "Property Sales", component: AgreementToSellForm },
   { id: "real-estate-agent-agreement", title: "Real Estate Agent Agreement", description: "Create an exclusive listing agreement with a real estate agent", icon: Home, category: "Property Sales", component: RealEstateAgentAgreementForm },

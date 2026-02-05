@@ -2,7 +2,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator, FilePlus } from "lucide-react";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 //import DemandForDeliveryForm from '../DemandForDeliveryForm';
 import { Description } from '@radix-ui/react-toast';
@@ -83,6 +83,11 @@ const LotteryPoolContractForm = lazy(() => import("@/components/LotteryPoolContr
 const BankCreditReferenceForm = lazy(() => import("@/components/BankCreditReferenceForm"));
 const RemovePersonalInfoRequestForm = lazy(() => import("@/components/RemovePersonalInfoRequestForm"));
 const SecurityAgreementInfoForm = lazy(() => import("@/components/SecurityAgreementInfoForm"));
+const SubordinatedLoanAgreementForm = lazy(() => import("@/components/SubordinatedLoanAgreementForm"));
+const DemandForMoneyOwedForm = lazy(() => import("@/components/DemandForMoneyOwedForm"));
+const RemoveFromMarketingListForm = lazy(() => import("@/components/RemoveFromMarketingListForm"));
+const StatementOfClaimAgainstEstateForm = lazy(() => import("@/components/StatementOfClaimAgainstEstateForm"));
+const WarrantyRepairRequestForm = lazy(() => import("@/components/WarrantyRepairRequestForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -287,6 +292,15 @@ const MakeDocument = () => {
       icon: Home,
       component: DomesticServiceAgreementForm
     },
+
+    { id: "statement-of-claim-against-estate", 
+      title: "Statement Of Claim Against Estate",
+      description:"Statement Of Claim Against Estate",
+       content: "Create a comprehensive statment against estate", 
+       icon: FilePlus, 
+        component: StatementOfClaimAgainstEstateForm },
+
+
     {
       id: 'corporate-bylaws',
       title: 'Corporate Bylaws',
@@ -666,6 +680,21 @@ const MakeDocument = () => {
       icon: FileText, 
        component: FormalComplaintRefundForm
       },
+
+    { id: "subordinated-loan-agreement", 
+      title: "Subordinated Loan Agreement", 
+      description:"Subordinated Loan Agreement",
+      content: "Create a comprehensive subordinated loan agreement", 
+      icon: Calculator, 
+      component: SubordinatedLoanAgreementForm },
+
+   { id: "demand-for-money-owed",
+     title: "Demand for Owed Money",
+     description:"Demand for Owed Money",
+      content: "Create a comprehensive agreement to Demand for Owed Money", 
+      icon: Calculator, 
+      component: DemandForMoneyOwedForm },
+
    {id : "request-remove-personal-information", 
     title:"Request Remove Personal Information ",
     description:"Request Remove personal info",
@@ -681,6 +710,20 @@ const MakeDocument = () => {
         icon: FileText,
         component: SecurityAgreementInfoForm
       },
+
+   {id : "remove-from-marketing-list", 
+    title:"Remove from Marketing List  ",
+    description:"Remove from Marketing List ",
+    content:"Create a formal agreement to remove information from marketing list",
+     icon: FileText, 
+     component: RemoveFromMarketingListForm},
+
+     {id : "warranty-repair-request", 
+      title:"Warranty Repair Request",
+      description:"Warranty Repair Request",
+      content:"Create a formal agreement for Warranty Repair Request", 
+      icon: FileText, 
+      component: WarrantyRepairRequestForm},
 
     {
       id : "reservation-confirmation", 

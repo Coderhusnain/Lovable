@@ -132,6 +132,11 @@ import LotteryPoolContractInfo from "./pages/LotteryPoolContractInfo";
 import BankCreditReferenceInfo from "./pages/BankCreditReferenceInfo";
 import RemovePersonalInfoRequestInfo from "./pages/RemovePersonalInfoRequestInfo";
 import SecurityAgreementInfo from "./pages/SecurityAgreementInfo";
+import SubordinatedLoanAgreementInfo from "./pages/SubordinatedLoanAgreementInfo";
+import DemandForMoneyOwedInfo from "./pages/DemandForMoneyOwedInfo";
+import RemoveFromMarketingListInfo from "./pages/RemoveFromMarketingListInfo";
+import StatementOfClaimAgainstEstateInfo from "./pages/StatementOfClaimAgainstEstateInfo";
+import WarrantyRepairRequestInfo from "./pages/WarrantyRepairRequestInfo";
 
 
 
@@ -263,6 +268,16 @@ const App = () => {
                 <Route path="/request-remove-personal-information-form" element={<Documents />} />
                 <Route path="/security-agreement-info-info" element={<SecurityAgreementInfo/>} />
                 <Route path="/security-agreement-info-form" element={<Documents />} />
+                <Route path="/subordinated-loan-agreement-info" element={<SubordinatedLoanAgreementInfo/>} />
+                <Route path="/subordinated-loan-agreement-form" element={<Documents />} />
+                <Route path="/demand-for-money-owed-info" element={<DemandForMoneyOwedInfo/>} />
+                <Route path="/demand-for-money-owed-form" element={<Documents />} />
+                <Route path="/remove-from-marketing-list-info" element={<RemoveFromMarketingListInfo/>} />
+                <Route path="/remove-from-marketing-list-form" element={<Documents />} />
+                <Route path="/statement-of-claim-against-estate-info" element={<StatementOfClaimAgainstEstateInfo/>} />
+                <Route path="/statement-of-claim-against-estate-form" element={<Documents />} />
+                <Route path="/warranty-repair-request-info" element={<WarrantyRepairRequestInfo/>} />
+                <Route path="/warranty-repair-request-form" element={<Documents />} />
                 <Route path="/license-agreement-form" element={<Documents />} />
                 <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
                 <Route path="/manufacturing-license-form" element={<Documents />} />
