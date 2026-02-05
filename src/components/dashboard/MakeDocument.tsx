@@ -445,7 +445,7 @@ const MakeDocument = () => {
     icon: FileSignature,
     component: LotteryPoolContractForm
   },
-  { id: "request-bank-credit-reference", 
+  { id: "request-bankcredit-reference", 
     title: "Request Bank Credit Reference", 
     description:"Request Bank credit",
     content: "Create a comprehensive reference to request bank credit", 

@@ -257,8 +257,8 @@ const App = () => {
                 <Route path="/note-payable-form" element={<Documents />} />
                 <Route path="/lottery-pool-contract-info" element={<LotteryPoolContractInfo/>} />
                 <Route path="/lottery-pool-contract-form" element={<Documents />} />
-                <Route path="/request-bank-credit-reference-info" element={<BankCreditReferenceInfo/>} />
-                <Route path="/request-bank-credit-reference-form" element={<Documents />} />
+                <Route path="/request-bankcredit-reference-info" element={<BankCreditReferenceInfo/>} />
+                <Route path="/request-bankcredit-reference-form" element={<Documents />} />
                 <Route path="/request-remove-personal-information-info" element={<RemovePersonalInfoRequestInfo/>} />
                 <Route path="/request-remove-personal-information-form" element={<Documents />} />
                 <Route path="/security-agreement-info-info" element={<SecurityAgreementInfo/>} />

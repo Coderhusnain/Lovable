@@ -348,7 +348,7 @@ export const businessSecurityDocs = [
   { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Financial", component: InstallmentPromissoryNoteForm },
   { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Financial", component: IOUForm },
   { id: "note-payable", title: "Note Pyabale", description: "Create a comprehensive agreement for note payable", icon: Calculator, category: "Financial", component: NotePayableForm },
-  { id: "request-bank-credit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Financial", component: BankCreditReferenceForm },
+  { id: "request-bankcredit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Financial", component: BankCreditReferenceForm },
 
 
   // === INTELLECTUAL PROPERTY ===
