@@ -75,7 +75,7 @@ import GeneralContractInfo from "./pages/GeneralContractInfo";
 import LivingWillInfo from "./pages/LivingWillInfo";
 import SaleAgreementInfo from "./pages/SaleAgreementInfo";
 import IndependentContractorInfo from "./pages/IndependentContractorInfo";
-import LoanAgreementInfo from "@/pages/LoanAgreementInfo";
+import LoanAgreementInfo from "./pages/LoanAgreementInfo";
 import GiftAffidavitInfo from "./pages/GiftAffidavitInfo";
 import FinancialSupportAffidavitInfo from "./pages/FinancialSupportAffidavitInfo";
 import ServicesContractInfo from "./pages/ServicesContractInfo";
@@ -91,6 +91,7 @@ import BusinessSaleAgreementInfo from "./pages/BusinessSaleContractInfo";
 import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo";
 import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo";
 import BalloonPaymentPromissoryNoteInfo from "./pages/BalloonPaymentPromissoryNoteInfo";
+import CellPhoneInquiryLetterInfo from "./pages/CellPhoneInquiryLetterInfo";
 
 // --- FIXED IMPORTS (These files exist now) ---
 // import SecurityAgreementInfo from "./pages/SecurityAgreementForm";
@@ -114,6 +115,8 @@ import ContractExtensionAgreementInfo from "./pages/ContractExtensionAgreementIn
 import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreementInfo";
 import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo";
 import BarterAgreementInfo from "./pages/BarterAgreementInfo";
+import DemandForDeliveryInfo from "./pages/DemandForDeliveryInfo";
+import DueOnDemandPromissoryNoteInfo from "./pages/DueOnDemandPromissoryNoteInfo";
 
 // Loading component
 const PageLoader = () => (
@@ -225,9 +228,14 @@ const App = () => {
                 <Route path="/copyright-permission-info" element={<CopyrightPermissionInfo />} />
                 <Route path="/copyright-permission-form" element={<Documents />} />
                 <Route path="/license-agreement-info" element={<LicenseAgreementInfo />} />
+                <Route path="/demand-for-delivery-info" element={<DemandForDeliveryInfo />} />
+                <Route path="/demand-for-delivery-form" element={<Documents />} />
+                <Route path="/cell-phone-inquiry-letter" element={<CellPhoneInquiryLetterInfo/>} />
+                <Route path="/cell-phone-inquiry-letter-form" element={<Documents />} />
                 <Route path="/license-agreement-form" element={<Documents />} />
                 <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
                 <Route path="/manufacturing-license-form" element={<Documents />} />
+                <Route path="/due-on-demand-promissory-note" element={< DueOnDemandPromissoryNoteInfo/>} />
                 <Route path="/music-license-info" element={<MusicLicenseInfo />} />
                 <Route path="/music-license-form" element={<Documents />} />
                 <Route path="/patent-assignment-info" element={<PatentAssignmentInfo />} />

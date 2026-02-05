@@ -2,8 +2,11 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator } from "lucide-react";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
+import DemandForDeliveryForm from '../DemandForDeliveryForm';
+import { Description } from '@radix-ui/react-toast';
+import DueOnDemandPromissoryNoteForm from '../DueOnDemandPromissoryNoteForm';
 // Convert all form imports to lazy loading to prevent build conflicts
 const ConditionalForm = lazy(() => import("@/components/ConditionalForm"));
 const ChildCareAuthForm = lazy(() => import("@/components/ChildCareAuthForm"));
@@ -11,8 +14,8 @@ const GeneralContractForm = lazy(() => import("@/components/GeneralContractForm"
 const IndependentContractorForm = lazy(() => import("@/components/IndependentContractorForm"));
 const LivingWillForm = lazy(() => import("@/components/LivingWillForm"));
 const SharePurchaseAgreementForm = lazy(() => import("@/components/SharePurchaseAgreementForm"));
-const LoanAgreementForm = lazy(() => import("../LoanAgreementForm"));
-const BalloonPaymentPromissoryNoteForm = lazy(() => import("../BalloonPaymentPromissoryNoteForm"));
+const LoanAgreementForm = lazy(() => import("@/components/LoanAgreementForm"));
+const BalloonPaymentPromissoryNoteForm = lazy(() => import("@/components/BalloonPaymentPromissoryNoteForm"));
 const GiftAffidavitForm = lazy(() => import("@/components/GiftAffidavitForm"));
 const FinancialSupportAffidavitForm = lazy(() => import("@/components/FinancialSupportAffidavitForm"));
 const ServicesContractForm = lazy(() => import("@/components/ServicesContractForm"));
@@ -62,6 +65,7 @@ const SecurityDepositReturnLetter = lazy(() => import("@/components/SecurityDepo
 const LeaseTerminationLetter = lazy(() => import("@/components/LeaseTerminationLetter"));
 const LateRentPaymentAgreement = lazy(() => import("@/components/LateRentPaymentAgreement"));
 const NonDisturbanceAgreement = lazy(() => import("@/components/NonDisturbanceAgreement"));
+const CellPhoneInquiryLetterForm = lazy(() => import("@/components/CellPhoneInquiryLetterForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -203,6 +207,15 @@ const MakeDocument = () => {
       component: GeneralContractForm
     },
     {
+      id: 'demand-for-delivery',
+      title: 'Demand for Delivery',
+      description: 'Business & Commercial',
+      content: 'Create a comprehensive demand for delivery agreement',
+      icon: FileSignature,
+      component: DemandForDeliveryForm
+    },
+   
+    {
       id: 'share-purchase-agreement',
       title: 'Share Purchase Agreement',
       description: 'Corporate & Investment',
@@ -306,6 +319,14 @@ const MakeDocument = () => {
       icon: Shield,
       component: PatentAssignmentForm
     },
+    { id: "due-on-demand-promissory-note",
+       title: "Promissory Note",
+       description:"Due on Demand Promissory Note",
+       content: "Create a comprehensive due on demand promissory note contract", 
+       icon: Calculator, 
+       component: DueOnDemandPromissoryNoteForm
+       },
+
     {
       id: 'royalty-agreement',
       title: 'Royalty Agreement',
@@ -526,6 +547,14 @@ const MakeDocument = () => {
       content: 'Create a professional non-disturbance agreement between mortgagee and tenant',
       icon: Shield,
       component: NonDisturbanceAgreement
+    },
+    {
+      id: 'cellphone-inquiry-letter',
+      title: 'Cell Phone Inquiry Letter',
+      description: 'Cellular Service',
+      content: 'Create a formal letter to inquire about or dispute cellular service charges',
+      icon: FileText,
+      component: CellPhoneInquiryLetterForm
     }
   ];
 

@@ -21,6 +21,9 @@ import {
   BadgeCheck, Landmark, PiggyBank, Ticket, Award, UserPlus,
   Bed, TreePine, Droplets, Zap, Store, Warehouse as WarehouseIcon, Coffee
 } from "lucide-react";
+import CellPhoneInquiryLetterForm from "@/components/CellPhoneInquiryLetterForm";
+import DemandForDeliveryForm from "@/components/DemandForDeliveryForm";
+import DueOnDemandPromissoryNoteForm from "@/components/DueOnDemandPromissoryNoteForm";
 
 // ============================================================================
 // LAZY IMPORTS - ALL 200+ FORM COMPONENTS
@@ -319,6 +322,7 @@ export const businessSecurityDocs = [
   { id: "FeeAgreementForm", title: "Fee Agreement", description: "Create a comprehensive fee agreement", icon: DollarSign, category: "Financial", component: FeeAgreementForm },
   { id: "royalty-agreement", title: "Royalty Agreement", description: "Create a professional royalty agreement", icon: DollarSign, category: "Financial", component: RoyaltyAgreementForm },
   { id: "AccountingContractForm", title: "Accounting Contract", description: "Create a comprehensive accounting contract", icon: Calculator, category: "Financial", component: AccountingContractForm },
+  { id: "due-on-demand-promissory-note", title: "Promissory Note", description: "Create a comprehensive due on demand promissory note contract", icon: Calculator, category: "Financial", component: DueOnDemandPromissoryNoteForm },
 
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
@@ -355,7 +359,8 @@ export const businessSecurityDocs = [
   { id: "ReferralAndWarrantyForm", title: "Referral & Warranty Agreement", description: "Create a comprehensive referral & warranty agreement", icon: Handshake, category: "Contracts", component: ReferralAndWarrantyForm },
   { id: "JointBidAgreementForm", title: "Joint Bid Agreement", description: "Create a comprehensive joint bid agreement", icon: Handshake, category: "Contracts", component: JointBidAgreementForm },
   { id: "bidproposal-agreement", title: "Bid Proposal Agreement", description: "Create a comprehensive bid proposal agreement", icon: FileSignature, category: "Contracts", component: BidProposalForm },
-
+  { id: "demand-for-delivery", title: "Demand For Delivery", description: "Create a comprehensive demand of delivery agreement", icon: FileSignature, category: "Contracts", component: DemandForDeliveryForm },
+  
   // === BUSINESS ACQUISITIONS ===
   { id: "AssetPurchaseForm", title: "Asset Purchase Agreement", description: "Create a comprehensive asset purchase agreement", icon: Briefcase, category: "Acquisitions", component: AssetPurchaseForm },
   { id: "BusinessSaleAgreementForm", title: "Business Sale Agreement", description: "Create a comprehensive business sale agreement", icon: Briefcase, category: "Acquisitions", component: BusinessSaleAgreementForm },
@@ -456,7 +461,8 @@ export const propertyMattersDocs = [
   { id: "eviction-notice", title: "Eviction Notice", description: "Create a formal notice to terminate a tenancy", icon: FileText, category: "Notices & Letters", component: EvictionNoticeForm },
   { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters", component: SecurityDepositReturnLetter },
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
-
+  {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Notices & Letters", component: CellPhoneInquiryLetterForm},
+ 
   // === PROPERTY SALES ===
   { id: "agreement-to-sell", title: "Agreement to Sell", description: "Create a comprehensive agreement to sell for property transactions", icon: FileText, category: "Property Sales", component: AgreementToSellForm },
   { id: "real-estate-agent-agreement", title: "Real Estate Agent Agreement", description: "Create an exclusive listing agreement with a real estate agent", icon: Home, category: "Property Sales", component: RealEstateAgentAgreementForm },
