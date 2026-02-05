@@ -92,6 +92,7 @@ import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo";
 import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo";
 import BalloonPaymentPromissoryNoteInfo from "./pages/BalloonPaymentPromissoryNoteInfo";
 import CellPhoneInquiryLetterInfo from "./pages/CellPhoneInquiryLetterInfo";
+import ComplaintLetterInfo from "./pages/ComplaintLetterInfo";
 
 // --- FIXED IMPORTS (These files exist now) ---
 // import SecurityAgreementInfo from "./pages/SecurityAgreementForm";
@@ -117,7 +118,10 @@ import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo";
 import BarterAgreementInfo from "./pages/BarterAgreementInfo";
 import DemandForDeliveryInfo from "./pages/DemandForDeliveryInfo";
 import DueOnDemandPromissoryNoteInfo from "./pages/DueOnDemandPromissoryNoteInfo";
-
+import ChangeOfBeneficiaryInfo from "./pages/ChangeOfBeneficiaryInfo";
+import ReservationConfirmationInfo from "./pages/ReservationConfirmationInfo";
+import DebtCollectionWorksheetInfo from "./pages/DebtCollectionWorksheetInfo";
+import DirectMailAdvertisingInfo from "./pages/DirectMailAdvertisingInfo";
 // Loading component
 const PageLoader = () => (
   <div className="flex h-screen w-full items-center justify-center">
@@ -232,10 +236,13 @@ const App = () => {
                 <Route path="/demand-for-delivery-form" element={<Documents />} />
                 <Route path="/cell-phone-inquiry-letter" element={<CellPhoneInquiryLetterInfo/>} />
                 <Route path="/cell-phone-inquiry-letter-form" element={<Documents />} />
+                <Route path="/complaint-letter-info" element={<ComplaintLetterInfo/>} />
+                <Route path="/complaint-letter-info-form" element={<Documents />} />
                 <Route path="/license-agreement-form" element={<Documents />} />
                 <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
                 <Route path="/manufacturing-license-form" element={<Documents />} />
                 <Route path="/due-on-demand-promissory-note" element={< DueOnDemandPromissoryNoteInfo/>} />
+                <Route path="/due-on-demand-promissory-note-form" element={< Documents/>} />
                 <Route path="/music-license-info" element={<MusicLicenseInfo />} />
                 <Route path="/music-license-form" element={<Documents />} />
                 <Route path="/patent-assignment-info" element={<PatentAssignmentInfo />} />
@@ -252,6 +259,14 @@ const App = () => {
                 <Route path="/services-contract-info" element={<ServicesContractInfo />} />
                 <Route path="/billboard-lease-info" element={<BillboardLeaseInfo />} />
                 <Route path="/billboard-lease-form" element={<Documents />} />
+                <Route path="/change-of-beneficiary-form" element={<Documents/>}/>
+                <Route path="/change-of-beneficiary-form-info" element={<ChangeOfBeneficiaryInfo/>}/>
+                <Route path="/debt-collection-worksheet-form" element={<Documents/>}/>
+                <Route path="/debt-collection-worksheet-info" element={<DebtCollectionWorksheetInfo/>}/>
+                <Route path="/direct-mail-request-form" element={<Documents/>}/>
+                <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
+                <Route path="/reservation-confirmation-form" element={<Documents/>}/>
+                <Route path="/reservation-confirmation-info" element={<ReservationConfirmationInfo/>}/>
                 <Route path="/office-space-lease-info" element={<OfficeSpaceLeaseInfo />} />
                 <Route path="/office-space-lease-form" element={<Documents />} />
                 <Route path="/storage-space-lease-info" element={<StorageSpaceLeaseInfo />} />
@@ -269,6 +284,7 @@ const App = () => {
                 <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
                 <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
                 <Route path="/fee-agreement-info" element={<FeeAgreementContractInfo />} />
+
 
                 {/* --- FIXED & ENABLED ROUTES --- */}
                 {/* <Route path="/security-agreement-info" element={<SecurityAgreementInfo />} /> */}

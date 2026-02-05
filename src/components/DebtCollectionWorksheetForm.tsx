@@ -89,11 +89,11 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Effective Date",
     fields: [
       {
         name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
+        label: "What is the effective date of this document?",
         type: "date",
         required: true,
       },
@@ -160,7 +160,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party1Phone",
         label: "Phone Number",
-        type: "tel",
+        type: "phone",
         required: false,
         placeholder: "(555) 123-4567",
       },
@@ -227,26 +227,26 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party2Phone",
         label: "Phone Number",
-        type: "tel",
+        type: "phone",
         required: false,
         placeholder: "(555) 123-4567",
       },
     ],
   },
   {
-    label: "Agreement Details",
+    label: "Document Details",
     fields: [
       {
         name: "description",
-        label: "Describe the purpose and scope of this agreement",
+        label: "Describe the purpose and details of this document",
         type: "textarea",
         required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
+        placeholder: "Provide a detailed description...",
       },
     ],
   },
   {
-    label: "Terms & Conditions",
+    label: "Terms & Duration",
     fields: [
       {
         name: "duration",
@@ -342,12 +342,12 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         label: "Any additional terms or special conditions?",
         type: "textarea",
         required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
+        placeholder: "Enter any additional terms...",
       },
     ],
   },
   {
-    label: "Review & Sign",
+    label: "Signatures",
     fields: [
       {
         name: "party1Signature",
@@ -380,7 +380,7 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("D J Services Agreement", 105, y, { align: "center" });
+  doc.text("Divorce Settlement Agreement", 105, y, { align: "center" });
   y += 15;
   
   doc.setFontSize(10);
@@ -412,7 +412,7 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
+  doc.text("DOCUMENT DETAILS", 20, y);
   y += 8;
   
   doc.setFontSize(10);
@@ -437,33 +437,6 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
   y += 15;
   
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("SIGNATURES", 20, y);
@@ -481,26 +454,18 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("Signature: " + (values.party2Signature || ""), 110, y);
   y += 10;
   doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
   
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
-  doc.save("Demandon_delivery.pdf");
+  doc.save("debt_collection.pdf");
 };
 
-export default function DemandForDeliveryForm() {
+export default function DebtCollectionWorksheetForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Demand on deleivery"
+      title="Debt collection"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="demandondelivery"
+      documentType="debtcollection"
     />
   );
 }

@@ -21,15 +21,20 @@ import {
   BadgeCheck, Landmark, PiggyBank, Ticket, Award, UserPlus,
   Bed, TreePine, Droplets, Zap, Store, Warehouse as WarehouseIcon, Coffee
 } from "lucide-react";
-import CellPhoneInquiryLetterForm from "@/components/CellPhoneInquiryLetterForm";
-import DemandForDeliveryForm from "@/components/DemandForDeliveryForm";
-import DueOnDemandPromissoryNoteForm from "@/components/DueOnDemandPromissoryNoteForm";
+
 
 // ============================================================================
 // LAZY IMPORTS - ALL 200+ FORM COMPONENTS
 // ============================================================================
 
 // --- MAIN COMPONENTS FOLDER ---
+const DirectMailAdvertisingForm = lazy(() => import("@/components/DirectMailAdvertisingForm"));
+const DebtCollectionWorksheetForm = lazy(() => import("@/components/DebtCollectionWorksheetForm"));
+const ReservationConfirmationForm = lazy(() => import("@/components/ReservationConfirmationForm"));
+const CellPhoneInquiryLetterForm = lazy(() => import("@/components/CellPhoneInquiryLetterForm"));
+const DemandForDeliveryForm = lazy(() => import("@/components/DemandForDeliveryForm"));
+const DueOnDemandPromissoryNoteForm  = lazy(() => import("@/components/DueOnDemandPromissoryNoteForm"));
+const ChangeOfBeneficiaryForm =lazy(()=>import("@/components/ChangeOfBeneficiaryForm")) ;
 const AccountingContractForm = lazy(() => import("@/components/AccountingContractForm"));
 const AdministrativeServicesContractForm = lazy(() => import("@/components/AdministrativeServicesContractForm"));
 const AdministrativeServicesForm = lazy(() => import("@/components/AdministrativeServicesForm"));
@@ -215,6 +220,7 @@ const WarrantyAgreementForm = lazy(() => import("@/components/WarrantyAgreementF
 const WeddingPlannerAgreementForm = lazy(() => import("@/components/WeddingPlannerAgreementForm"));
 const workfromhome = lazy(() => import("@/components/workfromhome"));
 
+
 // --- DOCUMENTS SUBFOLDER ---
 const OfferToLeaseForm = lazy(() => import("@/components/documents/OfferToLeaseForm"));
 const LegalServicesAgreementForm = lazy(() => import("@/components/documents/LegalServicesAgreementForm"));
@@ -228,6 +234,7 @@ const AffidavitCharacterForm = lazy(() => import("@/components/documents/Affidav
 const AffidavitOwnershipForm = lazy(() => import("@/components/documents/AffidavitOwnershipForm"));
 const HealthcarePOAForm = lazy(() => import("@/components/documents/HealthcarePOAForm"));
 const VehicleLeaseForm = lazy(() => import("@/components/documents/VehicleLeaseForm"));
+const ComplaintLetterInfoForm= lazy(() => import("@/components/ComplaintLetterInfoForm"));
 
 // ============================================================================
 // DOCUMENT DEFINITIONS - COMPREHENSIVE REGISTRY (200+ DOCUMENTS)
@@ -266,6 +273,8 @@ export const familyProtectionDocs = [
 
   // === LEGAL REPORTS ===
   { id: "InformationForPoliceReportForm", title: "Information For Police Report", description: "Create a comprehensive information for police report", icon: ShieldAlert, category: "Legal Reports", component: InformationForPoliceReportForm },
+  { id: "change-of-beneficiary-form", title: "Information For changing beneficiary", description: "Create a comprehensive information for beneficiary changing", icon: UserCheck, category: "Legal Reports", component: ChangeOfBeneficiaryForm },
+
 ];
 
 export const businessSecurityDocs = [
@@ -323,7 +332,9 @@ export const businessSecurityDocs = [
   { id: "royalty-agreement", title: "Royalty Agreement", description: "Create a professional royalty agreement", icon: DollarSign, category: "Financial", component: RoyaltyAgreementForm },
   { id: "AccountingContractForm", title: "Accounting Contract", description: "Create a comprehensive accounting contract", icon: Calculator, category: "Financial", component: AccountingContractForm },
   { id: "due-on-demand-promissory-note", title: "Promissory Note", description: "Create a comprehensive due on demand promissory note contract", icon: Calculator, category: "Financial", component: DueOnDemandPromissoryNoteForm },
+  { id: "debt-collection-worksheet", title: "Debt collection", description: "Create a comprehensive debt collection worksheet", icon: Calculator, category: "Financial", component: DebtCollectionWorksheetForm },
 
+ 
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
   { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Intellectual Property", component: CopyrightLicenseForm },
@@ -360,7 +371,8 @@ export const businessSecurityDocs = [
   { id: "JointBidAgreementForm", title: "Joint Bid Agreement", description: "Create a comprehensive joint bid agreement", icon: Handshake, category: "Contracts", component: JointBidAgreementForm },
   { id: "bidproposal-agreement", title: "Bid Proposal Agreement", description: "Create a comprehensive bid proposal agreement", icon: FileSignature, category: "Contracts", component: BidProposalForm },
   { id: "demand-for-delivery", title: "Demand For Delivery", description: "Create a comprehensive demand of delivery agreement", icon: FileSignature, category: "Contracts", component: DemandForDeliveryForm },
-  
+  { id: "direct-mail-request", title: "Direct mail advertising request", description: "Create a comprehensive direct mail advirtisng request agreement", icon: FileSignature, category: "Contracts", component: DirectMailAdvertisingForm },
+
   // === BUSINESS ACQUISITIONS ===
   { id: "AssetPurchaseForm", title: "Asset Purchase Agreement", description: "Create a comprehensive asset purchase agreement", icon: Briefcase, category: "Acquisitions", component: AssetPurchaseForm },
   { id: "BusinessSaleAgreementForm", title: "Business Sale Agreement", description: "Create a comprehensive business sale agreement", icon: Briefcase, category: "Acquisitions", component: BusinessSaleAgreementForm },
@@ -418,6 +430,8 @@ export const businessSecurityDocs = [
   { id: "limited-scope-representation-agreement", title: "Limited Scope Representation Agreement", description: "Create a limited scope legal representation agreement", icon: Scale, category: "Legal Services", component: LimitedScopeRepresentationAgreementForm },
   { id: "unbundled-legal-services-agreement", title: "Unbundled Legal Services Agreement", description: "Create an agreement for specific unbundled legal services", icon: Scale, category: "Legal Services", component: UnbundledLegalServicesAgreementForm },
   { id: "attorney-engagement-letter", title: "Attorney Engagement Letter", description: "Create a formal attorney engagement letter for legal representation", icon: FileText, category: "Legal Services", component: AttorneyEngagementLetterForm },
+  { id: "complaint-letter-info", title: "Complaint to BBB/Attorney General", description: "Create a formal complaint letter to Attorney Gneral", icon: FileText, category: "Legal Services", component: ComplaintLetterInfoForm },
+
 
   // === CONSULTING ===
   { id: "consulting-agreement", title: "Consulting Agreement", description: "Create a consulting services agreement between consultant and client", icon: Briefcase, category: "Consulting", component: ConsultingAgreementForm },
@@ -462,7 +476,7 @@ export const propertyMattersDocs = [
   { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters", component: SecurityDepositReturnLetter },
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
   {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Notices & Letters", component: CellPhoneInquiryLetterForm},
- 
+  {id : "reservation-confirmation", title:"Reservations confirmation Letter",description:"Create a formal letter for confirming reservations", icon: FileText, category: "Notices & Letters", component: ReservationConfirmationForm},
   // === PROPERTY SALES ===
   { id: "agreement-to-sell", title: "Agreement to Sell", description: "Create a comprehensive agreement to sell for property transactions", icon: FileText, category: "Property Sales", component: AgreementToSellForm },
   { id: "real-estate-agent-agreement", title: "Real Estate Agent Agreement", description: "Create an exclusive listing agreement with a real estate agent", icon: Home, category: "Property Sales", component: RealEstateAgentAgreementForm },

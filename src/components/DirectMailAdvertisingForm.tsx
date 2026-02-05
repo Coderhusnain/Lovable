@@ -490,17 +490,17 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text("Name: " + values.witnessName, 20, y);
   }
   
-  doc.save("Demandon_delivery.pdf");
+  doc.save("Direct-mail-advertising.pdf");
 };
 
-export default function DemandForDeliveryForm() {
+export default function DirectMailAdvertisingForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Demand on deleivery"
+      title="Direct mail advertising"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="demandondelivery"
+      documentType="directmailadvertising"
     />
   );
 }

@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator } from "lucide-react";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
-import DemandForDeliveryForm from '../DemandForDeliveryForm';
+//import DemandForDeliveryForm from '../DemandForDeliveryForm';
 import { Description } from '@radix-ui/react-toast';
-import DueOnDemandPromissoryNoteForm from '../DueOnDemandPromissoryNoteForm';
+//import DueOnDemandPromissoryNoteForm from '../DueOnDemandPromissoryNoteForm';
 // Convert all form imports to lazy loading to prevent build conflicts
 const ConditionalForm = lazy(() => import("@/components/ConditionalForm"));
 const ChildCareAuthForm = lazy(() => import("@/components/ChildCareAuthForm"));
@@ -66,6 +66,13 @@ const LeaseTerminationLetter = lazy(() => import("@/components/LeaseTerminationL
 const LateRentPaymentAgreement = lazy(() => import("@/components/LateRentPaymentAgreement"));
 const NonDisturbanceAgreement = lazy(() => import("@/components/NonDisturbanceAgreement"));
 const CellPhoneInquiryLetterForm = lazy(() => import("@/components/CellPhoneInquiryLetterForm"));
+const DueOnDemandPromissoryNoteForm = lazy(() => import("@/components/DueOnDemandPromissoryNoteForm"));
+const DemandForDeliveryForm = lazy(() => import("@/components/DemandForDeliveryForm"));
+const ComplaintLetterInfoForm = lazy(() => import("@/components/ComplaintLetterInfoForm"));
+const ChangeOfBeneficiaryForm = lazy(() => import("@/components/ChangeOfBeneficiaryForm"));
+const ReservationConfirmationForm = lazy(() => import("@/components/ReservationConfirmationForm"));
+const DebtCollectionWorksheetForm = lazy(() => import("@/components/DebtCollectionWorksheetForm"));
+const DirectMailAdvertisingForm = lazy(() => import("@/components/DirectMailAdvertisingForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -98,6 +105,13 @@ const MakeDocument = () => {
       icon: UserCheck,
       component: AffidavitOfMarriageForm
     },
+    { id: "ChangeOfBeneficiaryForm", 
+      title: "Chnaging beneficiary", 
+      description:"Information For changing beneficiary",
+      content: "Create a comprehensive information for beneficiary changing", 
+      icon: UserCheck, 
+      component: ChangeOfBeneficiaryForm },
+
     {
       id: 'divorce-settlement-agreement',
       title: 'Divorce Settlement Agreement',
@@ -367,7 +381,31 @@ const MakeDocument = () => {
       icon: Building2,
       component: OfficeSpaceLeaseForm
     },
-  
+    { id: "complaint-letter-info",
+       title: "Complaint to BBB/Attorney General", 
+       description:"Complaint to Attorney General",
+       content: "Create a formal complaint letter to Attorney Gneral", 
+       icon: FileText, 
+       component: ComplaintLetterInfoForm 
+      },
+
+      {
+         id: "direct-mail-request", 
+        title: "Direct mail advertising request",
+        description:"Direct Mail advertising request",
+         content: "Create a comprehensive direct mail advirtisng request agreement", 
+         icon: FileSignature, 
+         component: DirectMailAdvertisingForm },
+
+
+      { id: " debt-collection-worksheet",
+         title: "Debt collection", 
+         description:"Debt collection",
+         content: "Create a comprehensive debt collection worksheet",
+          icon: Calculator, 
+          component: DebtCollectionWorksheetForm
+       }
+
   ];
 
   // Property Matters documents
@@ -555,7 +593,16 @@ const MakeDocument = () => {
       content: 'Create a formal letter to inquire about or dispute cellular service charges',
       icon: FileText,
       component: CellPhoneInquiryLetterForm
-    }
+    },
+    {
+      id : "reservation-confirmation", 
+      title:"Reservations confirmation Letter",
+      description:"Reservation Confirmation",
+      content:"Create a formal letter for confirming reservations",
+       icon: FileText, 
+        component: ReservationConfirmationForm
+      }
+
   ];
 
   // Combine all documents for direct access
