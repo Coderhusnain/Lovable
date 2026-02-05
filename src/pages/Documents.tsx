@@ -29,6 +29,12 @@ import {
 // ============================================================================
 
 // --- MAIN COMPONENTS FOLDER ---
+const SecurityAgreementInfoForm = lazy(() => import("@/components/SecurityAgreementInfoForm"));
+const RemovePersonalInfoRequestForm = lazy(() => import("@/components/RemovePersonalInfoRequestForm"));
+const BankCreditReferenceForm  = lazy(() => import("@/components/BankCreditReferenceForm"));
+const LotteryPoolContractForm = lazy(() => import("@/components/LotteryPoolContractForm"));
+const NotePayableForm = lazy(() => import("@/components/NotePayableForm"));
+const MembershipCancellationLetterForm = lazy(() => import("@/components/MembershipCancellationLetterForm"));
 const IOUForm = lazy(() => import("@/components/IOUForm"));
 const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
 const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
@@ -341,8 +347,10 @@ export const businessSecurityDocs = [
   { id: "secured-promissory-note", title: "Secured Promissory note", description: "Create a comprehensive agreement for secured promissory", icon: Calculator, category: "Financial", component: SecuredPromissoryNoteForm },
   { id: "installment-promissory-note", title: "installment Promissory note", description: "Create a comprehensive agreement for installment promissory note", icon: Calculator, category: "Financial", component: InstallmentPromissoryNoteForm },
   { id: "iou", title: "IOU", description: "Create a comprehensive iou agreement acknowledment of debt", icon: Calculator, category: "Financial", component: IOUForm },
+  { id: "note-payable", title: "Note Pyabale", description: "Create a comprehensive agreement for note payable", icon: Calculator, category: "Financial", component: NotePayableForm },
+  { id: "request-bank-credit-reference", title: "Request Bank Credit Reference", description: "Create a comprehensive reference to request bank credit", icon: Calculator, category: "Financial", component: BankCreditReferenceForm },
 
- 
+
   // === INTELLECTUAL PROPERTY ===
   { id: "copyright-assignment", title: "Copyright Assignment", description: "Create a comprehensive copyright assignment agreement", icon: FileText, category: "Intellectual Property", component: CopyrightAssignmentForm },
   { id: "copyright-license", title: "Copyright License Agreement", description: "Grant or obtain rights to use copyrighted material", icon: Shield, category: "Intellectual Property", component: CopyrightLicenseForm },
@@ -380,7 +388,9 @@ export const businessSecurityDocs = [
   { id: "bidproposal-agreement", title: "Bid Proposal Agreement", description: "Create a comprehensive bid proposal agreement", icon: FileSignature, category: "Contracts", component: BidProposalForm },
   { id: "demand-for-delivery", title: "Demand For Delivery", description: "Create a comprehensive demand of delivery agreement", icon: FileSignature, category: "Contracts", component: DemandForDeliveryForm },
   { id: "direct-mail-request", title: "Direct mail advertising request", description: "Create a comprehensive direct mail advirtisng request agreement", icon: FileSignature, category: "Contracts", component: DirectMailAdvertisingForm },
+  { id: " lottery-pool-contract", title: "Lottery Pool Contract", description: "Create a comprehensiveLottery Pool Contract agreement", icon: FileSignature, category: "Contracts", component: LotteryPoolContractForm},
 
+ 
   // === BUSINESS ACQUISITIONS ===
   { id: "AssetPurchaseForm", title: "Asset Purchase Agreement", description: "Create a comprehensive asset purchase agreement", icon: Briefcase, category: "Acquisitions", component: AssetPurchaseForm },
   { id: "BusinessSaleAgreementForm", title: "Business Sale Agreement", description: "Create a comprehensive business sale agreement", icon: Briefcase, category: "Acquisitions", component: BusinessSaleAgreementForm },
@@ -486,6 +496,9 @@ export const propertyMattersDocs = [
   {id: "cellphone-inquiry-letter", title:"CellPhone Inquiry Letter",description:"Create a formal letter to inquire about or dispute cellular service charges", icon: FileText, category: "Notices & Letters", component: CellPhoneInquiryLetterForm},
   {id : "reservation-confirmation", title:"Reservations confirmation Letter",description:"Create a formal letter for confirming reservations", icon: FileText, category: "Notices & Letters", component: ReservationConfirmationForm},
   {id : "complaint-demand-refund", title:"Complaint for refund",description:"Create a formal complaint for refund", icon: FileText, category: "Notices & Letters", component: FormalComplaintRefundForm},
+  {id : "membership-cancellation-letter", title:"Member Cancellation Request",description:"Create a formal request to cancel membership", icon: FileText, category: "Notices & Letters", component: MembershipCancellationLetterForm},
+  {id : "request-remove-personal-information", title:"Request Remove Personal Information ",description:"Create a formal request to remove personal information", icon: FileText, category: "Notices & Letters", component: RemovePersonalInfoRequestForm},
+  {id : "security-agreement-info", title:"Security agreement Information",description:"Create a formal agreement of security information", icon: FileText, category: "Notices & Letters", component: SecurityAgreementInfoForm},
 
   
   // === PROPERTY SALES ===

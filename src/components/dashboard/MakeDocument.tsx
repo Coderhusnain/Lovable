@@ -77,6 +77,12 @@ const FormalComplaintRefundForm = lazy(() => import("@/components/FormalComplain
 const SecuredPromissoryNoteForm = lazy(() => import("@/components/SecuredPromissoryNoteForm"));
 const InstallmentPromissoryNoteForm = lazy(() => import("@/components/InstallmentPromissoryNoteForm"));
 const IOUForm = lazy(() => import("@/components/IOUForm"));
+const MembershipCancellationLetterForm = lazy(() => import("@/components/MembershipCancellationLetterForm"));
+const NotePayableForm = lazy(() => import("@/components/NotePayableForm"));
+const LotteryPoolContractForm = lazy(() => import("@/components/LotteryPoolContractForm"));
+const BankCreditReferenceForm = lazy(() => import("@/components/BankCreditReferenceForm"));
+const RemovePersonalInfoRequestForm = lazy(() => import("@/components/RemovePersonalInfoRequestForm"));
+const SecurityAgreementInfoForm = lazy(() => import("@/components/SecurityAgreementInfoForm"));
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -393,7 +399,7 @@ const MakeDocument = () => {
        component: ComplaintLetterInfoForm 
       },
 
-      {
+  {
          id: "direct-mail-request", 
         title: "Direct mail advertising request",
         description:"Direct Mail advertising request",
@@ -421,10 +427,33 @@ const MakeDocument = () => {
               description:"Acknowledment of debt",
               content: "Create a comprehensive iou agreement acknowledment of debt", 
               icon: Calculator,
-              component: IOUForm },
+              component: IOUForm 
+            },
 
+     { id: "note-payable",
+       title: "Note Pyabale", 
+       description:"Note Payable",
+       content: "Create a comprehensive agreement for note payable", 
+       icon: Calculator,
+       component: NotePayableForm 
+      },
 
-      { id: " debt-collection-worksheet",
+  { id: "lottery-pool-contract", 
+    title: "Lottery Pool Contract", 
+    description:"Lottery Pool Contract",
+    content: "Create a comprehensiveLottery Pool Contract agreement", 
+    icon: FileSignature,
+    component: LotteryPoolContractForm
+  },
+  { id: "request-bank-credit-reference", 
+    title: "Request Bank Credit Reference", 
+    description:"Request Bank credit",
+    content: "Create a comprehensive reference to request bank credit", 
+    icon: Calculator, 
+     component: BankCreditReferenceForm 
+    },
+
+      { id: "debt-collection-worksheet",
          title: "Debt collection", 
          description:"Debt collection",
          content: "Create a comprehensive debt collection worksheet",
@@ -621,6 +650,14 @@ const MakeDocument = () => {
       component: CellPhoneInquiryLetterForm
     },
 
+    {id : "membership-cancellation-letter  ",
+       title:"Member Cancellation Request",
+       description:"Membership cancellation",
+       content:"Create a formal request to cancel membership", 
+       icon: FileText, 
+        component: MembershipCancellationLetterForm},
+
+
     {
       id : "complaint-demand-refund", 
       title:"Complaint for refund",
@@ -629,7 +666,21 @@ const MakeDocument = () => {
       icon: FileText, 
        component: FormalComplaintRefundForm
       },
+   {id : "request-remove-personal-information", 
+    title:"Request Remove Personal Information ",
+    description:"Request Remove personal info",
+    content:"Create a formal request to remove personal information",
+     icon: FileText, 
+     component: RemovePersonalInfoRequestForm
+    },
 
+    {id : "security-agreement-info",
+       title:"Security agreement Information",
+       description:"Security agreement info",
+       content:"Create a formal agreement of security information",
+        icon: FileText,
+        component: SecurityAgreementInfoForm
+      },
 
     {
       id : "reservation-confirmation", 

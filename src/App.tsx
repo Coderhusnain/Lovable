@@ -126,6 +126,12 @@ import FormalComplaintRefundInfo from "./pages/FormalComplaintRefundInfo";
 import SecuredPromissoryNoteInfo from "./pages/SecuredPromissoryNoteInfo";
 import InstallmentPromissoryNoteInfo from "./pages/InstallmentPromissoryNoteInfo";
 import IOUInfo from "./pages/IOUInfo";
+import MembershipCancellationLetterInfo from "./pages/MembershipCancellationLetterInfo";
+import NotePayableInfo from "./pages/NotePayableInfo";
+import LotteryPoolContractInfo from "./pages/LotteryPoolContractInfo";
+import BankCreditReferenceInfo from "./pages/BankCreditReferenceInfo";
+import RemovePersonalInfoRequestInfo from "./pages/RemovePersonalInfoRequestInfo";
+import SecurityAgreementInfo from "./pages/SecurityAgreementInfo";
 
 
 
@@ -243,8 +249,20 @@ const App = () => {
                 <Route path="/demand-for-delivery-form" element={<Documents />} />
                 <Route path="/cell-phone-inquiry-letter" element={<CellPhoneInquiryLetterInfo/>} />
                 <Route path="/cell-phone-inquiry-letter-form" element={<Documents />} />
+                <Route path="/membership-cancellation-letter-info" element={<MembershipCancellationLetterInfo/>} />
+                <Route path="/membership-cancellation-letter-form" element={<Documents />} />         
                 <Route path="/complaint-letter-info" element={<ComplaintLetterInfo/>} />
                 <Route path="/complaint-letter-info-form" element={<Documents />} />
+                <Route path="/note-payable-info" element={<NotePayableInfo/>} />
+                <Route path="/note-payable-form" element={<Documents />} />
+                <Route path="/lottery-pool-contract-info" element={<LotteryPoolContractInfo/>} />
+                <Route path="/lottery-pool-contract-form" element={<Documents />} />
+                <Route path="/request-bank-credit-reference-info" element={<BankCreditReferenceInfo/>} />
+                <Route path="/request-bank-credit-reference-form" element={<Documents />} />
+                <Route path="/request-remove-personal-information-info" element={<RemovePersonalInfoRequestInfo/>} />
+                <Route path="/request-remove-personal-information-form" element={<Documents />} />
+                <Route path="/security-agreement-info-info" element={<SecurityAgreementInfo/>} />
+                <Route path="/security-agreement-info-form" element={<Documents />} />
                 <Route path="/license-agreement-form" element={<Documents />} />
                 <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
                 <Route path="/manufacturing-license-form" element={<Documents />} />
