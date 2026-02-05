@@ -380,7 +380,7 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("Loan Agreement", 105, y, { align: "center" });
+  doc.text("Affidavit Of Marriage", 105, y, { align: "center" });
   y += 15;
   
   doc.setFontSize(10);
@@ -490,18 +490,17 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text("Name: " + values.witnessName, 20, y);
   }
   
-  doc.save("loan_agreement.pdf");
+  doc.save("balloon_payment_promissory_note.pdf");
 };
 
-export default function LoanAgreement() {
+export default function BalloonPaymentPromissoryNoteForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Loan Agreement"
+      title="Balloon Payment Promissory Note"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="loanagreement"
+      documentType="balloonpaymentpromissorynote"
     />
   );
 }
-

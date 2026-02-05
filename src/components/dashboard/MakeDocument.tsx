@@ -11,7 +11,8 @@ const GeneralContractForm = lazy(() => import("@/components/GeneralContractForm"
 const IndependentContractorForm = lazy(() => import("@/components/IndependentContractorForm"));
 const LivingWillForm = lazy(() => import("@/components/LivingWillForm"));
 const SharePurchaseAgreementForm = lazy(() => import("@/components/SharePurchaseAgreementForm"));
-const LoanAgreementForm = lazy(() => import("@/components/LoanAgreementForm"));
+const LoanAgreementForm = lazy(() => import("../LoanAgreementForm"));
+const BalloonPaymentPromissoryNoteForm = lazy(() => import("../BalloonPaymentPromissoryNoteForm"));
 const GiftAffidavitForm = lazy(() => import("@/components/GiftAffidavitForm"));
 const FinancialSupportAffidavitForm = lazy(() => import("@/components/FinancialSupportAffidavitForm"));
 const ServicesContractForm = lazy(() => import("@/components/ServicesContractForm"));
@@ -216,6 +217,14 @@ const MakeDocument = () => {
       content: 'Create a comprehensive loan agreement for personal or business lending arrangements',
       icon: DollarSign,
       component: LoanAgreementForm
+    },
+    {
+      id: 'balloon-payment-promissory-note',
+      title: 'Balloon Payment Promissory Note',
+      description: 'Financial & Lending',
+      content: 'Create a promissory note with installment payments and a final balloon payment',
+      icon: DollarSign,
+      component: BalloonPaymentPromissoryNoteForm
     },
     {
       id: 'copyright-assignment',

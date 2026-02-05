@@ -75,7 +75,7 @@ import GeneralContractInfo from "./pages/GeneralContractInfo";
 import LivingWillInfo from "./pages/LivingWillInfo";
 import SaleAgreementInfo from "./pages/SaleAgreementInfo";
 import IndependentContractorInfo from "./pages/IndependentContractorInfo";
-import LoanAgreementInfo from "./pages/LoanAgreementInfo";
+import LoanAgreementInfo from "@/pages/LoanAgreementInfo";
 import GiftAffidavitInfo from "./pages/GiftAffidavitInfo";
 import FinancialSupportAffidavitInfo from "./pages/FinancialSupportAffidavitInfo";
 import ServicesContractInfo from "./pages/ServicesContractInfo";
@@ -90,6 +90,7 @@ import AccountingContractInfo from "./pages/AccountingContractInfo";
 import BusinessSaleAgreementInfo from "./pages/BusinessSaleContractInfo";
 import ClinicalTrialAgreementInfo from "./pages/ClinicalTrialContractInfo";
 import FeeAgreementContractInfo from "./pages/FeeAgreementContractInfo";
+import BalloonPaymentPromissoryNoteInfo from "./pages/BalloonPaymentPromissoryNoteInfo";
 
 // --- FIXED IMPORTS (These files exist now) ---
 // import SecurityAgreementInfo from "./pages/SecurityAgreementForm";
@@ -237,6 +238,7 @@ const App = () => {
                 <Route path="/sale-agreement-info" element={<SaleAgreementInfo />} />
                 <Route path="/independent-contractor-info" element={<IndependentContractorInfo />} />
                 <Route path="/loan-agreement-info" element={<LoanAgreementInfo />} />
+                <Route path="/balloon-payment-promissory-note-info" element={<BalloonPaymentPromissoryNoteInfo />} />
                 <Route path="/gift-affidavit-info" element={<GiftAffidavitInfo />} />
                 <Route path="/financial-support-affidavit-info" element={<FinancialSupportAffidavitInfo />} />
                 <Route path="/services-contract-info" element={<ServicesContractInfo />} />

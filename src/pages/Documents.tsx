@@ -127,7 +127,8 @@ const LiquidationDissolutionAgreementForm = lazy(() => import("@/components/Liqu
 const LivingWillForm = lazy(() => import("@/components/LivingWillForm"));
 const LLCBusinessFormation = lazy(() => import("@/components/LLCBusinessFormation"));
 const LLCOperatingAgreementForm = lazy(() => import("@/components/LLCOperatingAgreementForm"));
-const LoanAgreementForm = lazy(() => import("@/components/LoanAgreementForm"));
+const LoanAgreementForm = lazy(() => import("../components/LoanAgreementForm"));
+const BalloonPaymentPromissoryNoteForm = lazy(() => import("../components/BalloonPaymentPromissoryNoteForm"));
 const ManufacturingLicenseForm = lazy(() => import("@/components/ManufacturingLicenseForm"));
 const MarketingAgreementForm = lazy(() => import("@/components/MarketingAgreementForm"));
 const MarketingAgreementFormSimple = lazy(() => import("@/components/MarketingAgreementFormSimple"));
@@ -308,6 +309,7 @@ export const businessSecurityDocs = [
 
   // === FINANCIAL ===
   { id: "loan-agreement", title: "Loan Agreement", description: "Create a comprehensive loan agreement", icon: DollarSign, category: "Financial", component: LoanAgreementForm },
+  { id: "balloon-payment-promissory-note", title: "Balloon Payment Promissory Note", description: "Create a promissory note with installment payments and a final balloon payment", icon: FileText, category: "Financial", component: BalloonPaymentPromissoryNoteForm },
   { id: "payment-agreement", title: "Payment Agreement", description: "Create a comprehensive payment agreement", icon: Briefcase, category: "Financial", component: PaymentAgreement },
   { id: "DEBTSETTLEMENTAGREEMENT", title: "Debt Settlement Agreement", description: "Create a comprehensive debt settlement agreement", icon: Briefcase, category: "Financial", component: DEBTSETTLEMENTAGREEMENT },
   { id: "SECURITYAGREEMENT", title: "Security Agreement", description: "Create a comprehensive security agreement", icon: Lock, category: "Financial", component: SECURITYAGREEMENT },

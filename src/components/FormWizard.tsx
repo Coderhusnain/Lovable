@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Field definition for dynamic field rendering
-interface FieldDef {
+export interface FieldDef {
   name: string;
   label: string;
   type: "text" | "textarea" | "date" | "number" | "select" | "email" | "phone";
