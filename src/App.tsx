@@ -137,6 +137,10 @@ import DemandForMoneyOwedInfo from "./pages/DemandForMoneyOwedInfo";
 import RemoveFromMarketingListInfo from "./pages/RemoveFromMarketingListInfo";
 import StatementOfClaimAgainstEstateInfo from "./pages/StatementOfClaimAgainstEstateInfo";
 import WarrantyRepairRequestInfo from "./pages/WarrantyRepairRequestInfo";
+import PromissoryNoteInfo from "./pages/PromissoryNoteInfo";
+import RequestCreditReferenceInfo from "./pages/RequestCreditReferenceInfo";
+import ComplaintLetterToCompanyInfo from "./pages/ComplaintLetterToCompanyInfo";
+import PromissoryNoteDueOnSpecificDateInfo from "./pages/PromissoryNoteDueOnSpecificDateInfo";
 
 
 
@@ -307,6 +311,14 @@ const App = () => {
                 <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
                 <Route path="/iou-form" element={<Documents/>}/>
                 <Route path="/iou-info" element={<IOUInfo/>}/>
+                <Route path="/promissory-note-due-on-specific-date-form" element={<Documents/>}/>
+                <Route path="/promissory-note-due-on-specific-date-info" element={<PromissoryNoteDueOnSpecificDateInfo/>}/>
+                <Route path="/promissory-note-form" element={<Documents/>}/>
+                <Route path="/promissory-note-info" element={<PromissoryNoteInfo/>}/>
+                <Route path="/request-credit-reference-form" element={<Documents/>}/>
+                <Route path="/request-credit-reference-info" element={<RequestCreditReferenceInfo/>}/>
+                <Route path="/complaint-letter-to-company-form" element={<Documents/>}/>
+                <Route path="/complaint-letter-to-company-info" element={<ComplaintLetterToCompanyInfo/>}/>
                 <Route path="/installment-promissory-note-form" element={<Documents/>}/>
                 <Route path="/installment-promissory-note-info" element={<InstallmentPromissoryNoteInfo/>}/>
                 <Route path="/secured-promissory-note-form" element={<Documents/>}/>

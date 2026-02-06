@@ -13,7 +13,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-         
+          
         ],
       },
     ],
@@ -355,7 +355,7 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("Guarantee Agreement", 105, y, { align: "center" });
+  doc.text("Composer Agreement", 105, y, { align: "center" });
   y += 15;
   
   doc.setFontSize(10);
@@ -390,27 +390,21 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("AGREEMENT DETAILS", 20, y);
   y += 8;
   
- 
-
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   const DEFAULT_AGREEMENT_TEXT = `
-  A Guaranty Agreement is a legally binding contract in which one
-  person  agrees to take responsibility for another person’s or entity’s debt or obligation
-  if they fail to pay or perform as agreed.
-  This agreement is commonly used to strengthen a borrower’s
-  creditworthiness—such as helping a family member secure a loan or
-  satisfying a lender’s requirement for additional security. A
-  properly drafted Guaranty Agreement protects all parties by
-  clearly defining liability, limits, and enforcement rights.
-  `.trim();
-    const fullDescription = values.description
-    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
-    : DEFAULT_AGREEMENT_TEXT;
-  
-  const descLines = doc.splitTextToSize(fullDescription, 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
+A Complaint Letter to a Company Agreement is a formal document used to
+report issues related to a product or service. It allows consumers to
+clearly describe the problem, request a resolution, and maintain a
+professional, legally recognized record of communication.
+`.trim();
+  const fullDescription = values.description
+  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+  : DEFAULT_AGREEMENT_TEXT;
+
+const descLines = doc.splitTextToSize(fullDescription, 170);
+doc.text(descLines, 20, y);
+y += descLines.length * 5 + 10;
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
@@ -481,17 +475,17 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text("Name: " + values.witnessName, 20, y);
   }
   
-  doc.save("guarantee_agreement.pdf");
+  doc.save("complaint-letter-to-company.pdf");
 };
 
-export default function GuaranteeAgreement() {
+export default function ComplaintLetterToCompanyForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Guarantee Agreement"
+      title="Coomplaint letter to company"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="guaranteeagreement"
+      documentType="complaintlettertocompany"
     />
   );
 }

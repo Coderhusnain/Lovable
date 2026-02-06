@@ -28,37 +28,37 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         dependsOn: "country",
         getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
+            if (value=== "us") {
+              return [
+                { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+                { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+                { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+                { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+                { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+                { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+                { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+                { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+                { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+                { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+                { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+                { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+                { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+                { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+                { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+                { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+                { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+                { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+                { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+                { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+                { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+                { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+                { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+                { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+                { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+                { value: "DC", label: "District of Columbia" },
+              ];
+            } 
+            return [{ value: "other", label: "Other Region" }];
         },
       },
     ],
@@ -355,7 +355,7 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("Guarantee Agreement", 105, y, { align: "center" });
+  doc.text("Rent Increase", 105, y, { align: "center" });
   y += 15;
   
   doc.setFontSize(10);
@@ -390,19 +390,14 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("AGREEMENT DETAILS", 20, y);
   y += 8;
   
- 
-
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   const DEFAULT_AGREEMENT_TEXT = `
-  A Guaranty Agreement is a legally binding contract in which one
-  person  agrees to take responsibility for another person’s or entity’s debt or obligation
-  if they fail to pay or perform as agreed.
-  This agreement is commonly used to strengthen a borrower’s
-  creditworthiness—such as helping a family member secure a loan or
-  satisfying a lender’s requirement for additional security. A
-  properly drafted Guaranty Agreement protects all parties by
-  clearly defining liability, limits, and enforcement rights.
+A Request for a Credit Reference is a formal letter used to ask a
+creditor, bank, or financial institution to provide a positive credit
+reference on your behalf. This reference is usually sent to another
+organization to support applications for loans, leases, or business
+relationships.
   `.trim();
     const fullDescription = values.description
     ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
@@ -411,7 +406,6 @@ const generatePDF = (values: Record<string, string>) => {
   const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
-  
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("TERMS", 20, y);
@@ -481,17 +475,17 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text("Name: " + values.witnessName, 20, y);
   }
   
-  doc.save("guarantee_agreement.pdf");
+  doc.save("RequestCreditReference.pdf");
 };
 
-export default function GuaranteeAgreement() {
+export default function RequestCreditReferenceForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Guarantee Agreement"
-      subtitle="Complete each step to generate your document"
+      title="Remove info from marketing list"
+      subtitle="Request Credit Reference"
       onGenerate={generatePDF}
-      documentType="guaranteeagreement"
+      documentType="RequestCreditReference"
     />
   );
 }

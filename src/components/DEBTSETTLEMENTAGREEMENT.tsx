@@ -13,10 +13,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
+        
         ],
       },
     ],
@@ -30,8 +27,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
+        getOptions: (value) => {
+          if (value === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -60,29 +57,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
+          } 
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -412,12 +387,20 @@ const generatePDF = (values: Record<string, string>) => {
   
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
+  doc.text("Agreement DETAILS", 20, y);
   y += 8;
   
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
+  const DEFAULT_AGREEMENT_TEXT = `
+  A Debt Settlement Agreement is a legally binding document between a creditor and a debtor in which both parties agree to settle an outstanding debt for less than the total amount owed. 
+  It outlines the reduced payment amount, repayment terms, and confirms that once payment is made, the remaining balance is forgiven, protecting both parties from future claims or disputes
+  `.trim();
+    const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+  
+  const descLines = doc.splitTextToSize(fullDescription, 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
   

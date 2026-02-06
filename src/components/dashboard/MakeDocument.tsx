@@ -2,11 +2,12 @@ import React, { useState, lazy, Suspense } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator, FilePlus } from "lucide-react";
+import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator, FilePlus, ShieldCheck } from "lucide-react";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 //import DemandForDeliveryForm from '../DemandForDeliveryForm';
 import { Description } from '@radix-ui/react-toast';
-//import DueOnDemandPromissoryNoteForm from '../DueOnDemandPromissoryNoteForm';
+
+
 // Convert all form imports to lazy loading to prevent build conflicts
 const ConditionalForm = lazy(() => import("@/components/ConditionalForm"));
 const ChildCareAuthForm = lazy(() => import("@/components/ChildCareAuthForm"));
@@ -88,6 +89,14 @@ const DemandForMoneyOwedForm = lazy(() => import("@/components/DemandForMoneyOwe
 const RemoveFromMarketingListForm = lazy(() => import("@/components/RemoveFromMarketingListForm"));
 const StatementOfClaimAgainstEstateForm = lazy(() => import("@/components/StatementOfClaimAgainstEstateForm"));
 const WarrantyRepairRequestForm = lazy(() => import("@/components/WarrantyRepairRequestForm"));
+const GuaranteeAgreementForm = lazy(() => import("@/components/GuaranteeAgreementForm"));
+const PaymentAgreement = lazy(() => import("@/components/PaymentAgreement"));
+const DEBTSETTLEMENTAGREEMENT= lazy(() => import("@/components/DEBTSETTLEMENTAGREEMENT"));
+const PromissoryNoteForm = lazy(() => import("@/components/PromissoryNoteForm"));
+const RequestCreditReferenceForm = lazy(() => import("@/components/RequestCreditReferenceForm"));
+const ComplaintLetterToCompanyForm = lazy(() => import("@/components/ComplaintLetterToCompanyForm"));
+const PromissoryNoteDueOnSpecificDateForm = lazy(() => import("@/components/PromissoryNoteDueOnSpecificDateForm"));
+
 
 const MakeDocument = () => {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -178,7 +187,7 @@ const MakeDocument = () => {
     },
 
     { id: "due-on-demand-promissory-note",
-      title: "Promissory Note",
+      title: "Due On Demand Promissory Note",
       description:"Due on Demand Promissory Note",
       content: "Create a comprehensive due on demand promissory note contract", 
       icon: Calculator, 
@@ -345,7 +354,67 @@ const MakeDocument = () => {
             content:"Create a formal letter for confirming reservations",
              icon: FileText, 
               component: ReservationConfirmationForm
-            }
+            },
+
+    { id: "GuaranteeAgreementForm", 
+      title: "Guarantee Agreement", 
+      description:"Create a comprehensive guarantee agreement",
+      content: "Create a comprehensive guarantee agreement", 
+      icon: ShieldCheck, 
+       component: GuaranteeAgreementForm },
+
+    { id: "payment-agreement", 
+      title: "Payment Agreement",
+      description:"Create a comprehensive payment agreement",
+       content: "Create a comprehensive payment agreement",
+        icon: Briefcase, 
+        component: PaymentAgreement },
+
+        { id: "DEBTSETTLEMENTAGREEMENT",
+           title: "Debt Settlement Agreement",
+           description:"Create a comprehensive personal or business debt settlement agreement",
+           content: "Create a comprehensive debt settlement agreement",
+            icon: Briefcase, 
+          component: DEBTSETTLEMENTAGREEMENT },
+
+        {
+          id: 'loan-agreement',
+          title: 'Loan Agreement',
+          description: 'Financial & Lending',
+          content: 'Create a comprehensive loan agreement for personal or business lending arrangements',
+          icon: DollarSign,
+          component: LoanAgreementForm
+        },
+
+        { id: "promissory-note", 
+          title: "Promissory Note Agreement", 
+          description: "Create a comprehensive promissory note agreement", 
+          content: "Create a comprehensive promissory note agreement", 
+          icon: Briefcase,
+          component: PromissoryNoteForm},
+
+{ id: "request-credit-reference",
+   title: "Request Credit Reference",
+    description: "Create a comprehensive request agreement for credit reference", 
+    content: "Create a comprehensive request agreement for credit reference", 
+    icon: Briefcase,
+     component: RequestCreditReferenceForm},
+
+ { id: "complaint-letter-to-company",
+   title: "Complaint Letter To Company", 
+   description: "Create a comprehensive  Letter to Complaint about Company",
+   content: "Create a comprehensive  Letter to Complaint about Company",
+   icon: Briefcase, 
+    component: ComplaintLetterToCompanyForm},
+
+ { id: "promissory-note-due-on-specific-date", 
+  title: "Promissory Note Due on Specific date", 
+  description: "Create a comprehensive  agreement for Promissory Note Due on Specific date", 
+  content: "Create a comprehensive  agreement for Promissory Note Due on Specific date", 
+  icon: Briefcase,
+  component: PromissoryNoteDueOnSpecificDateForm},
+
+
   ];
 
   // Business Security documents  
