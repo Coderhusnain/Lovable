@@ -125,7 +125,7 @@ const Header = () => {
           <Link to="/" className="flex items-center">
             <div className="flex items-center gap-2">
               <img 
-                src="/lovable-uploads/a17fd11f-8e26-4052-9951-f94d83efbea4.png" 
+                src="/lovable-uploads/legalgram.jpeg" 
                 alt="Legalgram Logo" 
                 className="w-10 h-10 rounded-full shadow-md transition-transform hover:scale-105 duration-300"
               />
