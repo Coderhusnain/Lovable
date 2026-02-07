@@ -352,130 +352,129 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Mediation Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const DEFAULT_AGREEMENT_TEXT = `
- A Membership Cancellation Letter is a formal written notice used to
- inform an organization, club, service provider, or association of
- a member’s decision to terminate their membership. It also serves
-as a written request for a refund of membership dues, where
-applicable under the membership agreement.
-`.trim();
-  const fullDescription = values.description
-  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
-  : DEFAULT_AGREEMENT_TEXT;
 
-const descLines = doc.splitTextToSize(fullDescription, 170);
-doc.text(descLines, 20, y);
-y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
+  const pageWidth = 210;
+  const margin = 20;
+  const textWidth = pageWidth - margin * 2;
+
+  const addParagraph = (text: string) => {
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 6 + 6;
+  };
+
+  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
+  doc.setFontSize(18);
+  doc.text("MEMBERSHIP CANCELLATION AGREEMENT", pageWidth / 2, y, {
+    align: "center",
+  });
+  y += 14;
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.text(`Effective Date: ${values.effectiveDate || "N/A"}`, margin, y);
+  doc.text(
+    `Jurisdiction: ${values.state || ""}, ${values.country || ""}`,
+    pageWidth - margin,
+    y,
+    { align: "right" }
+  );
   y += 12;
-  
-  doc.setFontSize(10);
+
+  // ===== INTRO PARAGRAPH =====
+  addParagraph(
+    `This Membership Cancellation Agreement ("Agreement") is made effective as of ${
+      values.effectiveDate || "________"
+    }, by and between ${values.party1Name || "First Party"}, located at ${
+      values.party1Street || ""
+    }, ${values.party1City || ""} ${values.party1Zip || ""}, ("First Party") and ${
+      values.party2Name || "Second Party"
+    }, located at ${values.party2Street || ""}, ${
+      values.party2City || ""
+    } ${values.party2Zip || ""}, ("Second Party").`
+  );
+
+  // ===== DESCRIPTION LOGIC =====
+  doc.setFont("helvetica", "bold");
+  doc.text("PURPOSE", margin, y);
+  y+=6;
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
+  const DEFAULT_AGREEMENT_TEXT = `A Membership Cancellation Agreement is a formal written notice used to inform an organization, club, service provider, or association of a member’s decision to terminate their membership and, where applicable, request any refund of membership dues in accordance with the governing membership terms.`;
+
+  const fullDescription = values.description
+    ? `${DEFAULT_AGREEMENT_TEXT} ${values.description}`
+    : DEFAULT_AGREEMENT_TEXT;
+
+  addParagraph(fullDescription);
+
+  // ===== TERMS PARAGRAPH =====
+  doc.setFont("helvetica", "bold");
+  doc.text("TERM AND TERMINATION", margin, y);
   y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
+  doc.setFont("helvetica", "normal");
+  addParagraph(
+    `The duration of this Agreement shall be ${
+      values.duration || "N/A"
+    }. Either party may terminate this Agreement by providing ${
+      values.terminationNotice || "N/A"
+    } notice. Confidentiality is ${
+      values.confidentiality === "yes" ? "included" : "not included"
+    } in this Agreement, and any dispute arising hereunder shall be resolved through ${
+      values.disputeResolution || "N/A"
+    }.`
+  );
+
+  // ===== PAYMENT PARAGRAPH =====
+  if (values.paymentAmount) {
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", margin, y);
     y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+    doc.setFont("helvetica", "normal");
+    addParagraph(
+      `Any financial obligation related to this cancellation shall be ${
+        values.paymentAmount
+      }, payable on a ${
+        values.paymentSchedule || "one-time"
+      } basis unless otherwise agreed in writing by the parties.`
+    );
   }
-  
+
+  // ===== ADDITIONAL TERMS =====
+  if (values.additionalTerms) {
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", margin, y);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    addParagraph(values.additionalTerms);
+    y += 10;
+  }
+
+  // ===== SIGNATURE BLOCK =====
+ 
+
+  addParagraph(
+    `IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.`
+  );
+
+  y += 8;
+
+  doc.text(values.party1Name || "First Party", margin, y);
+  doc.text(values.party2Name || "Second Party", pageWidth / 2 + 10, y);
+
+  y += 6;
+  doc.text(`Signature: ${values.party1Signature || ""}`, margin, y);
+  doc.text(`Signature: ${values.party2Signature || ""}`, pageWidth / 2 + 10, y);
+
+  y += 6;
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, margin, y);
+  doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth / 2 + 10, y);
+
+  if (values.witnessName) {
+    y += 10;
+    doc.text(`Witness: ${values.witnessName}`, margin, y);
+  }
+
   doc.save("membership_cancellation.pdf");
 };
 

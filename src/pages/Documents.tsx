@@ -325,6 +325,7 @@ export const familyProtectionDocs = [
   { id: "request-credit-reference", title: "Request Credit Reference", description: "Create a comprehensive request agreement for credit reference", icon: Briefcase, category: "Legal Reports", component: RequestCreditReferenceForm},
   { id: "complaint-letter-to-company", title: "Complaint Letter To Company", description: "Create a comprehensive  Letter to Complaint about Company", icon: Briefcase, category: "Legal Reports", component: ComplaintLetterToCompanyForm},
   { id: "promissory-note-due-on-specific-date", title: "Promissory Note Due on Specific date", description: "Create a comprehensive  agreement for Promissory Note Due on Specific date", icon: Briefcase, category: "Legal Reports", component: PromissoryNoteDueOnSpecificDateForm},
+  { id: "loan-agreement", title: "Loan Agreement", description: "Create a comprehensive loan agreement", icon: Calculator, category:"Legal Reports", component: LoanAgreementForm },
 
 ];
 
