@@ -481,7 +481,7 @@ const bankName = values.party2Name || "________";
 
 // Introduction
 addParagraph(
-  "This letter is provided as a credit reference in support of a credit card application submitted to your institution."
+  "This letter is provided as a credit reference in support of a credit card applications submitted to your institution."
 );
 
 // Applicant identification
