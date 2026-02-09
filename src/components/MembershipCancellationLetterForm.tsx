@@ -351,132 +351,187 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
+
+  // ===== PAGE SETUP =====
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
+  const textWidth = pageWidth - margin * 2;
   let y = 20;
 
-  const pageWidth = 210;
-  const margin = 20;
-  const textWidth = pageWidth - margin * 2;
+  // ===== AUTO PAGE BREAK =====
+  const checkPageBreak = (space = 10) => {
+    if (y + space > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
 
-  const addParagraph = (text: string) => {
+  // ===== UNDERLINED FIELD (Date / To / Address) =====
+  const addUnderlinedField = (
+    label: string,
+    value: string,
+    minWidth = 60
+  ) => {
+    checkPageBreak();
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    doc.text(label, margin, y);
+    const labelWidth = doc.getTextWidth(label);
+
+    const startX = margin + labelWidth + 2;
+    const display = value || "";
+
+    if (display) {
+      doc.text(display, startX, y);
+    }
+
+    const width = display
+      ? doc.getTextWidth(display)
+      : minWidth;
+
+    doc.line(startX, y + 1, startX + width, y + 1);
+
+    y += 8;
+  };
+
+  // ===== PARAGRAPH (tight spacing) =====
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(10);
+
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+
     const lines = doc.splitTextToSize(text, textWidth);
     doc.text(lines, margin, y);
-    y += lines.length * 6 + 6;
+    y += lines.length * 5 + 2; // tight spacing
+  };
+
+  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
+  const addParagraphWithUnderline = (
+    before: string,
+    value: string,
+    after: string
+  ) => {
+    const fullText = `${before}${value}${after}`;
+    const lines = doc.splitTextToSize(fullText, textWidth);
+
+    lines.forEach((line: string) => {
+      checkPageBreak(8);
+
+      doc.text(line, margin, y);
+
+      if (line.includes(value)) {
+        const beforeText = line.substring(0, line.indexOf(value));
+        const startX = margin + doc.getTextWidth(beforeText);
+        const valueWidth = doc.getTextWidth(value);
+        doc.line(startX, y + 1, startX + valueWidth, y + 1);
+      }
+
+      y += 6;
+    });
+
+    y += 2;
   };
 
   // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.text("MEMBERSHIP CANCELLATION AGREEMENT", pageWidth / 2, y, {
-    align: "center",
-  });
-  y += 14;
+  doc.setFontSize(16);
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Effective Date: ${values.effectiveDate || "N/A"}`, margin, y);
+  const title = "MEMBERSHIP CANCELLATION LETTER";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = pageWidth / 2 - titleWidth / 2;
+  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+
+  y += 15;
+
+  // ===== DATE / TO / ADDRESS =====
+  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+
+  addUnderlinedField("To:", values.party2Name || "", 100);
+
+  const address = `${values.party2Street || ""}, ${
+    values.party2City || ""
+  } ${values.party2Zip || ""}`.trim();
+
+  addUnderlinedField("Address:", address, 120);
+
+  y += 4;
+
+  // ===== SUBJECT =====
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
   doc.text(
-    `Jurisdiction: ${values.state || ""}, ${values.country || ""}`,
-    pageWidth - margin,
-    y,
-    { align: "right" }
+    "Subject: Notice of Membership Cancellation and Request for Refund",
+    margin,
+    y
   );
-  y += 12;
+  y += 10;
 
-  // ===== INTRO PARAGRAPH =====
+  // ===== GREETING =====
+  addParagraph("Dear Sir or Madam:");
+
+  // ===== BODY =====
+  const orgName = values.party2Name || "your organization";
+
+  addParagraphWithUnderline(
+    "I am writing to formally notify you of my decision to cancel my membership with ",
+    orgName,
+    ", effective immediately."
+  );
+
   addParagraph(
-    `This Membership Cancellation Agreement ("Agreement") is made effective as of ${
-      values.effectiveDate || "________"
-    }, by and between ${values.party1Name || "First Party"}, located at ${
-      values.party1Street || ""
-    }, ${values.party1City || ""} ${values.party1Zip || ""}, ("First Party") and ${
-      values.party2Name || "Second Party"
-    }, located at ${values.party2Street || ""}, ${
-      values.party2City || ""
-    } ${values.party2Zip || ""}, ("Second Party").`
+    "I respectfully request a full refund of all membership dues paid, in accordance with the applicable terms and conditions of the membership agreement. Enclosed is proof of payment evidencing the membership dues remitted."
   );
 
-  // ===== DESCRIPTION LOGIC =====
-  doc.setFont("helvetica", "bold");
-  doc.text("PURPOSE", margin, y);
-  y+=6;
-  doc.setFont("helvetica", "normal");
-  const DEFAULT_AGREEMENT_TEXT = `A Membership Cancellation Agreement is a formal written notice used to inform an organization, club, service provider, or association of a member’s decision to terminate their membership and, where applicable, request any refund of membership dues in accordance with the governing membership terms.`;
+  addParagraph(
+    "Please contact me should you require any additional information to process this cancellation and refund. I appreciate your prompt attention to this matter and look forward to written confirmation of cancellation and reimbursement."
+  );
 
-  const fullDescription = values.description
-    ? `${DEFAULT_AGREEMENT_TEXT} ${values.description}`
-    : DEFAULT_AGREEMENT_TEXT;
+  y += 4;
+  addParagraph("Thank you for your cooperation.");
 
-  addParagraph(fullDescription);
-
-  // ===== TERMS PARAGRAPH =====
-  doc.setFont("helvetica", "bold");
-  doc.text("TERM AND TERMINATION", margin, y);
   y += 6;
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `The duration of this Agreement shall be ${
-      values.duration || "N/A"
-    }. Either party may terminate this Agreement by providing ${
-      values.terminationNotice || "N/A"
-    } notice. Confidentiality is ${
-      values.confidentiality === "yes" ? "included" : "not included"
-    } in this Agreement, and any dispute arising hereunder shall be resolved through ${
-      values.disputeResolution || "N/A"
-    }.`
-  );
+  addParagraph("Sincerely,");
 
-  // ===== PAYMENT PARAGRAPH =====
-  if (values.paymentAmount) {
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", margin, y);
-    y += 6;
-    doc.setFont("helvetica", "normal");
-    addParagraph(
-      `Any financial obligation related to this cancellation shall be ${
-        values.paymentAmount
-      }, payable on a ${
-        values.paymentSchedule || "one-time"
-      } basis unless otherwise agreed in writing by the parties.`
-    );
+  y += 10;
+
+  // ===== SIGNATURE =====
+  checkPageBreak();
+
+  doc.setFont("helvetica", "bold");
+  const name = values.party1Name || "";
+  doc.text(name, margin, y);
+
+  if (name) {
+    const nameWidth = doc.getTextWidth(name);
+    doc.line(margin, y + 1, margin + nameWidth, y + 1);
   }
-
-  // ===== ADDITIONAL TERMS =====
-  if (values.additionalTerms) {
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", margin, y);
-    y += 6;
-    doc.setFont("helvetica", "normal");
-    addParagraph(values.additionalTerms);
-    y += 10;
-  }
-
-  // ===== SIGNATURE BLOCK =====
- 
-
-  addParagraph(
-    `IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.`
-  );
 
   y += 8;
 
-  doc.text(values.party1Name || "First Party", margin, y);
-  doc.text(values.party2Name || "Second Party", pageWidth / 2 + 10, y);
+  doc.setFont("helvetica", "normal");
+  addParagraph(
+    `${values.party1Street || ""}, ${values.party1City || ""} ${
+      values.party1Zip || ""
+    }`
+  );
 
-  y += 6;
-  doc.text(`Signature: ${values.party1Signature || ""}`, margin, y);
-  doc.text(`Signature: ${values.party2Signature || ""}`, pageWidth / 2 + 10, y);
+  addParagraph(`Email: ${values.party1Email || ""}`);
 
-  y += 6;
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, margin, y);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, pageWidth / 2 + 10, y);
-
-  if (values.witnessName) {
-    y += 10;
-    doc.text(`Witness: ${values.witnessName}`, margin, y);
+  if (values.party1Phone) {
+    addParagraph(`Phone: ${values.party1Phone}`);
   }
 
-  doc.save("membership_cancellation.pdf");
+  // ===== SAVE =====
+  doc.save("membership_cancellation_letter.pdf");
 };
+
+
 
 export default function MembershipCancellationLetterForm() {
   return (

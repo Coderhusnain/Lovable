@@ -287,7 +287,7 @@ const MakeDocument = () => {
           },
       
           {id : "membership-cancellation-letter  ",
-             title:"Member Cancellation Request",
+             title:"Membership Cancellation Request",
              description:"Membership cancellation",
              content:"Create a formal request to cancel membership", 
              icon: FileText, 

@@ -351,131 +351,230 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Composer Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const DEFAULT_AGREEMENT_TEXT = `
-A Complaint Letter to the Better Business Bureau (BBB) or the Attorney General
-is a formal written document used to report unsatisfactory or unresolved
-services provided by a business. It outlines the issue, prior attempts to
- resolve the matter, and the specific resolution being requested.
-`.trim();
-  const fullDescription = values.description
-  ? `${DEFAULT_AGREEMENT_TEXT}\n\n${values.description}`
-  : DEFAULT_AGREEMENT_TEXT;
 
-const descLines = doc.splitTextToSize(fullDescription, 170);
-doc.text(descLines, 20, y);
-y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
+  // ===== PAGE SETUP =====
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
+  const textWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  // ===== AUTO PAGE BREAK =====
+  const checkPageBreak = (space = 10) => {
+    if (y + space > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  // ===== UNDERLINED FIELD (Date / To / Address) =====
+  const addUnderlinedField = (
+    label: string,
+    value: string,
+    minWidth = 60
+  ) => {
+    checkPageBreak();
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    doc.text(label, margin, y);
+    const labelWidth = doc.getTextWidth(label);
+
+    const startX = margin + labelWidth + 2;
+    const display = value || "";
+
+    if (display) {
+      doc.text(display, startX, y);
+    }
+
+    const width = display
+      ? doc.getTextWidth(display)
+      : minWidth;
+
+    doc.line(startX, y + 1, startX + width, y + 1);
+
+    y += 8;
+  };
+
+  // ===== PARAGRAPH (tight spacing) =====
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(10);
+
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 5 + 2; // tight spacing
+  };
+
+  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
+  const addParagraphWithUnderline = (
+    before: string,
+    value: string,
+    after: string
+  ) => {
+    const fullText = `${before}${value}${after}`;
+    const lines = doc.splitTextToSize(fullText, textWidth);
+
+    lines.forEach((line: string) => {
+      checkPageBreak(8);
+
+      doc.text(line, margin, y);
+
+      if (line.includes(value)) {
+        const beforeText = line.substring(0, line.indexOf(value));
+        const startX = margin + doc.getTextWidth(beforeText);
+        const valueWidth = doc.getTextWidth(value);
+        doc.line(startX, y + 1, startX + valueWidth, y + 1);
+      }
+
+      y += 6;
+    });
+
+    y += 2;
+  };
+
+  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
+  doc.setFontSize(16);
+
+  const title = "  Complaint and Request for Information Letter";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = pageWidth / 2 - titleWidth / 2;
+  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+
   y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
+
+  // ===== DATE / TO / ADDRESS =====
+  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+
+  addUnderlinedField("To:", values.party2Name || "", 100);
+
+  const address = `${values.party2Street || ""}, ${
+    values.party2City || ""
+  } ${values.party2Zip || ""}`.trim();
+
+  addUnderlinedField("Address:", address, 120);
+
+  y += 4;
+// ===== SUBJECT =====
+doc.setFont("helvetica", "bold");
+doc.setFontSize(11);
+doc.text(
+  "Subject: Complaint and Request for Information",
+  margin,
+  y
+);
+y += 10;
+
+// ===== GREETING =====
+addParagraph("Dear Sir or Madam:");
+
+// ===== BODY =====
+
+// Parties
+const complainantName = values.party1Name || "________";
+const companyName = values.party2Name || "________";
+
+// Complaint details
+const referenceNumber = values.referenceNumber || "________";
+const incidentDate = values.incidentDate || "________";
+const issueDescription = values.issueDescription || "________";
+const requestedInformation = values.requestedInformation || "________";
+
+// Identification
+addParagraphWithUnderline(
+  "Complainant: ",
+  complainantName,
+  ""
+);
+
+addParagraphWithUnderline(
+  "Organization/Company: ",
+  companyName,
+  ""
+);
+
+addParagraphWithUnderline(
+  "Reference/Account Number: ",
+  referenceNumber,
+  "."
+);
+
+// Introduction
+addParagraph(
+  "I am writing to formally raise a complaint regarding the matter described below and to request detailed information for clarification and resolution."
+);
+
+// Incident details
+addParagraphWithUnderline(
+  "Date of Incident or Issue: ",
+  incidentDate,
+  "."
+);
+
+addParagraph(
+  "Description of the Issue:"
+);
+
+addParagraph(issueDescription);
+
+// Information request
+addParagraph(
+  "To better understand and resolve this matter, I kindly request the following information:"
+);
+
+addParagraph(requestedInformation);
+
+// Resolution expectation
+addParagraph(
+  "Please review this complaint and provide a written response along with the requested information at your earliest convenience."
+);
+
+// Closing tone
+addParagraph(
+  "I appreciate your prompt attention to this matter and look forward to your response."
+);
+
+
   y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  addParagraph("Sincerely,");
+
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+
+  // ===== SIGNATURE =====
+  checkPageBreak();
+
+  doc.setFont("helvetica", "bold");
+  const name = values.party1Name || "";
+  doc.text(name, margin, y);
+
+  if (name) {
+    const nameWidth = doc.getTextWidth(name);
+    doc.line(margin, y + 1, margin + nameWidth, y + 1);
   }
-  
-  doc.save("complaint-letter-info.pdf");
+
+  y += 8;
+
+  doc.setFont("helvetica", "normal");
+  addParagraph(
+    `${values.party1Street || ""}, ${values.party1City || ""} ${
+      values.party1Zip || ""
+    }`
+  );
+
+  addParagraph(`Email: ${values.party1Email || ""}`);
+
+  if (values.party1Phone) {
+    addParagraph(`Phone: ${values.party1Phone}`);
+  }
+
+  // ===== SAVE =====
+  doc.save("complaint_info.pdf");
 };
 
 export default function ComplaintLetterInfoForm() {
