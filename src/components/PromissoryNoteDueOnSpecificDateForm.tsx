@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const principalAmount = values.principalAmount || "________";
-const interestRate = values.interestRate || "________";
-const issueDate = values.issueDate || "________";
-const dueDate = values.dueDate || "________";
-const accountNumber = values.accountNumber || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -500,41 +495,13 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
 
 // Introduction
 addParagraph(
   "This Promissory Note documents the Borrower’s promise to repay the loan described below to the Lender under the terms specified in this agreement."
 );
 
-// Loan details
-addParagraphWithUnderline(
-  "Principal Amount: ",
-  principalAmount,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Interest Rate: ",
-  interestRate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Issue Date: ",
-  issueDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Due Date: ",
-  dueDate,
-  "."
-);
 
 // Promise to pay
 addParagraph(

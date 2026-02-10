@@ -479,12 +479,7 @@ addParagraph("Dear Sir or Madam:");
 // Business details
 const companyName = values.party1Name || "________";
 const recipientName = values.party2Name || "Valued Customer";
-const productService = values.productService || "our products and services";
-const offerDetails = values.offerDetails || "________";
-const contactPhone = values.party1Phone || "________";
-const contactEmail = values.party1Email || "________";
-const website = values.website || "________";
-const offerDeadline = values.offerDeadline || "________";
+
 
 // Introduction
 addParagraphWithUnderline(
@@ -500,21 +495,9 @@ addParagraphWithUnderline(
 );
 
 addParagraph(
-  "We are pleased to introduce you to " + productService + ", designed to provide quality, value, and reliable solutions to meet your needs."
+  "We are pleased to introduce you to our product designed to provide quality, value, and reliable solutions to meet your needs."
 );
 
-// Offer details
-addParagraphWithUnderline(
-  "Special Offer/Promotion: ",
-  offerDetails,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Offer Valid Until: ",
-  offerDeadline,
-  "."
-);
 
 // Value proposition
 addParagraph(
@@ -526,24 +509,7 @@ addParagraph(
   "For more information or to take advantage of this offer, please contact us using the details below or visit our website."
 );
 
-// Contact details
-addParagraphWithUnderline(
-  "Phone: ",
-  contactPhone,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Email: ",
-  contactEmail,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Website: ",
-  website,
-  "."
-);
 
 // Closing
 addParagraph(

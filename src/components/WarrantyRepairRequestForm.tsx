@@ -485,13 +485,6 @@ addParagraph("Dear Sir or Madam:");
 const customerName = values.party1Name || "________";
 const companyName = values.party2Name || "________";
 
-// Product details
-const productName = values.productName || "________";
-const modelNumber = values.modelNumber || "________";
-const serialNumber = values.serialNumber || "________";
-const purchaseDate = values.purchaseDate || "________";
-const issueDescription = values.issueDescription || "________";
-const warrantyReference = values.warrantyReference || "________";
 
 // Identification
 addParagraphWithUnderline(
@@ -506,43 +499,6 @@ addParagraphWithUnderline(
   ""
 );
 
-// Warranty details
-addParagraphWithUnderline(
-  "Product: ",
-  productName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Model Number: ",
-  modelNumber,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Serial Number: ",
-  serialNumber,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Date of Purchase: ",
-  purchaseDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Warranty/Reference Number: ",
-  warrantyReference,
-  "."
-);
-
-// Issue description
-addParagraph(
-  "Description of the Problem:"
-);
-
-addParagraph(issueDescription);
 
 // Request
 addParagraph(

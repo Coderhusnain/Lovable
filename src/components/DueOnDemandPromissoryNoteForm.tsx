@@ -480,10 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const borrowerName = values.party2Name || "________";
 const lenderName = values.party1Name || "________";
 
-// Loan details
-const loanAmount = values.loanAmount || "________";
-const interestRate = values.interestRate || "________";
-const loanDate = values.loanDate || "________";
+
 
 // Opening paragraph
 addParagraphWithUnderline(
@@ -498,26 +495,7 @@ addParagraphWithUnderline(
   ""
 );
 
-// Principal
-addParagraphWithUnderline(
-  "Principal Amount: ",
-  loanAmount,
-  "."
-);
 
-// Interest
-addParagraphWithUnderline(
-  "The unpaid principal shall accrue interest at the rate of ",
-  interestRate,
-  " per annum from the date of this Note."
-);
-
-// Date of note
-addParagraphWithUnderline(
-  "Date of Loan: ",
-  loanDate,
-  "."
-);
 
 // Demand clause (important for this type)
 addParagraph(

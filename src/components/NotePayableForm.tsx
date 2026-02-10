@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Note details
-const noteAmount = values.noteAmount || "________";
-const noteDate = values.noteDate || "________";
-const maturityDate = values.maturityDate || "________";
-const interestRate = values.interestRate || "________";
-const paymentTerms = values.paymentTerms || "________";
+
 
 // Introduction
 addParagraph(
@@ -505,40 +500,8 @@ addParagraphWithUnderline(
   ""
 );
 
-// Note date
-addParagraphWithUnderline(
-  "Date of Note: ",
-  noteDate,
-  "."
-);
 
-// Amount
-addParagraphWithUnderline(
-  "Principal Amount: ",
-  noteAmount,
-  ""
-);
 
-// Interest
-addParagraphWithUnderline(
-  "Interest Rate (if applicable): ",
-  interestRate,
-  ""
-);
-
-// Terms
-addParagraphWithUnderline(
-  "Payment Terms: ",
-  paymentTerms,
-  ""
-);
-
-// Maturity
-addParagraphWithUnderline(
-  "Maturity Date: ",
-  maturityDate,
-  "."
-);
 
 // Obligation statement
 addParagraph(

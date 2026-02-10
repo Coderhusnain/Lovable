@@ -481,13 +481,6 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const loanAmount = values.loanAmount || "________";
-const interestRate = values.interestRate || "________";
-const paymentAmount = values.paymentAmount || "________";
-const paymentFrequency = values.paymentFrequency || "________";
-const balloonAmount = values.balloonAmount || "________";
-const maturityDate = values.maturityDate || "________";
 
 // Intro paragraph
 addParagraphWithUnderline(
@@ -502,52 +495,15 @@ addParagraphWithUnderline(
   ", the principal sum described below under the terms and conditions of this Note."
 );
 
-// Principal amount
-addParagraphWithUnderline(
-  "Principal Loan Amount: ",
-  loanAmount,
-  "."
-);
-
-// Interest
-addParagraphWithUnderline(
-  "The unpaid principal shall accrue interest at the rate of ",
-  interestRate,
-  " per annum."
-);
-
 // Payment terms
 addParagraph(
-  "The Borrower agrees to make regular installment payments toward the principal and interest as outlined below."
+  "The Borrower agrees to make regular installment payments toward the principal and interest as outlined ."
 );
 
-addParagraphWithUnderline(
-  "Regular Payment Amount: ",
-  paymentAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Frequency: ",
-  paymentFrequency,
-  "."
-);
 
 // Balloon payment section
 addParagraph(
   "This Note includes a balloon payment provision. At the end of the payment term, the remaining unpaid balance of principal and any accrued interest shall become immediately due and payable."
-);
-
-addParagraphWithUnderline(
-  "Balloon Payment Amount Due at Maturity: ",
-  balloonAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Maturity Date: ",
-  maturityDate,
-  "."
 );
 
 // Default clause

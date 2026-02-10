@@ -480,11 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const customerName = values.party1Name || "________";
 const providerName = values.party2Name || "________";
 
-// Inquiry details
-const accountNumber = values.accountNumber || "________";
-const phoneNumber = values.phoneNumber || "________";
-const inquiryType = values.inquiryType || "________";
-const additionalQuestions = values.additionalQuestions || "________";
 
 // Identification
 addParagraphWithUnderline(
@@ -499,36 +494,18 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account Number: ",
-  accountNumber,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Mobile Number: ",
-  phoneNumber,
-  "."
-);
-
 // Introduction
 addParagraph(
   "I am writing to request information regarding my mobile phone services and related options. I would appreciate your assistance in providing the details outlined below."
 );
 
-// Inquiry topic
-addParagraphWithUnderline(
-  "Nature of Inquiry: ",
-  inquiryType,
-  "."
-);
+
 
 // Additional questions
 addParagraph(
   "Additional Questions or Information Requested:"
 );
 
-addParagraph(additionalQuestions);
 
 // Response request
 addParagraph(

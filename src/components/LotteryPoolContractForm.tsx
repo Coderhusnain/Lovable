@@ -479,11 +479,8 @@ addParagraph("Dear Sir or Madam:");
 // Organizer and pool details
 const organizerName = values.party1Name || "________";
 const participantName = values.party2Name || "________";
-const contributionAmount = values.contributionAmount || "________";
-const drawFrequency = values.drawFrequency || "________";
-const ticketType = values.ticketType || "________";
+
 const prizeDistribution = values.prizeDistribution || "equal shares";
-const startDate = values.startDate || "________";
 
 // Introduction
 addParagraph(
@@ -503,30 +500,7 @@ addParagraphWithUnderline(
   ""
 );
 
-// Pool details
-addParagraphWithUnderline(
-  "Participation Start Date: ",
-  startDate,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Contribution Amount per Draw: ",
-  contributionAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Draw Frequency: ",
-  drawFrequency,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Type of Lottery/Tickets: ",
-  ticketType,
-  "."
-);
 
 // Contribution terms
 addParagraph(

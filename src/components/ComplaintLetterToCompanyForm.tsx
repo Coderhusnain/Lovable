@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const companyName = values.party2Name || "________";
 const customerName = values.party1Name || "________";
 
-// Complaint details
-const accountNumber = values.accountNumber || "________";
-const purchaseDate = values.purchaseDate || "________";
-const productService = values.productService || "________";
-const complaintDetails = values.complaintDetails || "________";
-const requestedResolution = values.requestedResolution || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -500,36 +495,20 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
   "I am writing to formally submit a complaint regarding a recent issue involving your product or service."
 );
 
-// Purchase / service details
-addParagraphWithUnderline(
-  "Date of Purchase/Service: ",
-  purchaseDate,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Product/Service: ",
-  productService,
-  "."
-);
 
 // Problem description
 addParagraph(
   "Description of the Issue:"
 );
 
-addParagraph(complaintDetails);
 
 // Impact
 addParagraph(
@@ -541,7 +520,6 @@ addParagraph(
   "Requested Resolution:"
 );
 
-addParagraph(requestedResolution);
 
 // Response request
 addParagraph(

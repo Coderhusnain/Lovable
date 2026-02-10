@@ -480,12 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Debt details
-const debtAmount = values.debtAmount || "________";
-const debtDate = values.debtDate || "________";
-const repaymentDate = values.repaymentDate || "________";
-const paymentTerms = values.paymentTerms || "________";
-const interestRate = values.interestRate || "________";
 
 // Introduction
 addParagraph(
@@ -505,40 +499,6 @@ addParagraphWithUnderline(
   ""
 );
 
-// Debt origin date
-addParagraphWithUnderline(
-  "Date Debt Incurred: ",
-  debtDate,
-  "."
-);
-
-// Amount owed
-addParagraphWithUnderline(
-  "Total Amount Owed: ",
-  debtAmount,
-  ""
-);
-
-// Interest (if any)
-addParagraphWithUnderline(
-  "Interest Rate (if applicable): ",
-  interestRate,
-  ""
-);
-
-// Repayment terms
-addParagraphWithUnderline(
-  "Repayment Terms: ",
-  paymentTerms,
-  ""
-);
-
-// Due date
-addParagraphWithUnderline(
-  "Final Repayment Due Date: ",
-  repaymentDate,
-  "."
-);
 
 // Commitment statement
 addParagraph(

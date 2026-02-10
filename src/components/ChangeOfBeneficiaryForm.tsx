@@ -488,14 +488,7 @@ addParagraph("Dear Sir or Madam:");
 // Organization / Company name (underlined)
 const organization = values.organizationName || "your organization";
 
-// Policy / Account number (underlined)
-const policyNumber = values.policyNumber || "________";
 
-// New beneficiary name (underlined)
-const beneficiaryName = values.newBeneficiaryName || "________";
-
-// Relationship (optional)
-const relationship = values.relationship || "________";
 
 // Request paragraph
 addParagraphWithUnderline(
@@ -504,29 +497,14 @@ addParagraphWithUnderline(
   "."
 );
 
-// Policy number paragraph (inline underline)
-addParagraphWithUnderline(
-  "The policy/account number is ",
-  policyNumber,
-  "."
-);
+
 
 // Beneficiary details paragraph
 addParagraph(
   "Please update your records to reflect the following new beneficiary information:"
 );
 
-addParagraphWithUnderline(
-  "Beneficiary Name: ",
-  beneficiaryName,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Relationship to Account Holder: ",
-  relationship,
-  ""
-);
 
 // Confirmation request
 addParagraph(

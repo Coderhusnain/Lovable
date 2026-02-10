@@ -479,9 +479,6 @@ addParagraph("Dear Sir or Madam:");
 // Applicant details
 const applicantName = values.party1Name || "________";
 const bankName = values.party2Name || "________";
-const accountNumber = values.accountNumber || "________";
-const relationshipPeriod = values.relationshipPeriod || "________";
-const referenceDate = values.referenceDate || "________";
 
 // Introduction
 addParagraph(
@@ -502,19 +499,6 @@ addParagraphWithUnderline(
   ""
 );
 
-// Account details
-addParagraphWithUnderline(
-  "Account/Customer Reference Number: ",
-  accountNumber,
-  ""
-);
-
-// Relationship duration
-addParagraphWithUnderline(
-  "Length of Banking Relationship: ",
-  relationshipPeriod,
-  "."
-);
 
 // Reference statement
 addParagraph(
@@ -531,12 +515,6 @@ addParagraph(
   "This reference is provided in good faith for informational purposes only and does not constitute a guarantee of repayment or financial obligation by the issuing party."
 );
 
-// Date
-addParagraphWithUnderline(
-  "Date of Reference: ",
-  referenceDate,
-  "."
-);
 
 // Closing
 addParagraph(

@@ -480,12 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const principalAmount = values.principalAmount || "________";
-const interestRate = values.interestRate || "________";
-const issueDate = values.issueDate || "________";
-const maturityDate = values.maturityDate || "________";
-const paymentTerms = values.paymentTerms || "________";
 
 // Identification of parties
 addParagraphWithUnderline(
@@ -505,39 +499,12 @@ addParagraph(
   "This Promissory Note confirms that the Borrower promises to pay the Lender the amount described below under the terms and conditions outlined in this document."
 );
 
-// Principal amount
-addParagraphWithUnderline(
-  "Principal Amount: ",
-  principalAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Date of Note: ",
-  issueDate,
-  "."
-);
-
-// Interest
-addParagraphWithUnderline(
-  "Interest Rate: ",
-  interestRate,
-  "% per annum."
-);
-
 // Payment terms
 addParagraph(
   "Payment Terms:"
 );
 
-addParagraph(paymentTerms);
 
-// Maturity
-addParagraphWithUnderline(
-  "Maturity Date: ",
-  maturityDate,
-  "."
-);
 
 // Obligation clause
 addParagraph(

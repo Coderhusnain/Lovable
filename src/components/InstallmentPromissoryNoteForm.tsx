@@ -480,13 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const principalAmount = values.principalAmount || "________";
-const interestRate = values.interestRate || "________";
-const installmentAmount = values.installmentAmount || "________";
-const paymentFrequency = values.paymentFrequency || "________";
-const firstPaymentDate = values.firstPaymentDate || "________";
-const maturityDate = values.maturityDate || "________";
+
 
 // Identification of parties
 addParagraphWithUnderline(
@@ -506,43 +500,6 @@ addParagraph(
   "For value received, the Borrower hereby promises to pay to the order of the Lender the principal sum described below, together with any applicable interest, in accordance with the installment terms set forth in this note."
 );
 
-// Loan terms
-addParagraphWithUnderline(
-  "Principal Amount: ",
-  principalAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Interest Rate (if applicable): ",
-  interestRate,
-  ""
-);
-
-// Installment terms
-addParagraphWithUnderline(
-  "Installment Amount: ",
-  installmentAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Frequency: ",
-  paymentFrequency,
-  ""
-);
-
-addParagraphWithUnderline(
-  "First Payment Date: ",
-  firstPaymentDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Final Payment (Maturity) Date: ",
-  maturityDate,
-  "."
-);
 
 // Default clause
 addParagraph(

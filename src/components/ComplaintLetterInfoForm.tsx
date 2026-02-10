@@ -480,11 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const complainantName = values.party1Name || "________";
 const companyName = values.party2Name || "________";
 
-// Complaint details
-const referenceNumber = values.referenceNumber || "________";
-const incidentDate = values.incidentDate || "________";
-const issueDescription = values.issueDescription || "________";
-const requestedInformation = values.requestedInformation || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -499,36 +495,19 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Reference/Account Number: ",
-  referenceNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
   "I am writing to formally raise a complaint regarding the matter described below and to request detailed information for clarification and resolution."
 );
 
-// Incident details
-addParagraphWithUnderline(
-  "Date of Incident or Issue: ",
-  incidentDate,
-  "."
-);
-
-addParagraph(
-  "Description of the Issue:"
-);
-
-addParagraph(issueDescription);
 
 // Information request
 addParagraph(
-  "To better understand and resolve this matter, I kindly request the following information:"
+  "To better understand and resolve this matter."
 );
 
-addParagraph(requestedInformation);
 
 // Resolution expectation
 addParagraph(

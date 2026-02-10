@@ -480,10 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const requesterName = values.party1Name || "________";
 const organizationName = values.party2Name || "________";
 
-// Details
-const accountNumber = values.accountNumber || "________";
-const dataDescription = values.dataDescription || "________";
-const removalReason = values.removalReason || "________";
 
 // Identification
 addParagraphWithUnderline(
@@ -498,30 +494,13 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
   "I am writing to formally request the removal and deletion of my personal information from your records, systems, databases, and any third parties with whom the information may have been shared."
 );
 
-// Data details
-addParagraph(
-  "Personal Information to be Removed:"
-);
-
-addParagraph(dataDescription);
-
-// Reason (optional but useful)
-addParagraphWithUnderline(
-  "Reason for Request: ",
-  removalReason,
-  "."
-);
 
 // Compliance request
 addParagraph(

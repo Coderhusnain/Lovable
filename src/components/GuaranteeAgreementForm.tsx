@@ -481,10 +481,7 @@ const guarantorName = values.party1Name || "________";
 const lenderName = values.party2Name || "________";
 const borrowerName = values.borrowerName || "________";
 
-// Guarantee details
-const obligationAmount = values.obligationAmount || "________";
-const agreementDate = values.effectiveDate || "________";
-const accountNumber = values.accountNumber || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -505,29 +502,13 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Agreement Date: ",
-  agreementDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
 
 // Introduction
 addParagraph(
   "This letter serves as a formal guarantee of payment and performance for the obligations described below."
 );
 
-// Obligation
-addParagraphWithUnderline(
-  "Amount Guaranteed: ",
-  obligationAmount,
-  "."
-);
+
 
 // Guarantee terms
 addParagraph(

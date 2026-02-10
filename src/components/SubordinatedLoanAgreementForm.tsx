@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const loanAmount = values.loanAmount || "________";
-const interestRate = values.interestRate || "________";
-const loanDate = values.loanDate || "________";
-const maturityDate = values.maturityDate || "________";
-const seniorLender = values.seniorLender || "________";
+
 
 // Introduction
 addParagraph(
@@ -505,37 +500,6 @@ addParagraphWithUnderline(
   ""
 );
 
-// Loan terms
-addParagraphWithUnderline(
-  "Loan Amount: ",
-  loanAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Date of Loan: ",
-  loanDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Interest Rate: ",
-  interestRate,
-  "% per annum."
-);
-
-addParagraphWithUnderline(
-  "Maturity Date: ",
-  maturityDate,
-  "."
-);
-
-// Subordination clause
-addParagraphWithUnderline(
-  "Senior Lender (if applicable): ",
-  seniorLender,
-  "."
-);
 
 addParagraph(
   "The parties agree that this loan shall be subordinate in right of payment to all present and future obligations of the Borrower to any senior lender identified above or otherwise designated as senior indebtedness."

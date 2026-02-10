@@ -480,12 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Debt details
-const accountNumber = values.accountNumber || "________";
-const originalAmount = values.originalAmount || "________";
-const currentBalance = values.currentBalance || "________";
-const debtDate = values.debtDate || "________";
-const debtReason = values.debtReason || "________";
 
 // Introduction
 addParagraph(
@@ -505,38 +499,8 @@ addParagraphWithUnderline(
   ""
 );
 
-// Account information
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  ""
-);
 
-// Debt origin
-addParagraphWithUnderline(
-  "Date the Debt Was Incurred: ",
-  debtDate,
-  "."
-);
 
-addParagraph(
-  "Nature of the Debt:"
-);
-
-addParagraph(debtReason);
-
-// Amount details
-addParagraphWithUnderline(
-  "Original Amount Owed: ",
-  originalAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Current Outstanding Balance: ",
-  currentBalance,
-  ""
-);
 
 // Collection statement
 addParagraph(

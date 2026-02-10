@@ -484,7 +484,6 @@ const organizationName = values.party2Name || "________";
 const emailToRemove = values.party1Email || "________";
 const phoneToRemove = values.party1Phone || "________";
 const addressToRemove = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`;
-const accountNumber = values.accountNumber || "________";
 
 // Identification
 addParagraphWithUnderline(
@@ -499,11 +498,7 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(

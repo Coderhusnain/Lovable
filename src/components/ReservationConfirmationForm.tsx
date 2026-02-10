@@ -480,13 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const customerName = values.party1Name || "________";
 const businessName = values.party2Name || "________";
 
-// Reservation details
-const reservationNumber = values.reservationNumber || "________";
-const reservationDate = values.reservationDate || "________";
-const reservationTime = values.reservationTime || "________";
-const reservationType = values.reservationType || "________";
-const numberOfGuests = values.numberOfGuests || "________";
-const specialRequests = values.specialRequests || "None";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -501,48 +495,13 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Reservation Number: ",
-  reservationNumber,
-  "."
-);
 
 // Confirmation statement
 addParagraph(
-  "This letter serves as confirmation of your reservation. Please review the details below and contact us promptly if any changes are required."
+  "This letter serves as confirmation of your reservation. Please review the details  and contact us promptly if any changes are required."
 );
 
-// Reservation details
-addParagraphWithUnderline(
-  "Reservation Date: ",
-  reservationDate,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Reservation Time: ",
-  reservationTime,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Reservation Type/Service: ",
-  reservationType,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Number of Guests/Participants: ",
-  numberOfGuests,
-  "."
-);
-
-// Special requests
-addParagraph(
-  "Special Requests or Notes:"
-);
-
-addParagraph(specialRequests);
 
 // Closing
 addParagraph(

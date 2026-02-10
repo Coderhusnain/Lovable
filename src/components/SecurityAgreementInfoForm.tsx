@@ -480,11 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const securedParty = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Security details
-const collateralDescription = values.collateralDescription || "________";
-const obligationAmount = values.obligationAmount || "________";
-const agreementDate = values.effectiveDate || "________";
-const accountNumber = values.accountNumber || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -499,40 +495,17 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Agreement Date: ",
-  agreementDate,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
 
 // Introduction
 addParagraph(
   "This letter is provided to document and summarize the terms and information related to a security agreement between the parties identified above."
 );
 
-// Obligation
-addParagraphWithUnderline(
-  "Obligation Amount Secured: ",
-  obligationAmount,
-  "."
-);
-
-// Collateral details
-addParagraph(
-  "Description of Collateral:"
-);
-
-addParagraph(collateralDescription);
 
 // Rights and purpose
 addParagraph(
-  "The collateral described above is pledged as security for the repayment and performance of the debtor’s obligations under the applicable loan or credit arrangement. The secured party retains a security interest in the collateral until the obligations have been fully satisfied."
+  "The collateral described  is pledged as security for the repayment and performance of the debtor’s obligations under the applicable loan or credit arrangement. The secured party retains a security interest in the collateral until the obligations have been fully satisfied."
 );
 
 // Additional rights

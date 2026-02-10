@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Debt details
-const amountOwed = values.amount || "________";
-const originalDate = values.debtDate || "________";
-const dueDate = values.dueDate || "________";
-const accountNumber = values.accountNumber || "________";
-const paymentDeadline = values.paymentDeadline || "________";
+
 
 // Introduction
 addParagraph(
@@ -505,39 +500,6 @@ addParagraphWithUnderline(
   ""
 );
 
-// Debt reference
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  ""
-);
-
-// Debt origin
-addParagraphWithUnderline(
-  "Date the Debt Was Incurred: ",
-  originalDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Original Due Date: ",
-  dueDate,
-  "."
-);
-
-// Amount due
-addParagraphWithUnderline(
-  "Total Amount Currently Owed: ",
-  amountOwed,
-  "."
-);
-
-// Demand statement
-addParagraphWithUnderline(
-  "Payment Deadline: ",
-  paymentDeadline,
-  "."
-);
 
 addParagraph(
   "Despite prior reminders, the above amount remains unpaid. You are hereby requested to remit full payment on or before the deadline stated above."

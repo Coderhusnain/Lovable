@@ -480,47 +480,18 @@ y += 10;
 // ===== GREETING =====
 addParagraph("Dear Sir or Madam,");
 
-// ===== BODY =====
-
-// Estate name (underlined)
-const deceasedName = values.deceasedName || "________";
-
-// Claim amount (underlined)
-const claimAmount = values.claimAmount || "________";
-
-// Basis of claim (underlined)
-const claimReason = values.claimReason || "________";
-
-// Date of obligation (optional)
-const obligationDate = values.obligationDate || "________";
 
 // Opening paragraph
-addParagraphWithUnderline(
-  "I am submitting this formal Statement of Claim against the Estate of ",
-  deceasedName,
-  "."
-);
+addParagraph("I am submitting this formal Statement of Claim against the Estate.");
 
 // Claim details paragraph
 addParagraph(
   "This claim represents a lawful debt or financial obligation owed to me by the deceased prior to their passing. The details of the claim are provided below for your review and consideration."
 );
 
-// Obligation details
-addParagraphWithUnderline(
-  "The obligation arose on or about ",
-  obligationDate,
-  ", and relates to the following matter: "
-);
 
-addParagraph(claimReason);
 
-// Amount paragraph
-addParagraphWithUnderline(
-  "The total amount currently due and payable is ",
-  claimAmount,
-  "."
-);
+
 
 // Supporting documents paragraph
 addParagraph(

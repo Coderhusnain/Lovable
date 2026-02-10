@@ -480,13 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Payment details
-const totalAmount = values.totalAmount || "________";
-const installmentAmount = values.installmentAmount || "________";
-const paymentFrequency = values.paymentFrequency || "________";
-const firstPaymentDate = values.firstPaymentDate || "________";
-const finalPaymentDate = values.finalPaymentDate || "________";
-const accountNumber = values.accountNumber || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -501,52 +495,16 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
 
 // Introduction
 addParagraph(
   "This letter confirms the agreement between the parties regarding the repayment of the outstanding balance under the terms outlined below."
 );
 
-// Amount
-addParagraphWithUnderline(
-  "Total Amount Owed: ",
-  totalAmount,
-  "."
-);
-
-// Installment terms
-addParagraphWithUnderline(
-  "Installment Amount: ",
-  installmentAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Frequency: ",
-  paymentFrequency,
-  ""
-);
-
-addParagraphWithUnderline(
-  "First Payment Date: ",
-  firstPaymentDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Final Payment Date: ",
-  finalPaymentDate,
-  "."
-);
 
 // Terms
 addParagraph(
-  "The Debtor agrees to make payments according to the schedule described above until the total balance has been paid in full."
+  "The Debtor agrees to make payments according to the schedule described  until the total balance has been paid in full."
 );
 
 // Default clause

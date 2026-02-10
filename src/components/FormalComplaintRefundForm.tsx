@@ -480,12 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const customerName = values.party1Name || "________";
 const companyName = values.party2Name || "________";
 
-// Transaction details
-const purchaseDate = values.purchaseDate || "________";
-const productService = values.productService || "________";
-const amountPaid = values.amountPaid || "________";
-const referenceNumber = values.referenceNumber || "________";
-const issueDescription = values.issueDescription || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -500,46 +495,20 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Transaction/Reference Number: ",
-  referenceNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
-  "I am writing to formally lodge a complaint regarding the following purchase and to request a refund."
+  "I am writing to formally lodge a complaint regarding the a purchase and to request a refund."
 );
 
-// Purchase details
-addParagraphWithUnderline(
-  "Date of Purchase: ",
-  purchaseDate,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Product/Service: ",
-  productService,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Amount Paid: ",
-  amountPaid,
-  "."
-);
 
-// Issue description
-addParagraph(
-  "Description of the Issue:"
-);
-
-addParagraph(issueDescription);
 
 // Refund request
 addParagraph(
-  "Due to the circumstances described above, I respectfully request a full refund of the amount paid. Please process the refund at your earliest convenience or advise if any additional information or documentation is required."
+  "Due to the circumstances described , I respectfully request a full refund of the amount paid. Please process the refund at your earliest convenience or advise if any additional information or documentation is required."
 );
 
 // Response expectation

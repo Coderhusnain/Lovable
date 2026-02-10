@@ -480,13 +480,7 @@ addParagraph("Dear Sir or Madam:");
 const lenderName = values.party1Name || "________";
 const borrowerName = values.party2Name || "________";
 
-// Loan details
-const loanAmount = values.loanAmount || "________";
-const interestRate = values.interestRate || "________";
-const loanDate = values.loanDate || "________";
-const maturityDate = values.maturityDate || "________";
-const paymentTerms = values.paymentTerms || "________";
-const accountNumber = values.accountNumber || "________";
+
 
 // Identification
 addParagraphWithUnderline(
@@ -501,48 +495,14 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
   "This letter confirms the agreement between the Lender and the Borrower regarding the loan described below and outlines the terms and conditions governing repayment."
 );
 
-// Loan amount
-addParagraphWithUnderline(
-  "Loan Amount: ",
-  loanAmount,
-  ""
-);
 
-addParagraphWithUnderline(
-  "Interest Rate: ",
-  interestRate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Loan Date: ",
-  loanDate,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Maturity Date: ",
-  maturityDate,
-  "."
-);
-
-// Payment terms
-addParagraphWithUnderline(
-  "Repayment Terms: ",
-  paymentTerms,
-  "."
-);
 
 // Borrower obligation
 addParagraph(

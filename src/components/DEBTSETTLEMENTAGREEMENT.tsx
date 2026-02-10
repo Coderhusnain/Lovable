@@ -480,12 +480,6 @@ addParagraph("Dear Sir or Madam:");
 const creditorName = values.party1Name || "________";
 const debtorName = values.party2Name || "________";
 
-// Settlement details
-const originalAmount = values.originalAmount || "________";
-const settlementAmount = values.settlementAmount || "________";
-const paymentMethod = values.paymentMethod || "________";
-const paymentDueDate = values.paymentDueDate || "________";
-const accountNumber = values.accountNumber || "________";
 
 // Identification
 addParagraphWithUnderline(
@@ -500,42 +494,13 @@ addParagraphWithUnderline(
   ""
 );
 
-addParagraphWithUnderline(
-  "Account/Reference Number: ",
-  accountNumber,
-  "."
-);
+
 
 // Introduction
 addParagraph(
   "This letter confirms that the parties have agreed to settle the outstanding debt under the terms outlined below."
 );
 
-// Original balance
-addParagraphWithUnderline(
-  "Original Amount Owed: ",
-  originalAmount,
-  "."
-);
-
-// Settlement amount
-addParagraphWithUnderline(
-  "Agreed Settlement Amount: ",
-  settlementAmount,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Method: ",
-  paymentMethod,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Payment Due Date: ",
-  paymentDueDate,
-  "."
-);
 
 // Settlement terms
 addParagraph(
