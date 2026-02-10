@@ -13,10 +13,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
+         
         ],
       },
     ],
@@ -30,8 +27,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
+        getOptions: (value) => {
+          if (value === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -60,29 +57,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
+          } 
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -376,122 +351,182 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Special Power Of Attorney", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  // ===== PAGE SETUP =====
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
+  const textWidth = pageWidth - margin * 2;
+  let y = 25;
+
+  // ===== AUTO PAGE BREAK =====
+  const checkPageBreak = (space = 10) => {
+    if (y + space > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  // ===== UNDERLINED FIELD =====
+  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
+    checkPageBreak();
+
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.setFontSize(11);
+
+    doc.text(label, margin, y);
+    const labelWidth = doc.getTextWidth(label);
+
+    const startX = margin + labelWidth + 3;
+    const display = value || "";
+
+    if (display) doc.text(display, startX, y);
+
+    const width = display ? doc.getTextWidth(display) : minWidth;
+    doc.line(startX, y + 1, startX + width, y + 1);
+
+    y += 9;
+  };
+
+  // ===== PARAGRAPH =====
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(12);
+
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 6 + 3;
+  };
+
+  // ===== PARAGRAPH WITH UNDERLINE =====
+  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
+    const full = `${before}${value}${after}`;
+    const lines = doc.splitTextToSize(full, textWidth);
+
+    lines.forEach((line: string) => {
+      checkPageBreak(10);
+      doc.text(line, margin, y);
+
+      if (value && line.includes(value)) {
+        const beforeText = line.substring(0, line.indexOf(value));
+        const startX = margin + doc.getTextWidth(beforeText);
+        const valueWidth = doc.getTextWidth(value);
+        doc.line(startX, y + 1, startX + valueWidth, y + 1);
+      }
+
+      y += 7;
+    });
+
+    y += 2;
+  };
+
+  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(16);
+
+  const title = "SPECIAL POWER OF ATTORNEY";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = pageWidth / 2 - titleWidth / 2;
+  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+
+  y += 18;
+
+  // ===== DATE / PRINCIPAL / ADDRESS =====
+  addUnderlinedField("Date:", values.effectiveDate || "");
+  addUnderlinedField("Principal:", values.party1Name || "");
+
+  const principalAddress = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`.trim();
+  addUnderlinedField("Address:", principalAddress, 140);
+
+  y += 6;
+
+  // ===== INTRO =====
+  addParagraph("Dear Sir or Madam:");
+
+  const principalName = values.party1Name || "________";
+  const agentName = values.party2Name || "________";
+
+  // ===== BODY =====
+  addParagraphWithUnderline(
+    "I, ",
+    principalName,
+    ", hereby appoint "
+  );
+
+  addParagraphWithUnderline(
+    "",
+    agentName,
+    " as my true and lawful Attorney-in-Fact to act on my behalf for the specific purposes described herein."
+  );
+
+  addParagraph(
+    "This Special Power of Attorney authorizes the above-named agent to perform only the following acts on my behalf, including but not limited to signing documents, managing specific financial transactions, representing me before institutions, and completing the particular matters for which this authority is granted."
+  );
+
+  addParagraph(
+    "The agent shall not exceed the authority granted under this Special Power of Attorney and shall act in my best interest and in accordance with applicable laws and regulations."
+  );
+
+  addParagraph(
+    "This Special Power of Attorney shall take effect immediately and shall remain valid until the specified task is completed or until revoked by me in writing, whichever occurs first."
+  );
+
+  addParagraph(
+    "In witness whereof, I have executed this Special Power of Attorney on the date written above."
+  );
+
+  y += 6;
+  addParagraph("Sincerely,");
+
   y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+
+  // ===== PRINCIPAL SIGNATURE =====
+  checkPageBreak();
+
+  doc.setFont("helvetica", "bold");
+  doc.text(principalName, margin, y);
+
+  const nameWidth = doc.getTextWidth(principalName);
+  doc.line(margin, y + 1, margin + nameWidth, y + 1);
+
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
+  addParagraph(`Email: ${values.party1Email || ""}`);
+
+  if (values.party1Phone) {
+    addParagraph(`Phone: ${values.party1Phone}`);
   }
-  
+
+  // ===== AGENT SECTION =====
+  y += 6;
+  addParagraph("Attorney-in-Fact:");
+
+  doc.setFont("helvetica", "bold");
+  doc.text(agentName, margin, y);
+
+  const agentWidth = doc.getTextWidth(agentName);
+  doc.line(margin, y + 1, margin + agentWidth, y + 1);
+
+  y += 8;
+
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
+  addParagraph(`Email: ${values.party2Email || ""}`);
+
+  if (values.party2Phone) {
+    addParagraph(`Phone: ${values.party2Phone}`);
+  }
+
+  // ===== SAVE =====
   doc.save("special_power_of_attorney.pdf");
 };
+
 
 export default function SpecialPowerOfAttorney() {
   return (

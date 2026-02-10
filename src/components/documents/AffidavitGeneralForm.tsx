@@ -107,121 +107,92 @@ const AffidavitGeneralForm: React.FC<AffidavitGeneralFormProps> = ({ onBack }) =
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const generatePDF = () => {
-    setIsGenerating(true);
+  setIsGenerating(true);
+  
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 25;
+    const textWidth = pageWidth - 2 * margin;
+    let y = 20;
+
+    const addParagraph = (text: string, bold = false) => {
+      if (y > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      doc.setFontSize(11);
+      const lines = doc.splitTextToSize(text, textWidth);
+      doc.text(lines, margin, y);
+      y += lines.length * 6 + 2;
+    };
+
+    const addField = (label: string, value: string, minWidth = 80) => {
+      if (y > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.text(label, margin, y);
+      const startX = margin + doc.getTextWidth(label) + 2;
+      doc.text(value || '', startX, y);
+      const width = value ? doc.getTextWidth(value) : minWidth;
+      doc.line(startX, y + 1, startX + width, y + 1);
+      y += 8;
+    };
+
+    // === Use formData here ===
+    addParagraph('GENERAL AFFIDAVIT', true);
+    addParagraph(`STATE OF ${formData.affiantState?.toUpperCase() || ''}`, true);
+    addParagraph(`COUNTY OF ${formData.county?.toUpperCase() || formData.notaryCounty?.toUpperCase() || ''}`, true);
+    addParagraph(`I, ${formData.affiantName || '________'}, being of legal age and first duly sworn upon my oath, do hereby depose and state as follows:`);
     
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const maxWidth = pageWidth - 2 * margin;
-      let y = 20;
+    addParagraph('1. AFFIANT INFORMATION', true);
+    addField('Full Name:', formData.affiantName);
+    addField('Address:', `${formData.affiantAddress}, ${formData.affiantCity}, ${formData.affiantState} ${formData.affiantZip}`);
+    if (formData.affiantPhone) addField('Phone:', formData.affiantPhone);
 
-      const addText = (text: string, fontSize: number = 11, isBold: boolean = false, centered: boolean = false, indent: number = 0) => {
-        doc.setFontSize(fontSize);
-        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        
-        const lines = doc.splitTextToSize(text, maxWidth - indent);
-        lines.forEach((line: string) => {
-          if (y > 270) {
-            doc.addPage();
-            y = 20;
-          }
-          if (centered) {
-            doc.text(line, pageWidth / 2, y, { align: 'center' });
-          } else {
-            doc.text(line, margin + indent, y);
-          }
-          y += fontSize * 0.5;
-        });
-        y += 2;
-      };
-
-      const stateName = formData.state ? getStateName(parseInt(formData.country), parseInt(formData.state)) : formData.notaryState;
-      const countryName = formData.country ? getCountryName(parseInt(formData.country)) : '';
-
-      // Title
-      addText('GENERAL AFFIDAVIT', 18, true, true);
-      y += 10;
-
-      // Jurisdiction Header
-      addText(`STATE OF ${stateName.toUpperCase()}`, 12, true);
-      addText(`COUNTY OF ${formData.county.toUpperCase() || formData.notaryCounty.toUpperCase()}`, 12, true);
-      y += 5;
-
-      // Affiant Statement
-      addText(`I, ${formData.affiantName}, being of legal age and being first duly sworn upon my oath, depose and state as follows:`, 11);
-      y += 5;
-
-      // Personal Information
-      addText('1. PERSONAL INFORMATION', 12, true);
-      addText(`My name is ${formData.affiantName}. I am over the age of 18 years and am competent to make this affidavit.`);
-      addText(`I reside at ${formData.affiantAddress}, ${formData.affiantCity}, ${formData.affiantState} ${formData.affiantZip}.`);
-      if (formData.affiantPhone) {
-        addText(`I can be reached at ${formData.affiantPhone}.`);
-      }
-      y += 3;
-
-      // Purpose of Affidavit
-      if (formData.statementPurpose) {
-        addText('2. PURPOSE OF THIS AFFIDAVIT', 12, true);
-        addText(formData.statementPurpose);
-        y += 3;
-      }
-
-      // Statement Content
-      addText('3. STATEMENT OF FACTS', 12, true);
-      addText(formData.statementContent);
-      y += 5;
-
-      // Affirmation
-      addText('4. AFFIRMATION', 12, true);
-      addText('I hereby declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge, information, and belief.');
-      y += 5;
-
-      // Signature Block
-      addText('FURTHER AFFIANT SAYETH NOT.', 11, true, true);
-      y += 15;
-
-      addText('_______________________________', 11, false, false);
-      addText(`${formData.affiantName}`, 11, false, false);
-      addText('Affiant', 10, false, false);
-      y += 5;
-      addText(`Date: ${formData.statementDate || '_______________'}`, 11);
-      y += 10;
-
-      // Witness Section (if applicable)
-      if (formData.witnessName) {
-        addText('WITNESS:', 12, true);
-        y += 10;
-        addText('_______________________________', 11, false, false);
-        addText(`${formData.witnessName}`, 11, false, false);
-        addText(`Address: ${formData.witnessAddress}`, 10, false, false);
-        y += 10;
-      }
-
-      // Notary Block
-      addText('NOTARY ACKNOWLEDGMENT', 14, true, true);
-      y += 5;
-      addText(`STATE OF ${formData.notaryState.toUpperCase() || stateName.toUpperCase()}`);
-      addText(`COUNTY OF ${formData.notaryCounty.toUpperCase() || formData.county.toUpperCase()}`);
-      y += 5;
-      addText(`Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.affiantName}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`);
-      y += 15;
-
-      addText('_______________________________', 11, false, false);
-      addText('Notary Public', 11, false, false);
-      addText('My Commission Expires: _______________', 10, false, false);
-      y += 5;
-      addText('[NOTARY SEAL]', 10, false, false);
-
-      // Save PDF
-      doc.save('General_Affidavit.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-    } finally {
-      setIsGenerating(false);
+    if (formData.statementPurpose) {
+      addParagraph('2. PURPOSE OF THIS AFFIDAVIT', true);
+      addParagraph(formData.statementPurpose);
     }
-  };
+
+    addParagraph('3. STATEMENT OF FACTS', true);
+    addParagraph(formData.statementContent || '________');
+
+    addParagraph('4. AFFIRMATION', true);
+    addParagraph('I hereby declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge, information, and belief.');
+
+    addParagraph('FURTHER AFFIANT SAYETH NOT.', true);
+
+    addField('Signature:', formData.affiantName);
+    addField('Date:', formData.statementDate || '________');
+
+    if (formData.witnessName) {
+      addParagraph('WITNESS:', true);
+      addField('Name:', formData.witnessName);
+      addField('Address:', formData.witnessAddress);
+    }
+
+    addParagraph('NOTARY ACKNOWLEDGMENT', true);
+    addParagraph(`STATE OF ${formData.notaryState?.toUpperCase() || formData.affiantState?.toUpperCase()}`);
+    addParagraph(`COUNTY OF ${formData.notaryCounty?.toUpperCase() || formData.county?.toUpperCase()}`);
+    addParagraph(`Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.affiantName || '________'}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`);
+    addField('Notary Signature:', '_________________________');
+    addField('Notary Public', '');
+    addField('Commission Expires:', '___________');
+    addParagraph('[NOTARY SEAL]');
+
+    doc.save('General_Affidavit.pdf');
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
 
   const renderStepContent = () => {
     switch(step) {

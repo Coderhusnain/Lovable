@@ -13,10 +13,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
+         
         ],
       },
     ],
@@ -30,8 +27,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
+        getOptions: (value) => {
+          if (value=== "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -60,29 +57,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
+          } 
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -376,87 +351,176 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+
+  // ===== PAGE SETUP =====
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
+  const textWidth = pageWidth - margin * 2;
+  let y = 25;
+
+  // ===== AUTO PAGE BREAK =====
+  const checkPageBreak = (space = 10) => {
+    if (y + space > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  // ===== UNDERLINED FIELD =====
+  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
+    checkPageBreak();
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    doc.text(label, margin, y);
+    const labelWidth = doc.getTextWidth(label);
+    const startX = margin + labelWidth + 3;
+    const display = value || "";
+
+    if (display) doc.text(display, startX, y);
+
+    const width = display ? doc.getTextWidth(display) : minWidth;
+    doc.line(startX, y + 1, startX + width, y + 1);
+
+    y += 9;
+  };
+
+  // ===== PARAGRAPH =====
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(12);
+
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 6 + 3;
+  };
+
+  // ===== PARAGRAPH WITH UNDERLINE =====
+  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
+    const full = `${before}${value}${after}`;
+    const lines = doc.splitTextToSize(full, textWidth);
+
+    lines.forEach((line: string) => {
+      checkPageBreak(10);
+      doc.text(line, margin, y);
+
+      if (value && line.includes(value)) {
+        const beforeText = line.substring(0, line.indexOf(value));
+        const startX = margin + doc.getTextWidth(beforeText);
+        const valueWidth = doc.getTextWidth(value);
+        doc.line(startX, y + 1, startX + valueWidth, y + 1);
+      }
+
+      y += 7;
+    });
+
+    y += 2;
+  };
+
+  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.text("Prenuptial Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  doc.setFontSize(16);
+
+  const title = "PRENUPTIAL AGREEMENT";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = pageWidth / 2 - titleWidth / 2;
+  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+
+  y += 18;
+
+  // ===== DATE / PARTIES =====
+  addUnderlinedField("Date:", values.effectiveDate || "");
+  addUnderlinedField("First Party:", values.party1Name || "");
+  addUnderlinedField("Second Party:", values.party2Name || "");
+
   y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+
+  const party1 = values.party1Name || "________";
+  const party2 = values.party2Name || "________";
+
+  // ===== BODY =====
+  addParagraphWithUnderline(
+    "This Prenuptial Agreement is entered into between ",
+    party1,
+    " and "
+  );
+
+  addParagraphWithUnderline(
+    "",
+    party2,
+    " in contemplation of marriage."
+  );
+
+  addParagraph(
+    "The parties desire to define their respective rights and obligations regarding property, assets, debts, income, and financial matters that may arise during the marriage or upon separation, divorce, or death."
+  );
+
+  addParagraph(
+    "Each party agrees that all property owned individually before the marriage shall remain the separate property of that party unless otherwise agreed in writing."
+  );
+
+  addParagraph(
+    "Any property acquired during the marriage shall be treated in accordance with the terms of this Agreement and applicable law."
+  );
+
+  addParagraph(
+    "Each party acknowledges full disclosure of assets and liabilities and enters into this Agreement voluntarily and without coercion."
+  );
+
+  addParagraph(
+    "This Agreement shall become effective upon the legal marriage of the parties and shall be governed by the laws of the selected jurisdiction."
+  );
+
+  addParagraph(
+    "In witness whereof, the parties have executed this Prenuptial Agreement on the date first written above."
+  );
+
   y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  addParagraph("Sincerely,");
+
   y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+
+  // ===== SIGNATURES =====
+  checkPageBreak();
+
+  doc.setFont("helvetica", "bold");
+  doc.text(party1, margin, y);
+  const w1 = doc.getTextWidth(party1);
+  doc.line(margin, y + 1, margin + w1, y + 1);
+
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
+
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
+  addParagraph(`Email: ${values.party1Email || ""}`);
+
+  if (values.party1Phone) addParagraph(`Phone: ${values.party1Phone}`);
+
+  y += 12;
+
+  doc.setFont("helvetica", "bold");
+  doc.text(party2, margin, y);
+  const w2 = doc.getTextWidth(party2);
+  doc.line(margin, y + 1, margin + w2, y + 1);
+
+  y += 10;
+
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
+  addParagraph(`Email: ${values.party2Email || ""}`);
+
+  if (values.party2Phone) addParagraph(`Phone: ${values.party2Phone}`);
+
+  // ===== SAVE =====
   doc.save("prenuptial_agreement.pdf");
 };
+
 
 export default function PrenuptialAgreementForm() {
   return (

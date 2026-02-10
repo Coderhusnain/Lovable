@@ -113,175 +113,140 @@ const AttorneyEngagementLetterForm: React.FC<AttorneyEngagementLetterFormProps> 
   const nextStep = () => setStep(prev => Math.min(prev + 1, 5));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const generatePDF = () => {
-    setIsGenerating(true);
-    
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const maxWidth = pageWidth - 2 * margin;
-      let y = 20;
+ const generatePDF = () => {
+  setIsGenerating(true);
 
-      const addText = (text: string, fontSize: number = 11, isBold: boolean = false, centered: boolean = false, indent: number = 0) => {
-        doc.setFontSize(fontSize);
-        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        
-        const lines = doc.splitTextToSize(text, maxWidth - indent);
-        lines.forEach((line: string) => {
-          if (y > 270) {
-            doc.addPage();
-            y = 20;
-          }
-          if (centered) {
-            doc.text(line, pageWidth / 2, y, { align: 'center' });
-          } else {
-            doc.text(line, margin + indent, y);
-          }
-          y += fontSize * 0.5;
-        });
-        y += 2;
-      };
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+    let y = 20;
 
-      // Title
-      addText('ATTORNEY ENGAGEMENT LETTER', 16, true, true);
-      y += 5;
-
-      // Introduction
-      addText(`This Attorney Engagement Letter ("Agreement") is entered into as of ${formData.effectiveDate} ("Effective Date"), by and between:`);
-      y += 3;
-      addText(`${formData.attorneyName}, Attorney ("Attorney"), and`, 11, false, false, 10);
-      addText(`${formData.clientName}, Client ("Client").`, 11, false, false, 10);
-      y += 3;
-      addText('Attorney and Client may be referred to individually as a "Party" and collectively as the "Parties."');
-      y += 5;
-
-      // 1. Scope of Legal Services
-      addText('1. SCOPE OF LEGAL SERVICES', 12, true);
-      addText('Attorney agrees to provide legal services to Client in connection with the following matter(s):');
-      addText(formData.matterDescription, 11, false, false, 10);
-      addText('(collectively, the "Services").');
-      addText('Attorney shall provide the Services in a professional and competent manner consistent with applicable ethical rules and standards of practice.');
-      y += 3;
-
-      // 2. Responsibilities
-      addText('2. RESPONSIBILITIES OF THE PARTIES', 12, true);
-      addText('2.1 Attorney Responsibilities', 11, true);
-      addText('Attorney shall:');
-      addText('• Perform the Services competently and diligently;', 11, false, false, 10);
-      addText('• Keep Client reasonably informed of the status of the matter;', 11, false, false, 10);
-      addText('• Respond to Client inquiries in a timely manner; and', 11, false, false, 10);
-      addText('• Provide legal advice consistent with applicable law and professional standards.', 11, false, false, 10);
+    const addText = (
+      text: string,
+      fontSize: number = 11,
+      isBold: boolean = false,
+      centered: boolean = false,
+      indent: number = 0
+    ) => {
+      doc.setFontSize(fontSize);
+      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+      const lines = doc.splitTextToSize(text, maxWidth - indent);
+      lines.forEach(line => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        if (centered) {
+          doc.text(line, pageWidth / 2, y, { align: 'center' });
+        } else {
+          doc.text(line, margin + indent, y);
+        }
+        y += fontSize * 0.5 + 2;
+      });
       y += 2;
+    };
 
-      addText('2.2 Client Responsibilities', 11, true);
-      addText('Client agrees to:');
-      addText('• Provide truthful, accurate, and complete information;', 11, false, false, 10);
-      addText('• Cooperate fully with Attorney;', 11, false, false, 10);
-      addText('• Keep Attorney informed of any changes in contact information;', 11, false, false, 10);
-      addText('• Promptly review and respond to communications;', 11, false, false, 10);
-      addText('• Timely pay all fees and costs as required under this Agreement.', 11, false, false, 10);
-      y += 3;
+    // === PDF CONTENT ===
+    addText('ATTORNEY ENGAGEMENT LETTER', 16, true, true);
+    addText(`Effective Date: ${formData.effectiveDate || '________'}`, 11, false, true);
+    y += 5;
 
-      // 3. Compensation
-      addText('3. COMPENSATION', 12, true);
-      if (formData.feeType === 'flat') {
-        addText('3.1 Flat Fee', 11, true);
-        addText(`In consideration of the Services, Client agrees to pay Attorney a flat fee of $${formData.flatFee}, payable upon completion of the Services unless otherwise agreed in writing.`);
-      } else {
-        addText('3.1 Hourly Fee', 11, true);
-        addText(`In consideration of the Services, Client agrees to pay Attorney at the rate of $${formData.hourlyRate} per hour.`);
-      }
-      addText('3.2 Scope of Fees', 11, true);
-      addText('The fee includes all professional services rendered by Attorney in connection with the matter, including but not limited to:');
-      addText('• Client conferences', 11, false, false, 10);
-      addText('• Court appearances', 11, false, false, 10);
-      addText('• Preparation of pleadings and documents', 11, false, false, 10);
-      addText('• Legal research', 11, false, false, 10);
-      addText('• Correspondence and communications', 11, false, false, 10);
-      addText('If more than one attorney or staff member works on the matter, each shall be billed at their applicable rate.');
-      y += 3;
+    addText(`This Attorney Engagement Letter ("Agreement") is entered into by and between:`);
+    addText(`${formData.attorneyName || '________'}, Attorney ("Attorney")`, 11, false, false, 10);
+    addText(`${formData.clientName || '________'}, Client ("Client")`, 11, false, false, 10);
+    addText('Attorney and Client may be referred to individually as a "Party" and collectively as the "Parties".');
+    y += 5;
 
-      // 4. Payment Terms
-      addText('4. PAYMENT TERMS', 12, true);
-      addText('Payment is due upon receipt of invoice unless otherwise stated.');
-      addText('If Attorney increases billing rates during the term of this Agreement, such increase shall apply only to services performed thirty (30) days after written notice to Client.');
-      addText('If Client does not agree to the increased rate, Client may terminate this Agreement by written notice.');
-      addText('Client acknowledges that Attorney has made no guarantee regarding the total amount of legal fees that may be incurred.');
-      y += 3;
+    // 1. Scope of Services
+    addText('1. SCOPE OF LEGAL SERVICES', 12, true);
+    addText('Attorney agrees to provide legal services to Client in connection with the following matter(s):');
+    addText(formData.matterDescription || '________', 11, false, false, 10);
+    addText('Attorney shall provide the Services in a professional and competent manner.');
+    y += 3;
 
-      // 5. Costs and Expenses
-      addText('5. COSTS AND EXPENSES', 12, true);
-      addText('Client agrees to pay all costs incurred in connection with the representation, including but not limited to:');
-      addText('• Court filing fees', 11, false, false, 10);
-      addText('• Deposition and transcript costs', 11, false, false, 10);
-      addText('• Expert witness fees', 11, false, false, 10);
-      addText('• Investigation expenses', 11, false, false, 10);
-      addText('• Long-distance telephone charges', 11, false, false, 10);
-      addText('• Courier or messenger services', 11, false, false, 10);
-      addText('• Photocopying and document reproduction', 11, false, false, 10);
-      addText('• Process server fees', 11, false, false, 10);
-      addText('Attorney may advance such costs on Client\'s behalf and bill Client accordingly or deduct them from any retainer on file.');
-      y += 3;
+    // 2. Responsibilities
+    addText('2. RESPONSIBILITIES OF THE PARTIES', 12, true);
+    addText('2.1 Attorney Responsibilities', 11, true);
+    addText('Attorney shall:');
+    ['Perform the Services competently and diligently;',
+     'Keep Client reasonably informed;',
+     'Respond to Client inquiries in a timely manner;',
+     'Provide legal advice consistent with applicable law'].forEach(line => addText(`• ${line}`, 11, false, false, 10));
+    y += 2;
 
-      // 6. Effective Date
-      addText('6. EFFECTIVE DATE', 12, true);
-      addText('This Agreement shall become effective on the date it is executed by both Parties.');
-      y += 3;
+    addText('2.2 Client Responsibilities', 11, true);
+    ['Provide truthful, accurate, and complete information;',
+     'Cooperate fully with Attorney;',
+     'Keep Attorney informed of changes;',
+     'Promptly review and respond to communications;',
+     'Timely pay all fees and costs'].forEach(line => addText(`• ${line}`, 11, false, false, 10));
+    y += 3;
 
-      // 7. Governing Law
-      addText('7. GOVERNING LAW', 12, true);
-      addText(`This Agreement shall be governed by and construed in accordance with the laws of the State of ${formData.governingLawState}.`);
-      y += 3;
-
-      // 8. Severability
-      addText('8. SEVERABILITY', 12, true);
-      addText('If any provision of this Agreement is held to be invalid, illegal, or unenforceable, such provision shall be modified to the extent necessary to be enforceable, and the remaining provisions shall remain in full force and effect.');
-      y += 3;
-
-      // 9. Entire Agreement
-      addText('9. ENTIRE AGREEMENT', 12, true);
-      addText('This Agreement constitutes the entire understanding between the Parties and supersedes all prior oral or written agreements, representations, or understandings relating to the subject matter herein.');
-      y += 3;
-
-      // 10. Amendments
-      addText('10. AMENDMENTS', 12, true);
-      addText('This Agreement may be amended only by a written instrument signed by both Parties.');
-      y += 3;
-
-      // Additional Terms
-      if (formData.additionalTerms) {
-        addText('11. ADDITIONAL TERMS', 12, true);
-        addText(formData.additionalTerms);
-        y += 3;
-      }
-
-      // Signatures
-      y += 10;
-      addText('11. SIGNATURES', 12, true);
-      addText('IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above.');
-      y += 10;
-
-      addText('ATTORNEY', 11, true);
-      y += 3;
-      addText('Signature: _______________________________');
-      addText(`Name: ${formData.attorneyName}`);
-      addText(`Date: ${formData.effectiveDate}`);
-      y += 10;
-
-      addText('CLIENT', 11, true);
-      y += 3;
-      addText('Signature: _______________________________');
-      addText(`Name: ${formData.clientName}`);
-      addText('Date: _______________________________');
-
-      doc.save('attorney-engagement-letter.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-    } finally {
-      setIsGenerating(false);
+    // 3. Compensation
+    addText('3. COMPENSATION', 12, true);
+    if (formData.feeType === 'flat') {
+      addText('3.1 Flat Fee', 11, true);
+      addText(`Client agrees to pay Attorney a flat fee of $${formData.flatFee || '________'}.`);
+    } else {
+      addText('3.1 Hourly Fee', 11, true);
+      addText(`Client agrees to pay Attorney at $${formData.hourlyRate || '________'} per hour.`);
     }
-  };
+    addText('3.2 Scope of Fees', 11, true);
+    ['Client conferences',
+     'Court appearances',
+     'Preparation of pleadings and documents',
+     'Legal research',
+     'Correspondence and communications'].forEach(line => addText(`• ${line}`, 11, false, false, 10));
+    y += 3;
+
+    // 4. Payment Terms
+    addText('4. PAYMENT TERMS', 12, true);
+    addText('Payment is due upon receipt of invoice. Increases in billing rates require 30 days notice.');
+    y += 3;
+
+    // 5. Costs and Expenses
+    addText('5. COSTS AND EXPENSES', 12, true);
+    ['Court filing fees', 'Deposition costs', 'Expert witness fees', 'Investigation expenses', 
+     'Long-distance charges', 'Courier services', 'Photocopying', 'Process server fees']
+      .forEach(line => addText(`• ${line}`, 11, false, false, 10));
+    addText('Attorney may advance costs on Client\'s behalf.');
+    y += 3;
+
+    // 6. Governing Law
+    addText('6. GOVERNING LAW', 12, true);
+    addText(`This Agreement is governed by the laws of the State of ${formData.governingLawState || '________'}.`);
+    y += 3;
+
+    // 7. Additional Terms
+    if (formData.additionalTerms) {
+      addText('7. ADDITIONAL TERMS', 12, true);
+      addText(formData.additionalTerms);
+      y += 3;
+    }
+
+    // 8. Signatures
+    addText('8. SIGNATURES', 12, true);
+    addText('IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.');
+    y += 10;
+
+    ['ATTORNEY', 'CLIENT'].forEach(party => {
+      addText(party, 11, true);
+      y += 3;
+      addText('Signature: _______________________________');
+      addText(`Name: ${party === 'ATTORNEY' ? formData.attorneyName || '________' : formData.clientName || '________'}`);
+      addText(`Date: ${formData.effectiveDate || '________'}`);
+      y += 10;
+    });
+
+    doc.save('Attorney-Engagement-Letter.pdf');
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+  } finally {
+    setIsGenerating(false);
+  }
+};
 
   const renderStepContent = () => {
     switch(step) {

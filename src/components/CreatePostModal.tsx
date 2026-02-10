@@ -40,24 +40,27 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
           } else {
             const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-            
             const { error: uploadError } = await supabase.storage
               .from('community-media')
               .upload(fileName, mediaFile, {
                 cacheControl: '3600',
                 upsert: false
               });
-
             if (uploadError) {
               console.warn("Upload error (storage may not be configured):", uploadError.message);
               toast.warning("Media upload unavailable. Posting text only.");
             } else {
-              const { data } = supabase.storage
+              // Get public URL after upload
+              const { publicUrl } = supabase.storage
                 .from('community-media')
-                .getPublicUrl(fileName);
-              
-              mediaUrl = data.publicUrl;
-              mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+                .getPublicUrl(fileName).data;
+              if (!publicUrl) {
+                console.warn("Could not get media URL.");
+                toast.warning("Could not get media URL. Posting text only.");
+              } else {
+                mediaUrl = publicUrl;
+                mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+              }
             }
           }
         } catch (uploadErr) {

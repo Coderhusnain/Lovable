@@ -351,122 +351,108 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Cohabitation Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
+  const textWidth = pageWidth - margin * 2;
+  let y = 25;
+
+  const checkPageBreak = (space = 10) => {
+    if (y + space > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
+    checkPageBreak();
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.setFontSize(11);
+
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const startX = margin + lw + 3;
+    const display = value || "";
+
+    if (display) doc.text(display, startX, y);
+    const w = display ? doc.getTextWidth(display) : minWidth;
+    doc.line(startX, y + 1, startX + w, y + 1);
+
+    y += 9;
+  };
+
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(12);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 6 + 3;
+  };
+
+  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(16);
+  const title = "COHABITATION AGREEMENT";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+
+  const tw = doc.getTextWidth(title);
+  doc.line(pageWidth / 2 - tw / 2, y + 2, pageWidth / 2 + tw / 2, y + 2);
+
+  y += 18;
+
+  addUnderlinedField("Date:", values.effectiveDate || "");
+  addUnderlinedField("Partner One:", values.party1Name || "");
+  addUnderlinedField("Partner Two:", values.party2Name || "");
+
+  y += 6;
+
+  const p1 = values.party1Name || "________";
+  const p2 = values.party2Name || "________";
+
+  addParagraph(
+    `This Cohabitation Agreement is entered into between ${p1} and ${p2}, who intend to live together in a shared residence without being legally married.`
+  );
+
+  addParagraph(
+    "The parties wish to define their rights and obligations regarding property, income, expenses, and financial matters during their cohabitation."
+  );
+
+  addParagraph(
+    "Each party shall retain ownership of their separate property unless otherwise agreed in writing."
+  );
+
+  addParagraph(
+    "The parties agree on the allocation of household expenses, financial responsibilities, and management of jointly acquired property."
+  );
+
+  addParagraph(
+    "This Agreement shall remain effective while the parties cohabit and may be terminated by mutual agreement or upon separation."
+  );
+
+  addParagraph(
+    "In witness whereof, the parties have executed this Cohabitation Agreement on the date first written above."
+  );
+
+  y += 8;
+  addParagraph("Sincerely,");
+
   y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+
+  doc.setFont("helvetica", "bold");
+  doc.text(p1, margin, y);
+  doc.line(margin, y + 1, margin + doc.getTextWidth(p1), y + 1);
+
+  y += 16;
+
+  doc.text(p2, margin, y);
+  doc.line(margin, y + 1, margin + doc.getTextWidth(p2), y + 1);
+
   doc.save("cohabitation_agreement.pdf");
 };
+
 
 export default function CohabitationAgreement() {
   return (

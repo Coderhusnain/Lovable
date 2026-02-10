@@ -64,14 +64,14 @@ const AffidavitOwnershipForm: React.FC<AffidavitOwnershipFormProps> = ({ onBack 
     county: '',
     
     // Owner Information
-    ownerName: '',
-    ownerAddress: '',
-    ownerCity: '',
-    ownerState: '',
-    ownerZip: '',
-    ownerPhone: '',
-    ownerIdType: '',
-    ownerIdNumber: '',
+    affiantName: '',
+    affiantAddress: '',
+    affiantCity: '',
+    affiantState: '',
+    affiantZip: '',
+    affiantPhone: '',
+    affiantType: '',
+    affiantNumber: '',
     
     // Property Information
     propertyType: '',
@@ -115,155 +115,139 @@ const AffidavitOwnershipForm: React.FC<AffidavitOwnershipFormProps> = ({ onBack 
   const nextStep = () => setStep(prev => Math.min(prev + 1, 5));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const generatePDF = () => {
-    setIsGenerating(true);
-    
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const maxWidth = pageWidth - 2 * margin;
-      let y = 20;
+ const generatePDF = () => {
+  setIsGenerating(true);
 
-      const addText = (text: string, fontSize: number = 11, isBold: boolean = false, centered: boolean = false, indent: number = 0) => {
-        doc.setFontSize(fontSize);
-        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        
-        const lines = doc.splitTextToSize(text, maxWidth - indent);
-        lines.forEach((line: string) => {
-          if (y > 270) {
-            doc.addPage();
-            y = 20;
-          }
-          if (centered) {
-            doc.text(line, pageWidth / 2, y, { align: 'center' });
-          } else {
-            doc.text(line, margin + indent, y);
-          }
-          y += fontSize * 0.5;
-        });
-        y += 2;
-      };
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+    let y = 20;
 
-      const stateName = formData.state ? getStateName(parseInt(formData.country), parseInt(formData.state)) : formData.notaryState;
+    const addText = (
+      text: string,
+      fontSize: number = 11,
+      isBold: boolean = false,
+      centered: boolean = false,
+      indent: number = 0
+    ) => {
+      doc.setFontSize(fontSize);
+      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+      const lines = doc.splitTextToSize(text, maxWidth - indent);
+      lines.forEach(line => {
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        if (centered) {
+          doc.text(line, pageWidth / 2, y, { align: 'center' });
+        } else {
+          doc.text(line, margin + indent, y);
+        }
+        y += fontSize * 0.5 + 2;
+      });
+      y += 2;
+    };
 
-      // Title
-      addText('AFFIDAVIT OF OWNERSHIP', 18, true, true);
-      y += 10;
+    const stateName = formData.state
+      ? getStateName(parseInt(formData.country), parseInt(formData.state))
+      : formData.notaryState;
 
-      // Jurisdiction Header
-      addText(`STATE OF ${stateName.toUpperCase()}`, 12, true);
-      addText(`COUNTY OF ${formData.county.toUpperCase() || formData.notaryCounty.toUpperCase()}`, 12, true);
-      y += 5;
+    // === PDF CONTENT ===
 
-      // Opening Statement
-      addText(`I, ${formData.ownerName}, being of legal age and being first duly sworn upon my oath, do hereby depose and state as follows:`, 11);
-      y += 5;
+    addText('AFFIDAVIT OF OWNERSHIP', 18, true, true);
+    addText('(Sworn Statement of Ownership)', 12, false, true);
+    y += 10;
 
-      // Section 1: Declarant Information
-      addText('1. DECLARANT IDENTIFICATION', 12, true);
-      addText(`My name is ${formData.ownerName}. I am over the age of 18 years and am competent to make this affidavit.`);
-      addText(`I reside at ${formData.ownerAddress}, ${formData.ownerCity}, ${formData.ownerState} ${formData.ownerZip}.`);
-      if (formData.ownerPhone) {
-        addText(`Contact Phone: ${formData.ownerPhone}.`);
-      }
-      if (formData.ownerIdType && formData.ownerIdNumber) {
-        addText(`Identification: ${formData.ownerIdType} - ${formData.ownerIdNumber}.`);
-      }
-      y += 3;
+    addText(`STATE OF ${stateName?.toUpperCase() || ''}`, 12, true);
+    addText(
+      `COUNTY OF ${formData.county?.toUpperCase() || formData.notaryCounty?.toUpperCase() || ''}`,
+      12,
+      true
+    );
+    y += 5;
 
-      // Section 2: Property Description
-      addText('2. PROPERTY DESCRIPTION', 12, true);
-      addText(`Type of Property: ${formData.propertyType}`);
-      addText('Property Description:');
-      addText(formData.propertyDescription, 11, false, false, 10);
-      if (formData.propertyLocation) {
-        addText(`Property Location: ${formData.propertyLocation}`);
-      }
-      if (formData.propertyValue) {
-        addText(`Estimated Value: $${formData.propertyValue}`);
-      }
-      y += 3;
+    addText(
+      `I, ${formData.affiantName || '________'}, being of legal age and first duly sworn, do hereby depose and state as follows:`,
+      11
+    );
+    y += 5;
 
-      // Section 3: Ownership Declaration
-      addText('3. DECLARATION OF OWNERSHIP', 12, true);
-      addText(`I hereby declare that I am the sole and rightful owner of the above-described property.`);
-      if (formData.acquisitionDate) {
-        addText(`Date of Acquisition: ${formData.acquisitionDate}`);
-      }
-      if (formData.acquisitionMethod) {
-        addText(`Method of Acquisition: ${formData.acquisitionMethod}`);
-      }
-      y += 3;
+    // 1. AFFIANT INFO
+    addText('1. AFFIANT INFORMATION', 12, true);
+    addText(`Full Name: ${formData.affiantName || '________'}`);
+    addText(
+      `Address: ${formData.affiantAddress || '________'}, ${formData.affiantCity || '________'}, ${formData.affiantState || '________'} ${formData.affiantZip || '________'}`
+    );
+    addText(`Phone: ${formData.affiantPhone || '________'}`);
+    addText(`ID Type: ${formData.affiantType || '________'}`);
+    addText(`ID Number: ${formData.affiantNumber || '________'}`);
+    y += 3;
 
-      // Section 4: Purpose
-      addText('4. PURPOSE OF THIS AFFIDAVIT', 12, true);
-      addText(formData.ownershipPurpose);
-      y += 3;
+    // 2. PROPERTY INFO
+    addText('2. PROPERTY INFORMATION', 12, true);
+    addText(`Property Type: ${formData.propertyType || '________'}`);
+    addText(`Description: ${formData.propertyDescription || '________'}`);
+    addText(`Location: ${formData.propertyLocation || '________'}`);
+    addText(`Estimated Value: $${formData.propertyValue || '________'}`);
+    addText(`Acquisition Date: ${formData.acquisitionDate || '________'}`);
+    addText(`Acquisition Method: ${formData.acquisitionMethod || '________'}`);
+    y += 3;
 
-      // Section 5: Supporting Documentation
-      if (formData.supportingDocs) {
-        addText('5. SUPPORTING DOCUMENTATION', 12, true);
-        addText('The following documents support my claim of ownership:');
-        addText(formData.supportingDocs, 11, false, false, 10);
-        y += 3;
-      }
+    // 3. PURPOSE & STATEMENT
+    addText('3. PURPOSE OF THIS AFFIDAVIT', 12, true);
+    addText(formData.ownershipPurpose || '________');
+    y += 3;
 
-      // Section 6: Additional Statements
-      if (formData.additionalStatements) {
-        addText('6. ADDITIONAL STATEMENTS', 12, true);
-        addText(formData.additionalStatements);
-        y += 3;
-      }
+    addText('4. SUPPORTING DOCUMENTS', 12, true);
+    addText(formData.supportingDocs || '________');
+    y += 3;
 
-      // Section 7: Warranties
-      addText('7. WARRANTIES AND REPRESENTATIONS', 12, true);
-      addText('I hereby warrant and represent that:');
-      addText('• I have good and marketable title to the described property;', 11, false, false, 10);
-      addText('• The property is free and clear of all liens, encumbrances, and claims unless otherwise stated;', 11, false, false, 10);
-      addText('• I have full right and authority to make this declaration;', 11, false, false, 10);
-      addText('• The information provided herein is true, accurate, and complete.', 11, false, false, 10);
-      y += 3;
+    addText('5. ADDITIONAL STATEMENTS', 12, true);
+    addText(formData.additionalStatements || '________');
+    y += 5;
 
-      // Affirmation
-      addText('8. AFFIRMATION', 12, true);
-      addText('I hereby declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge, information, and belief.');
-      y += 5;
+    // AFFIRMATION
+    addText('6. AFFIRMATION', 12, true);
+    addText(
+      'I declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge and belief.'
+    );
+    y += 5;
 
-      // Signature Block
-      addText('FURTHER AFFIANT SAYETH NOT.', 11, true, true);
-      y += 15;
+    // Signature
+    addText('FURTHER AFFIANT SAYETH NOT.', 11, true, true);
+    y += 15;
+    addText('_______________________________', 11);
+    addText(`${formData.affiantName || '________'}`, 11);
+    addText('Affiant', 10);
+    addText(`Date: ${formData.statementDate || '________'}`, 11);
+    y += 10;
 
-      addText('_______________________________', 11, false, false);
-      addText(`${formData.ownerName}`, 11, false, false);
-      addText('Affiant / Property Owner', 10, false, false);
-      y += 3;
-      addText(`Date: ${formData.statementDate || '_______________'}`, 11);
-      y += 10;
+    // NOTARY
+    addText('NOTARY ACKNOWLEDGMENT', 14, true, true);
+    y += 5;
+    addText(`STATE OF ${formData.notaryState?.toUpperCase() || stateName?.toUpperCase()}`);
+    addText(`COUNTY OF ${formData.notaryCounty?.toUpperCase() || formData.county?.toUpperCase()}`);
+    y += 5;
+    addText(
+      `Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.affiantName || '________'}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`
+    );
+    y += 15;
+    addText('_______________________________', 11);
+    addText('Notary Public', 11);
+    addText('My Commission Expires: _______________', 10);
+    addText('[NOTARY SEAL]', 10);
 
-      // Notary Block
-      addText('NOTARY ACKNOWLEDGMENT', 14, true, true);
-      y += 5;
-      addText(`STATE OF ${formData.notaryState.toUpperCase() || stateName.toUpperCase()}`);
-      addText(`COUNTY OF ${formData.notaryCounty.toUpperCase() || formData.county.toUpperCase()}`);
-      y += 5;
-      addText(`Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.ownerName}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`);
-      y += 15;
+    doc.save('Affidavit_of_Ownership.pdf');
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+  } finally {
+    setIsGenerating(false);
+  }
+};
 
-      addText('_______________________________', 11, false, false);
-      addText('Notary Public', 11, false, false);
-      addText('My Commission Expires: _______________', 10, false, false);
-      y += 5;
-      addText('[NOTARY SEAL]', 10, false, false);
 
-      // Save PDF
-      doc.save('Affidavit_of_Ownership.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   const renderStepContent = () => {
     switch(step) {
@@ -327,69 +311,69 @@ const AffidavitOwnershipForm: React.FC<AffidavitOwnershipFormProps> = ({ onBack 
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="ownerName">Full Legal Name *</Label>
+                <Label htmlFor="affiantName">Full Legal Name *</Label>
                 <Input
-                  id="ownerName"
-                  value={formData.ownerName}
-                  onChange={(e) => handleInputChange('ownerName', e.target.value)}
+                  id="affiantName"
+                  value={formData.affiantName}
+                  onChange={(e) => handleInputChange('affiantName', e.target.value)}
                   placeholder="Enter your full legal name"
                 />
               </div>
 
               <div>
-                <Label htmlFor="ownerAddress">Street Address *</Label>
+                <Label htmlFor="affiantAddress">Street Address *</Label>
                 <Input
-                  id="ownerAddress"
-                  value={formData.ownerAddress}
-                  onChange={(e) => handleInputChange('ownerAddress', e.target.value)}
+                  id="affiantAddress"
+                  value={formData.affiantAddress}
+                  onChange={(e) => handleInputChange('affiantAddress', e.target.value)}
                   placeholder="Enter your street address"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="ownerCity">City *</Label>
+                  <Label htmlFor="affiantCity">City *</Label>
                   <Input
-                    id="ownerCity"
-                    value={formData.ownerCity}
-                    onChange={(e) => handleInputChange('ownerCity', e.target.value)}
+                    id="affiantCity"
+                    value={formData.affiantCity}
+                    onChange={(e) => handleInputChange('affiantCity', e.target.value)}
                     placeholder="City"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="ownerState">State *</Label>
+                  <Label htmlFor="affiantState">State *</Label>
                   <Input
-                    id="ownerState"
-                    value={formData.ownerState}
-                    onChange={(e) => handleInputChange('ownerState', e.target.value)}
+                    id="affiantState"
+                    value={formData.affiantState}
+                    onChange={(e) => handleInputChange('affiantState', e.target.value)}
                     placeholder="State"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="ownerZip">ZIP Code *</Label>
+                  <Label htmlFor="affiantZip">ZIP Code *</Label>
                   <Input
-                    id="ownerZip"
-                    value={formData.ownerZip}
-                    onChange={(e) => handleInputChange('ownerZip', e.target.value)}
+                    id="affiantZip"
+                    value={formData.affiantZip}
+                    onChange={(e) => handleInputChange('affiantZip', e.target.value)}
                     placeholder="ZIP"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="ownerPhone">Phone Number</Label>
+                <Label htmlFor="affiantPhone">Phone Number</Label>
                 <Input
-                  id="ownerPhone"
-                  value={formData.ownerPhone}
-                  onChange={(e) => handleInputChange('ownerPhone', e.target.value)}
+                  id="affiantPhone"
+                  value={formData.affiantPhone}
+                  onChange={(e) => handleInputChange('affiantPhone', e.target.value)}
                   placeholder="Enter your phone number"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="ownerIdType">ID Type</Label>
-                  <Select value={formData.ownerIdType} onValueChange={(value) => handleInputChange('ownerIdType', value)}>
+                  <Label htmlFor="affiantType">ID Type</Label>
+                  <Select value={formData.affiantType} onValueChange={(value) => handleInputChange('affiantType', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select ID type" />
                     </SelectTrigger>
@@ -403,11 +387,11 @@ const AffidavitOwnershipForm: React.FC<AffidavitOwnershipFormProps> = ({ onBack 
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="ownerIdNumber">ID Number</Label>
+                  <Label htmlFor="affiantNumber">ID Number</Label>
                   <Input
-                    id="ownerIdNumber"
-                    value={formData.ownerIdNumber}
-                    onChange={(e) => handleInputChange('ownerIdNumber', e.target.value)}
+                    id="affiantNumber"
+                    value={formData.affiantNumber}
+                    onChange={(e) => handleInputChange('affiantNumber', e.target.value)}
                     placeholder="Enter ID number"
                   />
                 </div>

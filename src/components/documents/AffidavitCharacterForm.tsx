@@ -114,135 +114,162 @@ const AffidavitCharacterForm: React.FC<AffidavitCharacterFormProps> = ({ onBack 
   const nextStep = () => setStep(prev => Math.min(prev + 1, 5));
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
-  const generatePDF = () => {
-    setIsGenerating(true);
-    
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.width;
-      const margin = 20;
-      const maxWidth = pageWidth - 2 * margin;
-      let y = 20;
+const generatePDF = () => {
+  setIsGenerating(true);
 
-      const addText = (text: string, fontSize: number = 11, isBold: boolean = false, centered: boolean = false, indent: number = 0) => {
-        doc.setFontSize(fontSize);
-        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        
-        const lines = doc.splitTextToSize(text, maxWidth - indent);
-        lines.forEach((line: string) => {
-          if (y > 270) {
-            doc.addPage();
-            y = 20;
-          }
-          if (centered) {
-            doc.text(line, pageWidth / 2, y, { align: 'center' });
-          } else {
-            doc.text(line, margin + indent, y);
-          }
-          y += fontSize * 0.5;
-        });
-        y += 2;
-      };
+  try {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+    let y = 20;
 
-      const stateName = formData.state ? getStateName(parseInt(formData.country), parseInt(formData.state)) : formData.notaryState;
+    // Helper to add text with wrapping, bold, centered, and indentation
+    const addText = (
+      text: string,
+      fontSize: number = 11,
+      isBold: boolean = false,
+      centered: boolean = false,
+      indent: number = 0
+    ) => {
+      doc.setFontSize(fontSize);
+      doc.setFont('helvetica', isBold ? 'bold' : 'normal');
 
-      // Title
-      addText('AFFIDAVIT OF CHARACTER', 18, true, true);
-      addText('(Character Reference Sworn Statement)', 12, false, true);
-      y += 10;
+      const lines = doc.splitTextToSize(text, maxWidth - indent);
+      lines.forEach((line: string) => {
+        if (y > 270) { // new page
+          doc.addPage();
+          y = 20;
+        }
+        if (centered) {
+          doc.text(line, pageWidth / 2, y, { align: 'center' });
+        } else {
+          doc.text(line, margin + indent, y);
+        }
+        y += fontSize * 0.5 + 2;
+      });
+      y += 2;
+    };
 
-      // Jurisdiction Header
-      addText(`STATE OF ${stateName.toUpperCase()}`, 12, true);
-      addText(`COUNTY OF ${formData.county.toUpperCase() || formData.notaryCounty.toUpperCase()}`, 12, true);
-      y += 5;
+    const stateName = formData.state
+      ? getStateName(parseInt(formData.country), parseInt(formData.state))
+      : formData.notaryState;
 
-      // Opening Statement
-      addText(`I, ${formData.affiantName}, being of legal age and being first duly sworn upon my oath, do hereby depose and state as follows:`, 11);
-      y += 5;
+    // === PDF Content ===
 
-      // Section 1: Affiant Information
-      addText('1. AFFIANT IDENTIFICATION', 12, true);
-      addText(`My name is ${formData.affiantName}. I am over the age of 18 years and am competent to make this affidavit.`);
-      addText(`I reside at ${formData.affiantAddress}, ${formData.affiantCity}, ${formData.affiantState} ${formData.affiantZip}.`);
-      addText(`My occupation is: ${formData.affiantOccupation}.`);
-      if (formData.affiantPhone) {
-        addText(`Contact Information: ${formData.affiantPhone}${formData.affiantEmail ? ', ' + formData.affiantEmail : ''}.`);
-      }
-      y += 3;
+    // Title
+    addText('AFFIDAVIT OF CHARACTER', 18, true, true);
+    addText('(Character Reference Sworn Statement)', 12, false, true);
+    y += 10;
 
-      // Section 2: Relationship with Subject
-      addText('2. RELATIONSHIP WITH THE SUBJECT', 12, true);
-      addText(`I have known ${formData.subjectName} for approximately ${formData.yearsKnown} years.`);
-      addText(`My relationship to the subject is: ${formData.subjectRelationship}.`);
-      if (formData.howMet) {
-        addText(`We first met: ${formData.howMet}.`);
-      }
-      y += 3;
+    // Jurisdiction Header
+    addText(`STATE OF ${stateName?.toUpperCase() || ''}`, 12, true);
+    addText(
+      `COUNTY OF ${formData.county?.toUpperCase() || formData.notaryCounty?.toUpperCase() || ''}`,
+      12,
+      true
+    );
+    y += 5;
 
-      // Section 3: Purpose
-      addText('3. PURPOSE OF THIS AFFIDAVIT', 12, true);
-      addText(formData.purposeOfReference);
-      y += 3;
+    // Opening Statement
+    addText(
+      `I, ${formData.affiantName || '________'}, being of legal age and first duly sworn upon my oath, do hereby depose and state as follows:`,
+      11
+    );
+    y += 5;
 
-      // Section 4: Character Assessment
-      addText('4. CHARACTER ASSESSMENT', 12, true);
-      addText(`Based on my personal knowledge of ${formData.subjectName}, I can attest to the following character qualities:`);
-      addText(formData.characterQualities, 11, false, false, 10);
-      y += 3;
-
-      // Section 5: Specific Examples
-      if (formData.specificExamples) {
-        addText('5. SPECIFIC EXAMPLES', 12, true);
-        addText('I offer the following specific examples that demonstrate the character of the subject:');
-        addText(formData.specificExamples, 11, false, false, 10);
-        y += 3;
-      }
-
-      // Section 6: Recommendation
-      addText('6. RECOMMENDATION', 12, true);
-      addText(formData.recommendation);
-      y += 5;
-
-      // Affirmation
-      addText('7. AFFIRMATION', 12, true);
-      addText('I hereby declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge, information, and belief. I have made this statement voluntarily and without any promise of compensation or reward.');
-      y += 5;
-
-      // Signature Block
-      addText('FURTHER AFFIANT SAYETH NOT.', 11, true, true);
-      y += 15;
-
-      addText('_______________________________', 11, false, false);
-      addText(`${formData.affiantName}`, 11, false, false);
-      addText('Affiant', 10, false, false);
-      y += 3;
-      addText(`Occupation: ${formData.affiantOccupation}`, 10, false, false);
-      addText(`Date: ${formData.statementDate || '_______________'}`, 11);
-      y += 10;
-
-      // Notary Block
-      addText('NOTARY ACKNOWLEDGMENT', 14, true, true);
-      y += 5;
-      addText(`STATE OF ${formData.notaryState.toUpperCase() || stateName.toUpperCase()}`);
-      addText(`COUNTY OF ${formData.notaryCounty.toUpperCase() || formData.county.toUpperCase()}`);
-      y += 5;
-      addText(`Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.affiantName}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`);
-      y += 15;
-
-      addText('_______________________________', 11, false, false);
-      addText('Notary Public', 11, false, false);
-      addText('My Commission Expires: _______________', 10, false, false);
-      y += 5;
-      addText('[NOTARY SEAL]', 10, false, false);
-
-      // Save PDF
-      doc.save('Affidavit_of_Character.pdf');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-    } finally {
-      setIsGenerating(false);
+    // Section 1: Affiant Information
+    addText('1. AFFIANT IDENTIFICATION', 12, true);
+    addText(`My name is ${formData.affiantName || '________'}. I am over the age of 18 years and am competent to make this affidavit.`);
+    addText(
+      `I reside at ${formData.affiantAddress || '________'}, ${formData.affiantCity || '________'}, ${formData.affiantState || '________'} ${formData.affiantZip || '________'}.`
+    );
+    addText(`My occupation is: ${formData.affiantOccupation || '________'}.`);
+    if (formData.affiantPhone || formData.affiantEmail) {
+      addText(
+        `Contact Information: ${formData.affiantPhone || '________'}${
+          formData.affiantEmail ? ', ' + formData.affiantEmail : ''
+        }.`
+      );
     }
-  };
+    y += 3;
+
+    // Section 2: Relationship with Subject
+    addText('2. RELATIONSHIP WITH THE SUBJECT', 12, true);
+    addText(`I have known ${formData.subjectName || '________'} for approximately ${formData.yearsKnown || '________'} years.`);
+    addText(`My relationship to the subject is: ${formData.subjectRelationship || '________'}.`);
+    if (formData.howMet) addText(`We first met: ${formData.howMet}.`);
+    y += 3;
+
+    // Section 3: Purpose
+    addText('3. PURPOSE OF THIS AFFIDAVIT', 12, true);
+    addText(formData.purposeOfReference || '________');
+    y += 3;
+
+    // Section 4: Character Assessment
+    addText('4. CHARACTER ASSESSMENT', 12, true);
+    addText(
+      `Based on my personal knowledge of ${formData.subjectName || '________'}, I can attest to the following character qualities:`
+    );
+    addText(formData.characterQualities || '________', 11, false, false, 10);
+    y += 3;
+
+    // Section 5: Specific Examples
+    if (formData.specificExamples) {
+      addText('5. SPECIFIC EXAMPLES', 12, true);
+      addText('I offer the following specific examples that demonstrate the character of the subject:');
+      addText(formData.specificExamples, 11, false, false, 10);
+      y += 3;
+    }
+
+    // Section 6: Recommendation
+    addText('6. RECOMMENDATION', 12, true);
+    addText(formData.recommendation || '________');
+    y += 5;
+
+    // Affirmation
+    addText('7. AFFIRMATION', 12, true);
+    addText(
+      'I hereby declare under penalty of perjury that the foregoing statements are true and correct to the best of my knowledge, information, and belief. I have made this statement voluntarily and without any promise of compensation or reward.'
+    );
+    y += 5;
+
+    // Signature Block
+    addText('FURTHER AFFIANT SAYETH NOT.', 11, true, true);
+    y += 15;
+
+    addText('_______________________________', 11);
+    addText(`${formData.affiantName || '________'}`, 11);
+    addText('Affiant', 10);
+    addText(`Occupation: ${formData.affiantOccupation || '________'}`, 10);
+    addText(`Date: ${formData.statementDate || '________'}`, 11);
+    y += 10;
+
+    // Notary Block
+    addText('NOTARY ACKNOWLEDGMENT', 14, true, true);
+    y += 5;
+    addText(`STATE OF ${formData.notaryState?.toUpperCase() || stateName?.toUpperCase()}`);
+    addText(`COUNTY OF ${formData.notaryCounty?.toUpperCase() || formData.county?.toUpperCase()}`);
+    y += 5;
+    addText(
+      `Subscribed and sworn to (or affirmed) before me on this ______ day of ____________, 20___, by ${formData.affiantName || '________'}, proved to me on the basis of satisfactory evidence to be the person who appeared before me.`
+    );
+    y += 15;
+
+    addText('_______________________________', 11);
+    addText('Notary Public', 11);
+    addText('My Commission Expires: _______________', 10);
+    addText('[NOTARY SEAL]', 10);
+
+    doc.save('Affidavit_of_Character.pdf');
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+
 
   const renderStepContent = () => {
     switch(step) {
