@@ -1,471 +1,193 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, FileText } from "lucide-react";
 import { FormWizard } from "./FormWizard";
 import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
-  {
-    label: "Jurisdiction",
-    fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+  // --- Keep all your previous steps here ---
+];
 
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
-  
+
+  // Title
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
-  doc.text("L L C Business Formation", 105, y, { align: "center" });
+  doc.text("LLC BUSINESS FORMATION", 105, y, { align: "center" });
   y += 15;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+
+  // Effective Date
+  doc.text("Effective Date:", 20, y);
+  doc.text(values.effectiveDate || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1); // underline
+  y += 8;
+
+  // Jurisdiction
+  doc.text("Jurisdiction:", 20, y);
+  doc.text((values.state || "") + ", " + (values.country || ""), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 12;
+
+  // PARTIES
   doc.setFont("helvetica", "bold");
   doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+
+  doc.setFont("helvetica", "normal");
+
+  // First Party
+  doc.text("First Party Name:", 20, y);
+  doc.text(values.party1Name || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Type:", 20, y);
+  doc.text(values.party1Type || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Address:", 20, y);
+  doc.text((values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Contact:", 20, y);
+  doc.text((values.party1Email || "") + " | " + (values.party1Phone || ""), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 12;
+
+  // Second Party
+  doc.text("Second Party Name:", 20, y);
+  doc.text(values.party2Name || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Type:", 20, y);
+  doc.text(values.party2Type || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Address:", 20, y);
+  doc.text((values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 8;
+
+  doc.text("Contact:", 20, y);
+  doc.text((values.party2Email || "") + " | " + (values.party2Phone || ""), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 12;
+
+  // Document Details
   doc.setFont("helvetica", "bold");
   doc.text("DOCUMENT DETAILS", 20, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 8;
-  
-  doc.setFontSize(10);
+
   doc.setFont("helvetica", "normal");
   const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
+  descLines.forEach((line) => {
+    doc.text(line, 20, y);
+    doc.line(20, y + 1, 190, y + 1);
+    y += 6;
+  });
+  y += 6;
+
+  // TERMS & CONDITIONS
   doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
+  doc.text("TERMS & CONDITIONS", 20, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 8;
-  
-  doc.setFontSize(10);
+
   doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  doc.text("Duration:", 20, y);
+  doc.text(values.duration || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
+
+  doc.text("Termination Notice:", 20, y);
+  doc.text(values.terminationNotice || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
+
+  doc.text("Confidentiality:", 20, y);
+  doc.text(values.confidentiality === "yes" ? "Included" : "Not Included", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+
+  doc.text("Dispute Resolution:", 20, y);
+  doc.text(values.disputeResolution || "N/A", 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 12;
+
+  // Signatures
   doc.setFont("helvetica", "bold");
   doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  doc.line(20, y + 1, 190, y + 1);
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
-  doc.save("l_l_c_business_formation.pdf");
+
+  doc.setFont("helvetica", "normal");
+  doc.text("First Party Signature:", 20, y);
+  doc.text(values.party1Signature || "", 80, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 6;
+
+  doc.text("Second Party Signature:", 20, y);
+  doc.text(values.party2Signature || "", 80, y);
+  doc.line(20, y + 1, 190, y + 1);
+  y += 10;
+
+  doc.text("Date:", 20, y);
+  doc.text(new Date().toLocaleDateString(), 60, y);
+  doc.line(20, y + 1, 190, y + 1);
+
+  doc.save("llc_business_formation.pdf");
 };
 
 export default function LLCBusinessFormation() {
+  const navigate = useNavigate();
+
   return (
-    <FormWizard
-      steps={steps}
-      title="L L C Business Formation"
-      subtitle="Complete each step to generate your document"
-      onGenerate={generatePDF}
-      documentType="llcbusinessformation"
-    />
+    <Layout>
+      <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
+        <div className="mb-8">
+          <Button
+            variant="outline"
+            onClick={() => navigate(-1)}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </Button>
+
+          <div className="text-center mb-8">
+            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
+            <h1 className="text-4xl font-bold mb-4">
+              LLC Business Formation
+            </h1>
+            <p className="text-xl text-gray-600">
+              Complete the form to generate your LLC Formation Document
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+          <FormWizard
+            steps={steps}
+            title="LLC Business Formation"
+            subtitle="Complete each step to generate your document"
+            onGenerate={generatePDF}
+            documentType="llcbusinessformation"
+          />
+        </div>
+      </div>
+    </Layout>
   );
 }
