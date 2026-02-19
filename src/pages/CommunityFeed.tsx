@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import PostCard from '../components/PostCard';
@@ -7,29 +6,29 @@ import { Button } from '@/components/ui/button';
 import { Users, MessageSquarePlus } from 'lucide-react';
 
 const CommunityFeed: React.FC = () => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [dbError, setDbError] = useState<string | null>(null);
 
-  // Fetch posts from Supabase
+  // Fetch posts with user info
   const fetchPosts = async () => {
     setLoading(true);
     setDbError(null);
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('*')
+        .select('*, users(*)') // fetch user relation
         .order('created_at', { ascending: false });
-      
+
       if (error) {
-        console.error("Supabase error:", error);
+        console.error('Supabase error:', error);
         setDbError(`Database Error: ${error.message}. Make sure to run the migration SQL in Supabase SQL Editor.`);
       } else if (data) {
         setPosts(data);
       }
     } catch (err: any) {
-      console.error("Fetch error:", err);
+      console.error('Fetch error:', err);
       setDbError(`Connection Error: ${err.message}`);
     }
     setLoading(false);
@@ -37,14 +36,38 @@ const CommunityFeed: React.FC = () => {
 
   useEffect(() => {
     fetchPosts();
-    // Realtime updates
+
+    // Realtime subscription for new posts
     const channel = supabase
       .channel('public:posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, (payload) => {
-        setPosts((prev) => [payload.new, ...prev]);
-      })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'posts' },
+        async (payload) => {
+          try {
+            // Fetch full post with user relation
+            const { data, error } = await supabase
+              .from('posts')
+              .select('*, users(*)')
+              .eq('id', payload.new.id)
+              .single();
+
+            if (error) {
+              console.error('Error fetching new post details:', error);
+              return;
+            }
+
+            setPosts((prev) => [data, ...prev]);
+          } catch (err) {
+            console.error('Error fetching new post:', err);
+          }
+        }
+      )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
@@ -69,14 +92,11 @@ const CommunityFeed: React.FC = () => {
           >
             <MessageSquarePlus className="w-6 h-6" /> New Post
           </Button>
-          {/* Decorative Accent */}
           <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-blue-200 via-indigo-200 to-white rounded-full blur-2xl opacity-40 pointer-events-none" />
         </div>
 
-        {/* Modal for Creating Post */}
-        {showModal && (
-          <CreatePostModal onClose={() => setShowModal(false)} onPost={fetchPosts} />
-        )}
+        {/* Modal */}
+        {showModal && <CreatePostModal onClose={() => setShowModal(false)} onPost={fetchPosts} />}
 
         {/* Feed Content */}
         {loading ? (
