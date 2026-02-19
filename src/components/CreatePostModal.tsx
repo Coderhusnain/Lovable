@@ -27,8 +27,8 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
 
     setLoading(true);
     try {
-      let mediaUrl = null;
-      let mediaType = null;
+      let mediaUrl: string | null = null;
+      let mediaType: 'image' | 'video' | null = null;
 
       if (mediaFile) {
         if (mediaFile.size > 5 * 1024 * 1024) {
@@ -36,19 +36,27 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
         } else {
           const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
           const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+          // Upload file
           const { error: uploadError } = await supabase.storage
             .from('community-media')
             .upload(fileName, mediaFile, { cacheControl: '3600', upsert: false });
+
           if (!uploadError) {
-            const { publicUrl } = supabase.storage.from('community-media').getPublicUrl(fileName).data;
-            if (publicUrl) {
-              mediaUrl = publicUrl;
+            // Correctly get public URL
+            const { data: publicData, error: publicError } = supabase.storage
+              .from('community-media')
+              .getPublicUrl(fileName);
+
+            if (!publicError && publicData?.publicUrl) {
+              mediaUrl = publicData.publicUrl;
               mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
             }
           }
         }
       }
 
+      // Insert post into Supabase
       const { error: insertError } = await supabase.from('posts').insert([
         { guest_name: guestName.trim(), content: content.trim(), media_url: mediaUrl, media_type: mediaType },
       ]);
@@ -56,8 +64,8 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
       if (insertError) throw insertError;
 
       toast.success("Post shared successfully!");
-      onPost();
-      onClose();
+      onPost(); // Refresh feed
+      onClose(); // Close modal
     } catch (error: any) {
       toast.error(error.message || "Failed to post. Try again.");
     } finally {
@@ -68,7 +76,7 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-xl w-full max-w-md p-6 relative shadow-2xl">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
           <X className="w-5 h-5" />
         </button>
         <h2 className="text-xl font-bold mb-1 text-gray-900">Share Your Story</h2>
@@ -82,7 +90,14 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
 
           <div className="space-y-2">
             <Label htmlFor="content">Your Story</Label>
-            <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="resize-none" disabled={loading} />
+            <Textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={4}
+              className="resize-none"
+              disabled={loading}
+            />
           </div>
 
           <div className="space-y-2">
@@ -98,13 +113,25 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
               />
               <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <Upload className="w-4 h-4" />
-                {mediaFile ? <span className="text-blue-600 font-medium truncate max-w-[200px]">{mediaFile.name}</span> : <span>Click to upload image or video</span>}
+                {mediaFile ? (
+                  <span className="text-blue-600 font-medium truncate max-w-[200px]">{mediaFile.name}</span>
+                ) : (
+                  <span>Click to upload image or video</span>
+                )}
               </div>
             </div>
           </div>
 
           <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-2" disabled={loading}>
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Posting...</> : <><Send className="w-4 h-4 mr-2" />Post Story</>}
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />Posting...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" />Post Story
+              </>
+            )}
           </Button>
         </form>
       </div>
