@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 interface CreatePostModalProps {
   onClose: () => void;
-  onPost: () => void; // triggers CommunityFeed refresh
+  onPost: () => void;
 }
 
 export default function CreatePostModal({ onClose, onPost }: CreatePostModalProps) {
@@ -20,66 +20,72 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!guestName.trim() && !supabase.auth.getUser) {
-      toast.error("Please enter your name or login first");
-      return;
-    }
-
-    if (!content.trim()) {
-      toast.error("Content cannot be empty");
+    
+    if (!guestName.trim() || !content.trim()) {
+      toast.error("Name and Content are required");
       return;
     }
 
     setLoading(true);
-
     try {
-      let mediaUrl: string | null = null;
-      let mediaType: string | null = null;
+      let mediaUrl = null;
+      let mediaType = null;
 
-      // 1️⃣ Media Upload
+      // 1. Handle Media Upload (if a file is selected)
       if (mediaFile) {
-        if (mediaFile.size > 5 * 1024 * 1024) {
-          toast.warning("File too large (max 5MB). Posting text only.");
-        } else {
-          const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
-          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from('community-media')
-            .upload(fileName, mediaFile, { cacheControl: '3600', upsert: false });
-
-          if (uploadError) {
-            console.warn("Upload error:", uploadError.message);
-            toast.warning("Media upload failed. Posting text only.");
+        try {
+          // Validate file size (max 5MB)
+          if (mediaFile.size > 5 * 1024 * 1024) {
+            toast.warning("File too large (max 5MB). Posting text only.");
           } else {
-            const { data } = supabase.storage.from('community-media').getPublicUrl(fileName);
-            mediaUrl = data.publicUrl;
-            mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+            const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage
+              .from('community-media')
+              .upload(fileName, mediaFile, {
+                cacheControl: '3600',
+                upsert: false
+              });
+            if (uploadError) {
+              console.warn("Upload error (storage may not be configured):", uploadError.message);
+              toast.warning("Media upload unavailable. Posting text only.");
+            } else {
+              // Get public URL after upload
+              const { publicUrl } = supabase.storage
+                .from('community-media')
+                .getPublicUrl(fileName).data;
+              if (!publicUrl) {
+                console.warn("Could not get media URL.");
+                toast.warning("Could not get media URL. Posting text only.");
+              } else {
+                mediaUrl = publicUrl;
+                mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+              }
+            }
           }
+        } catch (uploadErr) {
+          console.warn("Media upload failed:", uploadErr);
+          toast.warning("Could not upload media. Posting text only.");
         }
       }
 
-      // 2️⃣ Get logged-in user (if any)
-      const { data: currentUser } = await supabase.auth.getUser();
-
-      // 3️⃣ Insert post
-      const { error: insertError } = await supabase.from('posts').insert([
-        {
-          user_id: currentUser?.user?.id || null, // link registered users
-          guest_name: guestName.trim() || null,   // fallback for guests
-          content: content.trim(),
-          video_url: mediaType === 'video' ? mediaUrl : null,
-          media_url: mediaType === 'image' ? mediaUrl : null,
-          media_type: mediaType,
-        },
-      ]);
+      // 2. Insert Post Data into Database
+      const { error: insertError } = await supabase
+        .from('posts')
+        .insert([
+          {
+            guest_name: guestName.trim(),
+            content: content.trim(),
+            media_url: mediaUrl,
+            media_type: mediaType,
+          },
+        ]);
 
       if (insertError) throw insertError;
 
       toast.success("Post shared successfully!");
-      onPost();  // refresh feed
-      onClose(); // close modal
+      onPost(); // Trigger feed refresh
+      onClose(); // Close modal
     } catch (error: any) {
       console.error('Error posting:', error);
       toast.error(error.message || "Failed to post. Please try again.");
@@ -165,4 +171,4 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
       </div>
     </div>
   );
- }
+}
