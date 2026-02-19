@@ -20,7 +20,6 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!guestName.trim() || !content.trim()) {
       toast.error("Name and Content are required");
       return;
@@ -31,64 +30,36 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
       let mediaUrl = null;
       let mediaType = null;
 
-      // 1. Handle Media Upload (if a file is selected)
       if (mediaFile) {
-        try {
-          // Validate file size (max 5MB)
-          if (mediaFile.size > 5 * 1024 * 1024) {
-            toast.warning("File too large (max 5MB). Posting text only.");
-          } else {
-            const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-            const { error: uploadError } = await supabase.storage
-              .from('community-media')
-              .upload(fileName, mediaFile, {
-                cacheControl: '3600',
-                upsert: false
-              });
-            if (uploadError) {
-              console.warn("Upload error (storage may not be configured):", uploadError.message);
-              toast.warning("Media upload unavailable. Posting text only.");
-            } else {
-              // Get public URL after upload
-              const { publicUrl } = supabase.storage
-                .from('community-media')
-                .getPublicUrl(fileName).data;
-              if (!publicUrl) {
-                console.warn("Could not get media URL.");
-                toast.warning("Could not get media URL. Posting text only.");
-              } else {
-                mediaUrl = publicUrl;
-                mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
-              }
+        if (mediaFile.size > 5 * 1024 * 1024) {
+          toast.warning("File too large (max 5MB). Posting text only.");
+        } else {
+          const fileExt = mediaFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('community-media')
+            .upload(fileName, mediaFile, { cacheControl: '3600', upsert: false });
+          if (!uploadError) {
+            const { publicUrl } = supabase.storage.from('community-media').getPublicUrl(fileName).data;
+            if (publicUrl) {
+              mediaUrl = publicUrl;
+              mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
             }
           }
-        } catch (uploadErr) {
-          console.warn("Media upload failed:", uploadErr);
-          toast.warning("Could not upload media. Posting text only.");
         }
       }
 
-      // 2. Insert Post Data into Database
-      const { error: insertError } = await supabase
-        .from('posts')
-        .insert([
-          {
-            guest_name: guestName.trim(),
-            content: content.trim(),
-            media_url: mediaUrl,
-            media_type: mediaType,
-          },
-        ]);
+      const { error: insertError } = await supabase.from('posts').insert([
+        { guest_name: guestName.trim(), content: content.trim(), media_url: mediaUrl, media_type: mediaType },
+      ]);
 
       if (insertError) throw insertError;
 
       toast.success("Post shared successfully!");
-      onPost(); // Trigger feed refresh
-      onClose(); // Close modal
+      onPost();
+      onClose();
     } catch (error: any) {
-      console.error('Error posting:', error);
-      toast.error(error.message || "Failed to post. Please try again.");
+      toast.error(error.message || "Failed to post. Try again.");
     } finally {
       setLoading(false);
     }
@@ -97,47 +68,29 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-xl w-full max-w-md p-6 relative shadow-2xl">
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"
-        >
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors">
           <X className="w-5 h-5" />
         </button>
-
         <h2 className="text-xl font-bold mb-1 text-gray-900">Share Your Story</h2>
         <p className="text-sm text-gray-500 mb-6">Tell the community about your legal journey.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="guestName">Your Name (Public)</Label>
-            <Input 
-              id="guestName"
-              value={guestName}
-              onChange={(e) => setGuestName(e.target.value)}
-              placeholder="e.g. John Doe"
-              disabled={loading}
-            />
+            <Input id="guestName" value={guestName} onChange={(e) => setGuestName(e.target.value)} disabled={loading} />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="content">Your Story</Label>
-            <Textarea 
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="What's on your mind?"
-              rows={4}
-              className="resize-none"
-              disabled={loading}
-            />
+            <Textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={4} className="resize-none" disabled={loading} />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="media">Attach Media (Optional)</Label>
             <div className="border border-dashed border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer relative">
-              <input 
+              <input
                 id="media"
-                type="file" 
+                type="file"
                 accept="image/*,video/*"
                 onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -145,27 +98,13 @@ export default function CreatePostModal({ onClose, onPost }: CreatePostModalProp
               />
               <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                 <Upload className="w-4 h-4" />
-                {mediaFile ? (
-                  <span className="text-blue-600 font-medium truncate max-w-[200px]">{mediaFile.name}</span>
-                ) : (
-                  <span>Click to upload image or video</span>
-                )}
+                {mediaFile ? <span className="text-blue-600 font-medium truncate max-w-[200px]">{mediaFile.name}</span> : <span>Click to upload image or video</span>}
               </div>
             </div>
           </div>
 
           <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-2" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                Posting...
-              </>
-            ) : (
-              <>
-                <Send className="w-4 h-4 mr-2" />
-                Post Story
-              </>
-            )}
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" />Posting...</> : <><Send className="w-4 h-4 mr-2" />Post Story</>}
           </Button>
         </form>
       </div>
