@@ -2,192 +2,141 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText } from "lucide-react";
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
-import { jsPDF } from "jspdf";
+import { ArrowLeft, FileText, Users, Clock, Shield, CheckCircle } from "lucide-react";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  PDFDownloadLink,
+  PDFViewer
+} from "@react-pdf/renderer";
 
-const steps: Array<{ label: string; fields: FieldDef[] }> = [
-  // --- Keep all your previous steps here ---
-];
+// ================== PDF STYLES ==================
+const pdfStyles = StyleSheet.create({
+  page: { padding: 40, fontSize: 11, fontFamily: "Times-Roman", lineHeight: 1.6 },
+  title: { textAlign: "center", fontSize: 16, fontWeight: "bold", textDecoration: "underline", marginBottom: 20 },
+  row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
+  sectionHeading: { fontWeight: "bold", marginTop: 15, marginBottom: 5 },
+  paragraph: { marginBottom: 4 },
+  signatureContainer: { flexDirection: "row", justifyContent: "space-between", marginTop: 40 },
+  signatureBlock: { width: "45%" },
+  signatureLine: { borderBottomWidth: 1, marginBottom: 5, marginTop: 40 }
+});
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
+// ================== PDF DOCUMENT ==================
+const LLCOperatingAgreementPDF = ({ data }) => (
+  <Document>
+    <Page size="A4" style={pdfStyles.page}>
+      <Text style={pdfStyles.title}>LLC OPERATING AGREEMENT</Text>
 
-  // Title
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("LLC BUSINESS FORMATION", 105, y, { align: "center" });
-  y += 15;
+      <View style={pdfStyles.row}>
+        <Text>Effective Date: {data.effectiveDate}</Text>
+        <Text>Jurisdiction: {data.jurisdiction}</Text>
+      </View>
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
+      <Text style={pdfStyles.sectionHeading}>PARTIES</Text>
+      <Text style={pdfStyles.paragraph}>First Party: {data.firstPartyName}</Text>
+      <Text style={pdfStyles.paragraph}>Address: {data.firstPartyAddress}</Text>
+      <Text style={pdfStyles.paragraph}>Contact: {data.firstPartyContact}</Text>
 
-  // Effective Date
-  doc.text("Effective Date:", 20, y);
-  doc.text(values.effectiveDate || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1); // underline
-  y += 8;
+      <Text style={{ marginTop: 8 }}>Second Party: {data.secondPartyName}</Text>
+      <Text style={pdfStyles.paragraph}>Address: {data.secondPartyAddress}</Text>
+      <Text style={pdfStyles.paragraph}>Contact: {data.secondPartyContact}</Text>
 
-  // Jurisdiction
-  doc.text("Jurisdiction:", 20, y);
-  doc.text((values.state || "") + ", " + (values.country || ""), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 12;
+      <Text style={pdfStyles.sectionHeading}>DOCUMENT DETAILS</Text>
+      <Text style={pdfStyles.paragraph}>{data.documentDetails}</Text>
 
-  // PARTIES
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 10;
+      <Text style={pdfStyles.sectionHeading}>TERMS</Text>
+      <Text style={pdfStyles.paragraph}>Duration: {data.duration}</Text>
+      <Text style={pdfStyles.paragraph}>Termination Notice: {data.terminationNotice}</Text>
+      <Text style={pdfStyles.paragraph}>Confidentiality: {data.confidentiality}</Text>
+      <Text style={pdfStyles.paragraph}>Dispute Resolution: {data.disputeResolution}</Text>
 
-  doc.setFont("helvetica", "normal");
+      <Text style={pdfStyles.sectionHeading}>SIGNATURES</Text>
+      <View style={pdfStyles.signatureContainer}>
+        <View style={pdfStyles.signatureBlock}>
+          <View style={pdfStyles.signatureLine} />
+          <Text>{data.firstPartyName}</Text>
+          <Text>Signature: ____________________</Text>
+          <Text>Date: {data.signatureDate}</Text>
+        </View>
 
-  // First Party
-  doc.text("First Party Name:", 20, y);
-  doc.text(values.party1Name || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
+        <View style={pdfStyles.signatureBlock}>
+          <View style={pdfStyles.signatureLine} />
+          <Text>{data.secondPartyName}</Text>
+          <Text>Signature: ____________________</Text>
+          <Text>Date: {data.signatureDate}</Text>
+        </View>
+      </View>
+    </Page>
+  </Document>
+);
 
-  doc.text("Type:", 20, y);
-  doc.text(values.party1Type || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.text("Address:", 20, y);
-  doc.text((values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.text("Contact:", 20, y);
-  doc.text((values.party1Email || "") + " | " + (values.party1Phone || ""), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 12;
-
-  // Second Party
-  doc.text("Second Party Name:", 20, y);
-  doc.text(values.party2Name || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.text("Type:", 20, y);
-  doc.text(values.party2Type || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.text("Address:", 20, y);
-  doc.text((values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.text("Contact:", 20, y);
-  doc.text((values.party2Email || "") + " | " + (values.party2Phone || ""), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 12;
-
-  // Document Details
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  descLines.forEach((line) => {
-    doc.text(line, 20, y);
-    doc.line(20, y + 1, 190, y + 1);
-    y += 6;
-  });
-  y += 6;
-
-  // TERMS & CONDITIONS
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS & CONDITIONS", 20, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration:", 20, y);
-  doc.text(values.duration || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 6;
-
-  doc.text("Termination Notice:", 20, y);
-  doc.text(values.terminationNotice || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 6;
-
-  doc.text("Confidentiality:", 20, y);
-  doc.text(values.confidentiality === "yes" ? "Included" : "Not Included", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 6;
-
-  doc.text("Dispute Resolution:", 20, y);
-  doc.text(values.disputeResolution || "N/A", 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 12;
-
-  // Signatures
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 10;
-
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party Signature:", 20, y);
-  doc.text(values.party1Signature || "", 80, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 6;
-
-  doc.text("Second Party Signature:", 20, y);
-  doc.text(values.party2Signature || "", 80, y);
-  doc.line(20, y + 1, 190, y + 1);
-  y += 10;
-
-  doc.text("Date:", 20, y);
-  doc.text(new Date().toLocaleDateString(), 60, y);
-  doc.line(20, y + 1, 190, y + 1);
-
-  doc.save("llc_business_formation.pdf");
-};
-
-export default function LLCBusinessFormation() {
+// ================== MAIN COMPONENT ==================
+const LLCOperatingAgreementInfo = () => {
   const navigate = useNavigate();
+
+  const data = {
+    effectiveDate: "2026-02-25",
+    jurisdiction: "Other, CA",
+    firstPartyName: "John Doe",
+    firstPartyAddress: "123 Main Street",
+    firstPartyContact: "john@email.com",
+    secondPartyName: "Jane Smith",
+    secondPartyAddress: "456 Business Ave",
+    secondPartyContact: "jane@email.com",
+    documentDetails: "This Operating Agreement defines the ownership structure, management rules, and operational procedures of the Limited Liability Company.",
+    duration: "2 years",
+    terminationNotice: "14 days",
+    confidentiality: "Included",
+    disputeResolution: "Arbitration",
+    signatureDate: "02/18/2026"
+  };
 
   return (
     <Layout>
       <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
-        <div className="mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+        <Button variant="outline" onClick={() => navigate(-1)} className="mb-8">
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </Button>
 
-          <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold mb-4">
-              LLC Business Formation
-            </h1>
-            <p className="text-xl text-gray-600">
-              Complete the form to generate your LLC Formation Document
-            </p>
-          </div>
+        <div className="text-center mb-8">
+          <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold mb-4">LLC Operating Agreement</h1>
+          <p className="text-xl text-gray-600">
+            Generate a complete LLC Operating Agreement PDF with all parties, terms, and signatures.
+          </p>
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
-          <FormWizard
-            steps={steps}
-            title="LLC Business Formation"
-            subtitle="Complete each step to generate your document"
-            onGenerate={generatePDF}
-            documentType="llcbusinessformation"
-          />
+          {/* Live PDF Preview */}
+          <section>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
+              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" /> Live Preview
+            </h2>
+            <div className="border p-2">
+              <PDFViewer width="100%" height={500}>
+                <LLCOperatingAgreementPDF data={data} />
+              </PDFViewer>
+            </div>
+          </section>
+
+          {/* Download PDF */}
+          <section className="text-center">
+            <PDFDownloadLink
+              document={<LLCOperatingAgreementPDF data={data} />}
+              fileName="LLC-Operating-Agreement.pdf"
+              className="inline-block mt-4 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+            >
+              {({ loading }) => (loading ? "Generating PDF..." : "Download LLC Operating Agreement")}
+            </PDFDownloadLink>
+          </section>
         </div>
       </div>
     </Layout>
   );
-}
+};
+
+export default LLCOperatingAgreementInfo;
