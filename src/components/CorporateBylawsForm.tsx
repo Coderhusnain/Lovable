@@ -377,130 +377,166 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
-  
+
+  const drawField = (label: string, value: string, x: number, width = 80) => {
+    doc.setFont("helvetica", "normal");
+    doc.text(label, x, y);
+    doc.line(x + 30, y + 1, x + 30 + width, y + 1); // underline
+    if (value) {
+      doc.text(value, x + 32, y);
+    }
+    y += 8;
+  };
+
+  // ================= TITLE =================
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
   doc.text("Corporate Bylaws", 105, y, { align: "center" });
+  doc.line(60, y + 2, 150, y + 2); // underline title
   y += 15;
-  
+
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
+
+  drawField("Effective Date:", values.effectiveDate || "N/A", 20);
+  drawField(
+    "Jurisdiction:",
+    (values.state || "") + ", " + (values.country?.toUpperCase() || ""),
+    20
+  );
+
+  y += 5;
+
+  // ================= PARTIES =================
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  doc.line(20, y + 2, 70, y + 2);
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
+
+  doc.setFontSize(10);
+
+  drawField("First Party Name:", values.party1Name || "", 20);
+  drawField("Street:", values.party1Street || "", 20);
+  drawField("City:", values.party1City || "", 20);
+  drawField("Zip:", values.party1Zip || "", 20);
+  drawField("Email:", values.party1Email || "", 20);
+  drawField("Phone:", values.party1Phone || "", 20);
+
+  y += 5;
+
+  drawField("Second Party Name:", values.party2Name || "", 20);
+  drawField("Street:", values.party2Street || "", 20);
+  drawField("City:", values.party2City || "", 20);
+  drawField("Zip:", values.party2Zip || "", 20);
+  drawField("Email:", values.party2Email || "", 20);
+  drawField("Phone:", values.party2Phone || "", 20);
+
+  y += 10;
+
+  // ================= AGREEMENT DETAILS =================
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
+  doc.line(20, y + 2, 100, y + 2);
+  y += 10;
+
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
+  doc.text("Description:", 20, y);
+  y += 6;
+
+  const descLines = doc.splitTextToSize(values.description || "", 170);
+  descLines.forEach((line: string) => {
+    doc.text(line, 20, y);
+    doc.line(20, y + 1, 190, y + 1);
+    y += 7;
+  });
+
+  y += 5;
+
+  // ================= TERMS =================
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("TERMS", 20, y);
-  y += 8;
-  
+  doc.line(20, y + 2, 55, y + 2);
+  y += 10;
+
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
+
+  drawField("Duration:", values.duration || "", 20);
+  drawField("Termination Notice:", values.terminationNotice || "", 20);
+  drawField(
+    "Confidentiality:",
+    values.confidentiality === "yes" ? "Included" : "Not Included",
+    20
+  );
+  drawField("Dispute Resolution:", values.disputeResolution || "", 20);
+
+  y += 10;
+
+  // ================= FINANCIAL TERMS =================
   if (values.paymentAmount) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
+    doc.line(20, y + 2, 95, y + 2);
+    y += 10;
+
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
+    drawField("Payment Amount:", values.paymentAmount, 20);
+    drawField("Payment Schedule:", values.paymentSchedule || "", 20);
+
+    y += 5;
   }
-  
+
+  // ================= ADDITIONAL TERMS =================
   if (values.additionalTerms) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
+    doc.line(20, y + 2, 100, y + 2);
+    y += 10;
+
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
     const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
+
+    addLines.forEach((line: string) => {
+      doc.text(line, 20, y);
+      doc.line(20, y + 1, 190, y + 1);
+      y += 7;
+    });
+
+    y += 5;
   }
-  
+
+  // ================= SIGNATURES =================
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
+  doc.line(20, y + 2, 85, y + 2);
+  y += 15;
+
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  doc.text("First Party Signature:", 20, y);
+  doc.line(20, y + 5, 90, y + 5);
+
+  doc.text("Second Party Signature:", 110, y);
+  doc.line(110, y + 5, 180, y + 5);
+
+  y += 15;
+
+  drawField("First Party Name:", values.party1Name || "", 20);
+  drawField("Second Party Name:", values.party2Name || "", 20);
+
+  drawField("Witness Name:", values.witnessName || "", 20);
+
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+
+  doc.text("Date:", 20, y);
+  doc.line(30, y + 1, 80, y + 1);
+
+  doc.text("Date:", 110, y);
+  doc.line(120, y + 1, 170, y + 1);
+
+  // ================= SAVE =================
   doc.save("corporate_bylaws.pdf");
 };
-
-export default function CorporateBylaws() {
-  return (
-    <FormWizard
-      steps={steps}
-      title="Corporate Bylaws"
-      subtitle="Complete each step to generate your document"
-      onGenerate={generatePDF}
-      documentType="corporatebylaws"
-    />
-  );
-}
