@@ -374,17 +374,41 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
-const generatePDF = (values: Record<string, string>) => {
+import jsPDF from "jspdf";
+
+const generatePDF = (values: Record<string, any>) => {
   const doc = new jsPDF();
   let y = 20;
 
-  const drawField = (label: string, value: string, x: number, width = 80) => {
-    doc.setFont("helvetica", "normal");
-    doc.text(label, x, y);
-    doc.line(x + 30, y + 1, x + 30 + width, y + 1); // underline
-    if (value) {
-      doc.text(value, x + 32, y);
+  // ================= SAFE CONVERTER =================
+  const safe = (val: any) => {
+    if (val === null || val === undefined) return "";
+    if (typeof val === "object") return val.value || val.label || "";
+    return String(val);
+  };
+
+  // ================= PAGE OVERFLOW CHECK =================
+  const checkPage = () => {
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
     }
+  };
+
+  // ================= UNDERLINE FIELD DRAWER =================
+  const drawField = (label: string, value: any, x: number, width = 100) => {
+    checkPage();
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+
+    doc.text(label, x, y);
+    doc.line(x + 35, y + 1, x + 35 + width, y + 1);
+
+    const textValue = safe(value);
+    if (textValue) {
+      doc.text(textValue, x + 37, y);
+    }
+
     y += 8;
   };
 
@@ -392,15 +416,16 @@ const generatePDF = (values: Record<string, string>) => {
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
   doc.text("Corporate Bylaws", 105, y, { align: "center" });
-  doc.line(60, y + 2, 150, y + 2); // underline title
+  doc.line(60, y + 2, 150, y + 2);
   y += 15;
 
   doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
 
-  drawField("Effective Date:", values.effectiveDate || "N/A", 20);
+  drawField("Effective Date:", values.effectiveDate, 20);
   drawField(
     "Jurisdiction:",
-    (values.state || "") + ", " + (values.country?.toUpperCase() || ""),
+    safe(values.state) + ", " + safe(values.country).toUpperCase(),
     20
   );
 
@@ -413,23 +438,21 @@ const generatePDF = (values: Record<string, string>) => {
   doc.line(20, y + 2, 70, y + 2);
   y += 10;
 
-  doc.setFontSize(10);
-
-  drawField("First Party Name:", values.party1Name || "", 20);
-  drawField("Street:", values.party1Street || "", 20);
-  drawField("City:", values.party1City || "", 20);
-  drawField("Zip:", values.party1Zip || "", 20);
-  drawField("Email:", values.party1Email || "", 20);
-  drawField("Phone:", values.party1Phone || "", 20);
+  drawField("First Party Name:", values.party1Name, 20);
+  drawField("Street:", values.party1Street, 20);
+  drawField("City:", values.party1City, 20);
+  drawField("Zip:", values.party1Zip, 20);
+  drawField("Email:", values.party1Email, 20);
+  drawField("Phone:", values.party1Phone, 20);
 
   y += 5;
 
-  drawField("Second Party Name:", values.party2Name || "", 20);
-  drawField("Street:", values.party2Street || "", 20);
-  drawField("City:", values.party2City || "", 20);
-  drawField("Zip:", values.party2Zip || "", 20);
-  drawField("Email:", values.party2Email || "", 20);
-  drawField("Phone:", values.party2Phone || "", 20);
+  drawField("Second Party Name:", values.party2Name, 20);
+  drawField("Street:", values.party2Street, 20);
+  drawField("City:", values.party2City, 20);
+  drawField("Zip:", values.party2Zip, 20);
+  drawField("Email:", values.party2Email, 20);
+  drawField("Phone:", values.party2Phone, 20);
 
   y += 10;
 
@@ -437,21 +460,22 @@ const generatePDF = (values: Record<string, string>) => {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("AGREEMENT DETAILS", 20, y);
-  doc.line(20, y + 2, 100, y + 2);
+  doc.line(20, y + 2, 110, y + 2);
   y += 10;
 
   doc.setFontSize(10);
-  doc.text("Description:", 20, y);
-  y += 6;
+  doc.setFont("helvetica", "normal");
 
-  const descLines = doc.splitTextToSize(values.description || "", 170);
+  const descLines = doc.splitTextToSize(safe(values.description), 170);
+
   descLines.forEach((line: string) => {
+    checkPage();
     doc.text(line, 20, y);
     doc.line(20, y + 1, 190, y + 1);
     y += 7;
   });
 
-  y += 5;
+  y += 10;
 
   // ================= TERMS =================
   doc.setFontSize(12);
@@ -460,16 +484,14 @@ const generatePDF = (values: Record<string, string>) => {
   doc.line(20, y + 2, 55, y + 2);
   y += 10;
 
-  doc.setFontSize(10);
-
-  drawField("Duration:", values.duration || "", 20);
-  drawField("Termination Notice:", values.terminationNotice || "", 20);
+  drawField("Duration:", values.duration, 20);
+  drawField("Termination Notice:", values.terminationNotice, 20);
   drawField(
     "Confidentiality:",
     values.confidentiality === "yes" ? "Included" : "Not Included",
     20
   );
-  drawField("Dispute Resolution:", values.disputeResolution || "", 20);
+  drawField("Dispute Resolution:", values.disputeResolution, 20);
 
   y += 10;
 
@@ -481,9 +503,8 @@ const generatePDF = (values: Record<string, string>) => {
     doc.line(20, y + 2, 95, y + 2);
     y += 10;
 
-    doc.setFontSize(10);
     drawField("Payment Amount:", values.paymentAmount, 20);
-    drawField("Payment Schedule:", values.paymentSchedule || "", 20);
+    drawField("Payment Schedule:", values.paymentSchedule, 20);
 
     y += 5;
   }
@@ -493,13 +514,16 @@ const generatePDF = (values: Record<string, string>) => {
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("ADDITIONAL TERMS", 20, y);
-    doc.line(20, y + 2, 100, y + 2);
+    doc.line(20, y + 2, 110, y + 2);
     y += 10;
 
     doc.setFontSize(10);
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
+    doc.setFont("helvetica", "normal");
+
+    const addLines = doc.splitTextToSize(safe(values.additionalTerms), 170);
 
     addLines.forEach((line: string) => {
+      checkPage();
       doc.text(line, 20, y);
       doc.line(20, y + 1, 190, y + 1);
       y += 7;
@@ -516,6 +540,9 @@ const generatePDF = (values: Record<string, string>) => {
   y += 15;
 
   doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+
+  // Signature Lines
   doc.text("First Party Signature:", 20, y);
   doc.line(20, y + 5, 90, y + 5);
 
@@ -524,10 +551,9 @@ const generatePDF = (values: Record<string, string>) => {
 
   y += 15;
 
-  drawField("First Party Name:", values.party1Name || "", 20);
-  drawField("Second Party Name:", values.party2Name || "", 20);
-
-  drawField("Witness Name:", values.witnessName || "", 20);
+  drawField("First Party Name:", values.party1Name, 20);
+  drawField("Second Party Name:", values.party2Name, 20);
+  drawField("Witness Name:", values.witnessName, 20);
 
   y += 10;
 
