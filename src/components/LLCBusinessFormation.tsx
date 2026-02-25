@@ -31,49 +31,51 @@ const LLCOperatingAgreementPDF = ({ data }) => (
     <Page size="A4" style={pdfStyles.page}>
       <Text style={pdfStyles.title}>LLC OPERATING AGREEMENT</Text>
 
-      <View style={pdfStyles.row}>
-        <Text>Effective Date: {data.effectiveDate}</Text>
-        <Text>Jurisdiction: {data.jurisdiction}</Text>
+      {/* Parties Section */}
+      <View style={{ marginBottom: 15, padding: 10, border: 1, borderColor: '#000' }}>
+        <Text style={pdfStyles.sectionHeading}>PARTIES</Text>
+        <Text style={pdfStyles.paragraph}>First Party: {data.firstPartyName}</Text>
+        <Text style={pdfStyles.paragraph}>Address: {data.firstPartyAddress}</Text>
+        <Text style={pdfStyles.paragraph}>Contact: {data.firstPartyContact}</Text>
+        <Text style={{ marginTop: 8 }}>Second Party: {data.secondPartyName}</Text>
+        <Text style={pdfStyles.paragraph}>Address: {data.secondPartyAddress}</Text>
+        <Text style={pdfStyles.paragraph}>Contact: {data.secondPartyContact}</Text>
       </View>
 
-      <Text style={pdfStyles.sectionHeading}>PARTIES</Text>
-      <Text style={pdfStyles.paragraph}>First Party: {data.firstPartyName}</Text>
-      <Text style={pdfStyles.paragraph}>Address: {data.firstPartyAddress}</Text>
-      <Text style={pdfStyles.paragraph}>Contact: {data.firstPartyContact}</Text>
+      {/* Document Details */}
+      <View style={{ marginBottom: 15, padding: 10, border: 1, borderColor: '#000' }}>
+        <Text style={pdfStyles.sectionHeading}>DOCUMENT DETAILS</Text>
+        <Text style={pdfStyles.paragraph}>{data.documentDetails}</Text>
+      </View>
 
-      <Text style={{ marginTop: 8 }}>Second Party: {data.secondPartyName}</Text>
-      <Text style={pdfStyles.paragraph}>Address: {data.secondPartyAddress}</Text>
-      <Text style={pdfStyles.paragraph}>Contact: {data.secondPartyContact}</Text>
+      {/* Terms */}
+      <View style={{ marginBottom: 15, padding: 10, border: 1, borderColor: '#000' }}>
+        <Text style={pdfStyles.sectionHeading}>TERMS</Text>
+        <Text style={pdfStyles.paragraph}>Duration: {data.duration}</Text>
+        <Text style={pdfStyles.paragraph}>Termination Notice: {data.terminationNotice}</Text>
+        <Text style={pdfStyles.paragraph}>Confidentiality: {data.confidentiality}</Text>
+        <Text style={pdfStyles.paragraph}>Dispute Resolution: {data.disputeResolution}</Text>
+      </View>
 
-      <Text style={pdfStyles.sectionHeading}>DOCUMENT DETAILS</Text>
-      <Text style={pdfStyles.paragraph}>{data.documentDetails}</Text>
-
-      <Text style={pdfStyles.sectionHeading}>TERMS</Text>
-      <Text style={pdfStyles.paragraph}>Duration: {data.duration}</Text>
-      <Text style={pdfStyles.paragraph}>Termination Notice: {data.terminationNotice}</Text>
-      <Text style={pdfStyles.paragraph}>Confidentiality: {data.confidentiality}</Text>
-      <Text style={pdfStyles.paragraph}>Dispute Resolution: {data.disputeResolution}</Text>
-
-      <Text style={pdfStyles.sectionHeading}>SIGNATURES</Text>
-      <View style={pdfStyles.signatureContainer}>
-        <View style={pdfStyles.signatureBlock}>
-          <View style={pdfStyles.signatureLine} />
+      {/* Signatures */}
+      <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ width: '45%', textAlign: 'center' }}>
           <Text>{data.firstPartyName}</Text>
-          <Text>Signature: ____________________</Text>
+          <View style={{ borderBottomWidth: 1, marginTop: 40, marginBottom: 5 }} />
+          <Text>Signature</Text>
           <Text>Date: {data.signatureDate}</Text>
         </View>
 
-        <View style={pdfStyles.signatureBlock}>
-          <View style={pdfStyles.signatureLine} />
+        <View style={{ width: '45%', textAlign: 'center' }}>
           <Text>{data.secondPartyName}</Text>
-          <Text>Signature: ____________________</Text>
+          <View style={{ borderBottomWidth: 1, marginTop: 40, marginBottom: 5 }} />
+          <Text>Signature</Text>
           <Text>Date: {data.signatureDate}</Text>
         </View>
       </View>
     </Page>
   </Document>
 );
-
 // ================== MAIN COMPONENT ==================
 const LLCOperatingAgreementInfo = () => {
   const navigate = useNavigate();
