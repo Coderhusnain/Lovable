@@ -1,0 +1,146 @@
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import Layout from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, FileText, CheckCircle, Shield } from "lucide-react";
+import { useReactToPrint } from "react-to-print";
+
+const MutualRescissionReleaseInfo = () => {
+  const navigate = useNavigate();
+  const printRef = useRef(null);
+
+  // Function to trigger printing
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+    documentTitle: "Mutual_Rescission_Release_Agreement",
+  });
+
+  return (
+    <Layout>
+      <div className="container mx-auto px-4 pt-24 pb-12 max-w-4xl">
+        {/* Back Button */}
+        <Button
+          variant="outline"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </Button>
+
+        {/* Printable Content */}
+        <div ref={printRef} className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
+            <h1 className="text-4xl font-bold mb-4">
+              Mutual Rescission & Release Agreement
+            </h1>
+            <p className="text-xl text-gray-600">
+              Formal agreement to rescind and release obligations under an existing contract.
+            </p>
+          </div>
+
+          {/* Overview Section */}
+          <section>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">Overview</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              This Agreement allows both parties to terminate an existing contract and mutually release all claims, obligations, and liabilities arising thereunder.
+            </p>
+          </section>
+
+          {/* Key Components Section */}
+          <section>
+            <div className="flex items-center mb-4">
+              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
+              <h2 className="text-2xl font-bold text-gray-900">Key Components</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  1. Rescission of Original Contract
+                </h3>
+                <p className="text-gray-700">
+                  The original contract is terminated and rendered null and void. Parties have no further obligations.
+                </p>
+              </div>
+
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  2. Mutual Release
+                </h3>
+                <p className="text-gray-700">
+                  Each party releases the other from any claims, obligations, or liabilities under the original contract.
+                </p>
+              </div>
+
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  3. No Admission of Liability
+                </h3>
+                <p className="text-gray-700">
+                  This agreement is a mutual compromise; it does not admit fault or wrongdoing.
+                </p>
+              </div>
+
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  4. Confidentiality
+                </h3>
+                <p className="text-gray-700">
+                  Terms and execution circumstances are confidential except as required by law or prior written consent.
+                </p>
+              </div>
+
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  5. Governing Law & Entire Agreement
+                </h3>
+                <p className="text-gray-700">
+                  This agreement supersedes all prior negotiations and is governed by applicable law.
+                </p>
+              </div>
+
+              <div className="border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-3 text-bright-orange-600">
+                  6. Signatures
+                </h3>
+                <p className="text-gray-700">
+                  Party A and Party B sign to make the agreement effective.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* How to Complete Section */}
+          <section>
+            <div className="flex items-center mb-4">
+              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
+              <h2 className="text-2xl font-bold text-gray-900">How to Complete</h2>
+            </div>
+            <ol className="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Fill in the Parties' names and addresses.</li>
+              <li>Attach the original contract as Exhibit A.</li>
+              <li>Specify the Effective Date of the agreement.</li>
+              <li>Review clauses and confirm mutual release and confidentiality.</li>
+              <li>Sign and date the agreement.</li>
+            </ol>
+          </section>
+
+          {/* Print Button */}
+          <section className="text-center mt-8">
+            <Button
+              size="lg"
+              onClick={handlePrint}
+              className="bg-bright-orange-500 text-white hover:bg-bright-orange-600 px-8 py-3 font-semibold"
+            >
+              Print Agreement as PDF
+            </Button>
+          </section>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default MutualRescissionReleaseInfo;
