@@ -25,6 +25,8 @@ const LLCOperatingAgreementPDF = ({ data }) => (
         <Text style={pdfStyles.paragraph}>Second Party: {data.secondPartyName}</Text>
         <Text style={pdfStyles.paragraph}>Address: {data.secondPartyAddress}</Text>
         <Text style={pdfStyles.paragraph}>Contact: {data.secondPartyContact}</Text>
+
+        <Text style={pdfStyles.paragraph}>Extra Name: Test User</Text>
       </View>
 
       {/* Document Details */}
