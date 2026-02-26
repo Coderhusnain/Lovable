@@ -1,13 +1,8 @@
 // LLCBusinessFormationForm.tsx
-
 import React from "react";
 import { FormWizard } from "./FormWizard";
 import { FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-
-/* =====================================================
-   ===================== FORM STEPS ====================
-   ===================================================== */
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
@@ -187,23 +182,17 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ];
 
-/* =====================================================
-   =================== PDF GENERATOR ===================
-   ===================================================== */
-
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  const margin = 25;
-  let y = 20;
+
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 25;
   const textWidth = pageWidth - margin * 2;
+  let y = 20;
 
   const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
+    if (y + space > pageHeight - margin) { doc.addPage(); y = margin; }
   };
 
   const addUnderlinedField = (label: string, value: string, minWidth = 60) => {
@@ -211,13 +200,34 @@ const generatePDF = (values: Record<string, string>) => {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
     doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-    const startX = margin + labelWidth + 2;
+    const startX = margin + doc.getTextWidth(label) + 2;
     const display = value || "";
-    doc.text(display || "________________", startX, y);
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
+    if (display) doc.text(display, startX, y);
+    doc.line(startX, y + 1, startX + (display ? doc.getTextWidth(display) : minWidth), y + 1);
     y += 8;
+  };
+
+  const addParagraph = (text: string, bold = false) => {
+    checkPageBreak(10);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 5 + 2;
+  };
+
+  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
+    const lines = doc.splitTextToSize(`${before}${value}${after}`, textWidth);
+    lines.forEach((line: string) => {
+      checkPageBreak(8);
+      doc.text(line, margin, y);
+      if (line.includes(value)) {
+        const startX = margin + doc.getTextWidth(line.substring(0, line.indexOf(value)));
+        doc.line(startX, y + 1, startX + doc.getTextWidth(value), y + 1);
+      }
+      y += 6;
+    });
+    y += 2;
   };
 
   // TITLE
@@ -225,31 +235,97 @@ const generatePDF = (values: Record<string, string>) => {
   doc.setFontSize(16);
   const title = "LLC BUSINESS FORMATION AGREEMENT";
   doc.text(title, pageWidth / 2, y, { align: "center" });
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  const titleX = pageWidth / 2 - doc.getTextWidth(title) / 2;
+  doc.line(titleX, y + 2, titleX + doc.getTextWidth(title), y + 2);
   y += 15;
 
-  // Date & Jurisdiction
-  addUnderlinedField("Effective Date:", values.effectiveDate);
-  addUnderlinedField("Jurisdiction:", `${values.state || ""}, ${values.country || ""}`);
+  // DATE & JURISDICTION
+  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+  addUnderlinedField("Jurisdiction:", values.state ? `${values.state}, ${values.country?.toUpperCase()}` : (values.country || ""), 80);
+  y += 4;
 
-  // Parties, Business, Terms, Financials, Legal, Additional, Signatures
-  steps.slice(3).forEach(step => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
-    doc.text(step.label.toUpperCase(), margin, y);
+  // FIRST PARTY
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("FIRST PARTY", margin, y); y += 8;
+  addUnderlinedField("Name:", values.party1Name || "", 100);
+  addUnderlinedField("Type:", values.party1Type || "", 60);
+  addUnderlinedField("Address:", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`.trim(), 120);
+  addUnderlinedField("Email:", values.party1Email || "", 100);
+  if (values.party1Phone) addUnderlinedField("Phone:", values.party1Phone, 80);
+  y += 4;
+
+  // SECOND PARTY
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("SECOND PARTY", margin, y); y += 8;
+  addUnderlinedField("Name:", values.party2Name || "", 100);
+  addUnderlinedField("Type:", values.party2Type || "", 60);
+  addUnderlinedField("Address:", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`.trim(), 120);
+  addUnderlinedField("Email:", values.party2Email || "", 100);
+  if (values.party2Phone) addUnderlinedField("Phone:", values.party2Phone, 80);
+  y += 6;
+
+  // SUBJECT
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("Subject: LLC Business Formation Agreement", margin, y); y += 10;
+
+  // BODY
+  addParagraph("To Whom It May Concern:");
+  addParagraphWithUnderline("This LLC Business Formation Agreement is entered into as of ", values.effectiveDate || "________________", `, by and between ${values.party1Name || "the first party"} and ${values.party2Name || "the second party"} (collectively referred to as the "Parties").`);
+  if (values.description) { addParagraph("PURPOSE AND SCOPE:", true); addParagraph(values.description); }
+  addParagraph("TERMS AND CONDITIONS:", true);
+  addParagraphWithUnderline("The duration of this agreement shall be ", values.duration || "________________", `. Either party may terminate this agreement upon ${values.terminationNotice || "________________"} written notice to the other party.`);
+  if (values.paymentAmount || values.paymentSchedule) {
+    addParagraph("FINANCIAL TERMS:", true);
+    addParagraph([values.paymentAmount ? `Payment Amount: ${values.paymentAmount}` : "", values.paymentSchedule ? `Payment Schedule: ${values.paymentSchedule}` : ""].filter(Boolean).join(" | "));
+  }
+  addParagraph("LEGAL PROVISIONS:", true);
+  if (values.confidentiality === "yes") {
+    addParagraph("CONFIDENTIALITY: Both parties agree to maintain the confidentiality of all proprietary information, trade secrets, and sensitive business data disclosed during the course of this agreement. This obligation shall survive the termination of this agreement.");
+  }
+  addParagraphWithUnderline("DISPUTE RESOLUTION: Any disputes arising under or in connection with this agreement shall be resolved through ", values.disputeResolution || "________________", " in accordance with applicable law.");
+  addParagraph("GOVERNING LAW: This agreement shall be governed by and construed in accordance with the laws of the jurisdiction stated herein, without regard to its conflict of law provisions.");
+  addParagraph("ENTIRE AGREEMENT: This document constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, warranties, and understandings with respect to the subject matter hereof.");
+  if (values.additionalTerms) { addParagraph("ADDITIONAL TERMS:", true); addParagraph(values.additionalTerms); }
+  y += 6;
+  addParagraph("IN WITNESS WHEREOF, the parties have executed this LLC Business Formation Agreement as of the date first written above.");
+  y += 10;
+
+  // SIGNATURES
+  checkPageBreak(50);
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("First Party Signature:", margin, y); y += 8;
+  const sig1 = values.party1Signature || "";
+  doc.text(sig1, margin, y);
+  doc.line(margin, y + 1, margin + (sig1 ? doc.getTextWidth(sig1) : 80), y + 1);
+  y += 8;
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
+  addParagraph(`Email: ${values.party1Email || ""}`);
+  if (values.party1Phone) addParagraph(`Phone: ${values.party1Phone}`);
+  y += 8;
+
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("Second Party Signature:", margin, y); y += 8;
+  const sig2 = values.party2Signature || "";
+  doc.text(sig2, margin, y);
+  doc.line(margin, y + 1, margin + (sig2 ? doc.getTextWidth(sig2) : 80), y + 1);
+  y += 8;
+  doc.setFont("helvetica", "normal");
+  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
+  addParagraph(`Email: ${values.party2Email || ""}`);
+  if (values.party2Phone) addParagraph(`Phone: ${values.party2Phone}`);
+
+  if (values.witnessName) {
     y += 8;
-    step.fields.forEach(field => addUnderlinedField(field.label, values[field.name]));
-    y += 4;
-  });
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+    doc.text("Witness:", margin, y); y += 8;
+    doc.text(values.witnessName, margin, y);
+    doc.line(margin, y + 1, margin + doc.getTextWidth(values.witnessName), y + 1);
+    y += 8;
+  }
 
   doc.save("llc_business_formation.pdf");
 };
-
-/* =====================================================
-   =================== COMPONENT =======================
-   ===================================================== */
 
 export default function LLCBusinessFormationForm() {
   return (
