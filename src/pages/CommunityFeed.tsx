@@ -1,135 +1,155 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import PostCard from '../components/PostCard';
-import CreatePostModal from '../components/CreatePostModal';
+import { X, Upload, Loader2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Users, MessageSquarePlus } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
-// Type for a post
-interface Post {
-  id: string;
-  guest_name: string;
-  content: string;
-  media_url: string | null;
-  media_type: 'image' | 'video' | null;
-  created_at: string;
+interface CreatePostModalProps {
+  onClose: () => void;
+  onPost: () => void;
 }
 
-const CommunityFeed: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [dbError, setDbError] = useState<string | null>(null);
+export default function CreatePostModal({ onClose, onPost }: CreatePostModalProps) {
+  const [guestName, setGuestName] = useState('');
+  const [content, setContent] = useState('');
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch posts
-  const fetchPosts = async () => {
-    setLoading(true);
-    setDbError(null);
-    try {
-      const { data, error } = await supabase
-        .from<Post>('posts') // <-- Type-safe generic
-        .select('*')
-        .order('created_at', { ascending: false });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      if (error) setDbError(`Database Error: ${error.message}`);
-      else if (data) setPosts(data);
-    } catch (err: any) {
-      setDbError(`Connection Error: ${err.message}`);
+    if (!guestName.trim() || !content.trim()) {
+      toast.error("Name and Content are required");
+      return;
     }
-    setLoading(false);
+
+    setLoading(true);
+    try {
+      let mediaUrl = null;
+      let mediaType: 'image' | 'video' | null = null;
+
+      // Upload media if exists
+      if (mediaFile) {
+        const fileExt = mediaFile.name.split('.').pop();
+        const fileName = `posts/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('community-media')
+          .upload(fileName, mediaFile, { cacheControl: '3600', upsert: false });
+
+        if (!uploadError) {
+          const { data: publicData } = supabase.storage
+            .from('community-media')
+            .getPublicUrl(fileName);
+
+          mediaUrl = publicData.publicUrl;
+          mediaType = mediaFile.type.startsWith('video') ? 'video' : 'image';
+        } else {
+          toast.warning("Media upload failed. Posting text only.");
+        }
+      }
+
+      // Insert post into DB
+      const { error: insertError } = await supabase
+        .from('posts')
+        .insert([
+          {
+            guest_name: guestName.trim(),
+            content: content.trim(),
+            media_url: mediaUrl,
+            media_type: mediaType,
+          },
+        ]);
+
+      if (insertError) throw insertError;
+
+      toast.success("Post shared successfully!");
+      onPost(); // refresh feed
+      onClose(); // close modal
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to post");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Realtime updates
-  useEffect(() => {
-    fetchPosts();
-
-    const channel = supabase
-      .channel('public:posts')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'posts' },
-        (payload: any) => {
-          if (payload.eventType === 'INSERT') setPosts((prev) => [payload.new, ...prev]);
-          else if (payload.eventType === 'UPDATE')
-            setPosts((prev) => prev.map((p) => (p.id === payload.new.id ? payload.new : p)));
-          else if (payload.eventType === 'DELETE')
-            setPosts((prev) => prev.filter((p) => p.id !== payload.old.id));
-        }
-      )
-      .subscribe();
-
-    return () => supabase.removeChannel(channel);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100/60 via-indigo-100/60 to-white flex items-center justify-center py-8">
-      <div className="w-full max-w-3xl bg-white/90 rounded-3xl shadow-2xl p-4 sm:p-8 md:p-12 border border-blue-200/40 backdrop-blur-md mx-2">
-        
-        {/* Header */}
-        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
-          <div className="flex items-center gap-4">
-            <div className="bg-gradient-to-br from-blue-400 via-indigo-400 to-blue-600 p-4 rounded-full shadow-lg">
-              <Users className="w-9 h-9 text-white drop-shadow" />
-            </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-2 tracking-tight drop-shadow">
-                Community
-              </h1>
-              <p className="text-indigo-700 text-lg md:text-xl font-medium mb-1">
-                Welcome to the Legalgram Community!
-              </p>
-              <p className="text-blue-700 text-base md:text-lg">
-                Share your legal journey, ask questions, and connect with others. This is a safe, supportive space for everyone.
-              </p>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl w-full max-w-md p-6 relative shadow-2xl">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        <h2 className="text-xl font-bold mb-1 text-gray-900">Share Your Story</h2>
+        <p className="text-sm text-gray-500 mb-6">Tell the community about your legal journey.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="guestName">Your Name (Public)</Label>
+            <Input
+              id="guestName"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              placeholder="e.g. John Doe"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="content">Your Story</Label>
+            <Textarea
+              id="content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="What's on your mind?"
+              rows={4}
+              className="resize-none"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="media">Attach Media (Optional)</Label>
+            <div className="border border-dashed border-gray-300 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer relative">
+              <input
+                id="media"
+                type="file"
+                accept="image/*,video/*"
+                onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={loading}
+              />
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+                <Upload className="w-4 h-4" />
+                {mediaFile ? (
+                  <span className="text-blue-600 font-medium truncate max-w-[200px]">{mediaFile.name}</span>
+                ) : (
+                  <span>Click to upload image or video</span>
+                )}
+              </div>
             </div>
           </div>
 
-          <Button
-            onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-7 py-3 rounded-xl shadow-xl hover:from-blue-600 hover:to-indigo-700 text-lg font-semibold border-2 border-blue-200/40"
-            size="lg"
-          >
-            <MessageSquarePlus className="w-6 h-6" /> New Post
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 mt-2" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Posting...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" /> Post Story
+              </>
+            )}
           </Button>
-
-          <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-blue-200 via-indigo-200 to-white rounded-full blur-2xl opacity-40 pointer-events-none" />
-        </div>
-
-        {/* Modal */}
-        {showModal && <CreatePostModal onClose={() => setShowModal(false)} onPost={fetchPosts} />}
-
-        {/* Feed */}
-        {loading ? (
-          <div className="flex justify-center py-16">
-            <svg className="animate-spin h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-            </svg>
-          </div>
-        ) : dbError ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-red-500">{dbError}</p>
-            <Button onClick={fetchPosts} className="mt-4 bg-blue-600 hover:bg-blue-700">
-              Retry Connection
-            </Button>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-blue-500 mb-2">No posts yet</p>
-            <Button onClick={() => setShowModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-              Create First Post
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
+        </form>
       </div>
     </div>
   );
-};
-
-export default CommunityFeed;
+}
