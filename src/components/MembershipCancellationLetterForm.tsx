@@ -13,7 +13,6 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-        
         ],
       },
     ],
@@ -28,37 +27,37 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         dependsOn: "country",
         getOptions: (value) => {
-            if (value=== "us") {
-              return [
-                { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-                { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-                { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-                { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-                { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-                { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-                { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-                { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-                { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-                { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-                { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-                { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-                { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-                { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-                { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-                { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-                { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-                { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-                { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-                { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-                { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-                { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-                { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-                { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-                { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-                { value: "DC", label: "District of Columbia" },
-              ];
-            } 
-            return [{ value: "other", label: "Other Region" }];
+          if (value === "us") {
+            return [
+              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+              { value: "DC", label: "District of Columbia" },
+            ];
+          }
+          return [{ value: "other", label: "Other Region" }];
         },
       },
     ],
@@ -350,188 +349,184 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
+  const pageWidth = 210;
+  const margin = 20;
   const textWidth = pageWidth - margin * 2;
-  let y = 20;
+  const fs = 10.5;   // base font size — keeps everything on one page
+  const lh = 5.5;    // base line height
+  let y = 22;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
-  };
+  // ── helpers ──────────────────────────────────────────────────────────────────
 
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
+  // Draw "Label:  _value_" with underline on the value portion
+  const labeledField = (label: string, value: string, minUnderlineW = 55) => {
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
+    doc.setFontSize(fs);
+    doc.setTextColor(20, 20, 20);
 
     doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
+    const lw = doc.getTextWidth(label);
+    const vx = margin + lw + 2;
     const display = value || "";
 
-    if (display) {
-      doc.text(display, startX, y);
-    }
+    if (display) doc.text(display, vx, y);
 
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
+    const uw = display ? doc.getTextWidth(display) : minUnderlineW;
+    doc.setDrawColor(20, 20, 20);
+    doc.line(vx, y + 1, vx + uw, y + 1);
+    y += lh + 1.5;
   };
 
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
+  // Plain paragraph (wraps to textWidth)
+  const para = (text: string, bold = false, extraAfter = 0) => {
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
+    doc.setFontSize(fs);
+    doc.setTextColor(20, 20, 20);
     const lines = doc.splitTextToSize(text, textWidth);
     doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
+    y += lines.length * lh + extraAfter;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
+  // Paragraph where one span of text gets an underline
+  const paraUnderline = (before: string, value: string, after: string) => {
+    const full = before + value + after;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(fs);
+    doc.setTextColor(20, 20, 20);
+    const lines: string[] = doc.splitTextToSize(full, textWidth);
 
     lines.forEach((line: string) => {
-      checkPageBreak(8);
-
       doc.text(line, margin, y);
 
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
+      // underline the portion of this line that overlaps with `value`
+      const idxInFull = full.indexOf(value);
+      if (idxInFull !== -1) {
+        const lineStartInFull = full.indexOf(line.trim());
+        const valueStartInLine = line.indexOf(
+          value.substring(0, Math.min(value.length, line.length))
+        );
+        if (valueStartInLine !== -1) {
+          const beforeInLine = line.substring(0, valueStartInLine);
+          const valueInLine = line.substring(
+            valueStartInLine,
+            valueStartInLine + value.length
+          );
+          if (valueInLine.length > 0) {
+            const ux = margin + doc.getTextWidth(beforeInLine);
+            doc.setDrawColor(20, 20, 20);
+            doc.line(ux, y + 1, ux + doc.getTextWidth(valueInLine), y + 1);
+          }
+        }
       }
-
-      y += 6;
+      y += lh;
     });
-
-    y += 2;
+    y += 1;
   };
 
-  // ===== TITLE =====
+  // ── TITLE ────────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
 
   const title = "MEMBERSHIP CANCELLATION LETTER";
   doc.text(title, pageWidth / 2, y, { align: "center" });
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  // underline the title
+  const tw = doc.getTextWidth(title);
+  const tx = pageWidth / 2 - tw / 2;
+  doc.setDrawColor(0, 0, 0);
+  doc.line(tx, y + 1.5, tx + tw, y + 1.5);
+  y += 12;
 
-  y += 15;
+  // ── DATE / TO / ADDRESS ───────────────────────────────────────────────────────
+  const address2 = [values.party2Street, values.party2City, values.party2Zip]
+    .filter(Boolean)
+    .join(", ");
 
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+  labeledField("Date:", values.effectiveDate || "");
+  labeledField("To:", values.party2Name || "");
+  labeledField("Address:", address2);
+  y += 3;
 
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-
-  // ===== SUBJECT =====
+  // ── SUBJECT ───────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
   doc.text(
     "Subject: Notice of Membership Cancellation and Request for Refund",
     margin,
     y
   );
-  y += 10;
+  y += lh + 4;
 
-  // ===== GREETING =====
-  addParagraph("Dear Sir or Madam:");
+  // ── GREETING ──────────────────────────────────────────────────────────────────
+  para("Dear Sir or Madam,", false, lh);
 
-  // ===== BODY =====
+  // ── BODY ──────────────────────────────────────────────────────────────────────
   const orgName = values.party2Name || "your organization";
 
-  addParagraphWithUnderline(
+  paraUnderline(
     "I am writing to formally notify you of my decision to cancel my membership with ",
     orgName,
     ", effective immediately."
   );
+  y += 2;
 
-  addParagraph(
-    "I respectfully request a full refund of all membership dues paid, in accordance with the applicable terms and conditions of the membership agreement. Enclosed is proof of payment evidencing the membership dues remitted."
+  para(
+    "I respectfully request a full refund of all membership dues paid, in accordance with the applicable terms and conditions of the membership agreement. Enclosed is proof of payment evidencing the membership dues remitted.",
+    false,
+    lh
   );
 
-  addParagraph(
-    "Please contact me should you require any additional information to process this cancellation and refund. I appreciate your prompt attention to this matter and look forward to written confirmation of cancellation and reimbursement."
+  para(
+    "Please contact me should you require any additional information to process this cancellation and refund. I appreciate your prompt attention to this matter and look forward to written confirmation of cancellation and reimbursement.",
+    false,
+    lh
   );
 
-  y += 4;
-  addParagraph("Thank you for your cooperation.");
+  para("Thank you for your cooperation.", false, lh + 2);
 
-  y += 6;
-  addParagraph("Sincerely,");
+  // ── CLOSING ───────────────────────────────────────────────────────────────────
+  para("Sincerely,", false, lh + 4);
 
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
+  // ── SIGNATURE BLOCK ───────────────────────────────────────────────────────────
+  const sigName = values.party1Name || "";
   doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text(sigName, margin, y);
 
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
+  // underline the name
+  if (sigName) {
+    const nw = doc.getTextWidth(sigName);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, y + 1, margin + nw, y + 1);
   }
-
-  y += 8;
+  y += lh + 2;
 
   doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
+
+  const sigAddress = [values.party1Street, values.party1City, values.party1Zip]
+    .filter(Boolean)
+    .join(", ");
+  if (sigAddress) { para(sigAddress, false, 1); }
+  if (values.party1Email) { para(`Email: ${values.party1Email}`, false, 1); }
+  if (values.party1Phone) { para(`Phone: ${values.party1Phone}`, false, 1); }
+
+  // ── FOOTER ────────────────────────────────────────────────────────────────────
+  doc.setFontSize(7);
+  doc.setTextColor(160, 160, 160);
+  doc.text(
+    `Generated by Legalgram  •  ${new Date().toLocaleDateString()}`,
+    pageWidth / 2,
+    290,
+    { align: "center" }
   );
 
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== SAVE =====
   doc.save("membership_cancellation_letter.pdf");
 };
-
-
 
 export default function MembershipCancellationLetterForm() {
   return (
@@ -544,4 +539,3 @@ export default function MembershipCancellationLetterForm() {
     />
   );
 }
-

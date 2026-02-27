@@ -1,7 +1,6 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
-
+ 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Jurisdiction",
@@ -30,7 +29,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (values) => {
+        getOptions: (values: Record<string, any>) => {
           if (values.country === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
@@ -160,7 +159,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party1Phone",
         label: "Phone Number",
-        type: "tel",
+        type: "phone",
         required: false,
         placeholder: "(555) 123-4567",
       },
@@ -227,7 +226,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party2Phone",
         label: "Phone Number",
-        type: "tel",
+        type: "phone",
         required: false,
         placeholder: "(555) 123-4567",
       },
@@ -372,124 +371,327 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       },
     ],
   },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
+// --- Helper: check & add new page if needed ---
+function checkPageBreak(doc: jsPDF, y: number, needed = 20): number {
+  const pageHeight = doc.internal.pageSize.getHeight();
+  if (y + needed > pageHeight - 20) {
+    doc.addPage();
+    return 20;
+  }
+  return y;
+}
+
+// --- Helper: bold label + normal underlined value on one line ---
+function drawLabelValue(
+  doc: jsPDF,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  pageWidth: number
+): number {
+  const maxLineWidth = pageWidth - x * 2;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text(label, x, y);
+  const labelWidth = doc.getTextWidth(label);
+  const valueX = x + labelWidth + 2;
+  const valueMaxWidth = maxLineWidth - labelWidth - 2;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  const valueLines = doc.splitTextToSize(value || "N/A", valueMaxWidth);
+  const firstLine = valueLines[0] || "";
+  doc.text(firstLine, valueX, y);
+  const valueWidth = doc.getTextWidth(firstLine);
+  doc.setLineWidth(0.3);
+  doc.line(valueX, y + 1.2, valueX + Math.max(valueWidth, 40), y + 1.2);
+  return y + 6;
+}
+
+// --- Helper: bold section heading with full-width underline ---
+function drawSectionHeading(
+  doc: jsPDF,
+  text: string,
+  x: number,
+  y: number,
+  pageWidth: number
+): number {
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text(text, x, y);
+  doc.setLineWidth(0.3);
+  doc.line(x, y + 1.5, pageWidth - x, y + 1.5);
+  return y + 7;
+}
+
+// --- Helper: normal body paragraph with word-wrap ---
+function drawParagraph(
+  doc: jsPDF,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  lineHeight = 5
+): number {
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  const lines = doc.splitTextToSize(text, maxWidth);
+  doc.text(lines, x, y);
+  return y + lines.length * lineHeight + 2;
+}
+
+// --- Helper: complete signature block ---
+function drawSignatureBlock(
+  doc: jsPDF,
+  label: string,
+  name: string,
+  address: string,
+  email: string,
+  phone: string,
+  signature: string,
+  x: number,
+  y: number
+): number {
+  y = checkPageBreak(doc, y, 40);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text(label, x, y);
+  y += 6;
+
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(11);
+  const sigText = signature || "____________________";
+  doc.text(sigText, x, y);
+  const sigWidth = doc.getTextWidth(sigText);
+  doc.setLineWidth(0.3);
+  doc.line(x, y + 1.5, x + Math.max(sigWidth, 60), y + 1.5);
+  y += 8;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Name:", x, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(name || "N/A", x + doc.getTextWidth("Name:  "), y);
+  y += 5;
+
+  if (address) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Address:", x, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(address, x + doc.getTextWidth("Address:  "), y);
+    y += 5;
+  }
+  if (email) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Email:", x, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(email, x + doc.getTextWidth("Email:  "), y);
+    y += 5;
+  }
+  if (phone) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Phone:", x, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(phone, x + doc.getTextWidth("Phone:  "), y);
+    y += 5;
+  }
+  y += 5;
+  return y;
+}
+
+// --- Main PDF generator ---
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 25;
+  const contentWidth = pageWidth - margin * 2;
   let y = 20;
-  
-  doc.setFontSize(18);
+
+  const durationMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "an indefinite/ongoing term", "custom": "a custom term",
+  };
+  const terminationMap: Record<string, string> = {
+    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
+    "30days": "30 days", "60days": "60 days", "90days": "90 days",
+  };
+  const scheduleMap: Record<string, string> = {
+    "onetime": "One-time", "weekly": "Weekly", "biweekly": "Bi-weekly",
+    "monthly": "Monthly", "quarterly": "Quarterly", "annually": "Annually",
+    "milestone": "Milestone-based",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  };
+
+  const durationLabel    = durationMap[values.duration]             || values.duration            || "the agreed duration";
+  const terminationLabel = terminationMap[values.terminationNotice] || values.terminationNotice   || "the agreed notice period";
+  const scheduleLabel    = scheduleMap[values.paymentSchedule]      || values.paymentSchedule     || "agreed";
+  const disputeLabel     = disputeMap[values.disputeResolution]     || values.disputeResolution   || "the agreed method";
+
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+  const hasAdditionalTerms = Boolean(values.additionalTerms?.trim());
+
+  // ── TITLE FIRST (at the very top) ──
   doc.setFont("helvetica", "bold");
-  doc.text("Limited Partnership Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(14);
+  const title = "LIMITED PARTNERSHIP AGREEMENT";
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.6);
+  doc.line(titleX, y + 1.8, titleX + titleWidth, y + 1.8);
   y += 12;
-  
+
+  // ── HEADER FIELDS (Date / To / Address / Contact) ──
+  y = drawLabelValue(doc, "Date:",    values.effectiveDate || "N/A", margin, y, pageWidth); y += 1;
+  y = drawLabelValue(doc, "To:",      values.party2Name    || "N/A", margin, y, pageWidth); y += 1;
+  y = drawLabelValue(doc, "Address:", party2Address        || "N/A", margin, y, pageWidth); y += 1;
+  if (values.party2Email) { y = drawLabelValue(doc, "Email:", values.party2Email, margin, y, pageWidth); y += 1; }
+  if (values.party2Phone) { y = drawLabelValue(doc, "Phone:", values.party2Phone, margin, y, pageWidth); y += 1; }
+  y += 4;
+
+  // ── SUBJECT ──
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
+  doc.text("Re: Limited Partnership Agreement", margin, y);
+  y += 8;
+
+  // ── SALUTATION ──
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+  doc.setFontSize(10);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
+  y += 7;
+
+  // ── INTRO PARAGRAPH ──
+  y = drawParagraph(doc,
+    `This Limited Partnership Agreement ("Agreement") is entered into as of ${values.effectiveDate || "[Date]"}, by and between ${values.party1Name || "[General Partner]"} (${values.party1Type === "business" ? "a business entity" : "an individual"}), as the General Partner, and ${values.party2Name || "[Limited Partner]"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), as the Limited Partner, collectively referred to as the "Partners." This Agreement is governed by the laws of ${jurisdiction || "[Jurisdiction]"}.`,
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 1: PURPOSE ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "1. PURPOSE OF THE LIMITED PARTNERSHIP", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    values.description || "The Partners agree to form a Limited Partnership for the purpose of conducting business for mutual benefit as described herein. The General Partner shall manage the day-to-day operations while the Limited Partner contributes capital without active management involvement.",
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 2: ROLES & RESPONSIBILITIES ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "2. ROLES AND RESPONSIBILITIES", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    `${values.party1Name || "The General Partner"} shall serve as the General Partner and shall be solely responsible for the management, operation, and decision-making of the partnership. ${values.party2Name || "The Limited Partner"} shall serve as the Limited Partner and shall have limited liability, not exceeding their capital contribution, and shall not participate in the active management of the partnership.`,
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 3: TERM ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "3. TERM", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    `This Agreement shall commence on ${values.effectiveDate || "[Effective Date]"} and shall continue for ${durationLabel}, unless earlier terminated. Either Partner may terminate this Agreement upon providing ${terminationLabel} written notice to the other party.`,
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 4: FINANCIAL TERMS ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "4. FINANCIAL TERMS", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    values.paymentAmount
+      ? `The agreed capital contribution or payment amount is ${values.paymentAmount}, payable on a ${scheduleLabel} schedule. All financial obligations and profit/loss distributions shall be fulfilled in accordance with the terms of this Agreement.`
+      : "The financial terms, capital contributions, and profit/loss distribution ratios between the Partners shall be as mutually agreed upon and documented separately or as amended to this Agreement.",
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 5: CONFIDENTIALITY ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "5. CONFIDENTIALITY", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    values.confidentiality === "yes"
+      ? "Each Partner agrees to keep confidential all proprietary, sensitive, or non-public information shared in the course of this Limited Partnership. Neither Partner shall disclose such information to any third party without prior written consent of the other, during the term of this Agreement and for a period of two (2) years thereafter."
+      : "No specific confidentiality provisions apply to this Agreement unless otherwise agreed in writing by both Partners.",
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 6: DISPUTE RESOLUTION ──
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, "6. DISPUTE RESOLUTION", margin, y, pageWidth);
+  y = drawParagraph(doc,
+    `Any dispute, controversy, or claim arising out of or in connection with this Agreement shall be resolved by ${disputeLabel}. The Partners agree to act in good faith to resolve all disputes promptly and amicably.`,
+    margin, y, contentWidth);
+  y += 2;
+
+  // ── SECTION 7: ADDITIONAL TERMS (conditional) ──
+  if (hasAdditionalTerms) {
+    y = checkPageBreak(doc, y, 25);
+    y = drawSectionHeading(doc, "7. ADDITIONAL TERMS", margin, y, pageWidth);
+    y = drawParagraph(doc, values.additionalTerms, margin, y, contentWidth);
+    y += 2;
   }
-  
+
+  // ── SECTION 7/8: GENERAL PROVISIONS ──
+  const generalSectionNum = hasAdditionalTerms ? "8" : "7";
+  y = checkPageBreak(doc, y, 25);
+  y = drawSectionHeading(doc, `${generalSectionNum}. GENERAL PROVISIONS`, margin, y, pageWidth);
+  y = drawParagraph(doc,
+    "This Agreement constitutes the entire agreement between the Partners with respect to the subject matter hereof and supersedes all prior agreements, understandings, negotiations, and discussions. This Agreement may not be amended except in writing signed by both Partners. If any provision of this Agreement is found to be unenforceable, the remaining provisions shall remain in full force and effect.",
+    margin, y, contentWidth);
+  y += 6;
+
+  // ── CLOSING ──
+  y = checkPageBreak(doc, y, 15);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("IN WITNESS WHEREOF, the Partners have executed this Agreement as of the date first written above.", margin, y);
+  y += 10;
+
+  // ── SENDER BLOCK (General Partner info) ──
+  y = checkPageBreak(doc, y, 25);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  // Underlined name like reference image
+  const senderName = values.party1Name || "General Partner";
+  doc.text(senderName, margin, y);
+  const senderNameWidth = doc.getTextWidth(senderName);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.2, margin + senderNameWidth, y + 1.2);
+  y += 6;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  if (party1Address)      { doc.text(party1Address,       margin, y); y += 5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
+  y += 4;
+
+  // ── SIGNATURES ──
+  y = drawSignatureBlock(doc, "General Partner:", values.party1Name || "", party1Address, values.party1Email || "", values.party1Phone || "", values.party1Signature || "", margin, y);
+  y = drawSignatureBlock(doc, "Limited Partner:", values.party2Name || "", party2Address, values.party2Email || "", values.party2Phone || "", values.party2Signature || "", margin, y);
+
+  // ── WITNESS ──
+  if (values.witnessName) {
+    y = checkPageBreak(doc, y, 24);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text("Witness:", margin, y);
+    y += 6;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(11);
+    doc.text("________________________", margin, y);
+    doc.setLineWidth(0.3);
+    y += 7;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("Name:", margin, y);
+    doc.setFont("helvetica", "normal");
+    doc.text(values.witnessName, margin + doc.getTextWidth("Name:  "), y);
+  }
+
   doc.save("limited_partnership_agreement.pdf");
 };
 

@@ -350,121 +350,211 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Business Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+  const pageWidth = 210;
+  const margin = 20;
+  const textWidth = pageWidth - margin * 2;
+  const fs = 10.5;  // base font size
+  const lh = 5.5;   // base line height
+  let y = 22;
+
+  // ── helpers ──────────────────────────────────────────────────────────────────
+
+  // "Label:  _value_" row with underline under value
+  const labeledField = (label: string, value: string, minUnderlineW = 55) => {
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.setFontSize(fs);
+    doc.setTextColor(20, 20, 20);
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const vx = margin + lw + 2;
+    const display = value || "";
+    if (display) doc.text(display, vx, y);
+    const uw = display ? doc.getTextWidth(display) : minUnderlineW;
+    doc.setDrawColor(20, 20, 20);
+    doc.line(vx, y + 1, vx + uw, y + 1);
+    y += lh + 1.5;
+  };
+
+  // Plain paragraph
+  const para = (text: string, bold = false, extraAfter = 0) => {
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(fs);
+    doc.setTextColor(20, 20, 20);
+    const lines = doc.splitTextToSize(text, textWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * lh + extraAfter;
+  };
+
+  // ── TITLE ────────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  const title = "BUSINESS AGREEMENT";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  const tx = pageWidth / 2 - tw / 2;
+  doc.setDrawColor(0, 0, 0);
+  doc.line(tx, y + 1.5, tx + tw, y + 1.5);
   y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+
+  // ── HEADER FIELDS ────────────────────────────────────────────────────────────
+  const jurisdiction = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+  labeledField("Date:", values.effectiveDate || "");
+  labeledField("Jurisdiction:", jurisdiction);
+  y += 3;
+
+  // ── SUBJECT ──────────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Subject: Business Agreement Between Parties", margin, y);
+  y += lh + 4;
+
+  // ── PARTIES ──────────────────────────────────────────────────────────────────
+  para("Dear Sir or Madam,", false, lh);
+
+  const p1addr = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const p2addr = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+
+  para(
+    `This Business Agreement ("Agreement") is entered into as of ${values.effectiveDate || "the date signed"}, ` +
+    `by and between ${values.party1Name || "First Party"} ` +
+    `(${values.party1Type === "business" ? "Business/Company" : "Individual"}), ` +
+    `located at ${p1addr || "N/A"}, Email: ${values.party1Email || "N/A"}` +
+    `${values.party1Phone ? ", Phone: " + values.party1Phone : ""} ("First Party"); and ` +
+    `${values.party2Name || "Second Party"} ` +
+    `(${values.party2Type === "business" ? "Business/Company" : "Individual"}), ` +
+    `located at ${p2addr || "N/A"}, Email: ${values.party2Email || "N/A"}` +
+    `${values.party2Phone ? ", Phone: " + values.party2Phone : ""} ("Second Party").`,
+    false,
+    lh
+  );
+
+  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text("1. PURPOSE AND SCOPE", margin, y);
+  y += lh + 1;
+  para(values.description || "N/A", false, lh);
+
+  // ── TERMS ────────────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text("2. TERMS AND CONDITIONS", margin, y);
+  y += lh + 1;
+  para(
+    `Duration: ${values.duration || "N/A"}.  Termination Notice: ${values.terminationNotice || "N/A"}.  ` +
+    `Confidentiality: ${values.confidentiality === "yes" ? "Included" : "Not Included"}.  ` +
+    `Dispute Resolution: ${values.disputeResolution || "N/A"}.`,
+    false,
+    lh
+  );
+
+  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────────
+  if (values.paymentAmount || values.paymentSchedule) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(fs);
+    doc.setTextColor(0, 0, 0);
+    doc.text("3. FINANCIAL TERMS", margin, y);
+    y += lh + 1;
+    para(
+      `Payment Amount: ${values.paymentAmount || "N/A"}.  Schedule: ${values.paymentSchedule || "N/A"}.`,
+      false,
+      lh
+    );
   }
-  
+
+  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────────
+  if (values.additionalTerms) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(fs);
+    doc.setTextColor(0, 0, 0);
+    doc.text("4. ADDITIONAL TERMS", margin, y);
+    y += lh + 1;
+    // cap to 2 lines to stay on one page
+    const addAllLines = doc.splitTextToSize(values.additionalTerms, textWidth);
+    const addLines = addAllLines.slice(0, 2);
+    doc.setFont("helvetica", "normal");
+    doc.text(addLines, margin, y);
+    y += addLines.length * lh + lh;
+  }
+
+  para(
+    "IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.",
+    false,
+    lh + 2
+  );
+
+  // ── SIGNATURES ───────────────────────────────────────────────────────────────
+  para("Sincerely,", false, lh + 2);
+
+  // First Party signature
+  const sig1 = values.party1Signature || values.party1Name || "";
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text(sig1, margin, y);
+  if (sig1) {
+    const sw = doc.getTextWidth(sig1);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, y + 1, margin + sw, y + 1);
+  }
+  y += lh + 1;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(fs);
+  para(`${values.party1Name || "First Party"} — First Party`, false, 1);
+  if (p1addr) para(p1addr, false, 1);
+  if (values.party1Email) para(`Email: ${values.party1Email}`, false, 1);
+  y += 3;
+
+  // Second Party signature
+  const sig2 = values.party2Signature || values.party2Name || "";
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(fs);
+  doc.setTextColor(0, 0, 0);
+  doc.text(sig2, margin, y);
+  if (sig2) {
+    const sw2 = doc.getTextWidth(sig2);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, y + 1, margin + sw2, y + 1);
+  }
+  y += lh + 1;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(fs);
+  para(`${values.party2Name || "Second Party"} — Second Party`, false, 1);
+  if (p2addr) para(p2addr, false, 1);
+  if (values.party2Email) para(`Email: ${values.party2Email}`, false, 1);
+  y += 3;
+
+  // Witness (optional)
+  if (values.witnessName) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(fs);
+    doc.text(values.witnessName, margin, y);
+    const ww = doc.getTextWidth(values.witnessName);
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, y + 1, margin + ww, y + 1);
+    y += lh + 1;
+    doc.setFont("helvetica", "normal");
+    para("Witness", false, 1);
+  }
+
+  // ── FOOTER ───────────────────────────────────────────────────────────────────
+  doc.setFontSize(7);
+  doc.setTextColor(160, 160, 160);
+  doc.text(
+    `Generated by Legalgram  •  ${new Date().toLocaleDateString()}`,
+    pageWidth / 2,
+    290,
+    { align: "center" }
+  );
+
   doc.save("business_agreement.pdf");
 };
 

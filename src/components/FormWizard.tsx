@@ -14,7 +14,7 @@ export interface FieldDef {
   placeholder?: string;
   options?: { value: string; label: string }[];
   dependsOn?: string;
-  getOptions?: (value: string) => { value: string; label: string }[];
+  getOptions?: (values: Record<string, any>) => { value: string; label: string }[];
 }
 
 // Step with pre-built content (JSX)
@@ -100,8 +100,11 @@ export const FormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
+  // Safe max: returns -1 when set is empty, avoiding spread of empty iterable into Math.max
+  const maxCompleted = completedSteps.size > 0 ? Math.max(...Array.from(completedSteps)) : -1;
+
   const jumpToStep = (index: number) => {
-    if (completedSteps.has(index) || index <= Math.max(...Array.from(completedSteps), -1) + 1) {
+    if (completedSteps.has(index) || index <= maxCompleted + 1) {
       setCurrentStep(index);
       setTouched(false);
     }
@@ -116,13 +119,10 @@ export const FormWizard: React.FC<FormWizardProps> = ({
     const value = formData[field.name] || '';
     const showError = touched && field.required && !value;
 
-    // Handle dependent selects
+    // Handle dependent selects — only populate options when the parent field has a value
     let options = field.options || [];
-    if (field.dependsOn && field.getOptions) {
-      const dependentValue = formData[field.dependsOn];
-      if (dependentValue) {
-        options = field.getOptions(dependentValue);
-      }
+    if (field.dependsOn && field.getOptions && formData[field.dependsOn]) {
+      options = field.getOptions(formData);
     }
 
     return (
@@ -216,7 +216,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
             {steps.map((step, index) => {
               const isCompleted = completedSteps.has(index);
               const isCurrent = index === currentStep;
-              const isClickable = isCompleted || index <= Math.max(...Array.from(completedSteps), -1) + 1;
+              const isClickable = isCompleted || index <= maxCompleted + 1;
 
               return (
                 <button
