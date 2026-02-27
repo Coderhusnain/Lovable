@@ -30,8 +30,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (value: string) => {
-          if (value === "us") {
+        getOptions: (values) => {
+          if (values.country === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -60,7 +60,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } else if (value === "ca") {
+          } else if (values.country === "ca") {
             return [
               { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
               { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
@@ -70,12 +70,12 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
               { value: "YT", label: "Yukon" },
             ];
-          } else if (value === "uk") {
+          } else if (values.country === "uk") {
             return [
               { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
               { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
             ];
-          } else if (value === "au") {
+          } else if (values.country === "au") {
             return [
               { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
               { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
@@ -124,46 +124,16 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "First Party Address",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "First Party Contact",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
@@ -191,46 +161,16 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Second Party Address",
     fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "Second Party Contact",
     fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
@@ -283,13 +223,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Financial Terms",
     fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
+      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
       {
         name: "paymentSchedule",
         label: "Payment Schedule",
@@ -349,251 +283,158 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Review & Sign",
     fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
+      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+  const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+
+  const durationMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom",
+  };
+  const terminationMap: Record<string, string> = {
+    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
+    "30days": "30 days", "60days": "60 days", "90days": "90 days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
   };
 
-  // ===== UNDERLINED FIELD =====
-  const addUnderlinedField = (label: string, value: string, minWidth = 60) => {
-    checkPageBreak();
-
+  const para = (text: string) => {
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
-  };
-
-  // ===== PARAGRAPH =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(text, contentWidth);
     doc.text(lines, margin, y);
-    y += lines.length * 5 + 2;
+    y += lines.length * 5 + 3;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE =====
-  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
+  // ── TITLE ──
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-
-  const title = "NONPROFIT FORMATION";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
-
+  doc.setFontSize(13);
+  const title = "NONPROFIT FORMATION AGREEMENT";
   const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.5);
+  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
+  y += 11;
 
-  y += 15;
+  // ── HEADER FIELDS ──
+  const field = (label: string, value: string) => {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const val = value || "N/A";
+    doc.text(val, margin + lw, y);
+    doc.setLineWidth(0.3);
+    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
+    y += 6;
+  };
 
-  // ===== DATE / JURISDICTION =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-  addUnderlinedField(
-    "Jurisdiction:",
-    `${values.state || ""}, ${values.country?.toUpperCase() || ""}`,
-    80
-  );
+  field("Date:  ", values.effectiveDate || "N/A");
+  field("To:  ", values.party2Name || "N/A");
+  field("Address:  ", party2Address || "N/A");
+  field("State/Province:  ", [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ") || "N/A");
+  y += 3;
 
-  y += 4;
-
-  // ===== SUBJECT =====
+  // ── SUBJECT ──
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("Subject: Nonprofit Formation Agreement", margin, y);
-  y += 10;
+  doc.setFontSize(10);
+  doc.text("Subject: Notice of Nonprofit Formation and Agreement of Terms", margin, y);
+  y += 7;
 
-  // ===== FIRST PARTY BLOCK =====
-  addParagraph("FIRST PARTY (FOUNDER / ORGANIZER):", true);
-  addUnderlinedField("Name:", values.party1Name || "", 100);
-  addUnderlinedField(
-    "Address:",
-    `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`,
-    120
+  // ── SALUTATION ──
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
+  y += 6;
+
+  // ── BODY PARAGRAPHS ──
+  para(
+    `I am writing to formally confirm the Nonprofit Formation Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the Founder"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Organization"}, governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`
   );
-  addUnderlinedField("Email:", values.party1Email || "", 100);
-  if (values.party1Phone) {
-    addUnderlinedField("Phone:", values.party1Phone, 80);
-  }
 
-  y += 4;
-
-  // ===== SECOND PARTY BLOCK =====
-  addParagraph("SECOND PARTY (ORGANIZATION / REGISTERED AGENT):", true);
-  addUnderlinedField("Name:", values.party2Name || "", 100);
-  addUnderlinedField(
-    "Address:",
-    `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`,
-    120
+  para(
+    values.description ||
+    "Both parties agree to establish this nonprofit organization for the purpose of advancing charitable, educational, or public benefit objectives in accordance with applicable nonprofit laws and regulations. Each party acknowledges their respective roles and obligations as outlined herein."
   );
-  addUnderlinedField("Email:", values.party2Email || "", 100);
-  if (values.party2Phone) {
-    addUnderlinedField("Phone:", values.party2Phone, 80);
-  }
 
-  y += 4;
-
-  // ===== DOCUMENT DETAILS =====
-  addParagraph("DOCUMENT DETAILS:", true);
-  addParagraph(values.description || "");
-
-  y += 4;
-
-  // ===== TERMS =====
-  addParagraph("TERMS & CONDITIONS:", true);
-
-  addParagraphWithUnderline("Duration: ", values.duration || "N/A", "");
-  addParagraphWithUnderline("Termination Notice: ", values.terminationNotice || "N/A", "");
-  addParagraphWithUnderline(
-    "Confidentiality: ",
-    values.confidentiality === "yes" ? "Included" : "Not Included",
-    ""
+  para(
+    `This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed funding contribution is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`
   );
-  addParagraphWithUnderline("Dispute Resolution: ", values.disputeResolution || "N/A", "");
 
-  if (values.paymentAmount) {
-    addParagraphWithUnderline("Payment Amount: ", values.paymentAmount, "");
-  }
-  if (values.paymentSchedule) {
-    addParagraphWithUnderline("Payment Schedule: ", values.paymentSchedule, "");
+  if (values.additionalTerms?.trim()) {
+    para(values.additionalTerms.trim());
   }
 
-  y += 4;
+  para(
+    "Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date."
+  );
 
-  // ===== ADDITIONAL TERMS =====
-  if (values.additionalTerms) {
-    addParagraph("ADDITIONAL TERMS:", true);
-    addParagraph(values.additionalTerms);
-    y += 4;
-  }
-
-  // ===== SIGNATURES =====
-  checkPageBreak(50);
-
-  addParagraph("SIGNATURES:", true);
-  y += 4;
-
-  // First Party Signature
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  const sig1 = values.party1Signature || values.party1Name || "";
-  doc.text(sig1, margin, y);
-  if (sig1) {
-    doc.line(margin, y + 1, margin + doc.getTextWidth(sig1), y + 1);
-  }
+  y += 2;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Thank you for your cooperation.", margin, y);
   y += 8;
+  doc.text("Sincerely,", margin, y);
+  y += 12;
+
+  // ── SENDER BLOCK ──
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  const senderName = values.party1Name || "Founder";
+  doc.text(senderName, margin, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
+  y += 6;
 
   doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
-  addParagraph(`Email: ${values.party1Email || ""}`);
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
+  doc.setFontSize(10);
+  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
 
-  y += 8;
-
-  // Second Party Signature
+  // ── SIGNATURES ──
+  y += 5;
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  const sig2 = values.party2Signature || values.party2Name || "";
-  doc.text(sig2, margin, y);
-  if (sig2) {
-    doc.line(margin, y + 1, margin + doc.getTextWidth(sig2), y + 1);
-  }
-  y += 8;
-
+  doc.setFontSize(10);
+  doc.text("First Party Signature:", margin, y);
   doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
-  addParagraph(`Email: ${values.party2Email || ""}`);
-  if (values.party2Phone) {
-    addParagraph(`Phone: ${values.party2Phone}`);
-  }
+  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("First Party Signature:  "), y);
+  y += 7;
 
-  // ===== WITNESS (optional) =====
+  doc.setFont("helvetica", "bold");
+  doc.text("Second Party Signature:", margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Second Party Signature:  "), y);
+  y += 7;
+
   if (values.witnessName) {
-    y += 8;
-    checkPageBreak(20);
-    addParagraph("WITNESS:", true);
-    addUnderlinedField("Name:", values.witnessName, 100);
+    doc.setFont("helvetica", "bold");
+    doc.text("Witness:", margin, y);
+    doc.setFont("helvetica", "normal");
+    const wx = margin + doc.getTextWidth("Witness:  ");
+    doc.text(values.witnessName, wx, y);
+    doc.setLineWidth(0.3);
+    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
   }
 
-  // ===== SAVE =====
   doc.save("nonprofit_formation.pdf");
 };
 

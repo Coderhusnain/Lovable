@@ -375,121 +375,151 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 25;
+  const contentWidth = pageWidth - margin * 2;
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Partnership Dissolution", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+
+  const durationMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom",
+  };
+  const terminationMap: Record<string, string> = {
+    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
+    "30days": "30 days", "60days": "60 days", "90days": "90 days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  };
+
+  // paragraph helper
+  const para = (text: string) => {
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(text, contentWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 5 + 3;
+  };
+
+  // ── TITLE: centered, bold, underlined ──
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  const title = "PARTNERSHIP DISSOLUTION AGREEMENT";
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.5);
+  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
+  y += 11;
+
+  // ── HEADER FIELDS: label + underlined value ──
+  const field = (label: string, value: string) => {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const val = value || "N/A";
+    doc.text(val, margin + lw, y);
+    doc.setLineWidth(0.3);
+    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
     y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+  };
+
+  field("Date:  ", values.effectiveDate || "N/A");
+  field("To:  ", values.party2Name || "N/A");
+  field("Address:  ", party2Address || "N/A");
+  field("State/Province:  ", jurisdiction || "N/A");
+  y += 3;
+
+  // ── SUBJECT ──
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(10);
+  doc.text("Subject: Notice of Partnership Dissolution and Settlement of Affairs", margin, y);
+  y += 7;
+
+  // ── SALUTATION ──
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
+  y += 6;
+
+  // ── BODY PARAGRAPHS (flowing, no sections) ──
+  para(
+    `I am writing to formally notify you of the dissolution of our partnership, effective ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} and ${values.party2Name || "the Second Party"}, governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`
+  );
+
+  para(
+    values.description ||
+    "Both parties mutually agree to dissolve the partnership and to settle all outstanding obligations, liabilities, and distributions in accordance with the applicable terms and conditions of the original partnership agreement and applicable law."
+  );
+
+  para(
+    `The dissolution process shall be completed within ${durationMap[values.duration] || values.duration || "the agreed duration"} and each party shall provide ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice for any pending obligations. Disputes arising during the dissolution shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " All confidential information shall remain protected as stipulated in the original agreement." : ""}${values.paymentAmount ? ` The agreed final settlement amount is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`
+  );
+
+  if (values.additionalTerms?.trim()) {
+    para(values.additionalTerms.trim());
+  }
+
+  para(
+    "Please retain a signed copy of this dissolution agreement for your records. Both parties are bound by the terms stated herein from the effective date."
+  );
+
+  y += 2;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Thank you for your cooperation.", margin, y);
+  y += 8;
+  doc.text("Sincerely,", margin, y);
   y += 12;
-  
+
+  // ── SENDER BLOCK: bold underlined name + contact ──
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
+  const senderName = values.party1Name || "First Party";
+  doc.text(senderName, margin, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
+  y += 6;
+
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
+  doc.setFontSize(10);
+  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
+
+  // ── SIGNATURES ──
+  y += 5;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("First Party Signature:", margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("First Party Signature:  "), y);
+  y += 7;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Second Party Signature:", margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Second Party Signature:  "), y);
+  y += 7;
+
   if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+    doc.setFont("helvetica", "bold");
+    doc.text("Witness:", margin, y);
+    doc.setFont("helvetica", "normal");
+    const wx = margin + doc.getTextWidth("Witness:  ");
+    doc.text(values.witnessName, wx, y);
+    doc.setLineWidth(0.3);
+    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
   }
-  
+
   doc.save("partnership_dissolution.pdf");
 };
 

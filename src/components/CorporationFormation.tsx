@@ -30,7 +30,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (value: string) => {
+        getOptions: (values: Record<string, string>) => {
+          const value = typeof values === "string" ? values : values.country;
           if (value === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
@@ -291,221 +292,149 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+  const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+
+  const durationMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom",
+  };
+  const terminationMap: Record<string, string> = {
+    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
+    "30days": "30 days", "60days": "60 days", "90days": "90 days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
   };
 
-  // ===== UNDERLINED FIELD =====
-  const addUnderlinedField = (label: string, value: string, minWidth = 60) => {
-    checkPageBreak();
+  const para = (text: string) => {
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-    if (display) doc.text(display, startX, y);
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
-    y += 8;
-  };
-
-  // ===== PARAGRAPH =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-    const lines = doc.splitTextToSize(text, textWidth);
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(text, contentWidth);
     doc.text(lines, margin, y);
-    y += lines.length * 5 + 2;
+    y += lines.length * 5 + 3;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE =====
-  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-      doc.text(line, margin, y);
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-      y += 6;
-    });
-    y += 2;
-  };
-
-  // ===== TITLE =====
+  // TITLE
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  const title = "CORPORATION FORMATION";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  doc.setFontSize(13);
+  const title = "BUSINESS ENTITY AGREEMENT";
   const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
-  y += 15;
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.5);
+  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
+  y += 11;
 
-  // ===== DATE & JURISDICTION =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-  addUnderlinedField(
-    "Jurisdiction:",
-    values.state ? `${values.state}, ${values.country?.toUpperCase()}` : (values.country || ""),
-    80
-  );
-  y += 4;
+  // HEADER FIELDS
+  const field = (label: string, value: string) => {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const val = value || "N/A";
+    doc.text(val, margin + lw, y);
+    doc.setLineWidth(0.3);
+    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
+    y += 6;
+  };
 
-  // ===== FIRST PARTY =====
+  field("Date:  ", values.effectiveDate || "N/A");
+  field("To:  ", values.party2Name || "N/A");
+  field("Address:  ", party2Address || "N/A");
+  field("State/Province:  ", [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ") || "N/A");
+  y += 3;
+
+  // SUBJECT
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("FIRST PARTY", margin, y);
-  y += 8;
-  addUnderlinedField("Name:", values.party1Name || "", 100);
-  addUnderlinedField("Type:", values.party1Type || "", 60);
-  addUnderlinedField("Address:", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`.trim(), 120);
-  addUnderlinedField("Email:", values.party1Email || "", 100);
-  if (values.party1Phone) addUnderlinedField("Phone:", values.party1Phone, 80);
-  y += 4;
+  doc.setFontSize(10);
+  doc.text("Subject: Notice of Business Entity Agreement and Terms of Engagement", margin, y);
+  y += 7;
 
-  // ===== SECOND PARTY =====
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("SECOND PARTY", margin, y);
-  y += 8;
-  addUnderlinedField("Name:", values.party2Name || "", 100);
-  addUnderlinedField("Type:", values.party2Type || "", 60);
-  addUnderlinedField("Address:", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`.trim(), 120);
-  addUnderlinedField("Email:", values.party2Email || "", 100);
-  if (values.party2Phone) addUnderlinedField("Phone:", values.party2Phone, 80);
+  // SALUTATION
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
   y += 6;
 
-  // ===== SUBJECT =====
+  // BODY
+  para(
+    `I am writing to formally confirm the Business Entity Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Second Party"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`
+  );
+
+  para(
+    values.description ||
+    "Both parties agree to enter into this business arrangement for the purpose of conducting lawful commercial activity for mutual benefit, in accordance with the applicable terms and conditions of this agreement and the governing laws of the stated jurisdiction."
+  );
+
+  para(
+    `This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed financial commitment is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`
+  );
+
+  if (values.additionalTerms?.trim()) {
+    para(values.additionalTerms.trim());
+  }
+
+  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
+
+  y += 2;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Thank you for your cooperation.", margin, y);
+  y += 8;
+  doc.text("Sincerely,", margin, y);
+  y += 12;
+
+  // SENDER BLOCK
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("Subject: Corporation Formation Agreement", margin, y);
-  y += 10;
-
-  // ===== BODY =====
-  addParagraph("To Whom It May Concern:");
-
-  addParagraphWithUnderline(
-    "This Corporation Formation Agreement is entered into as of ",
-    values.effectiveDate || "________________",
-    `, by and between ${values.party1Name || "the first party"} and ${values.party2Name || "the second party"} (collectively referred to as the "Parties").`
-  );
-
-  if (values.description) {
-    addParagraph("PURPOSE AND SCOPE:", true);
-    addParagraph(values.description);
-  }
-
-  addParagraph("TERMS AND CONDITIONS:", true);
-
-  addParagraphWithUnderline(
-    "The duration of this agreement shall be ",
-    values.duration || "________________",
-    `. Either party may terminate this agreement upon ${values.terminationNotice || "________________"} written notice to the other party.`
-  );
-
-  if (values.paymentAmount || values.paymentSchedule) {
-    addParagraph("FINANCIAL TERMS:", true);
-    addParagraph([
-      values.paymentAmount ? `Payment Amount: ${values.paymentAmount}` : "",
-      values.paymentSchedule ? `Payment Schedule: ${values.paymentSchedule}` : "",
-    ].filter(Boolean).join(" | "));
-  }
-
-  addParagraph("LEGAL PROVISIONS:", true);
-
-  if (values.confidentiality === "yes") {
-    addParagraph(
-      "CONFIDENTIALITY: Both parties agree to maintain the confidentiality of all proprietary information, trade secrets, and sensitive business data disclosed during the course of this agreement. This obligation shall survive the termination of this agreement."
-    );
-  }
-
-  addParagraphWithUnderline(
-    "DISPUTE RESOLUTION: Any disputes arising under or in connection with this agreement shall be resolved through ",
-    values.disputeResolution || "________________",
-    " in accordance with applicable law."
-  );
-
-  addParagraph(
-    "GOVERNING LAW: This agreement shall be governed by and construed in accordance with the laws of the jurisdiction stated herein, without regard to its conflict of law provisions."
-  );
-
-  addParagraph(
-    "ENTIRE AGREEMENT: This document constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, warranties, and understandings with respect to the subject matter hereof."
-  );
-
-  if (values.additionalTerms) {
-    addParagraph("ADDITIONAL TERMS:", true);
-    addParagraph(values.additionalTerms);
-  }
-
+  doc.setFontSize(10);
+  const senderName = values.party1Name || "First Party";
+  doc.text(senderName, margin, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
   y += 6;
-  addParagraph("IN WITNESS WHEREOF, the parties have executed this Corporation Formation Agreement as of the date first written above.");
-  y += 10;
 
-  // ===== SIGNATURES =====
-  checkPageBreak(50);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
 
+  // SIGNATURES
+  y += 5;
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
+  doc.setFontSize(10);
   doc.text("First Party Signature:", margin, y);
-  y += 8;
-  const sig1 = values.party1Signature || "";
-  doc.text(sig1, margin, y);
-  doc.line(margin, y + 1, margin + (sig1 ? doc.getTextWidth(sig1) : 80), y + 1);
-  y += 8;
   doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
-  addParagraph(`Email: ${values.party1Email || ""}`);
-  if (values.party1Phone) addParagraph(`Phone: ${values.party1Phone}`);
-
-  y += 8;
+  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("First Party Signature:  "), y);
+  y += 7;
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
   doc.text("Second Party Signature:", margin, y);
-  y += 8;
-  const sig2 = values.party2Signature || "";
-  doc.text(sig2, margin, y);
-  doc.line(margin, y + 1, margin + (sig2 ? doc.getTextWidth(sig2) : 80), y + 1);
-  y += 8;
   doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
-  addParagraph(`Email: ${values.party2Email || ""}`);
-  if (values.party2Phone) addParagraph(`Phone: ${values.party2Phone}`);
+  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Second Party Signature:  "), y);
+  y += 7;
 
   if (values.witnessName) {
-    y += 8;
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
     doc.text("Witness:", margin, y);
-    y += 8;
-    doc.text(values.witnessName, margin, y);
-    const witnessWidth = doc.getTextWidth(values.witnessName);
-    doc.line(margin, y + 1, margin + witnessWidth, y + 1);
-    y += 8;
+    doc.setFont("helvetica", "normal");
+    const wx = margin + doc.getTextWidth("Witness:  ");
+    doc.text(values.witnessName, wx, y);
+    doc.setLineWidth(0.3);
+    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
   }
 
-  // ===== SAVE =====
-  doc.save("corporation_formation.pdf");
+  doc.save("business_entity_agreement.pdf");
 };
 
 export default function CorporationFormation() {
