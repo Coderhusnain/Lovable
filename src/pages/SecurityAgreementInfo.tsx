@@ -132,7 +132,7 @@ const SecurityAgreementInfo = () => {
                   4. Default & Remedies
                 </h3>
                 <p className="text-gray-700">
-                  Explains what constitutes default and the secured party’s
+                  Explains what constitutes default and the secured party's
                   rights upon default.
                 </p>
               </div>
@@ -235,7 +235,7 @@ const SecurityAgreementInfo = () => {
             </p>
             <Button
               size="lg"
-              onClick={() => navigate("/documents/security-agreement-info")}
+              onClick={() => navigate("/documents/security-agreement")}
               className="bg-white text-bright-orange-600 hover:bg-gray-100 font-semibold px-8 py-3"
             >
               Start Security Agreement

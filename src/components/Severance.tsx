@@ -124,46 +124,16 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "First Party Address",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "First Party Contact",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
@@ -191,46 +161,16 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Second Party Address",
     fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "Second Party Contact",
     fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
@@ -283,13 +223,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Financial Terms",
     fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
+      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
       {
         name: "paymentSchedule",
         label: "Payment Schedule",
@@ -349,112 +283,170 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Review & Sign",
     fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
+      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
+  const pageWidth  = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin      = 20;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 18;
+
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
+
+  const durationMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom",
+  };
+  const terminationMap: Record<string, string> = {
+    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
+    "30days": "30 days", "60days": "60 days", "90days": "90 days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  };
+
+  // ── auto page-break ──
+  const checkPage = (needed = 8) => {
+    if (y + needed > pageHeight - 15) { doc.addPage(); y = 18; }
+  };
+
+  // ── paragraph: 9pt, 4.2mm line-height, 2mm gap ──
+  const para = (text: string) => {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    const lines = doc.splitTextToSize(text, contentWidth);
+    checkPage(lines.length * 4.2 + 2);
+    doc.text(lines, margin, y);
+    y += lines.length * 4.2 + 2;
+  };
+
+  // ── TITLE: 13pt bold centered underlined ──
   doc.setFont("helvetica", "bold");
-  doc.text("Severance", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+  doc.setFontSize(13);
+  const title = "SEVERANCE AGREEMENT";
+  const titleWidth = doc.getTextWidth(title);
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.5);
+  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
+  y += 9;
+
+  // ── HEADER FIELDS: 9pt label + underlined value ──
+  const field = (label: string, value: string) => {
+    checkPage(6);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(label, margin, y);
+    const lw  = doc.getTextWidth(label);
+    const val = value || "N/A";
+    doc.text(val, margin + lw, y);
+    doc.setLineWidth(0.3);
+    doc.line(margin + lw, y + 1.1, margin + lw + Math.max(doc.getTextWidth(val), 30), y + 1.1);
+    y += 5.5;
+  };
+
+  field("Date:  ", values.effectiveDate || "N/A");
+  field("To:  ", values.party2Name || "N/A");
+  field("Address:  ", party2Address || "N/A");
+  y += 2;
+
+  // ── SUBJECT ──
+  checkPage(7);
   doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
+  doc.setFontSize(9);
+  doc.text("Subject: Notice of Severance Agreement and Terms of Engagement", margin, y);
+  y += 6;
+
+  // ── SALUTATION ──
+  checkPage(6);
   doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  doc.setFontSize(9);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
+  y += 5;
+
+  // ── BODY PARAGRAPHS ──
+  para(
+    `I am writing to formally confirm the Severance Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Second Party"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`
+  );
+
+  para(
+    values.description ||
+    "Both parties agree to the terms of this severance arrangement, which outlines the conditions of separation, applicable compensation, benefits continuation, and all related obligations and releases in accordance with applicable laws and regulations."
+  );
+
+  para(
+    `This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed severance amount is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`
+  );
+
+  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
+
+  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
+
+  y += 1;
+  checkPage(16);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("Thank you for your cooperation.", margin, y);
   y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  doc.text("Sincerely,", margin, y);
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+
+  // ── SENDER BLOCK ──
+  checkPage(18);
   doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
+  doc.setFontSize(9);
+  const senderName = values.party1Name || "First Party";
+  doc.text(senderName, margin, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.1, margin + doc.getTextWidth(senderName), y + 1.1);
+  y += 5;
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
+  doc.setFontSize(9);
+  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 4.5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 4.5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 4.5; }
+
+  // ── SIGNATURES ──
+  y += 4;
+  checkPage(20);
   doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
+  doc.setFontSize(9);
+  doc.text("First Party Signature:", margin, y);
   doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
+  doc.text(
+    values.party1Signature || "________________________",
+    margin + doc.getTextWidth("First Party Signature:  "), y
+  );
   y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
+  doc.text("Second Party Signature:", margin, y);
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
+  doc.text(
+    values.party2Signature || "________________________",
+    margin + doc.getTextWidth("Second Party Signature:  "), y
+  );
   y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
+  if (values.witnessName) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Witness:", margin, y);
+    doc.setFont("helvetica", "normal");
+    const wx = margin + doc.getTextWidth("Witness:  ");
+    doc.text(values.witnessName, wx, y);
+    doc.setLineWidth(0.3);
+    doc.line(wx, y + 1.1, wx + doc.getTextWidth(values.witnessName), y + 1.1);
+  }
+
   doc.save("severance.pdf");
 };
 

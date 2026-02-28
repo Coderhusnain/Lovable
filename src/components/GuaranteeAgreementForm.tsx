@@ -13,7 +13,10 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-         
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
         ],
       },
     ],
@@ -27,8 +30,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
+        getOptions: (values) => {
+          if (values.country === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -57,7 +60,29 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } 
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -66,509 +91,239 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Agreement Date",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
     ],
   },
   {
     label: "First Party Name",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
+      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
     ],
   },
   {
     label: "First Party Address",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "First Party Contact",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
     label: "Second Party Name",
     fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
+      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
     ],
   },
   {
     label: "Second Party Address",
     fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
+      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
+      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
     ],
   },
   {
     label: "Second Party Contact",
     fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
+      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
     ],
   },
   {
     label: "Agreement Details",
     fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
+      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
     ],
   },
   {
     label: "Terms & Conditions",
     fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
+      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
+      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
     ],
   },
   {
     label: "Financial Terms",
     fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
+      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
+      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
     ],
   },
   {
     label: "Legal Protections",
     fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
+      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
+      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
     ],
   },
   {
     label: "Additional Terms",
     fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
+      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
     ],
   },
   {
     label: "Review & Sign",
     fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
+      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
+      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
+  const doc = new jsPDF({ unit: "mm", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+  const contentWidth = pageWidth - margin * 2;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
-  };
+  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
+  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
+  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
 
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
+  const para = (text: string) => {
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
-  };
-
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(text, contentWidth);
     doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
+    y += lines.length * 5 + 3;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
+  // TITLE
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-
-  const title = " Guarantee Agreement Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
-
+  doc.setFontSize(13);
+  const title = "GUARANTEE AGREEMENT LETTER";
   const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  const titleX = (pageWidth - titleWidth) / 2;
+  doc.text(title, titleX, y);
+  doc.setLineWidth(0.5);
+  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
+  y += 11;
 
-  y += 15;
+  // HEADER FIELDS
+  const field = (label: string, value: string) => {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(label, margin, y);
+    const lw = doc.getTextWidth(label);
+    const val = value || "N/A";
+    doc.text(val, margin + lw, y);
+    doc.setLineWidth(0.3);
+    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
+    y += 6;
+  };
 
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+  field("Date:  ", values.effectiveDate || "N/A");
+  field("To:  ", values.party2Name || "N/A");
+  field("Address:  ", party2Address || "N/A");
+  field("State/Province:  ", jurisdiction || "N/A");
+  y += 3;
 
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Personal/Corporate Guarantee Agreement",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Parties
-const guarantorName = values.party1Name || "________";
-const lenderName = values.party2Name || "________";
-const borrowerName = values.borrowerName || "________";
-
-
-
-// Identification
-addParagraphWithUnderline(
-  "Guarantor: ",
-  guarantorName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Lender/Creditor: ",
-  lenderName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Borrower/Debtor: ",
-  borrowerName,
-  ""
-);
-
-
-// Introduction
-addParagraph(
-  "This letter serves as a formal guarantee of payment and performance for the obligations described below."
-);
-
-
-
-// Guarantee terms
-addParagraph(
-  "The undersigned Guarantor hereby unconditionally guarantees the full and timely payment and performance of all obligations owed by the Borrower to the Lender. In the event of default by the Borrower, the Guarantor agrees to satisfy the outstanding obligations upon demand."
-);
-
-// Continuing guarantee
-addParagraph(
-  "This guarantee shall remain in effect until all obligations covered by this agreement have been fully paid and satisfied, unless released in writing by the Lender."
-);
-
-// Rights clause
-addParagraph(
-  "The Guarantor acknowledges that the Lender may extend, modify, or renew the underlying obligation without prior notice, and such actions shall not release the Guarantor from liability unless expressly agreed in writing."
-);
-
-// Closing
-addParagraph(
-  "This document is provided as a formal record of the guarantee commitment. Please retain it for your records and contact the undersigned if additional documentation or clarification is required."
-);
-
-addParagraph(
-  "Thank you for your attention to this matter."
-);
-
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
+  // SUBJECT
   doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
+  doc.setFontSize(10);
+  doc.text("Subject: Personal/Corporate Guarantee Agreement", margin, y);
+  y += 7;
 
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
+  // SALUTATION
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
+  y += 6;
 
-  y += 8;
+  // GUARANTOR / LENDER lines with underlines
+  const guarantorName = values.party1Name || "the Guarantor";
+  const lenderName    = values.party2Name || "the Lender/Creditor";
 
   doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
-  );
+  doc.setFontSize(10);
+  const gLabel = "Guarantor:  ";
+  doc.text(gLabel, margin, y);
+  const glw = doc.getTextWidth(gLabel);
+  doc.text(guarantorName, margin + glw, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin + glw, y + 1.2, margin + glw + doc.getTextWidth(guarantorName), y + 1.2);
+  y += 6;
 
-  addParagraph(`Email: ${values.party1Email || ""}`);
+  const lLabel = "Lender/Creditor:  ";
+  doc.text(lLabel, margin, y);
+  const llw = doc.getTextWidth(lLabel);
+  doc.text(lenderName, margin + llw, y);
+  doc.line(margin + llw, y + 1.2, margin + llw + doc.getTextWidth(lenderName), y + 1.2);
+  y += 8;
 
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
+  // BODY
+  para("This letter serves as a formal guarantee of payment and performance for the obligations described below.");
+
+  if (values.description?.trim()) para(values.description.trim());
+
+  para("The undersigned Guarantor hereby unconditionally guarantees the full and timely payment and performance of all obligations owed by the relevant party to the Lender/Creditor. In the event of default, the Guarantor agrees to satisfy the outstanding obligations upon demand.");
+
+  para("This guarantee shall remain in effect until all obligations covered by this agreement have been fully paid and satisfied, unless released in writing by the Lender/Creditor.");
+
+  para("The Guarantor acknowledges that the Lender/Creditor may extend, modify, or renew the underlying obligation without prior notice, and such actions shall not release the Guarantor from liability unless expressly agreed in writing.");
+
+  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
+
+  para("This document is provided as a formal record of the guarantee commitment. Please retain it for your records and contact the undersigned if additional documentation or clarification is required.");
+
+  y += 2;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text("Thank you for your attention to this matter.", margin, y);
+  y += 8;
+  doc.text("Sincerely,", margin, y);
+  y += 12;
+
+  // SENDER BLOCK
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  const senderName = values.party1Name || "Guarantor";
+  doc.text(senderName, margin, y);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
+  y += 6;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
+
+  // SIGNATURES
+  y += 5;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.text("Guarantor Signature:", margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("Guarantor Signature:  "), y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.text("Lender/Creditor Signature:", margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Lender/Creditor Signature:  "), y);
+  y += 7;
+  if (values.witnessName) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Witness:", margin, y);
+    doc.setFont("helvetica", "normal");
+    const wx = margin + doc.getTextWidth("Witness:  ");
+    doc.text(values.witnessName, wx, y);
+    doc.setLineWidth(0.3);
+    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
   }
 
-  // ===== SAVE =====
-  doc.save("gurantee_agreement.pdf");
+  doc.save("guarantee_agreement.pdf");
 };
 
 export default function GuaranteeAgreement() {
