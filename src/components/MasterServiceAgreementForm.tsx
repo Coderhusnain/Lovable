@@ -374,122 +374,117 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// Helper: draw underlined text
+const drawUnderlined = (doc: jsPDF, text: string, x: number, y: number) => {
+  doc.text(text, x, y);
+  const textWidth = doc.getTextWidth(text);
+  doc.line(x, y + 0.8, x + textWidth, y + 0.8);
+};
+
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+  let y = 14;
+  const lineH = 4.5; // compact line height
+  const pageH = 280; // safe page height
+
+  // Title
+  doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
   doc.text("Master Service Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
+  y += lineH + 2;
+
+  // Meta row
+  doc.setFontSize(7);
   doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
+  doc.text("Effective Date: ", 14, y);
+  drawUnderlined(doc, values.effectiveDate || "N/A", 14 + doc.getTextWidth("Effective Date: "), y);
+  doc.text("Jurisdiction: ", 120, y);
+  drawUnderlined(doc, (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120 + doc.getTextWidth("Jurisdiction: "), y);
+  y += lineH + 2;
+
+  // Section helper
+  const sectionTitle = (title: string) => {
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.text(title, 14, y);
+    y += lineH;
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+  };
+
+  const labelVal = (label: string, val: string, x = 14, col2 = false) => {
+    const lbl = label + ": ";
+    const xPos = col2 ? 110 : x;
+    doc.text(lbl, xPos, y);
+    drawUnderlined(doc, val || "N/A", xPos + doc.getTextWidth(lbl), y);
+    if (!col2) y += lineH;
+  };
+
+  const twoCol = (lbl1: string, val1: string, lbl2: string, val2: string) => {
+    const l1 = lbl1 + ": ";
+    doc.text(l1, 14, y);
+    drawUnderlined(doc, val1 || "N/A", 14 + doc.getTextWidth(l1), y);
+    const l2 = lbl2 + ": ";
+    doc.text(l2, 110, y);
+    drawUnderlined(doc, val2 || "N/A", 110 + doc.getTextWidth(l2), y);
+    y += lineH;
+  };
+
+  // PARTIES
+  sectionTitle("PARTIES");
+  twoCol("First Party", values.party1Name || "N/A", "Second Party", values.party2Name || "N/A");
+  twoCol("Address", (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), "Address", (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""));
+  twoCol("Email", values.party1Email || "", "Email", values.party2Email || "");
+  twoCol("Phone", values.party1Phone || "", "Phone", values.party2Phone || "");
+  y += 2;
+
+  // AGREEMENT DETAILS
+  sectionTitle("AGREEMENT DETAILS");
+  const descLines = doc.splitTextToSize(values.description || "N/A", 182);
+  doc.text(descLines, 14, y);
+  // Underline each desc line
+  descLines.forEach((line: string, i: number) => {
+    const w = doc.getTextWidth(line);
+    doc.line(14, y + 0.8 + i * lineH, 14 + w, y + 0.8 + i * lineH);
+  });
+  y += descLines.length * lineH + 2;
+
+  // TERMS
+  sectionTitle("TERMS");
+  twoCol("Duration", values.duration || "N/A", "Termination Notice", values.terminationNotice || "N/A");
+  twoCol("Confidentiality", values.confidentiality === "yes" ? "Included" : "Not Included", "Dispute Resolution", values.disputeResolution || "N/A");
+  y += 2;
+
+  // FINANCIAL TERMS (if present)
   if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
+    sectionTitle("FINANCIAL TERMS");
+    twoCol("Payment", values.paymentAmount, "Schedule", values.paymentSchedule || "N/A");
+    y += 2;
   }
-  
+
+  // ADDITIONAL TERMS (if present)
   if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
+    sectionTitle("ADDITIONAL TERMS");
+    const addLines = doc.splitTextToSize(values.additionalTerms, 182);
+    doc.text(addLines, 14, y);
+    addLines.forEach((line: string, i: number) => {
+      const w = doc.getTextWidth(line);
+      doc.line(14, y + 0.8 + i * lineH, 14 + w, y + 0.8 + i * lineH);
+    });
+    y += addLines.length * lineH + 2;
   }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
+
+  // SIGNATURES
+  sectionTitle("SIGNATURES");
+  twoCol("Name", values.party1Name || "First Party", "Name", values.party2Name || "Second Party");
+  twoCol("Signature", values.party1Signature || "", "Signature", values.party2Signature || "");
+  twoCol("Date", new Date().toLocaleDateString(), "Date", new Date().toLocaleDateString());
+
   if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+    y += 2;
+    labelVal("Witness", values.witnessName);
   }
-  
+
   doc.save("master_service_agreement.pdf");
 };
 

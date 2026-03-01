@@ -89,11 +89,35 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Extension Date",
     fields: [
       {
         name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
+        label: "What is the effective date of this extension?",
+        type: "date",
+        required: true,
+      },
+    ],
+  },
+  {
+    label: "Original Contract",
+    fields: [
+      {
+        name: "originalContractTitle",
+        label: "What is the title of the original contract?",
+        type: "text",
+        required: true,
+        placeholder: "e.g. Service Agreement dated Jan 1, 2024",
+      },
+      {
+        name: "originalEndDate",
+        label: "What was the original end/expiration date?",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "newEndDate",
+        label: "What is the new extended end date?",
         type: "date",
         required: true,
       },
@@ -234,103 +258,14 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     ],
   },
   {
-    label: "Agreement Details",
+    label: "Amendments",
     fields: [
       {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
+        name: "amendments",
+        label: "List any amendments or changes to the original contract (if any)",
         type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
         required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
+        placeholder: "Describe any specific changes or amendments to original terms...",
       },
     ],
   },
@@ -339,10 +274,10 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     fields: [
       {
         name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
+        label: "Any additional terms for this extension?",
         type: "textarea",
         required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
+        placeholder: "Enter any additional terms or special provisions...",
       },
     ],
   },
@@ -374,133 +309,174 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Contract Extension", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
-  doc.save("contract_extension.pdf");
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Render text + draw underline beneath it */
+const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
+  doc.text(text, x, y);
+  const w = doc.getTextWidth(text);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.25);
+  doc.line(x, y + 1.1, x + w, y + 1.1);
 };
 
-export default function ContractExtension() {
+/** Plain label then underlined value on same line */
+const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  ulText(doc, value, x + doc.getTextWidth(label), y);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+  const PW       = 210;
+  const M        = 20;
+  const TW       = PW - M * 2;
+  const FS       = 10.5;
+  const LH       = 5.8;
+  const SAFE_BOT = 270;
+  let y = 22;
+
+  const checkPage = (needed = 12) => {
+    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
+  };
+
+  // ── TITLE ────────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  const TITLE = "CONTRACT EXTENSION AGREEMENT";
+  doc.text(TITLE, PW / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(TITLE);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.4);
+  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
+  y += 12;
+
+  // ── DATE / JURISDICTION ──────────────────────────────────────────────────
+  doc.setFontSize(FS);
+  doc.setTextColor(0, 0, 0);
+  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y); y += LH + 1;
+  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y);
+  y += LH + 6;
+
+  // ── ORIGINAL CONTRACT DETAILS ────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(FS);
+  doc.text("ORIGINAL CONTRACT DETAILS", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  labelUl(doc, "Original Contract:  ", values.originalContractTitle || "N/A", M, y); y += LH;
+  labelUl(doc, "Original End Date:  ", values.originalEndDate || "N/A", M, y); y += LH;
+  labelUl(doc, "New Extended End Date:  ", values.newEndDate || "N/A", M, y); y += LH + 6;
+
+  // ── PARTIES ──────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.text("PARTIES", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+
+  // First Party
+  labelUl(doc, "First Party:  ", values.party1Name || "N/A", M, y); y += LH;
+  labelUl(doc, "Address:  ", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, M, y); y += LH;
+  labelUl(doc, "Email:  ", values.party1Email || "N/A", M, y); y += LH;
+  if (values.party1Phone) { labelUl(doc, "Phone:  ", values.party1Phone, M, y); y += LH; }
+  y += 4;
+
+  // Second Party
+  labelUl(doc, "Second Party:  ", values.party2Name || "N/A", M, y); y += LH;
+  labelUl(doc, "Address:  ", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`, M, y); y += LH;
+  labelUl(doc, "Email:  ", values.party2Email || "N/A", M, y); y += LH;
+  if (values.party2Phone) { labelUl(doc, "Phone:  ", values.party2Phone, M, y); y += LH; }
+  y += 6;
+
+  // ── EXTENSION TERMS ──────────────────────────────────────────────────────
+  checkPage(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("EXTENSION TERMS", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  const extText = doc.splitTextToSize(
+    `The parties hereby agree to extend the above-referenced contract from ` +
+    `${values.originalEndDate || "N/A"} to ${values.newEndDate || "N/A"}. ` +
+    `All other terms and conditions of the original contract remain in full force and effect, ` +
+    `unless specifically amended herein.`,
+    TW
+  );
+  doc.text(extText, M, y);
+  y += extText.length * LH + 5;
+
+  // ── AMENDMENTS ───────────────────────────────────────────────────────────
+  if (values.amendments) {
+    checkPage(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("AMENDMENTS TO ORIGINAL CONTRACT", M, y); y += LH + 1;
+    doc.setFont("helvetica", "normal");
+    const amendLines = doc.splitTextToSize(values.amendments, TW);
+    doc.text(amendLines, M, y);
+    y += amendLines.length * LH + 5;
+  }
+
+  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────
+  if (values.additionalTerms) {
+    checkPage(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", M, y); y += LH + 1;
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
+    doc.text(addLines, M, y);
+    y += addLines.length * LH + 5;
+  }
+
+  // ── SIGNATURES ───────────────────────────────────────────────────────────
+  checkPage(45);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", M, y); y += LH + 3;
+  doc.setFont("helvetica", "normal");
+
+  const C2 = 110;
+  doc.text("_______________________________", M, y);
+  doc.text("_______________________________", C2, y);
+  y += LH;
+
+  // Underlined party names
+  ulText(doc, values.party1Name || "First Party", M, y);
+  ulText(doc, values.party2Name || "Second Party", C2, y);
+  y += LH;
+
+  // Underlined typed signatures
+  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y);
+  labelUl(doc, "Signature:  ", values.party2Signature || "", C2, y);
+  y += LH;
+
+  doc.text("Date: " + new Date().toLocaleDateString(), M, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), C2, y);
+
+  if (values.witnessName) {
+    y += LH + 6;
+    doc.text("Witness: _______________________________", M, y); y += LH;
+    labelUl(doc, "Name:  ", values.witnessName, M, y);
+  }
+
+  // ── FOOTER ───────────────────────────────────────────────────────────────
+  doc.setFontSize(7);
+  doc.setTextColor(150, 150, 150);
+  doc.text(`Generated  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
+
+  doc.save("contract_extension_agreement.pdf");
+};
+
+export default function ContractExtensionAgreement() {
   return (
     <FormWizard
       steps={steps}
-      title="Contract Extension"
+      title="Contract Extension Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="contractextension"
+      documentType="contractextensionagreement"
     />
   );
 }

@@ -89,11 +89,11 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     ],
   },
   {
-    label: "Effective Date",
+    label: "Agreement Date",
     fields: [
       {
         name: "effectiveDate",
-        label: "What is the effective date of this document?",
+        label: "What is the effective date of this agreement?",
         type: "date",
         required: true,
       },
@@ -160,7 +160,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party1Phone",
         label: "Phone Number",
-        type: "phone",
+        type: "tel",
         required: false,
         placeholder: "(555) 123-4567",
       },
@@ -227,26 +227,26 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       {
         name: "party2Phone",
         label: "Phone Number",
-        type: "phone",
+        type: "tel",
         required: false,
         placeholder: "(555) 123-4567",
       },
     ],
   },
   {
-    label: "Document Details",
+    label: "Agreement Details",
     fields: [
       {
         name: "description",
-        label: "Describe the purpose and details of this document",
+        label: "Describe the purpose and scope of this agreement",
         type: "textarea",
         required: true,
-        placeholder: "Provide a detailed description...",
+        placeholder: "Provide a detailed description of the agreement terms...",
       },
     ],
   },
   {
-    label: "Terms & Duration",
+    label: "Terms & Conditions",
     fields: [
       {
         name: "duration",
@@ -342,12 +342,12 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         label: "Any additional terms or special conditions?",
         type: "textarea",
         required: false,
-        placeholder: "Enter any additional terms...",
+        placeholder: "Enter any additional terms, conditions, or special provisions...",
       },
     ],
   },
   {
-    label: "Signatures",
+    label: "Review & Sign",
     fields: [
       {
         name: "party1Signature",
@@ -374,87 +374,169 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// ─── Shared PDF helpers ──────────────────────────────────────────────────────
+
+/** Render "Label:  " (normal) + underlined value on the same baseline */
+const fieldRow = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  const vx = x + doc.getTextWidth(label);
+  doc.text(value, vx, y);
+  doc.line(vx, y + 0.7, vx + doc.getTextWidth(value), y + 0.7);
+};
+
+/** Underline a word/phrase that appears inline within running text.
+ *  `textBefore` is already rendered; this just draws the underline under `word`
+ *  at absolute position (wx, wy). */
+const inlineUnderline = (doc: jsPDF, word: string, wx: number, wy: number) => {
+  doc.line(wx, wy + 0.7, wx + doc.getTextWidth(word), wy + 0.7);
+};
+
+/** Bold + underlined centred title */
+const boldUnderlinedCentre = (doc: jsPDF, text: string, y: number, fontSize = 13) => {
+  doc.setFontSize(fontSize);
+  doc.setFont("helvetica", "bold");
+  const w = doc.getTextWidth(text);
+  const x = (210 - w) / 2;
+  doc.text(text, x, y);
+  doc.line(x, y + 0.9, x + w, y + 0.9);
+};
+
+/** Wrapped paragraph – returns updated y */
+const para = (doc: jsPDF, text: string, x: number, y: number, maxW: number, lh: number): number => {
+  const lines: string[] = doc.splitTextToSize(text, maxW);
+  doc.text(lines, x, y);
+  return y + lines.length * lh;
+};
+
+// ─── generatePDF ─────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const L = 25;
+  const W = 160;   // text width
+  const lh = 7;    // line height
+  let y = 22;
+
+  const durMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom Duration",
+  };
+  const noticeMap: Record<string, string> = {
+    "immediate": "Immediate", "7days": "7 Days", "14days": "14 Days",
+    "30days": "30 Days", "60days": "60 Days", "90days": "90 Days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  };
+
+  // ── Title ──
+  doc.setFontSize(13);
+  boldUnderlinedCentre(doc, "SERVICE AGREEMENT", y, 13);
+  y += lh * 2;
+
+  // ── Header rows ──
+  doc.setFontSize(11);
+  fieldRow(doc, "Date:  ", values.effectiveDate || "N/A", L, y); y += lh;
+  fieldRow(doc, "To:  ", values.party2Name || "N/A", L, y); y += lh;
+  fieldRow(
+    doc,
+    "Address:  ",
+    `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`,
+    L, y
+  ); y += lh * 1.6;
+
+  // ── Subject (bold) ──
   doc.setFont("helvetica", "bold");
-  doc.text("Service Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
+  doc.setFontSize(11);
+  doc.text(
+    `Subject: Service Agreement – ${values.party1Name || "First Party"} & ${values.party2Name || "Second Party"}`,
+    L, y
+  );
+  y += lh * 1.6;
+
+  // ── Body ──
   doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
+
+  doc.text("Dear Sir or Madam:", L, y);
+  y += lh;
+
+  // Para 1 – mention party2Name underlined inline
+  const p1a = "I am writing to formally confirm the Service Agreement with ";
+  const p2name = values.party2Name || "the Second Party";
+  const p1b = ", effective immediately.";
+  doc.text(p1a, L, y);
+  const p2x = L + doc.getTextWidth(p1a);
+  doc.text(p2name, p2x, y);
+  inlineUnderline(doc, p2name, p2x, y);
+  doc.text(p1b, p2x + doc.getTextWidth(p2name), y);
+  y += lh;
+
+  // Para 2
+  const body2 =
+    values.description ||
+    "The parties agree to provide services as described in the terms of this agreement. " +
+    "All obligations and deliverables shall be performed in a professional and timely manner.";
+  y = para(doc, body2, L, y, W, lh);
+  y += lh * 0.4;
+
+  // Para 3 – terms summary
+  const body3 =
+    `This agreement is governed by the laws of ${values.state || ""}, ${(values.country || "").toUpperCase()}. ` +
+    `Duration: ${durMap[values.duration] || values.duration || "N/A"}. ` +
+    `Termination notice: ${noticeMap[values.terminationNotice] || values.terminationNotice || "N/A"}. ` +
+    `Confidentiality: ${values.confidentiality === "yes" ? "Included" : "Not included"}. ` +
+    `Dispute resolution: ${disputeMap[values.disputeResolution] || values.disputeResolution || "N/A"}.`;
+  y = para(doc, body3, L, y, W, lh);
+  y += lh * 0.4;
+
+  // Para 4 – financial (if any)
+  if (values.paymentAmount) {
+    const body4 =
+      `Financial terms: A payment of ${values.paymentAmount} is agreed on a ` +
+      `${values.paymentSchedule || "N/A"} schedule.`;
+    y = para(doc, body4, L, y, W, lh);
+    y += lh * 0.4;
+  }
+
+  // Para 5 – additional (if any)
+  if (values.additionalTerms) {
+    y = para(doc, values.additionalTerms, L, y, W, lh);
+    y += lh * 0.4;
+  }
+
+  // Para 6 – closing
+  const body6 =
+    "Please contact us should you require any additional information to process this agreement. " +
+    "We appreciate your prompt attention to this matter and look forward to written confirmation " +
+    "of the terms herein.";
+  y = para(doc, body6, L, y, W, lh);
+  y += lh;
+
+  doc.text("Thank you for your cooperation.", L, y);
+  y += lh * 1.8;
+
+  doc.text("Sincerely,", L, y);
+  y += lh * 2.8;
+
+  // ── Signature block ──
+  const sigName = values.party1Signature || values.party1Name || "First Party";
   doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
+  doc.text(sigName, L, y);
+  doc.line(L, y + 0.9, L + doc.getTextWidth(sigName), y + 0.9);
+  y += lh;
+
   doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
+  doc.text(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, L, y); y += lh;
+  doc.text(`Email: ${values.party1Email || ""}`, L, y); y += lh;
+  doc.text(`Phone: ${values.party1Phone || ""}`, L, y); y += lh;
+
+  if (values.witnessName) {
+    y += lh * 0.5;
+    doc.text(`Witness: ${values.witnessName}`, L, y);
+  }
+
   doc.save("service_agreement.pdf");
 };
 

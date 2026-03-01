@@ -13,7 +13,6 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-         
         ],
       },
     ],
@@ -28,7 +27,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         dependsOn: "country",
         getOptions: (value) => {
-          if (value=== "us") {
+          if (value === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -57,7 +56,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } 
+          }
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -349,211 +348,194 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Render text + draw underline beneath it */
+const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
+  doc.text(text, x, y);
+  const w = doc.getTextWidth(text);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.25);
+  doc.line(x, y + 1.1, x + w, y + 1.1);
+};
+
+/** Plain label then underlined value on same line */
+const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  ulText(doc, value, x + doc.getTextWidth(label), y);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF GENERATOR — letter-style layout matching reference image
+// ─────────────────────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-  const pageWidth = 210;
-  const margin = 20;
-  const textWidth = pageWidth - margin * 2;
-  const fs = 10.5;  // base font size
-  const lh = 5.5;   // base line height
+  const PW       = 210;
+  const M        = 20;
+  const TW       = PW - M * 2;
+  const FS       = 10.5;
+  const LH       = 5.8;
+  const SAFE_BOT = 270;
   let y = 22;
 
-  // ── helpers ──────────────────────────────────────────────────────────────────
-
-  // "Label:  _value_" row with underline under value
-  const labeledField = (label: string, value: string, minUnderlineW = 55) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(fs);
-    doc.setTextColor(20, 20, 20);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const vx = margin + lw + 2;
-    const display = value || "";
-    if (display) doc.text(display, vx, y);
-    const uw = display ? doc.getTextWidth(display) : minUnderlineW;
-    doc.setDrawColor(20, 20, 20);
-    doc.line(vx, y + 1, vx + uw, y + 1);
-    y += lh + 1.5;
+  const checkPage = (needed = 12) => {
+    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
   };
-
-  // Plain paragraph
-  const para = (text: string, bold = false, extraAfter = 0) => {
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(fs);
-    doc.setTextColor(20, 20, 20);
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * lh + extraAfter;
-  };
-
-  // ── TITLE ────────────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  const title = "BUSINESS AGREEMENT";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
-  const tw = doc.getTextWidth(title);
-  const tx = pageWidth / 2 - tw / 2;
-  doc.setDrawColor(0, 0, 0);
-  doc.line(tx, y + 1.5, tx + tw, y + 1.5);
-  y += 12;
-
-  // ── HEADER FIELDS ────────────────────────────────────────────────────────────
-  const jurisdiction = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-  labeledField("Date:", values.effectiveDate || "");
-  labeledField("Jurisdiction:", jurisdiction);
-  y += 3;
-
-  // ── SUBJECT ──────────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(fs);
-  doc.setTextColor(0, 0, 0);
-  doc.text("Subject: Business Agreement Between Parties", margin, y);
-  y += lh + 4;
-
-  // ── PARTIES ──────────────────────────────────────────────────────────────────
-  para("Dear Sir or Madam,", false, lh);
 
   const p1addr = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
   const p2addr = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
 
-  para(
-    `This Business Agreement ("Agreement") is entered into as of ${values.effectiveDate || "the date signed"}, ` +
-    `by and between ${values.party1Name || "First Party"} ` +
-    `(${values.party1Type === "business" ? "Business/Company" : "Individual"}), ` +
-    `located at ${p1addr || "N/A"}, Email: ${values.party1Email || "N/A"}` +
-    `${values.party1Phone ? ", Phone: " + values.party1Phone : ""} ("First Party"); and ` +
-    `${values.party2Name || "Second Party"} ` +
-    `(${values.party2Type === "business" ? "Business/Company" : "Individual"}), ` +
-    `located at ${p2addr || "N/A"}, Email: ${values.party2Email || "N/A"}` +
-    `${values.party2Phone ? ", Phone: " + values.party2Phone : ""} ("Second Party").`,
-    false,
-    lh
-  );
-
-  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────────
+  // ── TITLE ────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(fs);
+  doc.setFontSize(14);
   doc.setTextColor(0, 0, 0);
-  doc.text("1. PURPOSE AND SCOPE", margin, y);
-  y += lh + 1;
-  para(values.description || "N/A", false, lh);
+  const TITLE = "BUSINESS AGREEMENT";
+  doc.text(TITLE, PW / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(TITLE);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.4);
+  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
+  y += 12;
 
-  // ── TERMS ────────────────────────────────────────────────────────────────────
+  // ── HEADER: Date, To, Address ─────────────────────────────────────────────
+  // Matches reference: "Date: <underlined>" / "To: <underlined>" / "Address: <underlined>"
+  doc.setFontSize(FS);
+  doc.setTextColor(0, 0, 0);
+  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y); y += LH + 1;
+  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y); y += LH + 1;
+  labelUl(doc, "To:  ", values.party2Name || "N/A", M, y); y += LH + 1;
+  labelUl(doc, "Address:  ", p2addr || "N/A", M, y); y += LH + 6;
+
+  // ── SUBJECT ──────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(fs);
-  doc.setTextColor(0, 0, 0);
-  doc.text("2. TERMS AND CONDITIONS", margin, y);
-  y += lh + 1;
-  para(
-    `Duration: ${values.duration || "N/A"}.  Termination Notice: ${values.terminationNotice || "N/A"}.  ` +
-    `Confidentiality: ${values.confidentiality === "yes" ? "Included" : "Not Included"}.  ` +
-    `Dispute Resolution: ${values.disputeResolution || "N/A"}.`,
-    false,
-    lh
-  );
+  doc.setFontSize(FS);
+  doc.text("Subject: Business Agreement Between Parties", M, y);
+  y += LH + 5;
 
-  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────────
+  // ── BODY ─────────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "normal");
+  doc.text("Dear Sir or Madam,", M, y); y += LH + 3;
+
+  // Opening paragraph — party names underlined inline
+  const p1type = values.party1Type === "business" ? "Business/Company" : "Individual";
+  const p2type = values.party2Type === "business" ? "Business/Company" : "Individual";
+
+  const openingParts = [
+    `This Business Agreement ("Agreement") is entered into as of `,
+    values.effectiveDate || "N/A",
+    `, by and between `,
+    values.party1Name || "First Party",
+    ` (${p1type}), located at ${p1addr || "N/A"}, Email: `,
+    values.party1Email || "N/A",
+    `${values.party1Phone ? ", Phone: " + values.party1Phone : ""}`,
+    ` ("First Party"); and `,
+    values.party2Name || "Second Party",
+    ` (${p2type}), located at ${p2addr || "N/A"}, Email: `,
+    values.party2Email || "N/A",
+    `${values.party2Phone ? ", Phone: " + values.party2Phone : ""}`,
+    ` ("Second Party").`,
+  ];
+
+  // Render opening paragraph as plain wrapped text (names already in text)
+  const openingText = openingParts.join("");
+  const openLines = doc.splitTextToSize(openingText, TW);
+  doc.text(openLines, M, y);
+  y += openLines.length * LH + 4;
+
+  // ── 1. PURPOSE AND SCOPE ─────────────────────────────────────────────────
+  checkPage(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("1. PURPOSE AND SCOPE", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", TW);
+  doc.text(descLines, M, y);
+  y += descLines.length * LH + 5;
+
+  // ── 2. TERMS AND CONDITIONS ──────────────────────────────────────────────
+  checkPage(30);
+  doc.setFont("helvetica", "bold");
+  doc.text("2. TERMS AND CONDITIONS", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  labelUl(doc, "Duration:  ", values.duration || "N/A", M, y); y += LH;
+  labelUl(doc, "Termination Notice:  ", values.terminationNotice || "N/A", M, y); y += LH;
+  labelUl(doc, "Confidentiality:  ", values.confidentiality === "yes" ? "Included" : "Not Included", M, y); y += LH;
+  labelUl(doc, "Dispute Resolution:  ", values.disputeResolution || "N/A", M, y); y += LH + 5;
+
+  // ── 3. FINANCIAL TERMS ───────────────────────────────────────────────────
   if (values.paymentAmount || values.paymentSchedule) {
+    checkPage(20);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(fs);
-    doc.setTextColor(0, 0, 0);
-    doc.text("3. FINANCIAL TERMS", margin, y);
-    y += lh + 1;
-    para(
-      `Payment Amount: ${values.paymentAmount || "N/A"}.  Schedule: ${values.paymentSchedule || "N/A"}.`,
-      false,
-      lh
-    );
-  }
-
-  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────────
-  if (values.additionalTerms) {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(fs);
-    doc.setTextColor(0, 0, 0);
-    doc.text("4. ADDITIONAL TERMS", margin, y);
-    y += lh + 1;
-    // cap to 2 lines to stay on one page
-    const addAllLines = doc.splitTextToSize(values.additionalTerms, textWidth);
-    const addLines = addAllLines.slice(0, 2);
+    doc.text("3. FINANCIAL TERMS", M, y); y += LH + 1;
     doc.setFont("helvetica", "normal");
-    doc.text(addLines, margin, y);
-    y += addLines.length * lh + lh;
+    labelUl(doc, "Payment Amount:  ", values.paymentAmount || "N/A", M, y); y += LH;
+    labelUl(doc, "Schedule:  ", values.paymentSchedule || "N/A", M, y); y += LH + 5;
   }
 
-  para(
+  // ── 4. ADDITIONAL TERMS ──────────────────────────────────────────────────
+  if (values.additionalTerms) {
+    checkPage(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("4. ADDITIONAL TERMS", M, y); y += LH + 1;
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
+    doc.text(addLines, M, y);
+    y += addLines.length * LH + 5;
+  }
+
+  // ── CLOSING PARAGRAPH ────────────────────────────────────────────────────
+  checkPage(20);
+  doc.setFont("helvetica", "normal");
+  const closingLines = doc.splitTextToSize(
     "IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.",
-    false,
-    lh + 2
+    TW
   );
+  doc.text(closingLines, M, y);
+  y += closingLines.length * LH + 4;
+  doc.text("Thank you for your cooperation.", M, y); y += LH + 4;
+  doc.text("Sincerely,", M, y); y += LH + 10;
 
-  // ── SIGNATURES ───────────────────────────────────────────────────────────────
-  para("Sincerely,", false, lh + 2);
+  // ── SIGNATURES ───────────────────────────────────────────────────────────
+  // Matches reference: bold underlined name, then address / email / phone plain
+  checkPage(40);
 
-  // First Party signature
-  const sig1 = values.party1Signature || values.party1Name || "";
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(fs);
-  doc.setTextColor(0, 0, 0);
-  doc.text(sig1, margin, y);
-  if (sig1) {
-    const sw = doc.getTextWidth(sig1);
-    doc.setDrawColor(0, 0, 0);
-    doc.line(margin, y + 1, margin + sw, y + 1);
-  }
-  y += lh + 1;
-
+  // First Party signature block
+  ulText(doc, values.party1Name || "First Party", M, y);
+  doc.setFont("helvetica", "bold");  // name is bold in reference
+  y += LH + 1;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(fs);
-  para(`${values.party1Name || "First Party"} — First Party`, false, 1);
-  if (p1addr) para(p1addr, false, 1);
-  if (values.party1Email) para(`Email: ${values.party1Email}`, false, 1);
-  y += 3;
+  doc.text(p1addr || "", M, y); y += LH;
+  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, M, y); y += LH; }
+  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, M, y); y += LH; }
+  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y); y += LH;
+  doc.text("Date: " + new Date().toLocaleDateString(), M, y); y += LH + 8;
 
-  // Second Party signature
-  const sig2 = values.party2Signature || values.party2Name || "";
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(fs);
-  doc.setTextColor(0, 0, 0);
-  doc.text(sig2, margin, y);
-  if (sig2) {
-    const sw2 = doc.getTextWidth(sig2);
-    doc.setDrawColor(0, 0, 0);
-    doc.line(margin, y + 1, margin + sw2, y + 1);
-  }
-  y += lh + 1;
-
+  // Second Party signature block
+  checkPage(30);
+  ulText(doc, values.party2Name || "Second Party", M, y);
+  y += LH + 1;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(fs);
-  para(`${values.party2Name || "Second Party"} — Second Party`, false, 1);
-  if (p2addr) para(p2addr, false, 1);
-  if (values.party2Email) para(`Email: ${values.party2Email}`, false, 1);
-  y += 3;
+  doc.text(p2addr || "", M, y); y += LH;
+  if (values.party2Email) { doc.text(`Email: ${values.party2Email}`, M, y); y += LH; }
+  if (values.party2Phone) { doc.text(`Phone: ${values.party2Phone}`, M, y); y += LH; }
+  labelUl(doc, "Signature:  ", values.party2Signature || "", M, y); y += LH;
+  doc.text("Date: " + new Date().toLocaleDateString(), M, y); y += LH;
 
   // Witness (optional)
   if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(fs);
-    doc.text(values.witnessName, margin, y);
-    const ww = doc.getTextWidth(values.witnessName);
-    doc.setDrawColor(0, 0, 0);
-    doc.line(margin, y + 1, margin + ww, y + 1);
-    y += lh + 1;
-    doc.setFont("helvetica", "normal");
-    para("Witness", false, 1);
+    y += 8;
+    checkPage(15);
+    doc.text("Witness: _______________________________", M, y); y += LH;
+    labelUl(doc, "Name:  ", values.witnessName, M, y);
   }
 
-  // ── FOOTER ───────────────────────────────────────────────────────────────────
+  // ── FOOTER ───────────────────────────────────────────────────────────────
   doc.setFontSize(7);
-  doc.setTextColor(160, 160, 160);
-  doc.text(
-    `Generated by Legalgram  •  ${new Date().toLocaleDateString()}`,
-    pageWidth / 2,
-    290,
-    { align: "center" }
-  );
+  doc.setTextColor(150, 150, 150);
+  doc.text(`Generated by Legalgram  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
 
   doc.save("business_agreement.pdf");
 };
