@@ -8,7 +8,9 @@ const ReferralFeeAgreementInfo: React.FC = () => {
     <div className="max-w-2xl mx-auto py-12 px-4">
       <h1 className="text-3xl font-bold mb-4">Referral Fee Agreement</h1>
       <p className="mb-6 text-muted-foreground">
-        A Referral Fee Agreement sets the terms for compensation when one party refers a client or business to another. It covers payment structure, obligations, and legal protections for both parties.
+        A Referral Fee Agreement sets the terms for compensation when one party refers a client or
+        business to another. It covers payment structure, obligations, and legal protections for
+        both parties.
       </p>
       <h2 className="text-xl font-semibold mb-2">Key Features</h2>
       <ul className="list-disc pl-6 mb-6">

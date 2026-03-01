@@ -13,7 +13,10 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         required: true,
         options: [
           { value: "us", label: "United States" },
-         
+          { value: "ca", label: "Canada" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "au", label: "Australia" },
+          { value: "other", label: "Other" },
         ],
       },
     ],
@@ -27,8 +30,8 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
         type: "select",
         required: true,
         dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
+        getOptions: (values) => {
+          if (values.country === "us") {
             return [
               { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
               { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
@@ -57,7 +60,29 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } 
+          } else if (values.country === "ca") {
+            return [
+              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+              { value: "YT", label: "Yukon" },
+            ];
+          } else if (values.country === "uk") {
+            return [
+              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+            ];
+          } else if (values.country === "au") {
+            return [
+              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+            ];
+          }
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -349,122 +374,209 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// ─── PDF Helpers ─────────────────────────────────────────────────────────────
+
+/** Draw plain label then UNDERLINED value on the same line. Returns x after value. */
+const fieldRow = (doc: jsPDF, label: string, value: string, x: number, y: number): number => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  const vx = x + doc.getTextWidth(label);
+  doc.text(value, vx, y);
+  const vw = doc.getTextWidth(value);
+  doc.line(vx, y + 0.7, vx + vw, y + 0.7);
+  return vx + vw;
+};
+
+/** Draw plain text then UNDERLINED credential inline; returns new x cursor. */
+const inlineVal = (doc: jsPDF, before: string, value: string, x: number, y: number): number => {
+  doc.text(before, x, y);
+  const vx = x + doc.getTextWidth(before);
+  doc.text(value, vx, y);
+  const vw = doc.getTextWidth(value);
+  doc.line(vx, y + 0.7, vx + vw, y + 0.7);
+  return vx + vw;
+};
+
+/** Bold + underlined centred title */
+const boldUnderlinedCentre = (doc: jsPDF, text: string, y: number, fontSize = 13) => {
+  doc.setFontSize(fontSize);
+  doc.setFont("helvetica", "bold");
+  const w = doc.getTextWidth(text);
+  const x = (210 - w) / 2;
+  doc.text(text, x, y);
+  doc.line(x, y + 0.9, x + w, y + 0.9);
+};
+
+/** Render a line with label (normal) + underlined value; advance y by lh */
+const credLine = (doc: jsPDF, label: string, value: string, x: number, y: number): number => {
+  fieldRow(doc, label, value, x, y);
+  return y;
+};
+
+// ─── generatePDF ─────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const L = 25;
+  const lh = 7;
+  let y = 22;
+
+  const durMap: Record<string, string> = {
+    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
+    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
+    "indefinite": "Indefinite/Ongoing", "custom": "Custom Duration",
+  };
+  const noticeMap: Record<string, string> = {
+    "immediate": "Immediate", "7days": "7 Days", "14days": "14 Days",
+    "30days": "30 Days", "60days": "60 Days", "90days": "90 Days",
+  };
+  const disputeMap: Record<string, string> = {
+    "mediation": "Mediation", "arbitration": "Binding Arbitration",
+    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  };
+
+  const p1name  = values.party1Name  || "First Party";
+  const p2name  = values.party2Name  || "Second Party";
+  const p1addr  = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`;
+  const p2addr  = `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`;
+  const eDate   = values.effectiveDate || "N/A";
+  const juris   = `${values.state || ""}, ${(values.country || "").toUpperCase()}`;
+  const dur     = durMap[values.duration]     || values.duration     || "N/A";
+  const notice  = noticeMap[values.terminationNotice] || values.terminationNotice || "N/A";
+  const confid  = values.confidentiality === "yes" ? "Included" : "Not Included";
+  const dispute = disputeMap[values.disputeResolution] || values.disputeResolution || "N/A";
+  const sig1    = values.party1Signature || p1name;
+  const sig2    = values.party2Signature || p2name;
+
+  doc.setFontSize(11);
+
+  // ── Title ──
+  boldUnderlinedCentre(doc, "CO MARKETING AGREEMENT", y, 13);
+  y += lh * 2;
+
+  // ── Header credential rows ──
+  doc.setFontSize(11);
+  fieldRow(doc, "Date:  ", eDate, L, y);   y += lh;
+  fieldRow(doc, "To:  ", p2name, L, y);    y += lh;
+  fieldRow(doc, "Address:  ", p2addr, L, y); y += lh * 1.6;
+
+  // ── Subject (bold) ──
   doc.setFont("helvetica", "bold");
-  doc.text("Co Marketing Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
+  doc.text("Subject: Co Marketing Agreement – ", L, y);
+  let sx = L + doc.getTextWidth("Subject: Co Marketing Agreement – ");
+  doc.text(p1name, sx, y);
+  doc.line(sx, y + 0.7, sx + doc.getTextWidth(p1name), y + 0.7);
+  sx += doc.getTextWidth(p1name);
+  doc.text(" & ", sx, y);
+  sx += doc.getTextWidth(" & ");
+  doc.text(p2name, sx, y);
+  doc.line(sx, y + 0.7, sx + doc.getTextWidth(p2name), y + 0.7);
+  y += lh * 1.6;
+
+  // ── Salutation ──
   doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
+  doc.text("Dear Sir or Madam:", L, y);
+  y += lh;
+
+  // ── Para 1: opening with underlined party name ──
+  let cx = inlineVal(doc, "I am writing to formally confirm the Co Marketing Agreement with ", p2name, L, y);
+  doc.text(", effective ", cx, y);
+  cx += doc.getTextWidth(", effective ");
+  cx = inlineVal(doc, "", eDate, cx, y);
+  doc.text(".", cx, y);
+  y += lh;
+
+  // ── Para 2: description (each line underlined) ──
+  const descText = values.description || "The parties agree to provide services as described in the terms of this agreement.";
+  const descLines: string[] = doc.splitTextToSize(descText, 160);
+  descLines.forEach((line: string) => {
+    doc.text(line, L, y);
+    doc.line(L, y + 0.7, L + doc.getTextWidth(line), y + 0.7);
+    y += lh;
+  });
+  y += lh * 0.3;
+
+  // ── Para 3: terms — each credential value underlined inline ──
+  doc.text("This agreement is governed by the laws of ", L, y);
+  cx = L + doc.getTextWidth("This agreement is governed by the laws of ");
+  cx = inlineVal(doc, "", juris, cx, y);
+  doc.text(".", cx, y);
+  y += lh;
+
+  cx = inlineVal(doc, "Duration: ", dur, L, y);
+  doc.text("  |  Termination Notice: ", cx, y);
+  cx += doc.getTextWidth("  |  Termination Notice: ");
+  cx = inlineVal(doc, "", notice, cx, y);
+  doc.text(".", cx, y);
+  y += lh;
+
+  cx = inlineVal(doc, "Confidentiality: ", confid, L, y);
+  doc.text("  |  Dispute Resolution: ", cx, y);
+  cx += doc.getTextWidth("  |  Dispute Resolution: ");
+  inlineVal(doc, "", dispute, cx, y);
+  y += lh;
+  y += lh * 0.3;
+
+  // ── Para 4: financial (if any) ──
   if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
+    cx = inlineVal(doc, "Payment of ", values.paymentAmount, L, y);
+    doc.text(" on a ", cx, y);
+    cx += doc.getTextWidth(" on a ");
+    cx = inlineVal(doc, "", values.paymentSchedule || "N/A", cx, y);
+    doc.text(" schedule.", cx, y);
+    y += lh;
+    y += lh * 0.3;
   }
-  
+
+  // ── Para 5: additional terms (if any, each line underlined) ──
   if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
+    const addLines: string[] = doc.splitTextToSize(values.additionalTerms, 160);
+    addLines.forEach((line: string) => {
+      doc.text(line, L, y);
+      doc.line(L, y + 0.7, L + doc.getTextWidth(line), y + 0.7);
+      y += lh;
+    });
+    y += lh * 0.3;
   }
-  
-  doc.setFontSize(12);
+
+  // ── Para 6: closing ──
+  const closeText = "Please contact us should you require any additional information to process this agreement. We appreciate your prompt attention to this matter and look forward to written confirmation of the terms herein.";
+  const closeLines: string[] = doc.splitTextToSize(closeText, 160);
+  doc.text(closeLines, L, y);
+  y += closeLines.length * lh + lh * 0.5;
+
+  doc.text("Thank you for your cooperation.", L, y);
+  y += lh * 1.8;
+
+  doc.text("Sincerely,", L, y);
+  y += lh * 2.8;
+
+  // ── Signature block – name bold+underlined ──
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
+  doc.text(sig1, L, y);
+  doc.line(L, y + 0.9, L + doc.getTextWidth(sig1), y + 0.9);
+  y += lh;
+
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
+  fieldRow(doc, "", p1addr, L, y); y += lh;
+  fieldRow(doc, "Email: ", values.party1Email || "", L, y); y += lh;
+  fieldRow(doc, "Phone: ", values.party1Phone || "", L, y); y += lh * 1.5;
+
+  // Second party signature
+  doc.setFont("helvetica", "bold");
+  doc.text(sig2, L, y);
+  doc.line(L, y + 0.9, L + doc.getTextWidth(sig2), y + 0.9);
+  y += lh;
+
+  doc.setFont("helvetica", "normal");
+  fieldRow(doc, "", p2addr, L, y); y += lh;
+  fieldRow(doc, "Email: ", values.party2Email || "", L, y); y += lh;
+  fieldRow(doc, "Phone: ", values.party2Phone || "", L, y); y += lh;
+
   if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+    y += lh * 0.5;
+    fieldRow(doc, "Witness: ", values.witnessName, L, y);
   }
-  
+
   doc.save("co_marketing_agreement.pdf");
 };
 
