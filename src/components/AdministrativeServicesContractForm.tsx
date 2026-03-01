@@ -56,7 +56,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
               { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
               { value: "DC", label: "District of Columbia" },
             ];
-          } 
+          }
           return [{ value: "other", label: "Other Region" }];
         },
       },
@@ -348,122 +348,158 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Write text and draw a thin underline beneath it */
+const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
+  doc.text(text, x, y);
+  const w = doc.getTextWidth(text);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.25);
+  doc.line(x, y + 1.1, x + w, y + 1.1);
+};
+
+/** Write plain label then an underlined value on the same line */
+const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  ulText(doc, value, x + doc.getTextWidth(label), y);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PDF GENERATOR
+// ─────────────────────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+  const PW       = 210;
+  const M        = 20;
+  const TW       = PW - M * 2;
+  const FS       = 10.5;
+  const LH       = 5.8;
+  const SAFE_BOT = 270;
+  let y = 22;
+
+  const checkPage = (needed = 12) => {
+    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
+  };
+
+  // ── TITLE ────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
-  doc.text("Administrative Services Contract", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.setFontSize(14);
+  doc.setTextColor(0, 0, 0);
+  const TITLE = "ADMINISTRATIVE SERVICES CONTRACT";
+  doc.text(TITLE, PW / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(TITLE);
+  doc.setDrawColor(0, 0, 0);
+  doc.setLineWidth(0.4);
+  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
   y += 12;
-  
-  doc.setFontSize(10);
+
+  // ── DATE / JURISDICTION ──────────────────────────────────────────────────
+  doc.setFontSize(FS);
+  doc.setTextColor(0, 0, 0);
+  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y);
+  y += LH + 1;
+  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y);
+  y += LH + 6;
+
+  // ── PARTIES ──────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(FS);
+  doc.text("PARTIES", M, y);
+  y += LH + 1;
+
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
+  // First Party
+  labelUl(doc, "First Party:  ", values.party1Name || "N/A", M, y); y += LH;
+  labelUl(doc, "Address:  ", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, M, y); y += LH;
+  labelUl(doc, "Email:  ", values.party1Email || "N/A", M, y); y += LH;
+  if (values.party1Phone) { labelUl(doc, "Phone:  ", values.party1Phone, M, y); y += LH; }
+  y += 4;
+
+  // Second Party
+  labelUl(doc, "Second Party:  ", values.party2Name || "N/A", M, y); y += LH;
+  labelUl(doc, "Address:  ", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`, M, y); y += LH;
+  labelUl(doc, "Email:  ", values.party2Email || "N/A", M, y); y += LH;
+  if (values.party2Phone) { labelUl(doc, "Phone:  ", values.party2Phone, M, y); y += LH; }
   y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+
+  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────
+  checkPage(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("AGREEMENT DETAILS", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  const descLines = doc.splitTextToSize(values.description || "N/A", TW);
+  doc.text(descLines, M, y);
+  y += descLines.length * LH + 6;
+
+  // ── TERMS ────────────────────────────────────────────────────────────────
+  checkPage(30);
+  doc.setFont("helvetica", "bold");
+  doc.text("TERMS", M, y); y += LH + 1;
+  doc.setFont("helvetica", "normal");
+  labelUl(doc, "Duration:  ", values.duration || "N/A", M, y); y += LH;
+  labelUl(doc, "Termination Notice:  ", values.terminationNotice || "N/A", M, y); y += LH;
+  labelUl(doc, "Confidentiality:  ", values.confidentiality === "yes" ? "Included" : "Not Included", M, y); y += LH;
+  labelUl(doc, "Dispute Resolution:  ", values.disputeResolution || "N/A", M, y); y += LH + 6;
+
+  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────
+  if (values.paymentAmount) {
+    checkPage(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("FINANCIAL TERMS", M, y); y += LH + 1;
+    doc.setFont("helvetica", "normal");
+    labelUl(doc, "Payment Amount:  ", values.paymentAmount, M, y); y += LH;
+    labelUl(doc, "Schedule:  ", values.paymentSchedule || "N/A", M, y); y += LH + 6;
   }
-  
+
+  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────
+  if (values.additionalTerms) {
+    checkPage(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADDITIONAL TERMS", M, y); y += LH + 1;
+    doc.setFont("helvetica", "normal");
+    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
+    doc.text(addLines, M, y);
+    y += addLines.length * LH + 6;
+  }
+
+  // ── SIGNATURES ───────────────────────────────────────────────────────────
+  checkPage(45);
+  doc.setFont("helvetica", "bold");
+  doc.text("SIGNATURES", M, y); y += LH + 3;
+  doc.setFont("helvetica", "normal");
+
+  const C2 = 110;
+  doc.text("_______________________________", M, y);
+  doc.text("_______________________________", C2, y);
+  y += LH;
+
+  ulText(doc, values.party1Name || "First Party", M, y);
+  ulText(doc, values.party2Name || "Second Party", C2, y);
+  y += LH;
+
+  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y);
+  labelUl(doc, "Signature:  ", values.party2Signature || "", C2, y);
+  y += LH;
+
+  doc.text("Date: " + new Date().toLocaleDateString(), M, y);
+  doc.text("Date: " + new Date().toLocaleDateString(), C2, y);
+
+  if (values.witnessName) {
+    y += LH + 6;
+    doc.text("Witness: _______________________________", M, y); y += LH;
+    labelUl(doc, "Name:  ", values.witnessName, M, y);
+  }
+
+  // ── FOOTER ───────────────────────────────────────────────────────────────
+  doc.setFontSize(7);
+  doc.setTextColor(150, 150, 150);
+  doc.text(`Generated  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
+
   doc.save("administrative_services_contract.pdf");
 };
 
