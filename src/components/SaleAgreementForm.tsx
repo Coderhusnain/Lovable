@@ -374,58 +374,84 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// Helper: draw underlined text
+const underlineText = (doc: jsPDF, text: string, x: number, y: number) => {
+  doc.text(text, x, y);
+  const textWidth = doc.getTextWidth(text);
+  doc.setLineWidth(0.3);
+  doc.line(x, y + 1, x + textWidth, y + 1);
+};
+
+// Helper: label + underlined value on same line
+const labelWithUnderline = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
+  doc.setFont("helvetica", "normal");
+  doc.text(label, x, y);
+  const labelWidth = doc.getTextWidth(label);
+  underlineText(doc, value, x + labelWidth + 1, y);
+};
+
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
   let y = 20;
-  
+
   doc.setFontSize(18);
   doc.setFont("helvetica", "bold");
   doc.text("Sale Agreement", 105, y, { align: "center" });
+  const titleWidth = doc.getTextWidth("Sale Agreement");
+  doc.setLineWidth(0.5);
+  doc.line(105 - titleWidth / 2, y + 1.5, 105 + titleWidth / 2, y + 1.5);
   y += 15;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
+  labelWithUnderline(doc, "Effective Date:  ", values.effectiveDate || "N/A", 20, y);
+  labelWithUnderline(doc, "Jurisdiction:  ", (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
   y += 15;
-  
+
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("PARTIES", 20, y);
   y += 8;
-  
+
   doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
+  labelWithUnderline(doc, "First Party:  ", values.party1Name || "N/A", 20, y);
   y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
+  labelWithUnderline(doc, "Address:  ", (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
   y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  labelWithUnderline(doc, "Email:  ", values.party1Email || "", 20, y);
+  if (values.party1Phone) {
+    const emailLineWidth = doc.getTextWidth("Email:  " + (values.party1Email || ""));
+    labelWithUnderline(doc, "   Phone:  ", values.party1Phone, 20 + emailLineWidth, y);
+  }
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
+
+  labelWithUnderline(doc, "Second Party:  ", values.party2Name || "N/A", 20, y);
   y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
+  labelWithUnderline(doc, "Address:  ", (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
   y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
+  labelWithUnderline(doc, "Email:  ", values.party2Email || "", 20, y);
+  if (values.party2Phone) {
+    const emailLineWidth = doc.getTextWidth("Email:  " + (values.party2Email || ""));
+    labelWithUnderline(doc, "   Phone:  ", values.party2Phone, 20 + emailLineWidth, y);
+  }
   y += 15;
-  
+
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("AGREEMENT DETAILS", 20, y);
   y += 8;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   const descLines = doc.splitTextToSize(values.description || "N/A", 170);
   doc.text(descLines, 20, y);
   y += descLines.length * 5 + 10;
-  
+
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("TERMS", 20, y);
   y += 8;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text("Duration: " + (values.duration || "N/A"), 20, y);
@@ -436,13 +462,13 @@ const generatePDF = (values: Record<string, string>) => {
   y += 6;
   doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
   y += 15;
-  
+
   if (values.paymentAmount) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("FINANCIAL TERMS", 20, y);
     y += 8;
-    
+
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("Payment: " + values.paymentAmount, 20, y);
@@ -450,46 +476,46 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
     y += 15;
   }
-  
+
   if (values.additionalTerms) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("ADDITIONAL TERMS", 20, y);
     y += 8;
-    
+
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     const addLines = doc.splitTextToSize(values.additionalTerms, 170);
     doc.text(addLines, 20, y);
     y += addLines.length * 5 + 15;
   }
-  
+
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("SIGNATURES", 20, y);
   y += 12;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text("_______________________________", 20, y);
   doc.text("_______________________________", 110, y);
   y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
+  underlineText(doc, values.party1Name || "First Party", 20, y);
+  underlineText(doc, values.party2Name || "Second Party", 110, y);
   y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  labelWithUnderline(doc, "Signature:  ", values.party1Signature || "", 20, y);
+  labelWithUnderline(doc, "Signature:  ", values.party2Signature || "", 110, y);
   y += 10;
   doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
   doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
+
   if (values.witnessName) {
     y += 15;
     doc.text("Witness: _______________________________", 20, y);
     y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+    labelWithUnderline(doc, "Name:  ", values.witnessName, 20, y);
   }
-  
+
   doc.save("sale_agreement.pdf");
 };
 
