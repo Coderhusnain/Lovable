@@ -4,543 +4,159 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Client and Bidder",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "clientName", label: "Client name", type: "text", required: true },
+      { name: "clientAddress", label: "Client address", type: "text", required: true },
+      { name: "clientPhone", label: "Client phone", type: "text", required: false },
+      { name: "clientEmail", label: "Client email", type: "email", required: false },
+      { name: "bidderCompany", label: "Bidder company name", type: "text", required: true },
+      { name: "bidderAddress", label: "Bidder address", type: "text", required: true },
+      { name: "bidderPhone", label: "Bidder phone", type: "text", required: false },
+      { name: "bidderEmail", label: "Bidder email", type: "email", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Proposal Details",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "projectName", label: "Project / execution subject", type: "text", required: true },
+      { name: "fromDate", label: "Schedule start date", type: "date", required: true },
+      { name: "toDate", label: "Schedule end date", type: "date", required: true },
+      { name: "scopeServices", label: "Scope of services", type: "textarea", required: true },
+      { name: "estimatedTimeline", label: "Estimated timeline", type: "textarea", required: true },
+      { name: "estimatedBudget", label: "Estimated budget / costs", type: "textarea", required: true },
+      { name: "currency", label: "Currency", type: "text", required: true, placeholder: "USD" },
+      { name: "keyPersonnel", label: "Key personnel", type: "textarea", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Validity and Execution",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "validityDays", label: "Proposal validity (days)", type: "text", required: true },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
+      { name: "signatory", label: "Authorized signatory", type: "text", required: true },
+      { name: "signName", label: "Signatory name", type: "text", required: true },
+      { name: "designation", label: "Designation", type: "text", required: false },
+      { name: "signDate", label: "Date", type: "date", required: true },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-// ─── Shared PDF helpers ──────────────────────────────────────────────────────
-
-/** Render "Label:  " (normal) + underlined value on the same baseline */
-const fieldRow = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  const vx = x + doc.getTextWidth(label);
-  doc.text(value, vx, y);
-  doc.line(vx, y + 0.7, vx + doc.getTextWidth(value), y + 0.7);
-};
-
-/** Underline a word/phrase that appears inline within running text.
- *  `textBefore` is already rendered; this just draws the underline under `word`
- *  at absolute position (wx, wy). */
-const inlineUnderline = (doc: jsPDF, word: string, wx: number, wy: number) => {
-  doc.line(wx, wy + 0.7, wx + doc.getTextWidth(word), wy + 0.7);
-};
-
-/** Bold + underlined centred title */
-const boldUnderlinedCentre = (doc: jsPDF, text: string, y: number, fontSize = 13) => {
-  doc.setFontSize(fontSize);
-  doc.setFont("helvetica", "bold");
-  const w = doc.getTextWidth(text);
-  const x = (210 - w) / 2;
-  doc.text(text, x, y);
-  doc.line(x, y + 0.9, x + w, y + 0.9);
-};
-
-/** Wrapped paragraph – returns updated y */
-const para = (doc: jsPDF, text: string, x: number, y: number, maxW: number, lh: number): number => {
-  const lines: string[] = doc.splitTextToSize(text, maxW);
-  doc.text(lines, x, y);
-  return y + lines.length * lh;
-};
-
-// ─── generatePDF ─────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const L = 25;
-  const W = 160;   // text width
-  const lh = 7;    // line height
-  let y = 22;
-
-  const durMap: Record<string, string> = {
-    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
-    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
-    "indefinite": "Indefinite/Ongoing", "custom": "Custom Duration",
-  };
-  const noticeMap: Record<string, string> = {
-    "immediate": "Immediate", "7days": "7 Days", "14days": "14 Days",
-    "30days": "30 Days", "60days": "60 Days", "90days": "90 Days",
-  };
-  const disputeMap: Record<string, string> = {
-    "mediation": "Mediation", "arbitration": "Binding Arbitration",
-    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
+  let y = 20;
+  const u = (value?: string, min = 24) => {
+    const v = (value || "").trim();
+    if (!v) return "_".repeat(min);
+    return v;
   };
 
-  // ── Title ──
-  doc.setFontSize(13);
-  boldUnderlinedCentre(doc, "BID PROPOSAL", y, 13);
-  y += lh * 2;
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, m, y);
+    const startX = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, startX, y);
+      const wLine = Math.max(12, doc.getTextWidth(shown));
+      doc.setLineWidth(0.22);
+      doc.line(startX, y + 1.1, startX + wLine, y + 1.1);
+    } else {
+      const wLine = doc.getTextWidth("_".repeat(min));
+      doc.setLineWidth(0.22);
+      doc.line(startX, y + 1.1, startX + wLine, y + 1.1);
+    }
+    y += lh + gap;
+  };
 
-  // ── Header rows ──
-  doc.setFontSize(11);
-  fieldRow(doc, "Date:  ", values.effectiveDate || "N/A", L, y); y += lh;
-  fieldRow(doc, "To:  ", values.party2Name || "N/A", L, y); y += lh;
-  fieldRow(
-    doc,
-    "Address:  ",
-    `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`,
-    L, y
-  ); y += lh * 1.6;
-
-  // ── Subject (bold) ──
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text(
-    `Subject: Bid Proposal – ${values.party1Name || "First Party"} & ${values.party2Name || "Second Party"}`,
-    L, y
-  );
-  y += lh * 1.6;
+  doc.setFontSize(12.5);
+  const title = "BID PROPOSAL";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // ── Body ──
-  doc.setFont("helvetica", "normal");
+  p("1. Client Information", true);
+  uf("Client Name", values.clientName);
+  uf("Address", values.clientAddress);
+  uf("Phone", values.clientPhone);
+  uf("Email", values.clientEmail, 24, 2.5);
 
-  doc.text("Dear Sir or Madam:", L, y);
-  y += lh;
+  p("2. Bidder Information", true);
+  uf("Company Name", values.bidderCompany);
+  uf("Address", values.bidderAddress);
+  uf("Phone", values.bidderPhone);
+  uf("Email", values.bidderEmail, 24, 3);
 
-  // Para 1 – mention party2Name underlined inline
-  const p1a = "I am writing to formally confirm the Bid Proposal with ";
-  const p2name = values.party2Name || "the Second Party";
-  const p1b = ", effective immediately.";
-  doc.text(p1a, L, y);
-  const p2x = L + doc.getTextWidth(p1a);
-  doc.text(p2name, p2x, y);
-  inlineUnderline(doc, p2name, p2x, y);
-  doc.text(p1b, p2x + doc.getTextWidth(p2name), y);
-  y += lh;
+  p("3. Introduction", true);
+  p(`We are honored to submit this Bid Proposal (the "Proposal") for the execution of ${u(values.projectName, 22)}, scheduled to take place between ${u(values.fromDate, 18)} and ${u(values.toDate, 18)}.`);
+  p("This Proposal sets forth a detailed outline of the scope of services, estimated project schedule, budgetary framework, and professional approach for fulfillment of Client objectives.");
+  p("The Bidder affirms this Proposal is submitted in good faith after careful review of Client requirements. This Proposal is not a legally binding agreement, but an offer to negotiate and, if accepted, to enter into a formal contract on substantially similar terms.");
+  p("This Proposal is submitted to facilitate transparent evaluation, mutual understanding, and alignment of expectations prior to formal engagement.", false, 3);
 
-  // Para 2
-  const body2 =
-    values.description ||
-    "The parties agree to provide services as described in the terms of this agreement. " +
-    "All obligations and deliverables shall be performed in a professional and timely manner.";
-  y = para(doc, body2, L, y, W, lh);
-  y += lh * 0.4;
+  p("4. Scope of Services", true);
+  p(values.scopeServices || "_".repeat(40));
+  p("Services shall be rendered in accordance with industry standards, applicable regulations, and the Client's specific requirements.", false, 3);
 
-  // Para 3 – terms summary
-  const body3 =
-    `This agreement is governed by the laws of ${values.state || ""}, ${(values.country || "").toUpperCase()}. ` +
-    `Duration: ${durMap[values.duration] || values.duration || "N/A"}. ` +
-    `Termination notice: ${noticeMap[values.terminationNotice] || values.terminationNotice || "N/A"}. ` +
-    `Confidentiality: ${values.confidentiality === "yes" ? "Included" : "Not included"}. ` +
-    `Dispute resolution: ${disputeMap[values.disputeResolution] || values.disputeResolution || "N/A"}.`;
-  y = para(doc, body3, L, y, W, lh);
-  y += lh * 0.4;
+  p("5. Estimated Timeline", true);
+  p(values.estimatedTimeline || "_".repeat(40));
+  p("Timeline may be reasonably adjusted due to unforeseen circumstances, material availability, regulatory approvals, or delays caused by Client/third parties. Changes require written communication and mutual approval.", false, 3);
 
-  // Para 4 – financial (if any)
-  if (values.paymentAmount) {
-    const body4 =
-      `Financial terms: A payment of ${values.paymentAmount} is agreed on a ` +
-      `${values.paymentSchedule || "N/A"} schedule.`;
-    y = para(doc, body4, L, y, W, lh);
-    y += lh * 0.4;
-  }
+  p("6. Estimated Budget / Costs", true);
+  p(values.estimatedBudget || "_".repeat(40));
+  p(`All prices are quoted in ${u(values.currency, 16)} and exclude applicable taxes, duties, or surcharges unless stated otherwise.`);
+  p("Bidder may revise budget only for material scope/technical/schedule changes, with prior written Client approval.", false, 3);
 
-  // Para 5 – additional (if any)
-  if (values.additionalTerms) {
-    y = para(doc, values.additionalTerms, L, y, W, lh);
-    y += lh * 0.4;
-  }
+  p("7. Key Personnel", true);
+  p(values.keyPersonnel || "_".repeat(40));
+  p("Each designated individual shall possess requisite professional credentials and experience.", false, 3);
+  p("8. Client Responsibilities", true);
+  p("Client shall provide site/document access and information; timely communication/decisions; authorized representative; timely payments; and permits/consents under Client control. Non-compliance may cause reasonable time/cost adjustments.", false, 3);
+  p("9. Proposal Validity", true);
+  p(`This Proposal remains valid for ${u(values.validityDays, 8)} days from submission date unless extended in writing.`, false, 3);
+  p("10. Confidentiality", true);
+  p("Both parties shall maintain strict confidentiality regarding proprietary/sensitive information exchanged in connection with this Proposal, except as required by law.", false, 3);
+  p("11. No Waiver / Reservation of Rights", true);
+  p("Submission of this Proposal is not a waiver of any right/claim/privilege and does not obligate either party to contract absent a definitive written agreement.", false, 3);
+  p("12. Governing Law", true);
+  p(`This Proposal is governed by laws of the State of ${u(values.governingState, 18)}, United States of America, without conflict-of-law principles.`, false, 3);
+  p("13. Conclusion", true);
+  p("The Bidder respectfully submits this Proposal as demonstration of competence, commitment, and capacity to deliver Services with professionalism, quality, and efficiency. The Bidder looks forward to discussing and negotiating terms toward formal contract execution.", false, 3);
 
-  // Para 6 – closing
-  const body6 =
-    "Please contact us should you require any additional information to process this agreement. " +
-    "We appreciate your prompt attention to this matter and look forward to written confirmation " +
-    "of the terms herein.";
-  y = para(doc, body6, L, y, W, lh);
-  y += lh;
-
-  doc.text("Thank you for your cooperation.", L, y);
-  y += lh * 1.8;
-
-  doc.text("Sincerely,", L, y);
-  y += lh * 2.8;
-
-  // ── Signature block ──
-  const sigName = values.party1Signature || values.party1Name || "First Party";
-  doc.setFont("helvetica", "bold");
-  doc.text(sigName, L, y);
-  doc.line(L, y + 0.9, L + doc.getTextWidth(sigName), y + 0.9);
-  y += lh;
-
-  doc.setFont("helvetica", "normal");
-  doc.text(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, L, y); y += lh;
-  doc.text(`Email: ${values.party1Email || ""}`, L, y); y += lh;
-  doc.text(`Phone: ${values.party1Phone || ""}`, L, y); y += lh;
-
-  if (values.witnessName) {
-    y += lh * 0.5;
-    doc.text(`Witness: ${values.witnessName}`, L, y);
-  }
+  p("For and on behalf of the Bidder", true, 1);
+  uf("Authorized Signatory", values.signatory);
+  uf("Name", values.signName, 34);
+  uf("Designation", values.designation, 30);
+  uf("Company Name", values.bidderCompany, 28);
+  uf("Date", values.signDate, 26);
 
   doc.save("bid_proposal.pdf");
 };
 
-export default function BidProposal() {
+export default function BidProposalForm() {
   return (
     <FormWizard
       steps={steps}

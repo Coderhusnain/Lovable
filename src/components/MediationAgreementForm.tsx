@@ -4,527 +4,347 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
-    fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
+    label: "Agreement Basics",
     fields: [
       {
         name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
+        label: "Effective date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "relationshipDate",
+        label: "Business relationship start date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "originalContractTitle",
+        label: "Original contract title",
+        type: "text",
+        required: true,
+        placeholder: "Example: Service Contract",
+      },
+      {
+        name: "governingLaw",
+        label: "Governing law jurisdiction",
+        type: "text",
+        required: true,
+        placeholder: "Example: State of California, USA",
+      },
+      {
+        name: "enforcementCourt",
+        label: "Court jurisdiction for enforcement",
+        type: "text",
+        required: true,
+        placeholder: "Example: Los Angeles County, California, USA",
+      },
+    ],
+  },
+  {
+    label: "Party Information",
+    fields: [
+      {
+        name: "partyAName",
+        label: "Party A legal name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "partyAAddress",
+        label: "Party A address",
+        type: "text",
+        required: true,
+        placeholder: "Street, city, state/province, zip",
+      },
+      {
+        name: "partyBName",
+        label: "Party B legal name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "partyBAddress",
+        label: "Party B address",
+        type: "text",
+        required: true,
+        placeholder: "Street, city, state/province, zip",
+      },
+    ],
+  },
+  {
+    label: "Mediator and Process",
+    fields: [
+      {
+        name: "mediatorName",
+        label: "Mediator name",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "mediationPlace",
+        label: "Mediation place (city/state/country)",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "extraTerms",
+        label: "Additional mediation terms (optional)",
+        type: "textarea",
+        required: false,
+      },
+    ],
+  },
+  {
+    label: "Signatures",
+    fields: [
+      {
+        name: "partyASignDate",
+        label: "Party A signature date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "partyBSignDate",
+        label: "Party B signature date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "mediatorSignDate",
+        label: "Mediator signature date",
         type: "date",
         required: true,
       },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Write text and draw a thin underline beneath it */
-const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
-  doc.text(text, x, y);
-  const w = doc.getTextWidth(text);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.25);
-  doc.line(x, y + 1.1, x + w, y + 1.1);
-};
-
-/** Write plain label then an underlined value on the same line */
-const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  ulText(doc, value, x + doc.getTextWidth(label), y);
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF GENERATOR
-// ─────────────────────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageWidth = 210;
+  const margin = 18;
+  const maxWidth = pageWidth - margin * 2;
+  const lineHeight = 5.6;
+  const bottomLimit = 280;
+  let y = 20;
 
-  const PW       = 210;
-  const M        = 20;
-  const TW       = PW - M * 2;
-  const FS       = 10.5;
-  const LH       = 5.8;
-  const SAFE_BOT = 270;
-  let y = 22;
-
-  const checkPage = (needed = 12) => {
-    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
+  const writeWrapped = (
+    text: string,
+    options?: { bold?: boolean; center?: boolean; indent?: number; gapAfter?: number }
+  ) => {
+    const indent = options?.indent ?? 0;
+    const lines = doc.splitTextToSize(text, maxWidth - indent);
+    const needed = lines.length * lineHeight + (options?.gapAfter ?? 0);
+    if (y + needed > bottomLimit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", options?.bold ? "bold" : "normal");
+    if (options?.center) {
+      doc.text(lines, pageWidth / 2, y, { align: "center" });
+    } else {
+      doc.text(lines, margin + indent, y);
+    }
+    y += lines.length * lineHeight + (options?.gapAfter ?? 0);
   };
 
-  // ── TITLE ────────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  const TITLE = "MEDIATION AGREEMENT";
-  doc.text(TITLE, PW / 2, y, { align: "center" });
-  const tw = doc.getTextWidth(TITLE);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.4);
-  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
-  y += 12;
+  const sectionHeader = (title: string) => {
+    writeWrapped(title, { bold: true, gapAfter: 1.5 });
+  };
 
-  // ── DATE / JURISDICTION ──────────────────────────────────────────────────
-  doc.setFontSize(FS);
-  doc.setTextColor(0, 0, 0);
-  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y);
-  y += LH + 1;
-  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y);
-  y += LH + 6;
+  const writeUnderlinedField = (label: string, value: string, options?: { indent?: number; gapAfter?: number }) => {
+    const indent = options?.indent ?? 0;
+    const gapAfter = options?.gapAfter ?? 1.2;
+    const display = value || "____________________";
+    const x = margin + indent;
+    const labelText = `${label}: `;
+    const needed = lineHeight + gapAfter;
+    if (y + needed > bottomLimit) {
+      doc.addPage();
+      y = 20;
+    }
 
-  // ── PARTIES ──────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(FS);
-  doc.text("PARTIES", M, y);
-  y += LH + 1;
-
-  doc.setFont("helvetica", "normal");
-  // First Party
-  labelUl(doc, "First Party:  ", values.party1Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party1Email || "N/A", M, y); y += LH;
-  if (values.party1Phone) { labelUl(doc, "Phone:  ", values.party1Phone, M, y); y += LH; }
-  y += 4;
-
-  // Second Party
-  labelUl(doc, "Second Party:  ", values.party2Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party2Email || "N/A", M, y); y += LH;
-  if (values.party2Phone) { labelUl(doc, "Phone:  ", values.party2Phone, M, y); y += LH; }
-  y += 6;
-
-  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────
-  checkPage(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", TW);
-  doc.text(descLines, M, y);
-  y += descLines.length * LH + 6;
-
-  // ── TERMS ────────────────────────────────────────────────────────────────
-  checkPage(30);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  labelUl(doc, "Duration:  ", values.duration || "N/A", M, y); y += LH;
-  labelUl(doc, "Termination Notice:  ", values.terminationNotice || "N/A", M, y); y += LH;
-  labelUl(doc, "Confidentiality:  ", values.confidentiality === "yes" ? "Included" : "Not Included", M, y); y += LH;
-  labelUl(doc, "Dispute Resolution:  ", values.disputeResolution || "N/A", M, y); y += LH + 6;
-
-  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────
-  if (values.paymentAmount) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", M, y); y += LH + 1;
     doc.setFont("helvetica", "normal");
-    labelUl(doc, "Payment Amount:  ", values.paymentAmount, M, y); y += LH;
-    labelUl(doc, "Schedule:  ", values.paymentSchedule || "N/A", M, y); y += LH + 6;
-  }
+    doc.text(labelText, x, y);
+    const labelWidth = doc.getTextWidth(labelText);
+    const valueX = x + labelWidth;
+    doc.text(display, valueX, y);
+    const available = maxWidth - indent - labelWidth;
+    const underlineWidth = Math.min(doc.getTextWidth(display), Math.max(20, available));
+    doc.setLineWidth(0.2);
+    doc.line(valueX, y + 1.1, valueX + underlineWidth, y + 1.1);
+    y += lineHeight + gapAfter;
+  };
 
-  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────
-  if (values.additionalTerms) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", M, y); y += LH + 1;
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
-    doc.text(addLines, M, y);
-    y += addLines.length * LH + 6;
-  }
-
-  // ── SIGNATURES ───────────────────────────────────────────────────────────
-  checkPage(45);
+  doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", M, y); y += LH + 3;
-  doc.setFont("helvetica", "normal");
+  const mediationTitle = "MEDIATION AGREEMENT";
+  const mediationTitleY = y;
+  doc.text(mediationTitle, pageWidth / 2, mediationTitleY, { align: "center" });
+  const mediationTitleWidth = doc.getTextWidth(mediationTitle);
+  doc.setLineWidth(0.35);
+  doc.line(
+    pageWidth / 2 - mediationTitleWidth / 2,
+    mediationTitleY + 1.2,
+    pageWidth / 2 + mediationTitleWidth / 2,
+    mediationTitleY + 1.2
+  );
+  y += 8;
+  doc.setFontSize(10.5);
 
-  const C2 = 110;
-  doc.text("_______________________________", M, y);
-  doc.text("_______________________________", C2, y);
-  y += LH;
+  writeWrapped(
+    `This Mediation Agreement (the "Agreement") is made and entered into on ${
+      values.effectiveDate || "___ day of ________, ______"
+    } (the "Effective Date"), by and between:`,
+    { gapAfter: 1.5 }
+  );
+  writeWrapped(`${values.partyAName || "____________________"}, of ${values.partyAAddress || "____________________"},`, {
+    indent: 3,
+  });
+  writeWrapped(`${values.partyBName || "____________________"}, of ${values.partyBAddress || "____________________"},`, {
+    indent: 3,
+  });
+  writeWrapped('hereinafter collectively referred to as the "Parties" and individually as a "Party".', {
+    indent: 3,
+    gapAfter: 5,
+  });
 
-  ulText(doc, values.party1Name || "First Party", M, y);
-  ulText(doc, values.party2Name || "Second Party", C2, y);
-  y += LH;
+  sectionHeader("RECITALS");
+  writeWrapped(
+    `WHEREAS, the Parties entered into a business relationship commencing on ${
+      values.relationshipDate || "__________"
+    }, pursuant to the terms of that certain contract titled ${
+      values.originalContractTitle || "____________________"
+    } (the "Original Contract"), attached hereto as Exhibit A and incorporated herein by reference;`
+  );
+  writeWrapped("WHEREAS, disputes and differences have arisen between the Parties regarding the Original Contract;");
+  writeWrapped(
+    "WHEREAS, the Parties recognize that litigation before a court of law is time-consuming, costly, and adversarial in nature; and"
+  );
+  writeWrapped(
+    `WHEREAS, the Parties have mutually appointed ${
+      values.mediatorName || "__________________"
+    } as their mediator (the "Mediator"), who has accepted the appointment subject to disclosure of any actual or potential conflicts of interest.`,
+    { gapAfter: 5 }
+  );
 
-  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y);
-  labelUl(doc, "Signature:  ", values.party2Signature || "", C2, y);
-  y += LH;
+  writeWrapped(
+    "NOW, THEREFORE, in consideration of the foregoing recitals and the mutual covenants contained herein, the Parties agree as follows:",
+    { gapAfter: 3 }
+  );
 
-  doc.text("Date: " + new Date().toLocaleDateString(), M, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), C2, y);
+  sectionHeader("I. DUTIES OF THE MEDIATOR");
+  writeWrapped(
+    "1. Self-Determination of the Parties - The Mediator shall conduct the mediation in accordance with the principle of party self-determination, whereby any settlement shall result from the voluntary, uncoerced, and informed decision of the Parties."
+  );
+  writeWrapped(
+    "2. Ex-Parte Communications - The Mediator may, in their discretion, conduct private meetings or engage in separate communications with either Party and/or their representatives before, during, or after scheduled mediation sessions."
+  );
+  writeWrapped(
+    "3. Exchange of Information - The Parties shall exchange all documents reasonably necessary for consideration of the dispute. The Mediator may request the submission of memoranda or additional information. Any materials intended to remain confidential may be submitted solely to the Mediator."
+  );
+  writeWrapped(
+    "4. Facilitation Role Only - The Mediator has no authority to impose or issue a settlement. The Mediator's role is limited to facilitating discussion and encouraging a mutually satisfactory resolution."
+  );
+  writeWrapped(
+    "5. No Decision-Making Authority - The Mediator shall not serve as an arbitrator, adjudicator, or decision-maker and shall not provide legal representation to either Party."
+  );
+  writeWrapped(
+    "6. Continuing Efforts - If a full settlement is not reached during the mediation conference, the Mediator may continue to communicate with the Parties in an effort to facilitate resolution."
+  );
+  writeWrapped(
+    `7. Scheduling - The Mediator shall determine the date, time, and place of mediation sessions (initial location: ${
+      values.mediationPlace || "__________________"
+    }), and the Parties shall cooperate in good faith by attending as scheduled.`
+  );
+  writeWrapped(
+    "8. Submission of Statements and Evidence - The Mediator may direct the Parties to submit statements of claim, legal submissions, defenses, and supporting documents."
+  );
+  writeWrapped(
+    "9. Representation - Each Party may appear with legal counsel duly authorized to negotiate and conclude a settlement. Any Party may elect to appear pro se (without representation)."
+  );
+  writeWrapped(
+    "10. Confidentiality of Proceedings - Mediation sessions and related communications shall be private and confidential. Attendance shall be limited to the Parties and their representatives, unless otherwise agreed by the Parties and approved by the Mediator.",
+    { gapAfter: 3 }
+  );
 
-  if (values.witnessName) {
-    y += LH + 6;
-    doc.text("Witness: _______________________________", M, y); y += LH;
-    labelUl(doc, "Name:  ", values.witnessName, M, y);
+  sectionHeader("II. CONFIDENTIALITY AND PRIVILEGE");
+  writeWrapped(
+    "1. Confidential Nature of Mediation - All oral and written communications made in the course of the mediation, including offers, admissions, statements, proposals, and documents exchanged, shall be strictly confidential."
+  );
+  writeWrapped(
+    "2. Inadmissibility in Subsequent Proceedings - No mediation communications, whether oral or written, shall be admissible in any subsequent litigation, arbitration, or administrative proceeding, except to the extent necessary to enforce a settlement agreement reached as a result of the mediation."
+  );
+  writeWrapped(
+    "3. Mediator's Protection - The Mediator shall not be called as a witness in any judicial, arbitral, or administrative proceeding relating to the subject matter of the mediation. The Mediator shall have immunity from any subpoena or discovery process relating to the mediation."
+  );
+  writeWrapped("4. Exceptions - Confidentiality shall not apply to:");
+  writeWrapped("(i) communications necessary to prove the existence, validity, or terms of a settlement agreement reached in mediation;", {
+    indent: 4,
+  });
+  writeWrapped("(ii) disclosures required by law, regulation, or court order; or", { indent: 4 });
+  writeWrapped("(iii) information independently available to a Party outside the mediation process.", {
+    indent: 4,
+    gapAfter: 3,
+  });
+
+  sectionHeader("III. TERMINATION");
+  writeWrapped("The mediation shall be deemed terminated upon the earliest occurrence of any of the following:");
+  writeWrapped("(i) the execution of a written settlement agreement by the Parties;", { indent: 4 });
+  writeWrapped("(ii) a declaration by the Mediator, in writing or verbally, that further mediation efforts would not be productive;", {
+    indent: 4,
+  });
+  writeWrapped("(iii) a declaration by all Parties, in writing or verbally, that the mediation proceedings are terminated; or", {
+    indent: 4,
+  });
+  writeWrapped(
+    "(iv) a period of twenty-one (21) consecutive days following the conclusion of the last mediation session during which there has been no communication between the Mediator and any Party or Party's representative.",
+    { indent: 4, gapAfter: 3 }
+  );
+
+  sectionHeader("IV. COSTS AND EXPENSES");
+  writeWrapped(
+    "1. Each Party shall bear its own costs and expenses in connection with the mediation, unless otherwise mutually agreed in writing."
+  );
+  writeWrapped(
+    "2. The expenses of any additional participants requested by a Party shall be borne solely by the requesting Party.",
+    { gapAfter: 3 }
+  );
+
+  sectionHeader("V. GOVERNING LAW AND JURISDICTION");
+  writeWrapped(
+    `1. This Agreement shall be governed by, and construed in accordance with, the laws of ${
+      values.governingLaw || "[insert jurisdiction]"
+    }, without regard to its conflict of law principles.`
+  );
+  writeWrapped(
+    `2. The Parties agree that any legal action seeking to enforce the terms of this Agreement, or any settlement reached pursuant to it, shall be brought exclusively before the courts of ${
+      values.enforcementCourt || "[insert jurisdiction/city/country]"
+    }, which shall have subject-matter jurisdiction and personal jurisdiction over the Parties.`,
+    { gapAfter: 3 }
+  );
+
+  if (values.extraTerms) {
+    sectionHeader("ADDITIONAL TERMS");
+    writeWrapped(values.extraTerms, { gapAfter: 3 });
   }
 
-  // ── FOOTER ───────────────────────────────────────────────────────────────
-  doc.setFontSize(7);
-  doc.setTextColor(150, 150, 150);
-  doc.text(`Generated  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
+  sectionHeader("SIGNATURES");
+  writeWrapped("IN WITNESS WHEREOF, the Parties have executed this Mediation Agreement as of the Effective Date.", {
+    gapAfter: 3,
+  });
+  writeWrapped("________________________________________");
+  writeUnderlinedField("Name", values.partyAName || "[Name of Party A]");
+  writeUnderlinedField("Date", values.partyASignDate, { gapAfter: 3 });
+
+  writeWrapped("________________________________________");
+  writeUnderlinedField("Name", values.partyBName || "[Name of Party B]");
+  writeUnderlinedField("Date", values.partyBSignDate, { gapAfter: 3 });
+
+  writeWrapped("________________________________________");
+  writeUnderlinedField("Name", values.mediatorName || "[Name of Mediator]");
+  writeUnderlinedField("Date", values.mediatorSignDate);
 
   doc.save("mediation_agreement.pdf");
 };

@@ -4,468 +4,235 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Security Agreement Details",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "lenderName", label: "Lender/Secured Party name", type: "text", required: false },
+      { name: "borrowerName", label: "Borrower/Debtor name", type: "text", required: false },
+      { name: "loanAmount", label: "Total loan amount", type: "text", required: false },
+      { name: "collateralDescription", label: "Collateral description", type: "text", required: false },
+      { name: "collateralLocation", label: "Collateral location", type: "text", required: false },
+      { name: "governingLaw", label: "Governing law", type: "text", required: false },
     ],
   },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
-  
-  doc.setFontSize(18);
+
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
   doc.setFont("helvetica", "bold");
-  doc.text("Security Agreement Alt", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
-  doc.save("security_agreement_alt.pdf");
+  doc.setFontSize(12.5);
+  const title = "SECURITY AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
+
+  if (values.lenderName) p(`Secured Party/Lender: ${values.lenderName}`);
+  if (values.borrowerName) p(`Debtor/Borrower: ${values.borrowerName}`);
+  if (values.loanAmount) p(`Principal Debt Amount: ${values.loanAmount}`);
+  if (values.collateralDescription) p(`Collateral: ${values.collateralDescription}`);
+  if (values.collateralLocation) p(`Collateral Location: ${values.collateralLocation}`);
+  if (values.governingLaw) p(`Governing Law: ${values.governingLaw}`, false, 3);
+
+  p("Other Names:", true);
+  p("- Collateral Agreement");
+  p("- Vehicle Security Agreement");
+  p("- Security Agreement Form", false, 3);
+
+  p("What is a Security Agreement?", true);
+  p("A Security Agreement is a legally binding contract that grants the lender (secured party) a legal interest in specific personal property (collateral) if the borrower fails to repay a loan. It protects the lender and provides repayment security through pledged assets.");
+  p("If you are a borrower, the lender may claim collateral upon default. If you are a lender, this draft Security Agreement provides legal assurance and financial protection.");
+  p("This Security Agreement on Legalgram allows clear definition of collateral, lender rights, borrower obligations, and legal protections for both parties.");
+  p("You can download Security Agreement in the best format from Legalgram for personal, business, or commercial transactions.", false, 3);
+
+  p("What is Security or Collateral?", true);
+  p("Collateral is personal property used to guarantee a loan, such as vehicles, machinery, jewelry, paintings, coin collections, equipment, and valuable personal property.");
+  p("Note: To secure debt using real estate/land, use a Mortgage Deed or Deed of Trust instead of a Security Agreement.", false, 3);
+
+  p("When to Use a Security Agreement?", true);
+  p("✔ You are lending money and want collateral protection");
+  p("✔ You are borrowing money and lender requires security");
+  p("✔ You want a legally enforceable loan structure");
+  p("✔ You need a formal collateral agreement");
+  p("✔ You want a professional draft Security Agreement", false, 3);
+
+  p("Why Download a Security Agreement from Legalgram?", true);
+  p("- Legally binding and enforceable");
+  p("- Best format Security Agreement from Legalgram");
+  p("- Professionally structured legal template");
+  p("- Easy to edit and customize");
+  p("- Ready-to-sign legal document");
+  p("- Trusted format for lenders and borrowers");
+  p("- Free download Security Agreement");
+  p("- Secure and reliable document format");
+  p("- Valid for personal and business use");
+  p("Download Security Agreement on Legalgram and get a professionally drafted legal document in minutes.", false, 3);
+
+  p("Security Agreement FAQs", true);
+  p("How do you write a Security Agreement?");
+  p("With Legalgram you typically provide: total loan amount, collateral description, collateral location, governing law, lender details, and borrower details.");
+  p("Does a Security Agreement have to be notarized?");
+  p("Notarization is generally not mandatory, but highly recommended for stronger legal protection and dispute prevention.", false, 3);
+
+  p("Download Security Agreement - Best Legal Format from Legalgram", true);
+  p("Get your Security Agreement, Collateral Agreement, or Vehicle Security Agreement today:");
+  p("✔ Free download Security Agreement");
+  p("✔ Best format this Security Agreement from Legalgram");
+  p("✔ Editable legal template");
+  p("✔ Ready for signing");
+  p("✔ Professional structure");
+  p("✔ Easy customization");
+  p("✔ Trusted by users");
+
+  doc.save("security_agreement.pdf");
 };
 
-export default function SecurityAgreementAlt() {
+export default function SecurityAgreement() {
   return (
     <FormWizard
       steps={steps}
-      title="Security Agreement Alt"
+      title="Security Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="securityagreementalt"
+      documentType="securityagreement"
+    />
+  );
+}
+import { FormWizard } from "./FormWizard";
+import { FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
+
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  {
+    label: "Security Agreement Details",
+    fields: [
+      { name: "lenderName", label: "Lender/Secured Party name", type: "text", required: false },
+      { name: "borrowerName", label: "Borrower/Debtor name", type: "text", required: false },
+      { name: "loanAmount", label: "Total loan amount", type: "text", required: false },
+      { name: "collateralDescription", label: "Collateral description", type: "text", required: false },
+      { name: "collateralLocation", label: "Collateral location", type: "text", required: false },
+      { name: "governingLaw", label: "Governing law", type: "text", required: false },
+    ],
+  },
+];
+
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
+  let y = 20;
+
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12.5);
+  const title = "SECURITY AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
+
+  if (values.lenderName) p(`Secured Party/Lender: ${values.lenderName}`);
+  if (values.borrowerName) p(`Debtor/Borrower: ${values.borrowerName}`);
+  if (values.loanAmount) p(`Principal Debt Amount: ${values.loanAmount}`);
+  if (values.collateralDescription) p(`Collateral: ${values.collateralDescription}`);
+  if (values.collateralLocation) p(`Collateral Location: ${values.collateralLocation}`);
+  if (values.governingLaw) p(`Governing Law: ${values.governingLaw}`, false, 3);
+
+  p("Other Names:", true);
+  p("- Collateral Agreement");
+  p("- Vehicle Security Agreement");
+  p("- Security Agreement Form", false, 3);
+
+  p("What is a Security Agreement?", true);
+  p("A Security Agreement is a legally binding contract that grants the lender (secured party) a legal interest in specific personal property (collateral) if the borrower fails to repay a loan. It protects the lender and provides repayment security through pledged assets.");
+  p("If you are a borrower, the lender may claim collateral upon default. If you are a lender, this draft Security Agreement provides legal assurance and financial protection.");
+  p("This Security Agreement on Legalgram allows clear definition of collateral, lender rights, borrower obligations, and legal protections for both parties.");
+  p("You can download Security Agreement in the best format from Legalgram for personal, business, or commercial transactions.", false, 3);
+
+  p("What is Security or Collateral?", true);
+  p("Collateral is personal property used to guarantee a loan, such as vehicles, machinery, jewelry, paintings, coin collections, equipment, and valuable personal property.");
+  p("Note: To secure debt using real estate/land, use a Mortgage Deed or Deed of Trust instead of a Security Agreement.", false, 3);
+
+  p("When to Use a Security Agreement?", true);
+  p("✔ You are lending money and want collateral protection");
+  p("✔ You are borrowing money and lender requires security");
+  p("✔ You want a legally enforceable loan structure");
+  p("✔ You need a formal collateral agreement");
+  p("✔ You want a professional draft Security Agreement", false, 3);
+
+  p("Why Download a Security Agreement from Legalgram?", true);
+  p("- Legally binding and enforceable");
+  p("- Best format Security Agreement from Legalgram");
+  p("- Professionally structured legal template");
+  p("- Easy to edit and customize");
+  p("- Ready-to-sign legal document");
+  p("- Trusted format for lenders and borrowers");
+  p("- Free download Security Agreement");
+  p("- Secure and reliable document format");
+  p("- Valid for personal and business use");
+  p("Download Security Agreement on Legalgram and get a professionally drafted legal document in minutes.", false, 3);
+
+  p("Security Agreement FAQs", true);
+  p("How do you write a Security Agreement?");
+  p("With Legalgram you typically provide: total loan amount, collateral description, collateral location, governing law, lender details, and borrower details.");
+  p("Does a Security Agreement have to be notarized?");
+  p("Notarization is generally not mandatory, but highly recommended for stronger legal protection and dispute prevention.", false, 3);
+
+  p("Download Security Agreement - Best Legal Format from Legalgram", true);
+  p("Get your Security Agreement, Collateral Agreement, or Vehicle Security Agreement today:");
+  p("✔ Free download Security Agreement");
+  p("✔ Best format this Security Agreement from Legalgram");
+  p("✔ Editable legal template");
+  p("✔ Ready for signing");
+  p("✔ Professional structure");
+  p("✔ Easy customization");
+  p("✔ Trusted by users");
+
+  doc.save("security_agreement.pdf");
+};
+
+export default function SecurityAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Security Agreement"
+      subtitle="Complete each step to generate your document"
+      onGenerate={generatePDF}
+      documentType="securityagreement"
     />
   );
 }

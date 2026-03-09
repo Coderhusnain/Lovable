@@ -4,527 +4,284 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Agreement Basics",
     fields: [
       {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
+        name: "agreementDate",
+        label: "Agreement date",
         type: "date",
         required: true,
       },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
       {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
+        name: "underlyingContractDate",
+        label: "Underlying contract date",
+        type: "date",
         required: true,
-        placeholder: "Enter full legal name",
       },
       {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
+        name: "governingLawState",
+        label: "Governing law state",
+        type: "text",
         required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
       },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Parties and Consideration",
     fields: [
       {
-        name: "party1Street",
-        label: "Street Address",
+        name: "partyAName",
+        label: "Party A legal name",
         type: "text",
         required: true,
-        placeholder: "123 Main Street",
       },
       {
-        name: "party1City",
-        label: "City",
+        name: "partyBName",
+        label: "Party B legal name",
         type: "text",
         required: true,
-        placeholder: "City",
       },
       {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
+        name: "consideration1Amount",
+        label: "First consideration amount",
         type: "text",
         required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
         placeholder: "$0.00",
       },
       {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
+        name: "consideration1From",
+        label: "First payment from",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "consideration1To",
+        label: "First payment to",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "consideration2Amount",
+        label: "Second consideration amount",
+        type: "text",
+        required: true,
+        placeholder: "$0.00",
+      },
+      {
+        name: "consideration2From",
+        label: "Second payment from",
+        type: "text",
+        required: true,
+      },
+      {
+        name: "consideration2To",
+        label: "Second payment to",
+        type: "text",
+        required: true,
       },
     ],
   },
   {
-    label: "Legal Protections",
+    label: "Execution and Notary",
     fields: [
       {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
+        name: "partyATitle",
+        label: "Party A title",
         type: "text",
         required: false,
-        placeholder: "Witness full legal name",
+      },
+      {
+        name: "partyADate",
+        label: "Party A signature date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "partyBTitle",
+        label: "Party B title",
+        type: "text",
+        required: false,
+      },
+      {
+        name: "partyBDate",
+        label: "Party B signature date",
+        type: "date",
+        required: true,
+      },
+      {
+        name: "notaryState",
+        label: "Notary state (optional)",
+        type: "text",
+        required: false,
+      },
+      {
+        name: "notaryCounty",
+        label: "Notary county (optional)",
+        type: "text",
+        required: false,
+      },
+      {
+        name: "notaryAppearer",
+        label: "Notary appearer name (optional)",
+        type: "text",
+        required: false,
+      },
+      {
+        name: "notaryDate",
+        label: "Notary acknowledgment date (optional)",
+        type: "date",
+        required: false,
       },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Write text and draw a thin underline beneath it */
-const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
-  doc.text(text, x, y);
-  const w = doc.getTextWidth(text);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.25);
-  doc.line(x, y + 1.1, x + w, y + 1.1);
-};
-
-/** Write plain label then an underlined value on the same line */
-const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  ulText(doc, value, x + doc.getTextWidth(label), y);
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF GENERATOR
-// ─────────────────────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageWidth = 210;
+  const margin = 18;
+  const width = pageWidth - margin * 2;
+  const lineHeight = 5.6;
+  const bottomLimit = 280;
+  let y = 20;
 
-  const PW       = 210;
-  const M        = 20;
-  const TW       = PW - M * 2;
-  const FS       = 10.5;
-  const LH       = 5.8;
-  const SAFE_BOT = 270;
-  let y = 22;
-
-  const checkPage = (needed = 12) => {
-    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
+  const writeWrapped = (text: string, bold = false, gapAfter = 1.8) => {
+    const lines = doc.splitTextToSize(text, width);
+    const needed = lines.length * lineHeight + gapAfter;
+    if (y + needed > bottomLimit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, margin, y);
+    y += lines.length * lineHeight + gapAfter;
   };
 
-  // ── TITLE ────────────────────────────────────────────────────────────────
+  doc.setFontSize(13);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  const TITLE = "MUTUAL RELEASE";
-  doc.text(TITLE, PW / 2, y, { align: "center" });
-  const tw = doc.getTextWidth(TITLE);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.4);
-  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
-  y += 12;
+  const title = "MUTUAL RELEASE AGREEMENT";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(pageWidth / 2 - tw / 2, y + 1.2, pageWidth / 2 + tw / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // ── DATE / JURISDICTION ──────────────────────────────────────────────────
-  doc.setFontSize(FS);
-  doc.setTextColor(0, 0, 0);
-  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y);
-  y += LH + 1;
-  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y);
-  y += LH + 6;
+  writeWrapped(
+    `This Mutual Release Agreement (the "Agreement") is entered into as of ${values.agreementDate || "____________"}, by and between:`
+  );
+  writeWrapped(`- ${values.partyAName || "________________________"}, and`);
+  writeWrapped(`- ${values.partyBName || "________________________"},`);
+  writeWrapped('(each a "Party" and collectively, the "Parties").', false, 4);
 
-  // ── PARTIES ──────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(FS);
-  doc.text("PARTIES", M, y);
-  y += LH + 1;
+  writeWrapped("Purpose", true);
+  writeWrapped(
+    "The purpose of this Agreement is to effect the full and final settlement of all disputes, obligations, and liabilities between the Parties, and to terminate any obligations owed by either Party to the other in connection with the matters described herein.",
+    false,
+    4
+  );
 
-  doc.setFont("helvetica", "normal");
-  // First Party
-  labelUl(doc, "First Party:  ", values.party1Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party1Email || "N/A", M, y); y += LH;
-  if (values.party1Phone) { labelUl(doc, "Phone:  ", values.party1Phone, M, y); y += LH; }
-  y += 4;
+  writeWrapped("Recitals", true);
+  writeWrapped(
+    `WHEREAS, disputes and differences have arisen between the Parties relating to that certain agreement dated ${values.underlyingContractDate || "____________"}, a copy of which is attached hereto as Exhibit A (the "Underlying Contract");`
+  );
+  writeWrapped(
+    "WHEREAS, the Parties desire to fully and finally resolve said disputes and differences, without admission of liability, by executing this Mutual Release;"
+  );
+  writeWrapped(
+    `WHEREAS, in consideration of this Mutual Release and additional consideration, including the payment of ${
+      values.consideration1Amount || "$--------"
+    } by ${values.consideration1From || "________________"} to ${
+      values.consideration1To || "________________"
+    }, receipt of which is hereby acknowledged, and the payment of ${
+      values.consideration2Amount || "$------"
+    } by ${values.consideration2From || "________________"} to ${
+      values.consideration2To || "________________"
+    }, receipt of which is hereby acknowledged, each Party wishes to release and discharge the other Party from all claims and liabilities arising from the Underlying Contract; and`
+  );
+  writeWrapped(
+    "WHEREAS, the Parties desire to provide mutual releases, and in some instances indemnification, on the terms and conditions set forth herein."
+  );
+  writeWrapped(
+    "NOW, THEREFORE, in consideration of the foregoing recitals, the payments acknowledged above, and the mutual covenants contained herein, the Parties agree as follows:",
+    false,
+    4
+  );
 
-  // Second Party
-  labelUl(doc, "Second Party:  ", values.party2Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party2Email || "N/A", M, y); y += LH;
-  if (values.party2Phone) { labelUl(doc, "Phone:  ", values.party2Phone, M, y); y += LH; }
-  y += 6;
+  writeWrapped("1. Mutual Release", true);
+  writeWrapped(
+    `1.1 Release by [Party A]. [Party A] does hereby release, cancel, forgive, and forever discharge [Party B], together with its predecessors, parent corporations, holding companies, subsidiaries, affiliates, divisions, heirs, successors, and assigns, and all of their respective officers, directors, employees, and representatives, from any and all actions, claims, demands, damages, liabilities, obligations, controversies, and causes of action of every kind or nature whatsoever, whether known or unknown, suspected or unsuspected, which have arisen, may have arisen, or may hereafter arise out of or relating to the Underlying Contract, from the beginning of time through the date of this Agreement.`
+  );
+  writeWrapped(
+    `1.2 Release by [Party B]. [Party B] does hereby release, cancel, forgive, and forever discharge [Party A], together with its subsidiaries, affiliates, divisions, heirs, successors, and assigns, in all capacities including as officers, directors, employees, representatives, agents, or shareholders, from any and all actions, claims, demands, damages, liabilities, obligations, controversies, and causes of action of every kind or nature whatsoever, whether known or unknown, suspected or unsuspected, which have arisen, may have arisen, or may hereafter arise out of or relating to the Underlying Contract, from the beginning of time through the date of this Agreement.`
+  );
+  writeWrapped(
+    "1.3 Waiver of Unknown Claims. Each Party acknowledges that it has been advised of, and expressly waives, the provisions of any law which would otherwise limit the scope of this Release to matters known or suspected at the time of execution.",
+    false,
+    3
+  );
 
-  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────
-  checkPage(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", TW);
-  doc.text(descLines, M, y);
-  y += descLines.length * LH + 6;
+  writeWrapped("2. Governing Law", true);
+  writeWrapped(
+    `This Agreement shall be governed by, and construed in accordance with, the laws of the State of ${
+      values.governingLawState || "____________________"
+    }.`,
+    false,
+    3
+  );
 
-  // ── TERMS ────────────────────────────────────────────────────────────────
-  checkPage(30);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  labelUl(doc, "Duration:  ", values.duration || "N/A", M, y); y += LH;
-  labelUl(doc, "Termination Notice:  ", values.terminationNotice || "N/A", M, y); y += LH;
-  labelUl(doc, "Confidentiality:  ", values.confidentiality === "yes" ? "Included" : "Not Included", M, y); y += LH;
-  labelUl(doc, "Dispute Resolution:  ", values.disputeResolution || "N/A", M, y); y += LH + 6;
+  writeWrapped("3. Legal Construction", true);
+  writeWrapped(
+    "If any provision of this Agreement is held to be invalid, illegal, or unenforceable, such provision shall be deemed severed, and the remaining provisions shall remain valid and enforceable. This Agreement shall be construed as a whole and not as severable obligations.",
+    false,
+    3
+  );
 
-  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────
-  if (values.paymentAmount) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", M, y); y += LH + 1;
-    doc.setFont("helvetica", "normal");
-    labelUl(doc, "Payment Amount:  ", values.paymentAmount, M, y); y += LH;
-    labelUl(doc, "Schedule:  ", values.paymentSchedule || "N/A", M, y); y += LH + 6;
+  writeWrapped("4. Attorneys' Fees", true);
+  writeWrapped(
+    "If any action or proceeding is brought to enforce or interpret the provisions of this Agreement, the prevailing Party shall be entitled to recover its reasonable attorneys' fees and costs, in addition to any other relief to which it may be entitled.",
+    false,
+    3
+  );
+
+  writeWrapped("5. Entire Agreement", true);
+  writeWrapped(
+    "This Agreement constitutes the entire agreement between the Parties with respect to the subject matter hereof, and supersedes all prior negotiations, representations, or agreements, whether written or oral.",
+    false,
+    4
+  );
+
+  writeWrapped("Execution", true);
+  writeWrapped(
+    "IN WITNESS WHEREOF, the Parties hereto have executed this Mutual Release Agreement as of the date first written above.",
+    false,
+    2
+  );
+
+  writeWrapped("Party A", true, 1.2);
+  writeWrapped("________________________________________", false, 1.2);
+  writeWrapped(`Name: ${values.partyAName || "_______________________________"}`, false, 1.2);
+  writeWrapped(`Title: ${values.partyATitle || "_______________________________"}`, false, 1.2);
+  writeWrapped(`Date: ${values.partyADate || "_______________________________"}`, false, 3);
+
+  writeWrapped("Party B", true, 1.2);
+  writeWrapped("________________________________________", false, 1.2);
+  writeWrapped(`Name: ${values.partyBName || "_______________________________"}`, false, 1.2);
+  writeWrapped(`Title: ${values.partyBTitle || "_______________________________"}`, false, 1.2);
+  writeWrapped(`Date: ${values.partyBDate || "_______________________________"}`, false, 3);
+
+  if (values.notaryState || values.notaryCounty || values.notaryAppearer || values.notaryDate) {
+    writeWrapped("[Optional Notary Acknowledgment]", true, 2);
+    writeWrapped(`State of ${values.notaryState || "____________"} )`, false, 1);
+    writeWrapped(`County of ${values.notaryCounty || "__________"} )`, false, 1);
+    writeWrapped(
+      `On this ${values.notaryDate || "___ day of __________, 20__"}, before me, the undersigned Notary Public, personally appeared ${
+        values.notaryAppearer || "______________________"
+      }, known to me (or satisfactorily proven) to be the person whose name is subscribed to this instrument, and acknowledged that he/she executed the same for the purposes therein contained.`
+    );
+    writeWrapped("IN WITNESS WHEREOF, I hereunto set my hand and official seal.");
+    writeWrapped("Notary Public");
   }
-
-  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────
-  if (values.additionalTerms) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", M, y); y += LH + 1;
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
-    doc.text(addLines, M, y);
-    y += addLines.length * LH + 6;
-  }
-
-  // ── SIGNATURES ───────────────────────────────────────────────────────────
-  checkPage(45);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", M, y); y += LH + 3;
-  doc.setFont("helvetica", "normal");
-
-  const C2 = 110;
-  doc.text("_______________________________", M, y);
-  doc.text("_______________________________", C2, y);
-  y += LH;
-
-  ulText(doc, values.party1Name || "First Party", M, y);
-  ulText(doc, values.party2Name || "Second Party", C2, y);
-  y += LH;
-
-  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y);
-  labelUl(doc, "Signature:  ", values.party2Signature || "", C2, y);
-  y += LH;
-
-  doc.text("Date: " + new Date().toLocaleDateString(), M, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), C2, y);
-
-  if (values.witnessName) {
-    y += LH + 6;
-    doc.text("Witness: _______________________________", M, y); y += LH;
-    labelUl(doc, "Name:  ", values.witnessName, M, y);
-  }
-
-  // ── FOOTER ───────────────────────────────────────────────────────────────
-  doc.setFontSize(7);
-  doc.setTextColor(150, 150, 150);
-  doc.text(`Generated  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
 
   doc.save("mutual_release.pdf");
 };
@@ -533,7 +290,7 @@ export default function MutualRelease() {
   return (
     <FormWizard
       steps={steps}
-      title="Mutual Release"
+      title="Mutual Release Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="mutualrelease"

@@ -4,329 +4,180 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "agreementDate", label: "Agreement date", type: "date", required: true },
+      { name: "creditorName", label: "Creditor name", type: "text", required: true },
+      { name: "creditorAddress", label: "Creditor address", type: "text", required: true },
+      { name: "creditorContact", label: "Creditor telephone/email", type: "text", required: false },
+      { name: "debtorName", label: "Debtor name", type: "text", required: true },
+      { name: "debtorAddress", label: "Debtor address", type: "text", required: true },
+      { name: "debtorContact", label: "Debtor telephone/email", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Debt and Settlement",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "outstandingDebt", label: "Outstanding debt amount", type: "text", required: true },
+      { name: "debtNature", label: "Nature of debt", type: "text", required: true, placeholder: "loan, note, credit account, etc." },
+      { name: "ackDebtWords", label: "Debt in figures and words", type: "text", required: true },
+      { name: "settlementAmount", label: "Settlement amount in figures and words", type: "text", required: true },
+      { name: "paymentMethod", label: "Payment method", type: "text", required: true, placeholder: "wire transfer / certified check / cashier's check / cash" },
+      { name: "paymentDueDate", label: "Settlement payment due date", type: "date", required: true },
+      { name: "accountName", label: "Payment account name", type: "text", required: false },
+      { name: "bankName", label: "Bank name", type: "text", required: false },
+      { name: "accountNumber", label: "Account number", type: "text", required: false },
+      { name: "routingNumber", label: "Routing number", type: "text", required: false },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Law and Execution",
     fields: [
-      { name: "effectiveDate", label: "What is the effective date of this document?", type: "date", required: true },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
+      { name: "courtLocation", label: "Exclusive court location (county/state)", type: "text", required: true },
+      { name: "releasorInitial1", label: "Releasor initial 1", type: "text", required: false },
+      { name: "releasorInitial2", label: "Releasor initial 2", type: "text", required: false },
+      { name: "debtorInitial1", label: "Debtor initial 1", type: "text", required: false },
+      { name: "debtorInitial2", label: "Debtor initial 2", type: "text", required: false },
+      { name: "creditorSignName", label: "Creditor signing name", type: "text", required: true },
+      { name: "creditorSignTitle", label: "Creditor title", type: "text", required: false },
+      { name: "creditorSignDate", label: "Creditor sign date", type: "date", required: true },
+      { name: "debtorSignName", label: "Debtor signing name", type: "text", required: true },
+      { name: "debtorSignTitle", label: "Debtor title", type: "text", required: false },
+      { name: "debtorSignDate", label: "Debtor sign date", type: "date", required: true },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and details of this document", type: "textarea", required: true, placeholder: "Provide a detailed description..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
 
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const para = (text: string) => {
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
   };
 
-  // TITLE
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  const title = "DEBT SETTLEMENT AGREEMENT LETTER";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  doc.setFontSize(12.5);
+  const title = "DEBT SETTLEMENT AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // HEADER FIELDS
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
-  };
+  p(`This Debt Settlement Agreement ("Agreement") is made and entered into as of ${values.agreementDate || "[Date]"}, by and between the following parties:`);
+  p("Creditor:", true, 1);
+  uf("Name", values.creditorName);
+  uf("Address", values.creditorAddress);
+  uf("Telephone/Email", values.creditorContact, 24, 2.4);
+  p("Debtor:", true, 1);
+  uf("Name", values.debtorName);
+  uf("Address", values.debtorAddress);
+  uf("Telephone/Email", values.debtorContact, 24, 2.4);
+  p('Collectively referred to herein as the "Parties," and individually as a "Party."', false, 3);
 
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
+  p("RECITALS", true);
+  p(`WHEREAS, the Debtor is indebted to the Creditor in the total amount of ${values.outstandingDebt || "[insert amount]"} (the "Outstanding Debt") arising from ${values.debtNature || "[describe nature of debt]"}; and`);
+  p("WHEREAS, the Parties desire to fully and finally resolve, discharge, and settle the Outstanding Debt and any related claims, disputes, or obligations between them without resort to litigation; and");
+  p("WHEREAS, the Creditor has agreed to accept a reduced amount in full and final satisfaction of the Outstanding Debt, under the terms and conditions set forth herein.");
+  p("NOW, THEREFORE, in consideration of the mutual covenants, promises, and representations contained herein, and intending to be legally bound, the Parties agree as follows:", false, 3);
 
-  // SUBJECT
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Debt Settlement Agreement", margin, y);
-  y += 7;
+  p("1. ACKNOWLEDGMENT OF DEBT", true);
+  p(`1.1 The Debtor acknowledges and confirms that the Outstanding Debt owed to the Creditor as of the date of this Agreement is ${values.ackDebtWords || "[amount in figures and words]"}.`);
+  p("1.2 The Debtor represents that the amount stated above constitutes the entire balance due and payable, and that there are no other claims, set-offs, or counterclaims against the Creditor related to this obligation.", false, 3);
 
-  // SALUTATION
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
+  p("2. SETTLEMENT TERMS", true);
+  p(`2.1 The Creditor agrees to accept payment in the amount of ${values.settlementAmount || "[insert settlement amount in figures and words]"} (the "Settlement Amount") as full and final satisfaction of the Outstanding Debt.`);
+  p(`2.2 The Settlement Amount shall be paid by the Debtor via ${values.paymentMethod || "[wire transfer/certified check/cashier's check/cash]"} to the Creditor on or before ${values.paymentDueDate || "[insert payment due date]"}.`);
+  p("2.3 Payment shall be made to the following account or address as designated by the Creditor:");
+  uf("Account Name", values.accountName);
+  uf("Bank Name", values.bankName);
+  uf("Account Number", values.accountNumber);
+  uf("Routing Number", values.routingNumber);
+  p("2.4 Upon receipt and clearance of the full Settlement Amount, the Creditor shall release the Debtor from any further obligation or liability in connection with the Outstanding Debt.", false, 3);
 
-  // BODY — Creditor / Debtor lines with underlines
-  const creditorName = values.party1Name || "the Creditor";
-  const debtorName   = values.party2Name || "the Debtor";
+  p("3. FAILURE TO PAY", true);
+  p("3.1 Should the Debtor fail to remit the full Settlement Amount by the due date specified in Clause 2.2, this Agreement shall be deemed null and void, and the Creditor shall be entitled to demand immediate payment of the original amount owed plus any accrued interest, fees, or costs recoverable under applicable law.");
+  p("3.2 The Debtor acknowledges that failure to comply with the payment obligation herein may result in legal action or other enforcement proceedings by the Creditor.", false, 3);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  const credLabel = "Creditor:  ";
-  doc.text(credLabel, margin, y);
-  const clw = doc.getTextWidth(credLabel);
-  doc.text(creditorName, margin + clw, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin + clw, y + 1.2, margin + clw + doc.getTextWidth(creditorName), y + 1.2);
-  y += 6;
-  const debtLabel = "Debtor:  ";
-  doc.text(debtLabel, margin, y);
-  const dlw = doc.getTextWidth(debtLabel);
-  doc.text(debtorName, margin + dlw, y);
-  doc.line(margin + dlw, y + 1.2, margin + dlw + doc.getTextWidth(debtorName), y + 1.2);
-  y += 8;
+  p("4. RELEASE AND WAIVER", true);
+  p("4.1 Upon full receipt of the Settlement Amount, the Creditor hereby fully and irrevocably releases, acquits, and forever discharges the Debtor and the Debtor's successors, assigns, agents, and representatives from any and all claims or demands arising from or related to the Outstanding Debt.");
+  p("4.2 The Parties expressly acknowledge and agree that this release constitutes a full and final settlement and discharge of any and all disputes and liabilities relating to the debt.", false, 3);
 
-  para("This letter confirms that the parties have agreed to settle the outstanding debt under the terms outlined below.");
+  p("5. WAIVER OF CALIFORNIA CIVIL CODE § 1542", true);
+  p("To the extent applicable, the Parties expressly waive the provisions of California Civil Code Section 1542, which provides as follows:");
+  p('"A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS WHICH THE CREDITOR(S) DO NOT KNOW OR SUSPECT TO EXIST IN THEIR FAVOR AT THE TIME OF EXECUTING THE RELEASE, WHICH, IF KNOWN BY THEM, MUST HAVE MATERIALLY AFFECTED THEIR SETTLEMENT WITH THE DEBTOR(S)."');
+  p("Each Party acknowledges this waiver has been read, understood, and voluntarily made.");
+  p(`Initials of Releasor(s): ${(values.releasorInitial1 || "").trim() || "_______"} ${(values.releasorInitial2 || "").trim() || "_______"}`);
+  p(`Initials of Debtor(s): ${(values.debtorInitial1 || "").trim() || "_______"} ${(values.debtorInitial2 || "").trim() || "_______"}`, false, 3);
 
-  if (values.description?.trim()) para(values.description.trim());
+  p("6. REPRESENTATIONS AND WARRANTIES", true);
+  p("Each Party represents and warrants authority/capacity to execute, binding enforceability of this Agreement, and no assignment of rights related to the subject matter.", false, 3);
+  p("7. CONFIDENTIALITY", true);
+  p("The Parties agree to maintain strict confidentiality regarding the existence and terms of this Agreement, except as required by law or necessary to enforce this Agreement.", false, 3);
+  p("8. NO ADMISSION OF LIABILITY", true);
+  p("This Agreement is a compromise of disputed claims and shall not be construed as an admission of liability by either Party.", false, 3);
+  p("9. ENTIRE AGREEMENT", true);
+  p("This Agreement is the entire understanding between the Parties and supersedes all prior discussions. Any amendment must be in writing and signed by both Parties.", false, 3);
+  p("10. SEVERABILITY", true);
+  p("If any provision is held invalid or unenforceable, the remaining provisions remain in full force and effect.", false, 3);
+  p("11. GOVERNING LAW AND JURISDICTION", true);
+  p(`This Agreement shall be governed by the laws of the State of ${values.governingState || "[insert state]"}, and disputes shall be subject to the exclusive jurisdiction of courts in ${values.courtLocation || "[insert county and state]"}.`, false, 3);
+  p("12. EXECUTION AND COUNTERPARTS", true);
+  p("This Agreement may be executed in counterparts; electronic/facsimile/scanned signatures are legally binding.", false, 3);
 
-  para(`Upon receipt of the settlement amount${values.paymentAmount ? ` of ${values.paymentAmount}` : ""} by the due date, the Creditor agrees to consider the debt fully satisfied and to release the Debtor from any further obligation related to this account.`);
+  p("IN WITNESS WHEREOF, the Parties hereto have executed this Debt Settlement Agreement as of the date first above written.", true, 2);
+  p("Creditor", true, 1);
+  p("By: _________________________");
+  uf("Name", values.creditorSignName, 22);
+  uf("Title (if applicable)", values.creditorSignTitle, 22);
+  uf("Date", values.creditorSignDate, 22, 2.6);
+  p("Debtor", true, 1);
+  p("By: _________________________");
+  uf("Name", values.debtorSignName, 22);
+  uf("Title (if applicable)", values.debtorSignTitle, 22);
+  uf("Date", values.debtorSignDate, 22, 3);
+  p("ACKNOWLEDGMENT", true);
+  p("Both Parties acknowledge that they have carefully read this Agreement, fully understand its terms, and voluntarily execute it with the intent to be legally bound.");
 
-  para("If the settlement amount is not received by the due date, this agreement may become void, and the Creditor reserves the right to pursue the full original balance, subject to applicable law.");
-
-  para("The Creditor agrees to update its records to reflect that the account has been settled, in accordance with applicable policies and legal requirements.");
-
-  para("Any changes to this settlement arrangement must be made in writing and agreed to by both parties.");
-
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
-
-  para("This document serves as a formal record of the agreed debt settlement terms. Please retain a copy for your records.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  // SENDER BLOCK
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "Creditor";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  // SIGNATURES
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Creditor Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("Creditor Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Debtor Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Debtor Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
-  }
-
-  doc.save("debt_settlement.pdf");
+  doc.save("debt_settlement_agreement.pdf");
 };
 
-export default function DebtSettlementAgreement() {
+export default function DEBTSETTLEMENTAGREEMENT() {
   return (
     <FormWizard
       steps={steps}

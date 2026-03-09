@@ -173,6 +173,7 @@ const MusicLicenseForm = lazy(() => import("@/components/MusicLicenseForm"));
 const MutualNDAForm = lazy(() => import("@/components/MutualNDAForm"));
 const MutualReleaseForm = lazy(() => import("@/components/MutualReleaseForm"));
 const MutualRescissionForm = lazy(() => import("@/components/MutualRescissionForm"));
+const SettlementAndReleaseAgreementForm = lazy(() => import("@/components/SettlementAndReleaseAgreementForm"));
 const NDAForm = lazy(() => import("@/components/NDAForm"));
 const NonCircumventionForm = lazy(() => import("@/components/NonCircumventionForm"));
 const NonDisturbanceAgreement = lazy(() => import("@/components/NonDisturbanceAgreement"));
@@ -207,8 +208,8 @@ const RoommateReleaseAgreementForm = lazy(() => import("@/components/RoommateRel
 const RoyaltyAgreementForm = lazy(() => import("@/components/RoyaltyAgreementForm"));
 const SaleAgreementForm = lazy(() => import("@/components/SaleAgreementForm"));
 const SaleOfGoodsForm = lazy(() => import("@/components/SaleOfGoodsForm"));
-const SECURITYAGREEMENT = lazy(() => import("@/components/SECURITYAGREEMENT"));
-const SecurityAgreementForm = lazy(() => import("@/components/SecurityAgreementForm"));
+const SECURITYAGREEMENT = lazy(() => import("../components/SECURITYAGREEMENT"));
+const SecurityAgreementForm = lazy(() => import("../components/SecurityAgreementForm"));
 const SecurityDepositReturnLetter = lazy(() => import("@/components/SecurityDepositReturnLetter"));
 const SeparationAgreementForm = lazy(() => import("@/components/SeparationAgreementForm"));
 const ServiceAgreementForm = lazy(() => import("@/components/ServiceAgreementForm"));
@@ -449,6 +450,7 @@ export const businessSecurityDocs = [
   { id: "MediationAgreementForm", title: "Mediation Agreement", description: "Create a comprehensive mediation agreement", icon: MessageSquare, category: "Dispute Resolution", component: MediationAgreementForm },
   { id: "MutualReleaseForm", title: "Mutual Release Agreement", description: "Create a comprehensive mutual release agreement", icon: FileCheck, category: "Dispute Resolution", component: MutualReleaseForm },
   { id: "MutualRescissionForm", title: "Mutual Rescission Agreement", description: "Create a comprehensive mutual rescission agreement", icon: FileX, category: "Dispute Resolution", component: MutualRescissionForm },
+  { id: "SettlementAndReleaseAgreementForm", title: "Settlement and Release Agreement", description: "Create a comprehensive settlement and release agreement", icon: FileCheck, category: "Dispute Resolution", component: SettlementAndReleaseAgreementForm },
 
   // === COLLABORATIONS ===
   { id: "CollaborationAgreementForm", title: "Collaboration Agreement", description: "Create a comprehensive collaboration agreement", icon: Handshake, category: "Collaborations", component: CollaborationAgreementForm },

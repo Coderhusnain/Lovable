@@ -4,569 +4,102 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Balloon Note Details",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "loanAmount", label: "Loan amount", type: "text", required: false },
+      { name: "monthlyPayment", label: "Monthly payment", type: "text", required: false },
+      { name: "balloonAmount", label: "Balloon payment amount", type: "text", required: false },
+      { name: "balloonDueDate", label: "Balloon due date", type: "date", required: false },
     ],
   },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
-  };
-
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
-  };
-
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(12.5);
+  const title = "PROMISSORY NOTE WITH BALLOON PAYMENTS";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  const title = "Balloon Promissory Note Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  if (values.loanAmount) p(`Loan Amount: ${values.loanAmount}`);
+  if (values.monthlyPayment) p(`Regular Payment: ${values.monthlyPayment}`);
+  if (values.balloonAmount) p(`Balloon Payment Amount: ${values.balloonAmount}`);
+  if (values.balloonDueDate) p(`Balloon Due Date: ${values.balloonDueDate}`, false, 3);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  p("Other Names:", true);
+  p("- Note Payable with Balloon Payments");
+  p("- Balloon Promissory Note", false, 3);
 
-  y += 15;
+  p("What is a Promissory Note with Balloon Payments?", true);
+  p("A Promissory Note with Balloon Payments is a legally binding loan agreement allowing regular payments and one or more large balloon payments due at end of term. It defines payment schedule, interest details, and final repayment obligations.");
+  p("Using this note on Legalgram helps avoid confusion and disputes by clearly stating when balloon payment is due and how much must be paid. It supports transparency and legal protection for lender and borrower.");
+  p("You can download this agreement in the best legal format from Legalgram for personal, business, or private lending.", false, 3);
 
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
+  p("Why Use a Promissory Note with Balloon Payments?", true);
+  p("- Lower periodic payments with larger final payment.");
+  p("- Clear amortization schedule for interest-bearing loans.");
+  p("- Strong legal clarity on repayment terms.");
+  p("- Avoid misunderstandings about final balance.");
+  p("The Legalgram version can include amortization table, interest rate, and exact dates.", false, 3);
 
-  addUnderlinedField("To:", values.party2Name || "", 100);
+  p("When to Use It", true);
+  p("✔ You are part of a loan that includes balloon payments");
+  p("✔ You want accurate monthly installment calculations");
+  p("✔ You need a legally enforceable loan document");
+  p("✔ You want a professional draft");
+  p("✔ You need final payment obligations clearly defined", false, 3);
 
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
+  p("Why Download from Legalgram?", true);
+  p("- Legally binding and enforceable");
+  p("- Best format from Legalgram");
+  p("- Professionally drafted template");
+  p("- Easy to customize");
+  p("- Suitable for personal/business loans");
+  p("- Free download option");
+  p("- Secure and ready to sign", false, 3);
 
-  addUnderlinedField("Address:", address, 120);
+  p("FAQs", true);
+  p("How can I draft one online?");
+  p("1. Enter amount, rate, and payment schedule.");
+  p("2. Define balloon amount and due date.");
+  p("3. Review and finalize.");
+  p("4. Download and sign.");
+  p("Do I need an attorney?");
+  p("Not always, but legal review may help for complex loans.");
+  p("Does it need notarization or witnesses?");
+  p("No, generally not required, but optional for additional strength.");
 
-  y += 4;
-
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Balloon Promissory Note",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Parties
-const lenderName = values.party1Name || "________";
-const borrowerName = values.party2Name || "________";
-
-
-// Intro paragraph
-addParagraphWithUnderline(
-  "This Promissory Note is made between ",
-  borrowerName,
-  " (\"Borrower\") and "
-);
-
-addParagraphWithUnderline(
-  "The Borrower promises to pay to the order of ",
-  lenderName,
-  ", the principal sum described below under the terms and conditions of this Note."
-);
-
-// Payment terms
-addParagraph(
-  "The Borrower agrees to make regular installment payments toward the principal and interest as outlined ."
-);
-
-
-// Balloon payment section
-addParagraph(
-  "This Note includes a balloon payment provision. At the end of the payment term, the remaining unpaid balance of principal and any accrued interest shall become immediately due and payable."
-);
-
-// Default clause
-addParagraph(
-  "In the event of default, including failure to make any payment when due, the Lender may declare the entire unpaid balance immediately due and payable, together with any applicable costs permitted by law."
-);
-
-// Closing legal language
-addParagraph(
-  "This Promissory Note shall be governed by the applicable laws of the governing jurisdiction and represents the entire agreement between the parties regarding this loan obligation."
-);
-
-
-// Closing tone
-addParagraph(
-  "Thank you for your attention to this matter. I look forward to your response regarding the status of this claim."
-);
-
-
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
-
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
-  );
-
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== SAVE =====
-    doc.save("Ballon_promissory.pdf");
+  doc.save("promissory_note_balloon_payments.pdf");
 };
-
-
 
 export default function BalloonPaymentPromissoryNoteForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Balloon Payment Promissory Note"
+      title="Promissory Note with Balloon Payments"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="balloonpaymentpromissorynote"

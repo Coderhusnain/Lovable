@@ -4,322 +4,188 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "agreementDate", label: "Agreement date", type: "date", required: true },
+      { name: "borrowerName", label: "Borrower name", type: "text", required: true },
+      { name: "borrowerAddress", label: "Borrower address", type: "text", required: true },
+      { name: "borrowerPhone", label: "Borrower contact number", type: "text", required: false },
+      { name: "borrowerEmail", label: "Borrower email", type: "email", required: false },
+      { name: "lenderName", label: "Lender name", type: "text", required: true },
+      { name: "lenderAddress", label: "Lender address", type: "text", required: true },
+      { name: "lenderPhone", label: "Lender contact number", type: "text", required: false },
+      { name: "lenderEmail", label: "Lender email", type: "email", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Loan Terms",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "loanAmount", label: "Loan amount (USD)", type: "text", required: true, placeholder: "0.00" },
+      { name: "interestRate", label: "Interest rate (%)", type: "text", required: true, placeholder: "0" },
+      { name: "interestType", label: "Interest basis (simple/compound)", type: "text", required: true, placeholder: "simple" },
+      { name: "installmentAmount", label: "Installment amount", type: "text", required: true },
+      { name: "commencementDate", label: "Commencement date", type: "date", required: true },
+      { name: "maturityDate", label: "Maturity date", type: "date", required: true },
+      { name: "paymentFrequency", label: "Frequency of payments", type: "text", required: true, placeholder: "Monthly" },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Legal and Execution",
     fields: [
-      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
+      { name: "governingLawState", label: "Governing law state", type: "text", required: true },
+      { name: "jurisdictionLocation", label: "Court jurisdiction location", type: "text", required: true },
+      { name: "executedAt", label: "Executed at", type: "text", required: false },
+      { name: "borrowerPrintedName", label: "Borrower printed name", type: "text", required: true },
+      { name: "lenderPrintedName", label: "Lender printed name", type: "text", required: true },
+      { name: "borrowerSignDate", label: "Borrower signature date", type: "date", required: true },
+      { name: "lenderSignDate", label: "Lender signature date", type: "date", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Optional Notary",
     fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
+      { name: "notaryState", label: "Notary state", type: "text", required: false },
+      { name: "notaryCounty", label: "Notary county", type: "text", required: false },
+      { name: "notaryDate", label: "Notary acknowledgment date", type: "date", required: false },
+      { name: "notaryBorrower", label: "Borrower name for notary line", type: "text", required: false },
+      { name: "notaryLender", label: "Lender name for notary line", type: "text", required: false },
+      { name: "commissionExpires", label: "Notary commission expires", type: "text", required: false },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageWidth = 210;
+  const margin = 18;
+  const width = pageWidth - margin * 2;
+  const lineHeight = 5.5;
+  const bottomLimit = 280;
   let y = 20;
 
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const para = (text: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
+  const writeWrapped = (text: string, bold = false, gapAfter = 1.8) => {
+    const lines = doc.splitTextToSize(text, width);
+    const needed = lines.length * lineHeight + gapAfter;
+    if (y + needed > bottomLimit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
     doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
+    y += lines.length * lineHeight + gapAfter;
   };
 
-  // TITLE
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
-  const title = "PAYMENT AGREEMENT LETTER";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  const title = "PAYMENT AGREEMENT";
+  doc.text(title, pageWidth / 2, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(pageWidth / 2 - tw / 2, y + 1.2, pageWidth / 2 + tw / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // HEADER FIELDS
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
-  };
+  writeWrapped(
+    `THIS PAYMENT AGREEMENT ("Agreement" or "Note") is made and entered into on this ${
+      values.agreementDate || "___ day of _______________, ______"
+    }, by and between:`
+  );
+  writeWrapped(`Borrower: ${values.borrowerName || "__________________________________________"}`);
+  writeWrapped(`of ${values.borrowerAddress || "____________________________________________________"}`);
+  writeWrapped(
+    `Contact No.: ${values.borrowerPhone || "_______________________"}   Email: ${
+      values.borrowerEmail || "______________________"
+    }`
+  );
+  writeWrapped("AND");
+  writeWrapped(`Lender: ${values.lenderName || "____________________________________________"}`);
+  writeWrapped(`of ${values.lenderAddress || "____________________________________________________"}`);
+  writeWrapped(
+    `Contact No.: ${values.lenderPhone || "_______________________"}   Email: ${
+      values.lenderEmail || "______________________"
+    }`
+  );
+  writeWrapped('The Borrower and the Lender are hereinafter collectively referred to as the "Parties," and individually as a "Party."', false, 3);
 
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
+  writeWrapped("1. INTRODUCTION AND PROMISE TO PAY", true);
+  writeWrapped("1.1 Identification of Parties: The Borrower is the person or entity receiving funds under this Agreement, and the Lender is the person or entity providing such funds.");
+  writeWrapped(
+    `1.2 Promise to Pay: For value received, the Borrower hereby unconditionally promises to pay to the order of the Lender, in lawful money of the United States of America, the principal sum of United States Dollars (US $${values.loanAmount || "_________"}) (the "Loan Amount"), together with interest thereon in accordance with the terms of this Agreement.`
+  );
+  writeWrapped(
+    "1.3 Acknowledgment of Debt: The Borrower acknowledges that the funds advanced by the Lender constitute a valid and enforceable debt obligation. The Borrower further acknowledges that this Agreement represents the entire understanding of the Parties with respect to the payment and repayment of said funds."
+  );
+  writeWrapped(
+    `1.4 Interest Terms: The Loan Amount shall bear interest at a rate of ${values.interestRate || "_____"} percent per annum, calculated on the outstanding principal balance from the date of disbursement until payment in full. Interest shall be computed on a ${
+      values.interestType || "[simple/compound]"
+    } interest basis, as mutually agreed by the Parties.`,
+    false,
+    3
+  );
 
-  // SUBJECT
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Payment Agreement", margin, y);
-  y += 7;
+  writeWrapped("2. TERMS OF REPAYMENT", true);
+  writeWrapped("2.1 Repayment Structure: The Borrower agrees to repay the Loan Amount, together with accrued interest, in periodic installments as follows:");
+  writeWrapped(`- Installment Amount: US $${values.installmentAmount || "_________"} per month (or other agreed periodic payment).`);
+  writeWrapped(`- Commencement Date: ${values.commencementDate || "____________________________"}`);
+  writeWrapped(`- Due Date: ${values.maturityDate || "____________________________"} (the "Maturity Date").`);
+  writeWrapped(`- Frequency of Payments: ${values.paymentFrequency || "____________________________"}`);
+  writeWrapped("2.2 Balloon Payment: The Borrower acknowledges that the periodic installment payments may not fully amortize the principal balance of the loan. Therefore, a final balloon payment representing the remaining unpaid principal and any accrued interest shall be due and payable in full on the Maturity Date.");
+  writeWrapped("2.3 Application of Payments: All payments received by the Lender shall be applied in the following order: (a) accrued and unpaid interest; (b) late fees, costs, or charges due; and (c) reduction of outstanding principal.");
+  writeWrapped("2.4 Method of Payment: Payments shall be made in lawful currency of the United States, delivered by check, bank transfer, or any mutually agreed method, to the Lender's designated address or account as specified in writing.");
+  writeWrapped("2.5 Prepayment: The Borrower may, at any time and without penalty, prepay the whole or any part of the outstanding principal balance. Any prepayment shall first be applied to accrued interest before reducing the principal amount.", false, 3);
 
-  // SALUTATION
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
+  writeWrapped("3. SECURITY AND COLLATERAL", true);
+  writeWrapped("3.1 Secured Loan (if applicable): This Note may be secured by personal or real property as collateral. The Borrower agrees that such collateral shall serve as security for the repayment of this Note and all obligations arising hereunder.");
+  writeWrapped("3.2 Security Agreement: If the Parties have agreed that the Note is to be secured, the Borrower shall execute a separate Security Agreement identifying the collateral pledged, together with all necessary instruments of perfection required under applicable law.");
+  writeWrapped("3.3 Ownership and Maintenance of Collateral: The Borrower represents and warrants that all collateral pledged under the Security Agreement shall be owned free and clear of any other liens or encumbrances, except as disclosed in writing to the Lender. The Borrower shall maintain the collateral in good condition and shall not transfer, sell, or dispose of it without the prior written consent of the Lender.");
+  writeWrapped("3.4 Default Under Security Agreement: Any default under the Security Agreement shall constitute a default under this Payment Agreement, and the Lender shall be entitled to exercise all rights and remedies available under law, including repossession or foreclosure of the collateral.", false, 3);
 
-  // BODY
-  const creditorName = values.party1Name || "the Creditor";
-  const debtorName   = values.party2Name || "the Debtor";
+  writeWrapped("4. DEFAULT", true);
+  writeWrapped("4.1 Events Constituting Default: The occurrence of any one or more of the following events shall constitute an Event of Default under this Agreement: (a) failure to pay principal or interest when due; (b) liquidation, dissolution, incompetency, or death of Borrower; (c) bankruptcy or insolvency proceedings; (d) receiver or trustee appointment; (e) assignment for benefit of creditors; (f) material misrepresentation to obtain credit; or (g) sale/transfer of material assets without prior written consent.");
+  writeWrapped("4.2 Effect of Default: Upon any Event of Default, (a) the entire unpaid principal balance, accrued interest, and other sums shall become immediately due and payable without further notice or demand; and (b) the Lender may pursue all rights and remedies available under this Agreement, at law, or in equity.", false, 3);
 
-  // Creditor / Debtor lines with underlines
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  const credLabel = "Creditor:  ";
-  doc.text(credLabel, margin, y);
-  const clw = doc.getTextWidth(credLabel);
-  doc.text(creditorName, margin + clw, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin + clw, y + 1.2, margin + clw + doc.getTextWidth(creditorName), y + 1.2);
-  y += 6;
-  const debtLabel = "Debtor:  ";
-  doc.text(debtLabel, margin, y);
-  const dlw = doc.getTextWidth(debtLabel);
-  doc.text(debtorName, margin + dlw, y);
-  doc.line(margin + dlw, y + 1.2, margin + dlw + doc.getTextWidth(debtorName), y + 1.2);
-  y += 8;
+  writeWrapped("5. MISCELLANEOUS LEGAL PROVISIONS", true);
+  writeWrapped("5.1 Collection Costs: If any payment obligation is not paid when due, the Borrower agrees to pay all reasonable collection costs, including attorney's fees, court costs, and collection agency fees, whether or not litigation is commenced.");
+  writeWrapped("5.2 Waiver of Presentment: The Borrower waives presentment for payment, notice of dishonor, protest, notice of protest, and all other notices or demands related to enforcement of this Note.");
+  writeWrapped("5.3 Waiver of Strict Compliance: No failure or delay by the Lender in exercising any right or remedy shall be deemed a waiver. Acceptance of late or partial payment shall not waive default or the right to demand full compliance.");
+  writeWrapped("5.4 Amendments: This Agreement may not be amended except by written instrument executed by both Parties. Oral amendments have no force or effect.");
+  writeWrapped("5.5 Severability: If any provision is invalid, illegal, or unenforceable, the remaining provisions remain valid and enforceable.");
+  writeWrapped("5.6 Assignment: Borrower may not assign rights or obligations without Lender's prior written consent. Lender may assign rights under this Note with written notice to Borrower.", false, 3);
 
-  para("This letter confirms the agreement between the parties regarding the repayment of the outstanding balance under the terms outlined below.");
+  writeWrapped("6. GOVERNING LAW AND JURISDICTION", true);
+  writeWrapped(
+    `6.1 Governing Law: This Agreement shall be governed by and construed in accordance with the laws of the State of ${
+      values.governingLawState || "____________________________"
+    }, without regard to its conflict-of-laws principles.`
+  );
+  writeWrapped(
+    `6.2 Jurisdiction: The Parties agree that any legal action or proceeding arising out of or in connection with this Agreement shall be brought exclusively in the courts of competent jurisdiction located in ${
+      values.jurisdictionLocation || "____________________________"
+    }, and both Parties hereby submit to the jurisdiction of such courts.`,
+    false,
+    3
+  );
 
-  if (values.description?.trim()) para(values.description.trim());
+  writeWrapped("7. EXECUTION AND SIGNATURES", true);
+  writeWrapped("IN WITNESS WHEREOF, the Parties hereto have executed this Payment Agreement as of the date first above written.");
+  writeWrapped(`Executed at: ${values.executedAt || "_______________________________________________"}`);
+  writeWrapped(`Date: ${values.agreementDate || "___________________________"}`);
+  writeWrapped("Borrower                                  Lender");
+  writeWrapped("Signature: ___________________________     Signature: ___________________________");
+  writeWrapped(`Printed Name: ${values.borrowerPrintedName || "______________________"}     Printed Name: ${values.lenderPrintedName || "______________________"}`);
+  writeWrapped(`Date: ${values.borrowerSignDate || "____________________________"}     Date: ${values.lenderSignDate || "____________________________"}`, false, 3);
 
-  para(`The Debtor agrees to make payments${values.paymentAmount ? ` of ${values.paymentAmount}` : ""} according to the ${values.paymentSchedule || "agreed"} schedule until the total balance has been paid in full.`);
-
-  para("If any payment is missed or delayed, the Creditor may declare the remaining balance immediately due and payable, subject to applicable law or any written modification agreed upon by the parties.");
-
-  para("Any changes to this payment arrangement must be made in writing and agreed to by both parties.");
-
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
-
-  para("This document serves as a formal record of the agreed payment terms. Please retain a copy for your records.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  // SENDER BLOCK
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "Creditor";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  // SIGNATURES
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Creditor Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("Creditor Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Debtor Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Debtor Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
+  if (values.notaryState || values.notaryCounty || values.notaryDate || values.notaryBorrower || values.notaryLender) {
+    writeWrapped("Optional Notarization", true);
+    writeWrapped(`State of ${values.notaryState || "___________________"} )`);
+    writeWrapped(`County of ${values.notaryCounty || "_________________"} )`);
+    writeWrapped(
+      `On this ${values.notaryDate || "___ day of ____________, ______"}, before me, the undersigned Notary Public, personally appeared ${
+        values.notaryBorrower || "__________________________"
+      } (Borrower) and ${values.notaryLender || "__________________________"} (Lender), who acknowledged that they executed the foregoing Payment Agreement for the purposes therein contained.`
+    );
+    writeWrapped("Notary Public: ___________________________");
+    writeWrapped(`Commission Expires: ${values.commissionExpires || "______________________"}`);
   }
 
   doc.save("payment_agreement.pdf");

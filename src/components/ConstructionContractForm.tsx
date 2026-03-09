@@ -4,492 +4,176 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Project",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "ownerName", label: "Owner name", type: "text", required: true },
+      { name: "ownerAddress", label: "Owner address", type: "text", required: true },
+      { name: "contractorName", label: "Contractor name", type: "text", required: true },
+      { name: "contractorAddress", label: "Contractor address", type: "text", required: true },
+      { name: "servicesDescription", label: "Detailed services description", type: "textarea", required: true },
+      { name: "structureDescription", label: "Structure description", type: "text", required: true },
+      { name: "worksiteAddress", label: "Worksite/property address", type: "text", required: true },
+      { name: "completionDate", label: "Completion date", type: "date", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Commercial and Legal",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "paymentAmount", label: "Contract payment amount", type: "text", required: true },
+      { name: "lateInterestRate", label: "Late payment annual rate", type: "text", required: false },
+      { name: "lateInterestState", label: "State for remedies on non-payment", type: "text", required: true },
+      { name: "cureDays", label: "Default cure days", type: "text", required: true },
+      { name: "governingState", label: "Governing law state/jurisdiction", type: "text", required: true },
+      { name: "ownerRep", label: "Owner representative name/title", type: "text", required: false },
+      { name: "contractorRep", label: "Contractor representative name/title", type: "text", required: false },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Execution",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "ownerSignName", label: "Owner signing name", type: "text", required: false },
+      { name: "ownerSignTitle", label: "Owner signing title", type: "text", required: false },
+      { name: "ownerSignDate", label: "Owner sign date", type: "date", required: true },
+      { name: "contractorSignName", label: "Contractor signing name", type: "text", required: false },
+      { name: "contractorSignTitle", label: "Contractor signing title", type: "text", required: false },
+      { name: "contractorSignDate", label: "Contractor sign date", type: "date", required: true },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Construction Contract", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+  doc.setFontSize(12.5);
+  const title = "CONSTRUCTION CONTRACT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
+
+  p(`This Construction Contract ("Contract") is made and entered into as of ${values.effectiveDate || "___"} ("Effective Date") by and between ${values.ownerName || "[Insert Name]"}, residing at ${values.ownerAddress || "[Insert Address]"} (the "Owner"), and ${values.contractorName || "[Insert Name]"}, a contractor having its principal place of business at ${values.contractorAddress || "[Insert Address]"} (the "Contractor").`);
+  p("WHEREAS, the Contractor is duly qualified and desirous of providing construction services to the Owner; and");
+  p("WHEREAS, the Owner wishes to engage the Contractor to perform such services upon the terms and conditions hereinafter set forth;");
+  p("NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, the parties hereto agree as follows:", false, 3);
+
+  p("1. Description of Services", true);
+  p("As of the Effective Date, the Contractor shall provide the following construction-related services to the Owner (collectively, the \"Services\"):");
+  p(values.servicesDescription || "[Insert detailed description of services].", false, 3);
+  p("2. Scope of Work", true);
+  p(`The Contractor shall furnish all labor, materials, and equipment necessary to complete construction of ${values.structureDescription || "[describe structure]"} at ${values.worksiteAddress || "[insert property address]"} ("Worksite").`);
+  p("This includes provision of materials, labor force, site safety/security measures, and tools/machinery essential for project execution.");
+  p("Unless otherwise agreed in writing, Contractor obligations exclude landscaping, site grading, walkways, painting, sewerage, water systems, steps, driveways, patios, and similar improvements.", false, 3);
+  p("3. Plans, Specifications, and Construction Documents", true);
+  p("Owner shall furnish requisite plans/specifications/drawings/blueprints and construction documents necessary for services. Such documents remain exclusive property of Owner and shall be returned upon completion.", false, 3);
+  p("4. Compliance With Applicable Laws", true);
+  p("Contractor shall perform services professionally, diligently, and workmanlike, in accordance with all applicable federal/state/local laws and regulations, including FLSA, ADA, and FMLA.", false, 3);
+  p("5. Worksite Access and Ownership Warranty", true);
+  p("Owner warrants lawful title to Worksite and authority to enter this Contract. Prior to commencement, Owner shall ensure site accessibility and clearly marked boundary stakes, maintained throughout construction period.", false, 3);
+  p("6. Provision of Materials and Labor", true);
+  p("Contractor shall provide complete list of subcontractors/vendors/third parties supplying labor/materials with payment amounts/obligations attached hereto. No material substitutions without Owner's prior written consent; substitutes must meet/exceed agreed quality.", false, 3);
+  p("7. Payment Terms", true);
+  p(`Payment of ${values.paymentAmount || "<insert amount>"} shall be made upon satisfactory completion of all Services.`);
+  p(`Late payment interest accrues at lesser of ${values.lateInterestRate || "<insert amount>"} per annum or maximum lawful rate. Owner is liable for collection costs including reasonable attorneys' fees.`);
+  p(`Non-payment is material breach, entitling Contractor to terminate and pursue remedies available under law of ${values.lateInterestState || "<insert name of state>"}.`, false, 3);
+  p("8. Term and Completion", true);
+  p(`Contractor shall commence performance within thirty (30) days from Effective Date and complete work on or before ${values.completionDate || "[Insert Completion Date]"}, time being of the essence.`);
+  p("Owner shall execute Notice of Completion within ten (10) days of project completion. If Owner fails to do so after final inspection, Contractor may execute such Notice on Owner's behalf.", false, 3);
+  p("9. Stop Work Order", true);
+  p("Owner may issue written Stop Work Order at any time, suspending part/all services for period not exceeding ninety (90) days. Contractor shall comply immediately and mitigate costs. Owner may resume via Resume Work Notice.");
+  p("Any extension/adjustment due to Stop Work Order shall be made equitably; claim asserted within thirty (30) days of resumption. Contractor shall not claim damages for delays resulting from Stop Work Orders.", false, 3);
+  p("10. Permits and Licenses", true);
+  p("Owner shall obtain requisite building permits. Contractor shall obtain all other necessary licenses/permits and include related costs in Contract price.", false, 3);
+  p("11. Insurance", true);
+  p("Prior to commencement, Contractor shall provide valid insurance certificates evidencing workers' compensation, general liability, and builder's risk coverage adequate for full contract scope.", false, 3);
+  p("12. Ownership of Work Product", true);
+  p("All intellectual property and work product generated under this Contract are exclusive property of Owner; Contractor shall execute documents to perfect ownership rights.", false, 3);
+  p("13. Confidentiality", true);
+  p("Contractor shall maintain strict confidentiality of proprietary information and return all records/materials on termination. Obligation survives termination.", false, 3);
+  p("14. Indemnification", true);
+  p("Contractor shall indemnify and hold harmless Owner from claims/damages/liabilities arising out of Contractor performance, except to extent contrary to public policy of applicable jurisdiction.", false, 3);
+  p("15. Warranty", true);
+  p("Contractor warrants all work is performed per prevailing professional standards and strict conformance with approved plans/specifications.", false, 3);
+  p("16. Access to Worksite", true);
+  p("Owner shall provide Contractor and workers reasonable access to Worksite/facilities. Contractor shall take reasonable precautions to avoid damage to driveways, landscaping, and existing structures.", false, 3);
+  p("17. Utilities", true);
+  p("Owner is responsible for providing water, power, and sewer connections prior to and during construction at no additional cost to Contractor.", false, 3);
+  p("18. Inspection Rights", true);
+  p("Owner has right to inspect work at reasonable times. Where third-party inspections/certifications are required, Owner bears such costs.", false, 3);
+  p("19. Events of Default", true);
+  p("Material breach includes non-payment by Owner; insolvency/bankruptcy of either party; lien/levy/lawsuit impacting completion; and failure to make Worksite available or undue construction delay.", false, 3);
+  p("20. Remedies", true);
+  p(`Non-defaulting party may issue Notice of Default detailing breach. Defaulting party has ${values.cureDays || "[Insert Days]"} days to cure; failure to cure results in automatic termination.`);
+  p("21. Force Majeure", true);
+  p("Neither party liable for delays due to Force Majeure beyond reasonable control; obligations resume promptly once causes cease.");
+  p("22. Dispute Resolution", true);
+  p("Disputes addressed through amicable negotiations, then mediation, then legal remedies in court of competent jurisdiction.");
+  p("23. Entire Agreement", true);
+  p("This Contract is full and final agreement; modifications must be in writing and signed by both parties.");
+  p("24. Severability", true);
+  p("If any provision is unenforceable, remainder remains in full force and effect.");
+  p("25. Amendment", true);
+  p("This Contract may be amended only by written instrument executed by both parties.");
+  p("26. Governing Law", true);
+  p(`This Contract is governed by laws of the State of ${values.governingState || "[Insert Jurisdiction]"}, without conflict-of-laws principles.`);
+  p("27. Notices", true);
+  p("Notices shall be delivered personally or via certified mail to addresses in preamble, unless updated in writing.");
+  p("28. Waiver", true);
+  p("Any waiver of breach is not waiver of subsequent breaches or other provisions.");
+  p("29. Execution and Effectiveness", true);
+  p(`Contract shall be executed by ${values.ownerRep || "[Insert Name and Title of Owner Representative]"} for Owner and ${values.contractorRep || "[Insert Name and Title of Contractor Representative]"} for Contractor, and effective as of Effective Date.`, false, 3);
+
+  p("IN WITNESS WHEREOF, the parties have executed this Construction Contract as of the Effective Date.", true);
+  p("OWNER:", true, 1);
+  uf("Name", values.ownerSignName, 22);
+  uf("Title", values.ownerSignTitle, 22);
+  uf("Date", values.ownerSignDate, 22, 2.2);
+  p("CONTRACTOR:", true, 1);
+  uf("Name", values.contractorSignName, 22);
+  uf("Title", values.contractorSignTitle, 22);
+  uf("Date", values.contractorSignDate, 22);
+
   doc.save("construction_contract.pdf");
 };
 

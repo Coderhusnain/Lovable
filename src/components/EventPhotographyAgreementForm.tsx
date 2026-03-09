@@ -4,492 +4,176 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Event",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "photographerName", label: "Photographer name", type: "text", required: true },
+      { name: "photographerAddress", label: "Photographer address", type: "text", required: true },
+      { name: "clientName", label: "Client name", type: "text", required: true },
+      { name: "clientAddress", label: "Client address", type: "text", required: true },
+      { name: "eventName", label: "Event name/description", type: "text", required: true },
+      { name: "eventDate", label: "Event date", type: "date", required: true },
+      { name: "eventTime", label: "Event time", type: "text", required: true },
+      { name: "eventLocation", label: "Event location", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Services and Payment",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "proofDays", label: "Proof gallery days", type: "text", required: true },
+      { name: "deliveryDays", label: "Final delivery days after proof", type: "text", required: true },
+      { name: "totalFee", label: "Total fee", type: "text", required: true },
+      { name: "deposit", label: "Deposit amount", type: "text", required: true },
+      { name: "balance", label: "Remaining balance amount", type: "text", required: true },
+      { name: "balanceDueDays", label: "Balance due days before event", type: "text", required: true },
+      { name: "extraHourRate", label: "Additional hourly rate", type: "text", required: true },
+      { name: "extraHourPayDays", label: "Extra hours payment due days after event", type: "text", required: true },
+      { name: "cureDays", label: "Breach cure days", type: "text", required: true },
+      { name: "cancelMoreThanDays", label: "Cancellation more-than days", type: "text", required: true },
+      { name: "cancelWithinDays", label: "Cancellation within days", type: "text", required: true },
+      { name: "cancelWithinPercent", label: "Cancellation fee percent", type: "text", required: true },
+      { name: "mediationState", label: "Mediation state", type: "text", required: true },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Signatures",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "clientSignName", label: "Client signatory name", type: "text", required: false },
+      { name: "clientSignDate", label: "Client sign date", type: "date", required: true },
+      { name: "photographerSignName", label: "Photographer signatory name", type: "text", required: false },
+      { name: "photographerSignDate", label: "Photographer sign date", type: "date", required: true },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Event Photography Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+  doc.setFontSize(12.5);
+  const title = "EVENT PHOTOGRAPHY AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
+
+  p(`This Event Photography Agreement ("Agreement") is made and entered into as of ${values.effectiveDate || "the Effective Date"}, by and between:`);
+  p(`Photographer: ${values.photographerName || "____________________________"}, of ${values.photographerAddress || "____________________________"} ("Photographer")`);
+  p("and");
+  p(`Client: ${values.clientName || "____________________________"}, of ${values.clientAddress || "____________________________"} ("Client")`);
+  p('The Photographer and Client may be referred to individually as a "Party" and collectively as the "Parties."', false, 3);
+
+  p("1. RECITALS", true);
+  p("WHEREAS, Client desires to engage Photographer for professional event photography services for the event described herein, and Photographer is willing to provide such services under this Agreement;");
+  p("NOW, THEREFORE, in consideration of mutual covenants, the Parties agree as follows:", false, 3);
+
+  p("2. DESCRIPTION OF SERVICES", true);
+  p("2.1 Event Details");
+  p(`- Event Name/Description: ${values.eventName || "___________________________________"}`);
+  p(`- Event Date: ${values.eventDate || "___________________________________"}`);
+  p(`- Event Time: ${values.eventTime || "___________________________________"}`);
+  p(`- Event Location: ${values.eventLocation || "___________________________________"}`);
+  p("2.2 Scope of Work");
+  p("Services include pre-event consultation on creative direction and logistics; on-site professional coverage; artistic editing/retouching/post-processing; delivery of edited high-resolution digital images in agreed format/quantity; and optional printed photographs/albums/products if separately agreed in writing.", false, 3);
+
+  p("3. PERFORMANCE OF SERVICES", true);
+  p("3.1 Photographer shall capture images per Client's reasonable instructions while retaining full artistic discretion; use professional-grade equipment and post-processing; apply color correction/cropping/light retouching; provide digital proof gallery/lookbook within stated business days; and deliver final edited images within stated business days after proof approval.");
+  p(`Proof gallery delivery: ${values.proofDays || "____"} business days following event.`);
+  p(`Final edited image delivery: ${values.deliveryDays || "____"} business days following proof approval.`);
+  p("3.2 Artistic Style: Client acknowledges Photographer's work is subjective and accepts Photographer judgment regarding style/composition/image selection as final.", false, 3);
+
+  p("4. FEES, PAYMENTS, AND EXPENSES", true);
+  p(`4.1 Total Fee: Client shall pay total fee of ${values.totalFee || "$__________"} ("Fee").`);
+  p(`4.2 Deposit: Non-refundable deposit of ${values.deposit || "$__________"} is due upon execution to secure availability.`);
+  p(`4.3 Balance Payment: Remaining balance of ${values.balance || "$__________"} due no later than ${values.balanceDueDays || "____"} days before event date.`);
+  p(`4.4 Additional Charges: Additional hours requested are billed at ${values.extraHourRate || "$__________"} per hour, payable within ${values.extraHourPayDays || "____"} days after event.`);
+  p("4.5 Expenses: Client reimburses reasonable pre-approved out-of-pocket expenses (travel, accommodation, parking, permits).", false, 3);
+
+  p("5. REMEDIES FOR BREACH", true);
+  p("In event of material breach, non-breaching Party shall provide written notice detailing breach.");
+  p(`Breaching Party has ${values.cureDays || "____"} days from notice receipt to cure.`);
+  p("If uncured, non-breaching Party may terminate and pursue remedies at law or in equity.", false, 3);
+
+  p("6. CANCELLATION AND RESCHEDULING", true);
+  p(`If Client cancels more than ${values.cancelMoreThanDays || "____"} days before event date, deposit is retained as liquidated damages.`);
+  p(`If cancellation occurs within ${values.cancelWithinDays || "____"} days of event date, Client is liable for ${values.cancelWithinPercent || "____"}% of total Fee.`);
+  p("Photographer will make reasonable efforts to accommodate rescheduling subject to availability.", false, 3);
+
+  p("7. COPYRIGHT AND USAGE RIGHTS", true);
+  p("7.1 Copyright: All photographs are intellectual property of Photographer and protected by U.S. copyright law.");
+  p("7.2 Client License: Upon full payment, Photographer grants Client non-exclusive, non-transferable, perpetual license for personal use including printing, sharing, and personal social media posting.");
+  p("7.3 Restrictions: Client may not sell, license, or commercially exploit images without Photographer's prior written consent.");
+  p("7.4 Photographer Portfolio Rights: Photographer may use images for promotional/advertising/portfolio purposes unless Client submits written request to withhold use.", false, 3);
+
+  p("8. FORCE MAJEURE", true);
+  p("Neither Party is liable for delay/failure due to causes beyond reasonable control, including acts of God, epidemics, war, civil unrest, natural disasters, strikes, or governmental restrictions. Affected Party shall promptly notify and mitigate delay.", false, 3);
+
+  p("9. DISPUTE RESOLUTION", true);
+  p("Parties shall attempt amicable resolution through good-faith negotiation.");
+  p(`If unresolved, disputes submitted to mediation in the State of ${values.mediationState || "__________"} under applicable mediation rules.`);
+  p("If mediation fails, Parties may pursue remedies in court, subject to governing law provision.", false, 3);
+
+  p("10. MISCELLANEOUS PROVISIONS", true);
+  p("10.1 Entire Agreement: This Agreement contains entire understanding and supersedes prior oral/written agreements.");
+  p("10.2 Severability: If any provision is invalid, remainder remains enforceable and invalid provision modified to reflect intent.");
+  p("10.3 Amendments: No amendment valid unless in writing and signed by both Parties.");
+  p(`10.4 Governing Law: Governed by laws of State of ${values.governingState || "__________"}.`);
+  p("10.5 Notices: All notices in writing and delivered in person, certified mail, or email with confirmation.");
+  p("10.6 Waiver: Failure to enforce any provision is not waiver of subsequent breach/default.");
+  p("10.7 Assignment: Neither Party may assign rights/obligations without prior written consent of other Party.", false, 3);
+
+  p("11. SIGNATURES", true);
+  p("IN WITNESS WHEREOF, Parties executed this Agreement as of Effective Date first written above.");
+  p("CLIENT:", true, 1);
+  p("Signature: ___________________________");
+  uf("Name", values.clientSignName, 22);
+  uf("Date", values.clientSignDate, 22, 2.2);
+  p("PHOTOGRAPHER:", true, 1);
+  p("Signature: ___________________________");
+  uf("Name", values.photographerSignName, 22);
+  uf("Date", values.photographerSignDate, 22);
+
   doc.save("event_photography_agreement.pdf");
 };
 
