@@ -4,560 +4,140 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Note Details",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          
-        ],
-      },
+      { name: "principalAmount", label: "Principal amount", type: "text", required: false },
+      { name: "noteDate", label: "Date", type: "date", required: false },
+      { name: "borrowerName", label: "Borrower", type: "text", required: false },
+      { name: "borrowerAddress", label: "Borrower address", type: "text", required: false },
+      { name: "lenderName", label: "Lender", type: "text", required: false },
+      { name: "paymentPlace", label: "Payment place", type: "text", required: false },
+      { name: "loanAmount", label: "Loan amount", type: "text", required: false },
+      { name: "interestStartDate", label: "Interest start date", type: "date", required: false },
+      { name: "interestRate", label: "Interest rate", type: "text", required: false },
+      { name: "stateLaw", label: "Governing law state", type: "text", required: false },
+      { name: "guarantorName", label: "Guarantor name", type: "text", required: false },
+      { name: "borrowerBy", label: "Borrower by", type: "text", required: false },
+      { name: "borrowerDate", label: "Borrower date", type: "date", required: false },
+      { name: "lenderBy", label: "Lender by", type: "text", required: false },
+      { name: "lenderDate", label: "Lender date", type: "date", required: false },
+      { name: "guarantorBy", label: "Guarantor by", type: "text", required: false },
+      { name: "guarantorDate", label: "Guarantor date", type: "date", required: false },
+      { name: "assigneeName", label: "Assignee", type: "text", required: false },
+      { name: "assigneeRegion", label: "Assignee city/state/province", type: "text", required: false },
+      { name: "assigneeCountry", label: "Assignee country", type: "text", required: false },
+      { name: "assignmentDate", label: "Assignment date", type: "date", required: false },
+      { name: "assignmentBy", label: "Assignment by", type: "text", required: false },
     ],
   },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+];
 
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
-  };
-
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
-  };
-
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
+  const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
+    const shown = (value || "").trim();
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    const labelText = `${label}: `;
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
   };
 
-  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(12.5);
+  const title = "DUE ON DEMAND PROMISSORY NOTE";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  const title = "Due on Demand Promissory Note Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  p(`Principal Amount: $${values.principalAmount || "-------"}`);
+  uf("Date", values.noteDate, 20);
+  p(`FOR VALUE RECEIVED, the undersigned ${values.borrowerName || "__________________"} (the "Borrower"), of ${values.borrowerAddress || "__________________"}, hereby promises to pay to the order of ${values.lenderName || "__________________"} (the "Lender"), at ${values.paymentPlace || "__________________"}, or at such other place as the Lender may designate in writing, the principal sum of $${values.loanAmount || "-----"}, together with interest accruing from ${values.interestStartDate || "__________________"} on the unpaid principal balance at the rate of ${values.interestRate || "------"}percent (${values.interestRate || "------"}%) per annum, all in accordance with the terms of this Due on Demand Promissory Note (the "Note").`);
+  p("I. TERMS OF REPAYMENT", true);
+  p("1.1 Demand for Payment", true);
+  p('The unpaid principal balance of this Note, together with all accrued interest, shall be payable in full on any future date on which the Lender demands repayment (the "Due Date").');
+  p("1.2 Application of Payments", true);
+  p("All payments made under this Note shall be applied first to accrued interest, if any, and thereafter to principal.");
+  p("II. PREPAYMENT", true);
+  p("The Borrower may prepay this Note, in whole or in part, at any time prior to the Due Date without penalty, provided that all accrued interest through the date of prepayment is paid in full.");
+  p("III. COLLECTION COSTS", true);
+  p("If any payment obligation under this Note is not paid when due, the Borrower agrees to pay all costs incurred by the Lender in connection with the collection of amounts due hereunder, including reasonable attorneys' fees, whether or not legal proceedings are commenced.");
+  p("IV. EVENTS OF DEFAULT", true);
+  p("The occurrence of any of the following shall constitute an event of default, upon which this Note and all other obligations of the Borrower to the Lender shall become immediately due and payable, without notice or demand:");
+  p("a. Failure of the Borrower to pay any principal or accrued interest when due;");
+  p("b. Liquidation, dissolution, incompetency, or death of the Borrower or the Lender;");
+  p("c. Filing of bankruptcy proceedings involving the Borrower as a debtor;");
+  p("d. Application for the appointment of a receiver for the Borrower;");
+  p("e. Making of a general assignment for the benefit of the Borrower's creditors;");
+  p("f. Insolvency of the Borrower;");
+  p("g. Any misrepresentation made by the Borrower to the Lender for the purpose of obtaining or extending credit;");
+  p("h. Sale of a material portion of the business or assets of the Borrower.");
+  p("V. SEVERABILITY", true);
+  p("If any provision of this Note is determined to be invalid or unenforceable, in whole or in part, for any reason, such determination shall not affect the validity or enforceability of the remaining provisions, which shall remain in full force and effect.");
+  p("VI. MISCELLANEOUS", true);
+  p("All payments of principal and interest under this Note shall be made in lawful currency of the United States of America.");
+  p("The Borrower hereby waives presentment for payment, protest, notice of protest, and notice of demand.");
+  p("No delay or failure by the Lender to enforce any right under this Note, no assignment of this Note, no failure to accelerate the indebtedness upon default, and no acceptance of any late or partial payment shall operate as a waiver of the Lender's right to thereafter enforce strict compliance with the terms of this Note without notice to the Borrower. All rights and remedies of the Lender under this Note are cumulative and may be exercised concurrently or consecutively at the Lender's option.");
+  p("This Note may not be amended or modified except by a written instrument approved by the holder of this Note.");
+  p("VII. GOVERNING LAW", true);
+  p(`This Note shall be governed by and construed in accordance with the laws of the State of ${values.stateLaw || "__________________"}.`);
+  p("VIII. GUARANTY", true);
+  p(`${values.guarantorName || "__________________"} hereby unconditionally guarantees the full and punctual payment and performance of all obligations of the Borrower under this Note. The Guarantor agrees that any modification of the terms of payment or any extension of time for payment shall not impair or release the Guarantor's obligations, and the Guarantor expressly consents to any such modifications or extensions.`);
+  p("IX. EXECUTION AND SIGNATURES", true);
+  p("This Note shall be executed by the Borrower and the Lender and shall also be co-signed by the Guarantor.");
+  p("IN WITNESS WHEREOF, this Note has been executed and delivered in accordance with applicable law as of the date first written above.");
+  p("BORROWER:", true);
+  uf("Name", values.borrowerName, 24);
+  uf("By", values.borrowerBy, 24);
+  uf("Date", values.borrowerDate, 20, 2.4);
+  p("LENDER:", true);
+  uf("Name", values.lenderName, 24);
+  uf("By", values.lenderBy, 24);
+  uf("Date", values.lenderDate, 20, 2.4);
+  p("CO-SIGNER / GUARANTOR:", true);
+  uf("Name", values.guarantorName, 24);
+  uf("By", values.guarantorBy, 24);
+  uf("Date", values.guarantorDate, 20, 2.8);
+  p("ASSIGNMENT", true);
+  p("(Complete only if assigning payments to a new party)");
+  p(`For value received, the foregoing Note is hereby assigned and transferred to ${values.assigneeName || "__________________"} (the "Assignee"), of ${values.assigneeRegion || "__________________"} (City/State/Province), ${values.assigneeCountry || "__________________"} (Country).`);
+  uf("Dated", values.assignmentDate, 20);
+  uf("By", values.assignmentBy, 20);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
-
-  y += 15;
-
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Due on Demand Promissory Note",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Parties
-const borrowerName = values.party2Name || "________";
-const lenderName = values.party1Name || "________";
-
-
-
-// Opening paragraph
-addParagraphWithUnderline(
-  "For value received, ",
-  borrowerName,
-  " (\"Borrower\") promises to pay to the order of "
-);
-
-addParagraphWithUnderline(
-  lenderName,
-  " (\"Lender\"), the principal sum described below under the terms of this Due on Demand Promissory Note.",
-  ""
-);
-
-
-
-// Demand clause (important for this type)
-addParagraph(
-  "This Note is payable on demand. The entire unpaid principal balance together with any accrued interest shall become immediately due and payable upon written or verbal demand by the Lender."
-);
-
-// Payment terms
-addParagraph(
-  "Payments shall be made in lawful currency at a location designated by the Lender, unless otherwise agreed in writing by the parties."
-);
-
-// Default clause
-addParagraph(
-  "If the Borrower fails to pay the amount due upon demand, the Lender may pursue any rights or remedies available under applicable law to recover the outstanding balance, including any permitted costs of collection."
-);
-
-// Governing law
-addParagraph(
-  "This Promissory Note shall be governed by and interpreted in accordance with the applicable laws of the governing jurisdiction and represents the full agreement between the parties regarding this obligation."
-);
-
-
-// Closing tone
-addParagraph(
-  "Thank you for your attention to this matter. I look forward to your response regarding the status of this claim."
-);
-
-
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
-
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
-  );
-
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  
   doc.save("due_on_demand_promissory_note.pdf");
 };
 

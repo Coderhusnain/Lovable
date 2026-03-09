@@ -4,47 +4,21 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Parties",
+    label: "Agreement Details",
     fields: [
-      { name: "agreementDate", label: "Agreement date", type: "date", required: true },
-      { name: "creditorName", label: "Creditor name", type: "text", required: true },
-      { name: "creditorAddress", label: "Creditor address", type: "text", required: true },
-      { name: "creditorContact", label: "Creditor telephone/email", type: "text", required: false },
-      { name: "debtorName", label: "Debtor name", type: "text", required: true },
-      { name: "debtorAddress", label: "Debtor address", type: "text", required: true },
-      { name: "debtorContact", label: "Debtor telephone/email", type: "text", required: false },
-    ],
-  },
-  {
-    label: "Debt and Settlement",
-    fields: [
-      { name: "outstandingDebt", label: "Outstanding debt amount", type: "text", required: true },
-      { name: "debtNature", label: "Nature of debt", type: "text", required: true, placeholder: "loan, note, credit account, etc." },
-      { name: "ackDebtWords", label: "Debt in figures and words", type: "text", required: true },
-      { name: "settlementAmount", label: "Settlement amount in figures and words", type: "text", required: true },
-      { name: "paymentMethod", label: "Payment method", type: "text", required: true, placeholder: "wire transfer / certified check / cashier's check / cash" },
-      { name: "paymentDueDate", label: "Settlement payment due date", type: "date", required: true },
-      { name: "accountName", label: "Payment account name", type: "text", required: false },
-      { name: "bankName", label: "Bank name", type: "text", required: false },
-      { name: "accountNumber", label: "Account number", type: "text", required: false },
-      { name: "routingNumber", label: "Routing number", type: "text", required: false },
-    ],
-  },
-  {
-    label: "Law and Execution",
-    fields: [
-      { name: "governingState", label: "Governing law state", type: "text", required: true },
-      { name: "courtLocation", label: "Exclusive court location (county/state)", type: "text", required: true },
-      { name: "releasorInitial1", label: "Releasor initial 1", type: "text", required: false },
-      { name: "releasorInitial2", label: "Releasor initial 2", type: "text", required: false },
-      { name: "debtorInitial1", label: "Debtor initial 1", type: "text", required: false },
-      { name: "debtorInitial2", label: "Debtor initial 2", type: "text", required: false },
-      { name: "creditorSignName", label: "Creditor signing name", type: "text", required: true },
-      { name: "creditorSignTitle", label: "Creditor title", type: "text", required: false },
-      { name: "creditorSignDate", label: "Creditor sign date", type: "date", required: true },
-      { name: "debtorSignName", label: "Debtor signing name", type: "text", required: true },
-      { name: "debtorSignTitle", label: "Debtor title", type: "text", required: false },
-      { name: "debtorSignDate", label: "Debtor sign date", type: "date", required: true },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: false },
+      { name: "creditorName", label: "Creditor", type: "text", required: false },
+      { name: "debtorName", label: "Debtor(s)", type: "text", required: false },
+      { name: "outstandingDebt", label: "Outstanding debt", type: "text", required: false },
+      { name: "settlementAmount", label: "Settlement amount", type: "text", required: false },
+      { name: "paymentDeadline", label: "Payment deadline", type: "date", required: false },
+      { name: "governingLaw", label: "Governing law", type: "text", required: false },
+      { name: "creditorSignature", label: "Creditor signature", type: "text", required: false },
+      { name: "creditorSignName", label: "Creditor name", type: "text", required: false },
+      { name: "creditorDate", label: "Creditor date", type: "date", required: false },
+      { name: "debtorSignature", label: "Debtor signature", type: "text", required: false },
+      { name: "debtorSignName", label: "Debtor name", type: "text", required: false },
+      { name: "debtorDate", label: "Debtor date", type: "date", required: false },
     ],
   },
 ];
@@ -65,17 +39,19 @@ const generatePDF = (values: Record<string, string>) => {
       y = 20;
     }
     doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.5);
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
-  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+  const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
     const shown = (value || "").trim();
-    const labelText = `${label}: `;
     if (y + lh + gap > limit) {
       doc.addPage();
       y = 20;
     }
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    const labelText = `${label}: `;
     doc.text(labelText, m, y);
     const x = m + doc.getTextWidth(labelText);
     if (shown) {
@@ -93,86 +69,55 @@ const generatePDF = (values: Record<string, string>) => {
   doc.setFontSize(12.5);
   const title = "DEBT SETTLEMENT AGREEMENT";
   doc.text(title, w / 2, y, { align: "center" });
-  const titleW = doc.getTextWidth(title);
+  const tW = doc.getTextWidth(title);
   doc.setLineWidth(0.35);
-  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
-  doc.setFontSize(10.5);
 
-  p(`This Debt Settlement Agreement ("Agreement") is made and entered into as of ${values.agreementDate || "[Date]"}, by and between the following parties:`);
-  p("Creditor:", true, 1);
-  uf("Name", values.creditorName);
-  uf("Address", values.creditorAddress);
-  uf("Telephone/Email", values.creditorContact, 24, 2.4);
-  p("Debtor:", true, 1);
-  uf("Name", values.debtorName);
-  uf("Address", values.debtorAddress);
-  uf("Telephone/Email", values.debtorContact, 24, 2.4);
-  p('Collectively referred to herein as the "Parties," and individually as a "Party."', false, 3);
-
-  p("RECITALS", true);
-  p(`WHEREAS, the Debtor is indebted to the Creditor in the total amount of ${values.outstandingDebt || "[insert amount]"} (the "Outstanding Debt") arising from ${values.debtNature || "[describe nature of debt]"}; and`);
-  p("WHEREAS, the Parties desire to fully and finally resolve, discharge, and settle the Outstanding Debt and any related claims, disputes, or obligations between them without resort to litigation; and");
-  p("WHEREAS, the Creditor has agreed to accept a reduced amount in full and final satisfaction of the Outstanding Debt, under the terms and conditions set forth herein.");
-  p("NOW, THEREFORE, in consideration of the mutual covenants, promises, and representations contained herein, and intending to be legally bound, the Parties agree as follows:", false, 3);
-
-  p("1. ACKNOWLEDGMENT OF DEBT", true);
-  p(`1.1 The Debtor acknowledges and confirms that the Outstanding Debt owed to the Creditor as of the date of this Agreement is ${values.ackDebtWords || "[amount in figures and words]"}.`);
-  p("1.2 The Debtor represents that the amount stated above constitutes the entire balance due and payable, and that there are no other claims, set-offs, or counterclaims against the Creditor related to this obligation.", false, 3);
-
-  p("2. SETTLEMENT TERMS", true);
-  p(`2.1 The Creditor agrees to accept payment in the amount of ${values.settlementAmount || "[insert settlement amount in figures and words]"} (the "Settlement Amount") as full and final satisfaction of the Outstanding Debt.`);
-  p(`2.2 The Settlement Amount shall be paid by the Debtor via ${values.paymentMethod || "[wire transfer/certified check/cashier's check/cash]"} to the Creditor on or before ${values.paymentDueDate || "[insert payment due date]"}.`);
-  p("2.3 Payment shall be made to the following account or address as designated by the Creditor:");
-  uf("Account Name", values.accountName);
-  uf("Bank Name", values.bankName);
-  uf("Account Number", values.accountNumber);
-  uf("Routing Number", values.routingNumber);
-  p("2.4 Upon receipt and clearance of the full Settlement Amount, the Creditor shall release the Debtor from any further obligation or liability in connection with the Outstanding Debt.", false, 3);
-
-  p("3. FAILURE TO PAY", true);
-  p("3.1 Should the Debtor fail to remit the full Settlement Amount by the due date specified in Clause 2.2, this Agreement shall be deemed null and void, and the Creditor shall be entitled to demand immediate payment of the original amount owed plus any accrued interest, fees, or costs recoverable under applicable law.");
-  p("3.2 The Debtor acknowledges that failure to comply with the payment obligation herein may result in legal action or other enforcement proceedings by the Creditor.", false, 3);
-
-  p("4. RELEASE AND WAIVER", true);
-  p("4.1 Upon full receipt of the Settlement Amount, the Creditor hereby fully and irrevocably releases, acquits, and forever discharges the Debtor and the Debtor's successors, assigns, agents, and representatives from any and all claims or demands arising from or related to the Outstanding Debt.");
-  p("4.2 The Parties expressly acknowledge and agree that this release constitutes a full and final settlement and discharge of any and all disputes and liabilities relating to the debt.", false, 3);
-
-  p("5. WAIVER OF CALIFORNIA CIVIL CODE § 1542", true);
-  p("To the extent applicable, the Parties expressly waive the provisions of California Civil Code Section 1542, which provides as follows:");
-  p('"A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS WHICH THE CREDITOR(S) DO NOT KNOW OR SUSPECT TO EXIST IN THEIR FAVOR AT THE TIME OF EXECUTING THE RELEASE, WHICH, IF KNOWN BY THEM, MUST HAVE MATERIALLY AFFECTED THEIR SETTLEMENT WITH THE DEBTOR(S)."');
-  p("Each Party acknowledges this waiver has been read, understood, and voluntarily made.");
-  p(`Initials of Releasor(s): ${(values.releasorInitial1 || "").trim() || "_______"} ${(values.releasorInitial2 || "").trim() || "_______"}`);
-  p(`Initials of Debtor(s): ${(values.debtorInitial1 || "").trim() || "_______"} ${(values.debtorInitial2 || "").trim() || "_______"}`, false, 3);
-
-  p("6. REPRESENTATIONS AND WARRANTIES", true);
-  p("Each Party represents and warrants authority/capacity to execute, binding enforceability of this Agreement, and no assignment of rights related to the subject matter.", false, 3);
-  p("7. CONFIDENTIALITY", true);
-  p("The Parties agree to maintain strict confidentiality regarding the existence and terms of this Agreement, except as required by law or necessary to enforce this Agreement.", false, 3);
-  p("8. NO ADMISSION OF LIABILITY", true);
-  p("This Agreement is a compromise of disputed claims and shall not be construed as an admission of liability by either Party.", false, 3);
-  p("9. ENTIRE AGREEMENT", true);
-  p("This Agreement is the entire understanding between the Parties and supersedes all prior discussions. Any amendment must be in writing and signed by both Parties.", false, 3);
-  p("10. SEVERABILITY", true);
-  p("If any provision is held invalid or unenforceable, the remaining provisions remain in full force and effect.", false, 3);
-  p("11. GOVERNING LAW AND JURISDICTION", true);
-  p(`This Agreement shall be governed by the laws of the State of ${values.governingState || "[insert state]"}, and disputes shall be subject to the exclusive jurisdiction of courts in ${values.courtLocation || "[insert county and state]"}.`, false, 3);
-  p("12. EXECUTION AND COUNTERPARTS", true);
-  p("This Agreement may be executed in counterparts; electronic/facsimile/scanned signatures are legally binding.", false, 3);
-
-  p("IN WITNESS WHEREOF, the Parties hereto have executed this Debt Settlement Agreement as of the date first above written.", true, 2);
-  p("Creditor", true, 1);
-  p("By: _________________________");
-  uf("Name", values.creditorSignName, 22);
-  uf("Title (if applicable)", values.creditorSignTitle, 22);
-  uf("Date", values.creditorSignDate, 22, 2.6);
-  p("Debtor", true, 1);
-  p("By: _________________________");
-  uf("Name", values.debtorSignName, 22);
-  uf("Title (if applicable)", values.debtorSignTitle, 22);
-  uf("Date", values.debtorSignDate, 22, 3);
-  p("ACKNOWLEDGMENT", true);
-  p("Both Parties acknowledge that they have carefully read this Agreement, fully understand its terms, and voluntarily execute it with the intent to be legally bound.");
+  p(`This Debt Settlement Agreement (the "Agreement") is entered into and made effective as of ${values.effectiveDate || "<insert date>"} (the "Effective Date"), by and between:`);
+  uf("Creditor", values.creditorName, 24);
+  uf("Debtor(s)", values.debtorName, 24);
+  p('The Creditor and the Debtor(s) are hereinafter collectively referred to as the "Parties," and individually as a "Party."');
+  p("1. Settlement of Debt", true);
+  p(`The Parties acknowledge and agree that the total outstanding debt owed by the Debtor(s) to the Creditor as of the Effective Date is $${values.outstandingDebt || "------"} (the "Outstanding Debt").`);
+  p(`In full and final settlement of the Outstanding Debt, the Creditor agrees to accept a wire transfer payment in the amount of $${values.settlementAmount || "---------"} (the "Settlement Amount"), provided such payment is received by the Creditor on or before ${values.paymentDeadline || "__________"} (the "Payment Deadline").`);
+  p("Upon timely receipt and clearance of the Settlement Amount, the Outstanding Debt shall be deemed fully satisfied, settled, and discharged.");
+  p("2. Failure to Pay", true);
+  p("If the Debtor(s) fail to remit the Settlement Amount in full by the Payment Deadline, the Creditor shall have the immediate right, without further notice or demand, to declare the original amount of the Outstanding Debt due and payable in full, less any payments previously received.");
+  p("3. Binding Effect", true);
+  p("This Agreement shall be binding upon and inure to the benefit of the Parties and their respective heirs, successors, assigns, and legal representatives.");
+  p("4. Release and Accord and Satisfaction", true);
+  p("Upon receipt and clearance of the Settlement Amount, each Party hereby fully, finally, and forever releases and discharges the other Party from any and all claims, demands, causes of action, liabilities, damages, or obligations of any kind whatsoever, whether known or unknown, suspected or unsuspected, arising out of or relating to the Outstanding Debt.");
+  p("The Parties acknowledge and agree that this Agreement constitutes a full and final accord and satisfaction of all disputes and claims between them relating to the Outstanding Debt.");
+  p("5. Governing Law", true);
+  p(`This Agreement shall be governed by and construed in accordance with the laws of ${values.governingLaw || "__________"}.`);
+  p("6. Entire Agreement", true);
+  p("This Agreement constitutes the entire agreement between the Parties with respect to the subject matter hereof and supersedes all prior or contemporaneous agreements, negotiations, discussions, representations, or understandings, whether written or oral.");
+  p("7. Authority", true);
+  p("Each Party represents and warrants that it has the full power, authority, and legal right to enter into and perform this Agreement, and that this Agreement constitutes a valid and binding obligation enforceable against such Party.");
+  p("8. Covenant Not to Sue", true);
+  p("Except solely for the purpose of enforcing the terms of this Agreement, each Party covenants and agrees not to commence, institute, or maintain any claim, action, or proceeding against the other Party arising out of any matter released under this Agreement. This Agreement shall serve as a complete bar to any such claim.");
+  p("9. Confidentiality", true);
+  p("The terms and existence of this Agreement shall remain strictly confidential and shall not be disclosed to any third party except as required by law, court order, or subpoena, or to a Party's legal counsel or financial advisors.");
+  p("10. No Admission of Liability; Non-Disparagement", true);
+  p("This Agreement is entered into as a compromise of disputed claims and shall not be construed as an admission of liability or wrongdoing by any Party. All liability is expressly denied.");
+  p("Each Party further agrees not to make any disparaging statements regarding the other Party to any third party at any time.");
+  p("11. Amendments", true);
+  p("No modification, amendment, or waiver of any provision of this Agreement shall be valid unless made in writing and signed by all Parties.");
+  p("12. Severability", true);
+  p("If any provision of this Agreement is held to be invalid or unenforceable, such provision shall be severed, and the remaining provisions shall continue in full force and effect.");
+  p("13. No Assignment of Claims", true);
+  p("Each Party represents and warrants that it has not assigned, transferred, or conveyed any claim, right, or interest released under this Agreement to any third party.");
+  p("14. Execution", true);
+  p("IN WITNESS WHEREOF, the Parties have executed this Debt Settlement Agreement as of the Effective Date first written above.");
+  p("CREDITOR:", true);
+  uf("Signature", values.creditorSignature, 28);
+  uf("Name", values.creditorSignName, 24);
+  uf("Date", values.creditorDate, 20, 2.4);
+  p("DEBTOR(S):", true);
+  uf("Signature", values.debtorSignature, 28);
+  uf("Name", values.debtorSignName, 24);
+  uf("Date", values.debtorDate, 20);
 
   doc.save("debt_settlement_agreement.pdf");
 };

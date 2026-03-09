@@ -4,569 +4,134 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Pool Details",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          
-        ],
-      },
+      { name: "agreementDate", label: "Date", type: "date", required: false },
+      { name: "totalContribution", label: "Total contribution amount", type: "text", required: false },
+      { name: "entryCountWords", label: "Entry count text", type: "text", required: false },
+      { name: "entryCountNumber", label: "Entry count number", type: "text", required: false },
+      { name: "coveredEntries", label: "Covered entries", type: "text", required: false },
+      { name: "lotteryName", label: "Lottery drawing name", type: "text", required: false },
+      { name: "drawingDate", label: "Drawing date", type: "date", required: false },
+      { name: "managerName", label: "Manager name", type: "text", required: false },
+      { name: "stateLaw", label: "Applicable state law", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Signatures",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "managerSignature", label: "Manager signature", type: "text", required: false },
+      { name: "managerPrintedName", label: "Manager printed name", type: "text", required: false },
+      { name: "managerAddress", label: "Manager address", type: "text", required: false },
+      { name: "managerDate", label: "Manager date", type: "date", required: false },
+      { name: "co1Signature", label: "Co-owner 1 signature", type: "text", required: false },
+      { name: "co1PrintedName", label: "Co-owner 1 printed name", type: "text", required: false },
+      { name: "co1Address", label: "Co-owner 1 address", type: "text", required: false },
+      { name: "co1Date", label: "Co-owner 1 date", type: "date", required: false },
+      { name: "co2Signature", label: "Co-owner 2 signature", type: "text", required: false },
+      { name: "co2PrintedName", label: "Co-owner 2 printed name", type: "text", required: false },
+      { name: "co2Address", label: "Co-owner 2 address", type: "text", required: false },
+      { name: "co2Date", label: "Co-owner 2 date", type: "date", required: false },
     ],
   },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
-  };
-
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
-  };
-
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
+  const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
+    const shown = (value || "").trim();
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    const labelText = `${label}: `;
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
   };
 
-  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(12.5);
+  const title = "LOTTERY POOL CONTRACT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  const title = " Lottery Pool Participation Agreement Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  uf("Date", values.agreementDate, 20);
+  p('This Lottery Pool Agreement (the "Agreement") is entered into by the undersigned individuals (collectively, the "Co-Owners"), who hereby agree as follows:');
+  p("1. Term of Agreement", true);
+  p("This Agreement shall commence on the date first written above and shall terminate one (1) year and one (1) day after the most recent lottery drawing date for which lottery tickets are purchased pursuant to this Agreement.");
+  p("2. Participants and Contributions", true);
+  p(`The individuals identified below are parties to this Agreement and have collectively contributed a total sum of $${values.totalContribution || "-----"} for the purpose of purchasing ${values.entryCountWords || "-------"} (${values.entryCountNumber || "----"}) lottery entries under this Agreement.`);
+  p("3. Ownership of Tickets", true);
+  p("All lottery tickets purchased pursuant to this Agreement shall be jointly owned by the Co-Owners as tenants in common, with each Co-Owner holding an undivided ownership interest in such tickets.");
+  p("4. Covered Lottery Entries", true);
+  p(`This Agreement applies to ${values.coveredEntries || "----"} entries in the ${values.lotteryName || "__________________________"} lottery drawing scheduled to occur on ${values.drawingDate || "__________________________"}. In the event no winning ticket is selected on the initial drawing date, this Agreement shall remain in full force and effect until a winning jackpot ticket is selected, subject to the term stated herein.`);
+  p("5. Legal Eligibility", true);
+  p("Each Co-Owner represents and warrants that they are at least eighteen (18) years of age and are not otherwise prohibited by law from purchasing lottery tickets or claiming lottery prizes.");
+  p("6. Designation of Manager", true);
+  p(`The Co-Owners hereby designate ${values.managerName || "__________________________"} (the "Manager"), a party to this Agreement, as the authorized representative of all Co-Owners. The Manager is empowered to act on behalf of the Co-Owners for purposes of administering the lottery pool, including collecting funds, purchasing lottery tickets, and safeguarding all tickets in a secure location.`);
+  p("The Manager shall serve without compensation for the duration of this Agreement. If the Manager is unable to perform these duties for any reason, the Manager may appoint another Co-Owner to act as Manager, provided that notice of such substitution is given to all Co-Owners. Any acting Manager shall be bound by the terms of this Agreement.");
+  p("7. Prize Claims and Applicable Law", true);
+  p(`The Co-Owners acknowledge that the payment of lottery prizes is governed by applicable ${values.stateLaw || "__________________________"} state law and lottery regulations.`);
+  p("If lottery regulations permit direct payment of any prize to multiple individuals, the appropriate claim for such payment shall be made. If regulations require payment to a single natural person, the Manager shall claim the prize and hold it in trust for the benefit of all Co-Owners, in accordance with their respective ownership interests.");
+  p("8. Distribution of Winnings", true);
+  p("Any lottery winnings shall be distributed to the Co-Owners in a lump-sum payment, in proportion to their respective ownership interests, unless otherwise required by law.");
+  p("9. Entire Agreement; Amendments", true);
+  p("This Agreement constitutes the entire agreement among the Co-Owners with respect to the subject matter hereof and supersedes all prior or contemporaneous agreements, understandings, representations, or communications, whether written or oral. This Agreement may be amended only by a written instrument signed by all Co-Owners.");
+  p("10. Withdrawal from Pool", true);
+  p("Any Co-Owner may withdraw from participation in the lottery pool by providing written notice to the Manager. Such withdrawal shall be effective upon receipt of notice but shall not affect the withdrawing Co-Owner's interest in any lottery drawings conducted prior to withdrawal.");
+  p("11. Acknowledgment", true);
+  p("By executing this Agreement, each Co-Owner acknowledges that they have read, understood, and voluntarily agreed to all of the terms and conditions set forth herein.");
+  p("IN WITNESS WHEREOF, the Co-Owners have executed this Agreement as of the date first written above.", true, 2.6);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  p("CO-OWNER / MANAGER (if applicable):", true, 1);
+  uf("Signature", values.managerSignature, 30);
+  uf("Printed Name", values.managerPrintedName, 28);
+  uf("Address", values.managerAddress, 34);
+  uf("Date", values.managerDate, 20, 2.4);
+  p("CO-OWNER:", true, 1);
+  uf("Signature", values.co1Signature, 30);
+  uf("Printed Name", values.co1PrintedName, 28);
+  uf("Address", values.co1Address, 34);
+  uf("Date", values.co1Date, 20, 2.4);
+  p("CO-OWNER:", true, 1);
+  uf("Signature", values.co2Signature, 30);
+  uf("Printed Name", values.co2PrintedName, 28);
+  uf("Address", values.co2Address, 34);
+  uf("Date", values.co2Date, 20);
 
-  y += 15;
-
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Lottery Pool Participation Agreement",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Organizer and pool details
-const organizerName = values.party1Name || "________";
-const participantName = values.party2Name || "________";
-
-const prizeDistribution = values.prizeDistribution || "equal shares";
-
-// Introduction
-addParagraph(
-  "This letter confirms the terms and conditions for participation in a group lottery pool organized for the purpose of jointly purchasing lottery tickets and sharing any winnings."
-);
-
-// Parties
-addParagraphWithUnderline(
-  "Pool Organizer: ",
-  organizerName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Participant: ",
-  participantName,
-  ""
-);
-
-
-
-// Contribution terms
-addParagraph(
-  "Each participant agrees to submit their contribution before the ticket purchase deadline for each draw. Failure to contribute on time may result in exclusion from that specific draw."
-);
-
-// Prize distribution
-addParagraphWithUnderline(
-  "Prize Distribution Method: ",
-  prizeDistribution,
-  "."
-);
-
-addParagraph(
-  "All winnings, including jackpot and secondary prizes, will be distributed according to the agreed method. Participants will only be entitled to winnings for draws in which their contribution was received."
-);
-
-// Record keeping
-addParagraph(
-  "The Pool Organizer agrees to maintain accurate records of contributions, ticket purchases, and results, and to provide copies or summaries to participants upon request."
-);
-
-// Acknowledgment
-addParagraph(
-  "By participating in the lottery pool, each participant acknowledges and agrees to the terms outlined in this agreement."
-);
-
-// Closing
-addParagraph(
-  "Please retain this document for your records and contact the Pool Organizer if you require additional information or clarification."
-);
-
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
-
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
-  );
-
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== SAVE =====
   doc.save("lottery_pool_contract.pdf");
 };
 
@@ -581,4 +146,3 @@ export default function LotteryPoolContractForm() {
     />
   );
 }
-
