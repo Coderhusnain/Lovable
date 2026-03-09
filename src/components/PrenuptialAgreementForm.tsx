@@ -1,526 +1,163 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Recitals",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "agreementDay", label: "Agreement day", type: "text", required: false },
+      { name: "agreementMonth", label: "Agreement month", type: "text", required: false },
+      { name: "agreementYear", label: "Agreement year", type: "text", required: false },
+      { name: "party1FullName", label: "Party 1 full name", type: "text", required: true },
+      { name: "party1Address", label: "Party 1 address", type: "text", required: false },
+      { name: "party1Short", label: "Party 1 short name/identifier", type: "text", required: false },
+      { name: "party2FullName", label: "Party 2 full name", type: "text", required: true },
+      { name: "party2Address", label: "Party 2 address", type: "text", required: false },
+      { name: "party2Short", label: "Party 2 short name/identifier", type: "text", required: false },
+      { name: "residenceOwner", label: "Residence owner name", type: "text", required: false },
+      { name: "residenceAddress", label: "Residence address", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Agreement Terms",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "party1Schedule", label: "Schedule A label", type: "text", required: false },
+      { name: "party2Schedule", label: "Schedule B label", type: "text", required: false },
+      { name: "revocationCounty1", label: "Revocation county (primary)", type: "text", required: false },
+      { name: "revocationCounty2", label: "Revocation county (secondary)", type: "text", required: false },
+      { name: "disputeMediationRules", label: "Mediation statutory rules", type: "text", required: false },
+      { name: "party1SignDate", label: "Party 1 sign date", type: "date", required: false },
+      { name: "party2SignDate", label: "Party 2 sign date", type: "date", required: false },
     ],
   },
   {
-    label: "Effective Date",
+    label: "Notary",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "notaryState", label: "Notary state", type: "text", required: false },
+      { name: "notaryCounty", label: "Notary county", type: "text", required: false },
+      { name: "notaryDay", label: "Notary day", type: "text", required: false },
+      { name: "notaryMonth", label: "Notary month", type: "text", required: false },
+      { name: "notaryYear", label: "Notary year", type: "text", required: false },
+      { name: "notaryAppeared1", label: "Appeared person 1", type: "text", required: false },
+      { name: "notaryAppeared2", label: "Appeared person 2", type: "text", required: false },
+      { name: "notaryName", label: "Notary public", type: "text", required: false },
+      { name: "notaryCommissionExpires", label: "Commission expires", type: "text", required: false },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Duration",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Signatures",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
-
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
+  let y = 20;
+  const u = (v?: string, n = 18) => (v || "").trim() || "_".repeat(n);
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
-  };
-
-  // ===== UNDERLINED FIELD =====
-  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-    const startX = margin + labelWidth + 3;
-    const display = value || "";
-
-    if (display) doc.text(display, startX, y);
-
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 9;
-  };
-
-  // ===== PARAGRAPH =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(12);
-
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string, min = 20, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINE =====
-  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
-    const full = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(full, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(10);
-      doc.text(line, margin, y);
-
-      if (value && line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 7;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-
+  doc.setFontSize(12.5);
   const title = "PRENUPTIAL AGREEMENT";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  p(`This Prenuptial Agreement (the "Agreement") is made and entered into on this ${u(values.agreementDay, 2)} day of ${u(values.agreementMonth, 8)}, ${u(values.agreementYear, 4)}, by and between ${u(values.party1FullName, 20)}, an adult individual residing at ${u(values.party1Address, 20)} (hereinafter "${u(values.party1Short, 10)}"), and ${u(values.party2FullName, 20)}, an adult individual residing at ${u(values.party2Address, 20)} (hereinafter "${u(values.party2Short, 10)}"), in contemplation of their legal marriage to one another. This Agreement becomes effective only upon solemnization of marriage.`);
+  p("RECITALS", true);
+  p("WHEREAS, the Parties contemplate lawful marriage in the immediate future;");
+  p("WHEREAS, neither Party has previously been married;");
+  p("WHEREAS, each Party possesses property, assets, income, and financial resources and desires to define and protect rights and obligations during marriage and upon dissolution, death, or other circumstances;");
+  p("WHEREAS, each Party affirms full and fair disclosure of assets, liabilities, income, and financial circumstances, as set forth in schedules attached hereto;");
+  p("NOW, THEREFORE, in consideration of mutual covenants and intending to be legally bound, the Parties agree:");
+  p("1. SEPARATE PROPERTY", true);
+  p("1.1 Definition: Property now owned or later acquired by either Party remains separate property, including all real/personal property and income/proceeds/reinvestments, and all property acquired by gift, devise, bequest, or inheritance.");
+  p(`1.2 Schedules: Schedule A - Property of ${u(values.party1Schedule || values.party1FullName, 10)}; Schedule B - Property of ${u(values.party2Schedule || values.party2FullName, 10)}. Separate property remains under sole and exclusive use/control/benefit/disposition of owning Party.`);
+  p("1.3 Waiver of Claims: Each Party waives all rights/claims in separate property of the other.");
+  p("1.4 Disposition of Property: Each Party may transfer, gift, mortgage, or dispose of separate property without consent of the other.");
+  p("1.5 Community Property Exception: If Parties reside in/move to community property jurisdiction, property rights remain governed by this Agreement.");
+  p("1.6 Execution of Documents: Non-owning Party shall execute documents necessary to confirm separate ownership.");
+  p("1.7 Pension Benefits: Each Party retains sole ownership of vested/future pension and retirement benefits and waives interest therein.");
+  p("2. RESIDENCE", true);
+  p(`Residence presently owned by ${u(values.residenceOwner, 12)} and located at ${u(values.residenceAddress, 16)} remains separate property of the owner.`);
+  p("3. EARNINGS DURING MARRIAGE", true);
+  p("All earnings, salaries, commissions, income, pensions, stock, stock options, and benefits derived from personal services of either Party remain separate property of the earning Party, notwithstanding commingling for joint expenses.");
+  p("4. DEBTS", true);
+  p("4.1 Pre-Marital Debts: Each Party remains solely responsible for debts incurred before marriage.");
+  p("4.2 Marital Expenses: Parties share responsibility for basic household/living expenses.");
+  p("4.3 Credit Accounts: Each Party may maintain separate personal credit accounts.");
+  p("5. JOINT PROPERTY | 6. TAXES | 7. DISSOLUTION OF MARRIAGE", true);
+  p("Nothing prevents jointly acquiring property or gifting/transferring between Parties. Parties may file joint or separate taxes without affecting ownership classifications under this Agreement. Upon dissolution, each Party retains separate property; only jointly owned property is subject to division.");
+  p("8. SPOUSAL SUPPORT WAIVER", true);
+  p("Each Party remains self-supporting and waives alimony/spousal support upon separation or dissolution.");
+  p("9. DISABILITY", true);
+  p("In event of disability, non-disabled Party shall provide care to extent of earnings and assets.");
+  p("10. DEATH", true);
+  p("Each Party waives rights of dower, curtesy, homestead, inheritance, descent, distributive share, and all statutory/legal surviving spouse rights in other Party's estate, except furniture/furnishings/personal effects and personal residence pass to survivor. Nothing prevents one Party from naming the other as beneficiary under will, life insurance, or retirement plan.");
+  p("11. REVOCATION", true);
+  p(`Revocation requires written agreement signed by both Parties before a notary/public official and is ineffective until recorded with recorder in county of primary residence (${u(values.revocationCounty1, 8)}) or both counties if separate residences (${u(values.revocationCounty2, 8)}).`);
+  p("12. ADDITIONAL INSTRUMENTS", true);
+  p("Each Party shall execute additional documents necessary to carry out the intent of this Agreement.");
+  p("13. DISPUTE RESOLUTION", true);
+  p(`Parties shall first attempt friendly negotiations. Unresolved disputes proceed to mediation in accordance with ${u(values.disputeMediationRules, 12)}. If mediation fails, Parties may seek other rights/remedies afforded by law.`);
+  p("14. ATTORNEY'S FEES", true);
+  p("Prevailing Party in enforcement action is entitled to reasonable attorney's fees/costs, after notice of default and opportunity to cure.");
+  p("15. FULL DISCLOSURE", true);
+  p("Parties affirm legal capacity, full financial disclosure, and voluntary entry into this Agreement.");
+  p("16. MISCELLANEOUS", true);
+  p("Binding Effect applies to heirs/executors/administrators/assigns. Entire Agreement clause applies. Invalid provision does not affect remainder.", false, 3);
+  p("SIGNATURES", true);
+  p("IN WITNESS WHEREOF, the Parties execute this Agreement as of the date first written above.");
+  uf("[Party 1 Name]", values.party1FullName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.party1SignDate, 24, 2.5);
+  uf("[Party 2 Name]", values.party2FullName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.party2SignDate, 24, 2.5);
 
-  y += 18;
+  p("Notary Acknowledgment", true);
+  p(`State of ${u(values.notaryState, 10)}`);
+  p(`County of ${u(values.notaryCounty, 10)}`);
+  p(`On this ${u(values.notaryDay, 2)} day of ${u(values.notaryMonth, 8)}, ${u(values.notaryYear, 4)}, before me, the undersigned notary public, personally appeared ${u(values.notaryAppeared1, 12)} and ${u(values.notaryAppeared2, 12)}, personally known to me or satisfactorily proven, and acknowledged they executed this Agreement as their free act and deed.`);
+  p("Notary Public");
+  uf("Name", values.notaryName, 24);
+  uf("My Commission Expires", values.notaryCommissionExpires, 24);
 
-  // ===== DATE / PARTIES =====
-  addUnderlinedField("Date:", values.effectiveDate || "");
-  addUnderlinedField("First Party:", values.party1Name || "");
-  addUnderlinedField("Second Party:", values.party2Name || "");
-
-  y += 6;
-
-  const party1 = values.party1Name || "________";
-  const party2 = values.party2Name || "________";
-
-  // ===== BODY =====
-  addParagraphWithUnderline(
-    "This Prenuptial Agreement is entered into between ",
-    party1,
-    " and "
-  );
-
-  addParagraphWithUnderline(
-    "",
-    party2,
-    " in contemplation of marriage."
-  );
-
-  addParagraph(
-    "The parties desire to define their respective rights and obligations regarding property, assets, debts, income, and financial matters that may arise during the marriage or upon separation, divorce, or death."
-  );
-
-  addParagraph(
-    "Each party agrees that all property owned individually before the marriage shall remain the separate property of that party unless otherwise agreed in writing."
-  );
-
-  addParagraph(
-    "Any property acquired during the marriage shall be treated in accordance with the terms of this Agreement and applicable law."
-  );
-
-  addParagraph(
-    "Each party acknowledges full disclosure of assets and liabilities and enters into this Agreement voluntarily and without coercion."
-  );
-
-  addParagraph(
-    "This Agreement shall become effective upon the legal marriage of the parties and shall be governed by the laws of the selected jurisdiction."
-  );
-
-  addParagraph(
-    "In witness whereof, the parties have executed this Prenuptial Agreement on the date first written above."
-  );
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 12;
-
-  // ===== SIGNATURES =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  doc.text(party1, margin, y);
-  const w1 = doc.getTextWidth(party1);
-  doc.line(margin, y + 1, margin + w1, y + 1);
-
-  y += 10;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) addParagraph(`Phone: ${values.party1Phone}`);
-
-  y += 12;
-
-  doc.setFont("helvetica", "bold");
-  doc.text(party2, margin, y);
-  const w2 = doc.getTextWidth(party2);
-  doc.line(margin, y + 1, margin + w2, y + 1);
-
-  y += 10;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
-  addParagraph(`Email: ${values.party2Email || ""}`);
-
-  if (values.party2Phone) addParagraph(`Phone: ${values.party2Phone}`);
-
-  // ===== SAVE =====
   doc.save("prenuptial_agreement.pdf");
 };
-
 
 export default function PrenuptialAgreementForm() {
   return (

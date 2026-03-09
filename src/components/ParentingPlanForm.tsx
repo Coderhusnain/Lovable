@@ -1,414 +1,151 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parents and Children",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "parent1", label: "Parent 1", type: "text", required: true },
+      { name: "parent2", label: "Parent 2", type: "text", required: true },
+      { name: "childrenTable", label: "Children (Name, Sex, DOB)", type: "textarea", required: true },
+      { name: "physicalCustodyParent", label: "Parent with sole physical custody", type: "text", required: false },
+      { name: "exchangePoint", label: "Exchange point", type: "text", required: false },
+      { name: "healthInsuranceParent", label: "Parent providing health insurance", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Support and Tax Terms",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "evenYearParent", label: "Even-numbered years dependency parent", type: "text", required: false },
+      { name: "oddYearParent", label: "Odd-numbered years dependency parent", type: "text", required: false },
+      { name: "form8332Deadline", label: "IRS Form 8332 deadline", type: "text", required: false },
+      { name: "childSupportAmount", label: "Child support amount per month", type: "text", required: false },
+      { name: "childSupportBasis", label: "Child support basis", type: "text", required: false },
     ],
   },
   {
-    label: "Effective Date",
+    label: "Execution and Notary",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "dated", label: "Dated", type: "date", required: false },
+      { name: "parent1Signature", label: "Parent 1 signature name", type: "text", required: false },
+      { name: "parent2Signature", label: "Parent 2 signature name", type: "text", required: false },
+      { name: "notaryState", label: "Notary state", type: "text", required: false },
+      { name: "notaryCounty", label: "Notary county", type: "text", required: false },
+      { name: "notaryName", label: "Notary public", type: "text", required: false },
+      { name: "notaryTitleRank", label: "Notary title/rank", type: "text", required: false },
+      { name: "notaryCommissionExpires", label: "Notary commission expires", type: "text", required: false },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Duration",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Signatures",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
+  let y = 20;
 
-  const checkPageBreak = (s = 10) => {
-    if (y + s > pageHeight - margin) {
+  const u = (value?: string, min = 20) => (value || "").trim() || "_".repeat(min);
+
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  const addField = (label: string, value: string, min = 80) => {
-    checkPageBreak();
-    doc.setFontSize(11);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const x = margin + lw + 3;
-    doc.text(value || "", x, y);
-    doc.line(x, y + 1, x + (value ? doc.getTextWidth(value) : min), y + 1);
-    y += 9;
-  };
-
-  const addParagraph = (t: string) => {
-    checkPageBreak(12);
-    const lines = doc.splitTextToSize(t, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
+  const uf = (label: string, value?: string, min = 20, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
   };
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("PARENTING PLAN AGREEMENT", pageWidth / 2, y, { align: "center" });
-  y += 18;
+  doc.setFontSize(12.5);
+  const title = "PARENTING PLAN";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  addField("Date:", values.effectiveDate || "");
-  addField("Parent One:", values.party1Name || "");
-  addField("Parent Two:", values.party2Name || "");
-  addField("Child(ren):", values.children || "");
+  p("1. Parents", true);
+  p(`This Parenting Plan is entered into by: Parent 1: ${u(values.parent1, 20)} and Parent 2: ${u(values.parent2, 20)}.`);
+  p("2. Children", true);
+  p(`The minor children of this marriage/relationship are: ${u(values.childrenTable, 26)}.`);
+  p("3. Child Custody and Visitation", true);
+  p("A. Legal Custody: Both parents agree to maintain joint legal custody of the children.");
+  p(`B. Physical Custody: The parties agree that ${u(values.physicalCustodyParent, 18)} shall have sole physical custody of the children.`);
+  p("C. Parenting Time / Visitation: The non-custodial parent shall have visitation every other weekend starting Friday at 5:00 p.m. and ending Sunday at 7:00 p.m.");
+  p("D. Holiday / Extended Visitation:");
+  p("1. Even-numbered years: New Year's Eve, Martin Luther King Jr. Day, Presidents Day, Easter Weekend, Father's Day, Independence Day, Columbus Day, Thanksgiving Holiday Break, Hanukkah, Christmas Eve.");
+  p("2. Odd-numbered years: New Year's Day, Spring Break Week, Mother's Day, Memorial Day, Labor Day, Veterans Day, Winter Holiday Break, Christmas Day.");
+  p("3. Birthdays: Each parent shall have visitation with the children on their own birthday.");
+  p("Holiday, summer, and extended visitation shall take precedence over regular visitation. Missed visits due to holiday or extended visitation will not be rescheduled.");
+  p("4. Transportation", true);
+  p("The parties agree to equally divide all transportation costs for visitation.");
+  p("5. Exchange Point", true);
+  p(`The exchange point for pick-up and drop-off shall be ${u(values.exchangePoint, 18)}.`);
+  p("6. Notification", true);
+  p("Neither parent shall change the residence of the children without adequate prior written notice to the other parent. If either parent relocates, custody and visitation arrangements shall be reassessed.");
+  p("7. Childcare", true);
+  p("Each parent shall give the other the first opportunity to care for the children during their scheduled parenting time before utilizing any third-party childcare provider.");
+  p("8. Health Insurance", true);
+  p(`${u(values.healthInsuranceParent, 18)} shall provide health insurance coverage for the children if available at no or minimal cost through employment.`);
+  p("9. Non-Covered Medical Expenses", true);
+  p("Each parent shall be responsible for 50% of any uninsured or out-of-pocket medical, dental, vision, orthodontic, physical therapy, psychiatric, or pharmaceutical expenses for the children. Reimbursement shall be made within 30 days of receiving written statement and receipts.");
+  p("10. Tax Matters Related to the Children", true);
+  p(`A. In even-numbered tax years, ${u(values.evenYearParent, 16)} shall claim dependency exemptions.`);
+  p(`B. In odd-numbered tax years, ${u(values.oddYearParent, 16)} shall claim dependency exemptions.`);
+  p(`C. IRS Form 8332 shall be executed by ${u(values.form8332Deadline, 12)} of the applicable tax year when required.`);
+  p("D. Child tax credit and related credits follow dependency allocation unless otherwise agreed in writing.");
+  p("E. Earned Income Credit shall be claimed only by the parent meeting the IRS definition of custodial parent for that tax year.");
+  p("F. Filing status and modifications must comply with IRS regulations, written agreement, or court order.");
+  p("G. Cooperation: both parents shall sign forms and provide necessary information to implement this section.");
+  p("11. Child Support", true);
+  p(`Child support shall be set at ${u(values.childSupportAmount, 10)} per month based on ${u(values.childSupportBasis, 16)}. Payments shall begin on the 1st day of the month following decree entry and be paid directly to the custodial parent.`);
+  p("12. College Expenses", true);
+  p("If children attend college, trade school, or technical school, both parents shall equally share tuition, room and board, and required books.");
+  p("13. Information Sharing", true);
+  p("Both parents are entitled to important information regarding the children, including address, phone number, educational records, medical records, and governmental/law enforcement records. Each parent shall notify the other of emergencies and significant health changes.");
+  p("14. Parent-Child Communication", true);
+  p("Both parents and children shall have the right to communicate by phone, writing, or email during reasonable hours without interference.");
+  p("15. Dispute Resolution", true);
+  p("Parents shall attempt to resolve disputes in good faith, prioritizing the children's best interests. If unresolved, they shall seek mediation before court proceedings.", false, 3);
 
-  y += 6;
+  p("SIGNATURES", true);
+  p("We knowingly and voluntarily agree to the terms of this Parenting Plan.");
+  uf("Dated", values.dated, 22);
+  uf("Parent", values.parent1Signature || values.parent1, 22);
+  uf("Parent", values.parent2Signature || values.parent2, 22, 2.5);
 
-  addParagraph("This Parenting Plan sets forth the rights and responsibilities of both parents regarding the care, custody, and upbringing of the child(ren).");
-
-  addParagraph("The parents agree to share responsibilities in the best interest of the child(ren), including decision-making for education, healthcare, and general welfare.");
-
-  addParagraph("A regular parenting time schedule shall be followed as agreed by both parents. Each parent agrees to foster a positive relationship between the child(ren) and the other parent.");
-
-  addParagraph("Any disputes shall be resolved cooperatively and in good faith.");
-
-  y += 10;
-
-  doc.text(values.party1Name || "Parent One", margin, y);
-  doc.line(margin, y + 1, margin + 80, y + 1);
-  y += 12;
-  doc.text(values.party2Name || "Parent Two", margin, y);
-  doc.line(margin, y + 1, margin + 80, y + 1);
+  p(`STATE OF ${u(values.notaryState, 12)} )`);
+  p(`COUNTY OF ${u(values.notaryCounty, 12)} ) ss:`);
+  uf("Notary Public", values.notaryName, 22);
+  uf("Title/Rank", values.notaryTitleRank, 22);
+  uf("My Commission Expires", values.notaryCommissionExpires, 22);
 
   doc.save("parenting_plan.pdf");
 };

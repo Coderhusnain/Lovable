@@ -1,495 +1,201 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Dates",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "contractDate", label: "Contract date", type: "date", required: true },
+      { name: "ownerName", label: "Owner name", type: "text", required: true },
+      { name: "contractorName", label: "Contractor name", type: "text", required: true },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Worksite and Services",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "ownerDescription", label: "Description of owner / description of work", type: "textarea", required: false },
+      { name: "worksiteAddress", label: "Worksite address", type: "text", required: true },
+      { name: "startDate", label: "Agreed start date", type: "date", required: false },
+      { name: "completionTimeframe", label: "Completion timeframe", type: "text", required: false },
+      { name: "completionDate", label: "Completion date", type: "date", required: false },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Payment and Warranty",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "contractPrice", label: "Contract price", type: "text", required: false },
+      { name: "discountTimeLimit", label: "Early payment discount time limit", type: "text", required: false },
+      { name: "workmanshipMonths", label: "Workmanship warranty months", type: "text", required: false },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Signatures",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "ownerSignatureName", label: "Owner name for signature line", type: "text", required: false },
+      { name: "ownerSignatureDate", label: "Owner signature date", type: "date", required: false },
+      { name: "contractorSignatureName", label: "Contractor name for signature line", type: "text", required: false },
+      { name: "contractorSignatureDate", label: "Contractor signature date", type: "date", required: false },
     ],
   },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.5;
+  const limit = 280;
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Roofing Contract", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+
+  const u = (value?: string, min = 20) => (value || "").trim() || " ".repeat(min);
+
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  const uf = (label: string, value?: string, min = 20, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+  doc.setFontSize(13);
+  const title = "ROOFING CONTRACT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1);
+  y += 9;
+  doc.setFontSize(10.5);
+
+  p(`This Roofing Contract ("Contract") is made and entered into as of ${u(values.contractDate, 12)}, by and between:`);
+  uf("Owner", values.ownerName, 34);
+  uf("Contractor", values.contractorName, 34);
+  p(`Effective Date: This Contract shall become effective on ${u(values.effectiveDate || values.contractDate, 12)}, the date first written above.`, false, 3);
+
+  p("1. Parties & Effective Date", true);
+  p("This Contract is made between the Owner and the Contractor, and shall be effective from the date stated herein. The obligations, covenants, and agreements set forth shall bind the parties from such date.");
+
+  p("2. Description of Services", true);
+  p(`The Contractor shall furnish all labor, equipment, and materials necessary to perform the roofing services in accordance with ${u(values.ownerDescription, 24)} ("Description of Work") at the property located at:`);
+  uf("Address", values.worksiteAddress, 46);
+  p(`The Contractor shall commence work on ${u(values.startDate, 12)} and complete the work within ${u(values.completionTimeframe, 20)}, subject to extensions permitted under this Contract.`);
+
+  p("3. Scope of Work", true);
+  p("The Contractor shall supply and deliver all necessary labor, materials, tools, equipment, and supervision required to complete the roofing project in accordance with industry standards, applicable building codes, and manufacturer specifications. Work shall be performed Monday through Saturday, excluding statutory holidays, and is subject to favorable weather conditions.");
+
+  p("4. Worksite Access & Conditions", true);
+  p("The Owner grants the Contractor the right to access the Worksite for purposes of performing the services herein. This includes authorization for excavation or grading as necessary to perform roofing work. Unless specifically stated, no landscaping, grading, filling, or excavation work is included.");
+
+  p("5. Payment Terms", true);
+  p(`(a) Contract Price - The total Contract Price shall be ${u(values.contractPrice, 16)} as set forth in writing.`);
+  p("(b) Due Date - Payment shall be due upon completion of the work unless otherwise agreed in writing.");
+  p(`(c) Discounts - Any early payment discounts must be taken within ${u(values.discountTimeLimit, 14)}.`);
+  p("(d) Late Payments - Late payments shall accrue interest at the maximum rate permitted by law.");
+  p("(e) Collection Costs - In the event of non-payment, the defaulting party shall be liable for all collection costs, including reasonable attorneys' fees.");
+  p("(f) Material Breach - Non-payment constitutes a material breach, entitling the non-defaulting party to suspend performance or terminate this Contract.");
+
+  p("6. Permits & Insurance", true);
+  p("The Contractor shall be responsible for obtaining all permits and licenses necessary for the performance of the work and shall maintain all insurance required by law, including commercial general liability insurance and workers' compensation coverage.");
+
+  p("7. Survey & Title", true);
+  p("If property lines are uncertain, the Owner shall indicate the boundaries and provide stakes or other markers. The Owner shall be responsible for ensuring that all work is performed within legal property limits.");
+
+  p("8. Indemnification", true);
+  p("Each party agrees to indemnify, defend, and hold harmless the other party, its officers, employees, and agents from any and all claims, liabilities, damages, costs, and expenses, including reasonable attorneys' fees, arising out of or related to the negligent acts, omissions, or willful misconduct of the indemnifying party or its agents.");
+
+  p("9. Warranty", true);
+  p(`(a) Workmanship Warranty - The Contractor warrants that all work will be free from defects in workmanship for a period of ${u(values.workmanshipMonths, 8)} months from the date of completion.`);
+  p("(b) Coverage - This warranty covers leaks occurring under normal weather conditions.");
+  p("(c) Exclusions - This warranty does not cover damage caused by misuse, neglect, unauthorized modifications, or acts of God.");
+  p("(d) Material Warranty - Manufacturer's warranties for materials shall be assigned to the Owner upon completion.");
+
+  p("10. Completion of Services", true);
+  p("Upon completion, the Contractor shall restore the property to its pre-work condition and remove all debris, tools, and equipment. The work shall be deemed completed when accepted by the Owner in writing.");
+
+  p("11. Change Orders", true);
+  p('No changes to the scope of work shall be binding unless documented in a written "Change Order" signed by both parties. Additional costs associated with change orders shall be borne by the Owner.');
+
+  p("12. Access & Protection", true);
+  p("The Owner shall provide the Contractor with free and unhindered access to the Worksite, including adequate space for the storage of materials and equipment. The Contractor shall take reasonable measures to protect the Owner's property during the course of work.");
+
+  p("13. Term", true);
+  p(`This Contract shall automatically terminate on ${u(values.completionDate, 12)}, unless extended by mutual written agreement.`);
+
+  p("14. Work Product Ownership", true);
+  p("All completed work and deliverables produced under this Contract shall be the property of the Owner upon payment in full. The Contractor shall execute any documents necessary to evidence such ownership.");
+
+  p("15. Confidentiality", true);
+  p("Each party agrees to maintain in strict confidence all proprietary or confidential information disclosed during the term of this Contract and not to use such information except as necessary to perform obligations herein.");
+
+  p("16. Default", true);
+  p("Events of default include, but are not limited to:");
+  p("(a) Failure to make timely payments;");
+  p("(b) Insolvency or bankruptcy;");
+  p("(c) Seizure of property;");
+  p("(d) Failure to commence or complete services within the agreed timeframe.");
+
+  p("17. Remedies", true);
+  p("In the event of default, the non-defaulting party may terminate this Contract upon written notice, provided the defaulting party fails to cure the breach within ten (10) business days after receipt of such notice.");
+
+  p("18. Force Majeure", true);
+  p("Neither party shall be liable for delays or failures in performance due to events beyond their reasonable control, including but not limited to natural disasters, pandemics, war, acts of terrorism, labor disputes, or government orders.");
+
+  p("19. Arbitration", true);
+  p("All disputes arising from or relating to this Contract shall be resolved by binding arbitration under the Construction Industry Arbitration Rules of the American Arbitration Association. The arbitrator's decision shall be final, and judgment may be entered in any court of competent jurisdiction.");
+
+  p("20. Entire Agreement & Amendments", true);
+  p("This Contract constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, or agreements, whether written or oral. Any amendments must be in writing and signed by both parties.");
+
+  p("21. Severability", true);
+  p("If any provision of this Contract is found invalid or unenforceable, the remaining provisions shall remain in full force and effect.");
+
+  p("22. Governing Law", true);
+  p(`This Contract shall be governed by and construed in accordance with the laws of the State of ${u(values.governingState, 16)}.`);
+
+  p("23. Notices", true);
+  p("All notices required under this Contract shall be in writing and delivered personally, by certified mail, or by recognized courier service to the addresses provided herein. Notices shall be deemed received upon delivery.");
+
+  p("24. Waiver of Contractual Right", true);
+  p("Failure to enforce any provision of this Contract shall not constitute a waiver of that provision or any other provision, nor prevent subsequent enforcement.");
+
+  p("25. Signatories", true);
+  p("By signing below, the parties affirm that they are duly authorized to enter into this Contract and that they agree to be bound by its terms.");
+  p("OWNER:");
+  uf("Name", values.ownerSignatureName || values.ownerName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.ownerSignatureDate, 14, 2.3);
+  p("CONTRACTOR:");
+  uf("Name", values.contractorSignatureName || values.contractorName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.contractorSignatureDate, 14);
+
   doc.save("roofing_contract.pdf");
 };
 

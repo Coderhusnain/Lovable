@@ -1,306 +1,157 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Effective Date",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "sellerName", label: "Seller name", type: "text", required: true },
+      { name: "sellerAddress", label: "Seller full residential address", type: "text", required: false },
+      { name: "buyerName", label: "Buyer name", type: "text", required: true },
+      { name: "buyerAddress", label: "Buyer full residential address", type: "text", required: false },
+      { name: "existingShareholderName", label: "Existing shareholder name", type: "text", required: false },
+      { name: "executionCity", label: "Execution city", type: "text", required: false },
+      { name: "executionDay", label: "Execution day", type: "text", required: false },
+      { name: "executionMonthYear", label: "Execution month/year", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Company and Shares",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "companyName", label: "Company name", type: "text", required: true },
+      { name: "incorporationNo", label: "Incorporation number", type: "text", required: false },
+      { name: "stateLaw", label: "State/country of incorporation law", type: "text", required: false },
+      { name: "shareAmount", label: "Share amount/percentage", type: "text", required: false },
+      { name: "applicableState", label: "Applicable law state/country", type: "text", required: false },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Signatures and Witnesses",
     fields: [
-      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
+      { name: "sellerSignerDate", label: "Seller signature date", type: "date", required: false },
+      { name: "buyerSignerDate", label: "Buyer signature date", type: "date", required: false },
+      { name: "existingShareholderSignerDate", label: "Existing shareholder signature date", type: "date", required: false },
+      { name: "witness1Name", label: "Witness 1 name", type: "text", required: false },
+      { name: "witness1Cnic", label: "Witness 1 CNIC/ID", type: "text", required: false },
+      { name: "witness2Name", label: "Witness 2 name", type: "text", required: false },
+      { name: "witness2Cnic", label: "Witness 2 CNIC/ID", type: "text", required: false },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.5;
+  const limit = 280;
   let y = 20;
 
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const durationMap: Record<string, string> = { "1month": "1 Month", "3months": "3 Months", "6months": "6 Months", "1year": "1 Year", "2years": "2 Years", "5years": "5 Years", "indefinite": "Indefinite/Ongoing", "custom": "Custom" };
-  const terminationMap: Record<string, string> = { "immediate": "immediately", "7days": "7 days", "14days": "14 days", "30days": "30 days", "60days": "60 days", "90days": "90 days" };
-  const disputeMap: Record<string, string> = { "mediation": "Mediation", "arbitration": "Binding Arbitration", "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation" };
-
-  const para = (text: string) => {
+  const u = (value?: string, min = 14) => (value || "").trim() || " ".repeat(min);
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string, min = 20) => {
+    const labelText = `${label}: `;
+    const shown = (value || "").trim();
+    if (y + lh + 1.8 > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.line(x, y + 1.1, x + Math.max(14, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1);
+    }
+    y += lh + 1.8;
   };
 
-  // TITLE
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   const title = "SHARE PURCHASE AGREEMENT";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // HEADER FIELDS
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
-  };
+  p(`This SHARE PURCHASE AGREEMENT ("Agreement") is made at ${u(values.executionCity, 10)} on this ${u(values.executionDay, 4)} day of ${u(values.executionMonthYear, 10)} ("Effective Date");`);
+  p(`BY AND BETWEEN ${u(values.sellerName, 12)}, residing at ${u(values.sellerAddress, 16)} (hereinafter referred to as "Seller"), AND ${u(values.buyerName, 12)}, residing at ${u(values.buyerAddress, 16)} (hereinafter referred to as "Buyer").`);
+  p('(The Seller and Buyer may collectively be referred to as the "Parties" and/or individually as the "Party").', false, 2.5);
+  p("RECITALS", true);
+  p(`I. WHEREAS ${u(values.companyName, 14)} bearing incorporation No. ${u(values.incorporationNo, 10)} is duly incorporated under the laws of ${u(values.stateLaw, 10)} ("Company");`);
+  p(`II. WHEREAS at the date hereof, the Seller is a shareholder of Company and holds a total of ${u(values.shareAmount, 8)} of the total issued and paid up share capital of the Company in the form of ordinary shares ("Shares");`);
+  p("III. AND WHEREAS the Seller agrees to sell the Shares and the Buyer agrees to purchase the Shares on the terms and conditions set forth in this Agreement.");
+  p("NOW, THEREFORE, THIS AGREEMENT WITNESSETH AS FOLLOWS:", false, 3);
 
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
+  p("1. ARTICLE 1 - DEFINITIONS", true);
+  p("1.1 In this Agreement, unless the context requires otherwise, all capitalised terms shall have the meanings set forth below:");
+  p('1.1.1 "Agreement" shall mean this Share Purchase Agreement and includes its Recitals, which form an integral part of this Agreement for all purposes;');
+  p(`1.1.2 "Applicable Law" means any constitution, statute, code, regulation, legislation, rule, ordinance, injunction, judgement, order, decree, ruling, charge, treaty, bilateral or multilateral agreement, embargo, sanction, statutory requirement or other restriction of or interpretation thereof as applicable to ${u(values.applicableState, 10)}.`);
+  p('1.1.3 "Buyer" shall mean the signatory as Buyer as mentioned in this Agreement and include legal heirs, agents, successors-in-interest and permitted assigns;');
+  p('1.1.4 "Effective Date" means the day on which the last Party signing this Agreement has signed this Agreement;');
+  p('1.1.5 "Encumbrances" includes any option, right to acquire, mortgage, charge, pledge, lien, assignment by way of security, trust arrangement, or other form of security or encumbrance;');
+  p('1.1.6 "Indemnifying Party" shall include the Buyers and Existing Shareholder, and include legal heirs, agents, successors-in-interest and permitted assigns.');
 
-  // SUBJECT
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Notice of Share Purchase Agreement and Terms of Engagement", margin, y);
-  y += 7;
+  p("2. ARTICLE 2 - TRANSACTION OF SHARES", true);
+  p("2.1 Subject to the terms and conditions of this Agreement, the Seller hereby sells and transfers to the Buyers, and the Buyers shall purchase and acquire from the Seller, the shares free and clear of any Encumbrances.");
+  p("2.2 Upon signing of this Agreement by Parties, the Seller shall promptly transfer and deliver to the Buyers the share certificates and all other relevant documents including but not limited to transfer deeds and board resolutions representing the sale of Shares.");
+  p("2.3 The transfer of Shares shall be effective as of Effective Date, from and after which:");
+  p("2.3.1 the Buyer shall be the exclusive owner of the Shares for all intents and purposes;");
+  p("2.3.2 the Seller's resignation as director shall become effective.");
 
-  // SALUTATION
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
+  p("3. ARTICLE 3 - REPRESENTATIONS AND WARRANTIES", true);
+  p("3.1 The Seller, by signing this Agreement, represents and warrants full power and authority to execute and perform this Agreement, and that the transaction does not conflict with constituent documents or certifications of shares.");
+  p(`3.1.3 The Seller has already made an offer to Existing Shareholder ${u(values.existingShareholderName, 14)} who had the right of first refusal and has declined, thereby permitting the Buyers to purchase the Shares.`);
+  p("3.1.4 Upon payment in full of the Purchase Price, good and valid title of the Shares shall pass to the Buyers, free and clear of any Encumbrances.");
+  p("3.2 The Existing Shareholder represents that the Company is duly incorporated, validly existing and in good standing.");
+  p("3.3 The Existing Shareholder has not engaged in activities that may expose the Seller to litigation, and no such proceedings are pending or threatened against the Company and its shareholders.");
 
-  // BODY
-  para(`I am writing to formally confirm the Share Purchase Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the Seller"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Buyer"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`);
+  p("4. ARTICLE 4 - INDEMNIFICATION", true);
+  p("4.1 The Indemnifying Party shall defend, indemnify and hold harmless the Seller for the period served as director/shareholder against losses, claims, demands, punitive damages, expenses, causes of action, judgment and/or costs arising from breaches, enforcement of rights, taxes/liabilities prior to Effective Date, and operations/actions of the Company before and after Effective Date.");
+  p("4.2 This Article remains valid and enforceable upon termination or expiration of any existing agreement or arrangement.");
 
-  para(values.description || "The Seller agrees to transfer and the Buyer agrees to purchase the agreed number of shares in the specified company at the agreed purchase price, subject to the representations, warranties, and conditions set forth herein. The transaction shall be completed in accordance with all applicable laws and regulations governing the sale and transfer of shares.");
+  p("5. ARTICLE 5 - MISCELLANEOUS", true);
+  p("5.1 The Indemnifying Party shall bear all expenses incurred in connection with transfer of Shares.");
+  p("5.2 The Indemnifying Party undertakes to assist the Seller for execution before any regulator or official authority.");
+  p("5.3 The Parties shall maintain confidentiality and not use exchanged information except to further the share transaction; this survives for twelve (12) months after Effective Date.");
+  p("5.4 Relevant Parties shall exercise voting rights to achieve the purpose of the Agreement.");
+  p("5.5 The Agreement may be amended or assigned only by written consent of all Parties.");
+  p("5.6 Any waiver by any Party of any right shall not imply waiver of any other right or subsequent waiver.");
+  p("5.7 Each Party agrees to do all acts and execute all requisite documents required to accomplish objectives of this Agreement.");
+  p(`5.8 This Agreement is governed by the Applicable Laws of ${u(values.applicableState, 10)} and the courts at ${u(values.executionCity, 10)} shall have exclusive jurisdiction.`);
 
-  para(`This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed purchase price is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`);
-
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
-
-  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  // SENDER BLOCK
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "Seller";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  // SIGNATURES
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Seller Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("Seller Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Buyer Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Buyer Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
-  }
+  p("IN WITNESS WHEREOF, the Parties hereto have caused this Agreement to be duly executed as of the date and year first written above.", false, 3);
+  p("Seller:");
+  uf("Name", values.sellerName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.sellerSignerDate, 14);
+  p("Buyer:");
+  uf("Name", values.buyerName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.buyerSignerDate, 14);
+  p("Existing Shareholder:");
+  uf("Name", values.existingShareholderName, 24);
+  p("Signature: ___________________________");
+  uf("Date", values.existingShareholderSignerDate, 14);
+  p("Witnesses:");
+  uf("Witness 1 Name", values.witness1Name, 20);
+  uf("Witness 1 CNIC", values.witness1Cnic, 16);
+  uf("Witness 2 Name", values.witness2Name, 20);
+  uf("Witness 2 CNIC", values.witness2Cnic, 16);
 
   doc.save("share_purchase_agreement.pdf");
 };

@@ -1,311 +1,97 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Entities and Effective Date",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "dissolvingEntity", label: "Dissolving entity", type: "text", required: true },
+      { name: "dissolvingType", label: "Dissolving entity type", type: "text", required: false },
+      { name: "dissolvingState", label: "Dissolving entity state/country", type: "text", required: false },
+      { name: "survivingEntity", label: "Surviving entity", type: "text", required: true },
+      { name: "survivingType", label: "Surviving entity type", type: "text", required: false },
+      { name: "survivingState", label: "Surviving entity state/country", type: "text", required: false },
+      { name: "survivingNameAfterMerger", label: "Name after merger", type: "text", required: false },
+      { name: "governingLaw", label: "Governing law state/country", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Valuation and Board",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "tangibleIntangibleValue", label: "Tangible/intangible assets value", type: "text", required: false },
+      { name: "receivablesValue", label: "Unrealized receivables", type: "text", required: false },
+      { name: "inventoryValue", label: "Inventory value", type: "text", required: false },
+      { name: "liabilitiesValue", label: "Estimated liabilities", type: "text", required: false },
+      { name: "conversionPercent", label: "Conversion percentage interests", type: "text", required: false },
+      { name: "boardCount", label: "Initial board director count", type: "text", required: false },
+      { name: "dissolvingNomineeCount", label: "Dissolving nominee director count", type: "text", required: false },
+      { name: "dissolvingSignerDate", label: "Dissolving entity sign date", type: "date", required: false },
+      { name: "survivingSignerDate", label: "Surviving entity sign date", type: "date", required: false },
     ],
   },
-  {
-    label: "Agreement Date",
-    fields: [
-      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210, m = 16, tw = w - m * 2, lh = 5.5, limit = 280;
   let y = 20;
-
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const durationMap: Record<string, string> = { "1month": "1 Month", "3months": "3 Months", "6months": "6 Months", "1year": "1 Year", "2years": "2 Years", "5years": "5 Years", "indefinite": "Indefinite/Ongoing", "custom": "Custom" };
-  const terminationMap: Record<string, string> = { "immediate": "immediately", "7days": "7 days", "14days": "14 days", "30days": "30 days", "60days": "60 days", "90days": "90 days" };
-  const disputeMap: Record<string, string> = { "mediation": "Mediation", "arbitration": "Binding Arbitration", "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation" };
-
-  const para = (text: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
+  const u = (v?: string, min = 14) => (v || "").trim() || " ".repeat(min);
+  const p = (t: string, b = false, g = 1.8) => {
+    const lines = doc.splitTextToSize(t, tw);
+    if (y + lines.length * lh + g > limit) { doc.addPage(); y = 20; }
+    doc.setFont("helvetica", b ? "bold" : "normal");
+    doc.text(lines, m, y); y += lines.length * lh + g;
+  };
+  const uf = (l: string, v?: string, min = 20) => {
+    const shown = (v || "").trim(), label = `${l}: `;
+    if (y + lh + 1.8 > limit) { doc.addPage(); y = 20; }
+    doc.text(label, m, y); const x = m + doc.getTextWidth(label);
+    if (shown) { doc.text(shown, x, y); doc.line(x, y + 1.1, x + Math.max(14, doc.getTextWidth(shown)), y + 1.1); }
+    else { doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1); }
+    y += lh + 1.8;
   };
 
-  // TITLE
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold"); doc.setFontSize(13);
   const title = "MERGER AGREEMENT";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1);
+  y += 9; doc.setFontSize(10.5);
 
-  // HEADER FIELDS
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
-  };
-
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
-
-  // SUBJECT
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Notice of Merger Agreement and Terms of Engagement", margin, y);
-  y += 7;
-
-  // SALUTATION
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
-
-  // BODY
-  para(`I am writing to formally confirm the Merger Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Second Party"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`);
-
-  para(values.description || "Both parties agree to merge their respective business operations, assets, and liabilities under the terms set forth herein, with the intent to consolidate resources, reduce operational redundancies, and pursue shared business objectives in accordance with applicable laws and regulations.");
-
-  para(`This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed financial commitment is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`);
-
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
-
-  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  // SENDER BLOCK
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "First Party";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  // SIGNATURES
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("First Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("First Party Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Second Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Second Party Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
-  }
+  p(`This Merger Agreement is made as of ${u(values.effectiveDate, 12)}, by and between ${u(values.dissolvingEntity, 12)} (the "Dissolving Entity"), a ${u(values.dissolvingType, 10)} existing under ${u(values.dissolvingState, 10)}, and ${u(values.survivingEntity, 12)} (the "Surviving Entity"), a ${u(values.survivingType, 10)} existing under ${u(values.survivingState, 10)}.`, false, 3);
+  p(`WHEREAS the parties desire the Dissolving Entity to merge into the Surviving Entity, with the Surviving Entity continuing under the name ${u(values.survivingNameAfterMerger, 12)}; NOW THEREFORE the parties agree as follows:`);
+  p("I. Merger", true);
+  p("1. Effective Date of Merger: Merger becomes effective upon filing certificate of merger with appropriate governmental authorities.");
+  p("2. Surviving Business Entity: Dissolving Entity merges into Surviving Entity; separate existence of Dissolving Entity ceases; Surviving Entity continues with all rights/assets/liabilities as provided by law.");
+  p("II. Terms and Conditions", true);
+  p("1. Further Assignments and Assurances: Authorized representatives of Dissolving Entity execute and deliver all deeds, assignments, confirmations, and assurances reasonably requested to vest and confirm title in Surviving Entity.");
+  p("III. Valuation of Assets", true);
+  p(`Tangible/intangible incl. goodwill: $${u(values.tangibleIntangibleValue, 8)}; Unrealized receivables: $${u(values.receivablesValue, 8)}; Inventory: $${u(values.inventoryValue, 8)}; Estimated liabilities: $${u(values.liabilitiesValue, 8)}.`);
+  p(`Conversion of Interests: Interests in Dissolving Entity convert into ${u(values.conversionPercent, 8)} percent interest(s) of Surviving Entity; no fractional interests issued; fractional values settled in cash at fair market value.`);
+  p("IV. Management of Surviving Entity", true);
+  p(`Management and control rest exclusively with Surviving Entity per governing documents. Initial board shall consist of ${u(values.boardCount, 3)} directors; Dissolving Entity may nominate ${u(values.dissolvingNomineeCount, 3)} director(s).`);
+  p("V. Interpretation and Enforcement", true);
+  p("Notices must be in writing and delivered personally, by certified mail (return receipt requested), or facsimile to designated addresses.");
+  p("This Agreement may be executed in counterparts, each deemed an original and together one instrument.");
+  p("VI. General Provisions", true);
+  p("Severability applies. Mutual indemnification applies for material breaches of representations, warranties, covenants, or obligations.");
+  p(`Applicable law: ${u(values.governingLaw, 12)} without conflict-of-law principles.`);
+  p("VII. Signatories", true);
+  p("By signing, each party confirms they have read, understood, and agreed to be bound by all terms.");
+  p("Dissolving Entity:");
+  uf("Name", values.dissolvingEntity, 22);
+  p("Signature: _______________________");
+  uf("Date", values.dissolvingSignerDate, 14);
+  p("Surviving Entity:");
+  uf("Name", values.survivingEntity, 22);
+  p("Signature: _______________________");
+  uf("Date", values.survivingSignerDate, 14);
 
   doc.save("merger_agreement.pdf");
 };
 
-export default function MergerAgreement() {
+export default function MergerAgreementForm() {
   return (
     <FormWizard
       steps={steps}

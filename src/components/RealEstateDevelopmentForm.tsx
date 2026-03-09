@@ -1,503 +1,150 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Project",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "agreementDay", label: "Agreement day", type: "text", required: false },
+      { name: "agreementMonth", label: "Agreement month", type: "text", required: false },
+      { name: "agreementYear", label: "Agreement year", type: "text", required: false },
+      { name: "owner", label: "Owner", type: "text", required: true },
+      { name: "developer", label: "Developer", type: "text", required: true },
+      { name: "propertyDescription", label: "Property legal description", type: "textarea", required: true },
+      { name: "projectDescription", label: "Project description", type: "textarea", required: false },
+      { name: "startDate", label: "Development start date", type: "date", required: false },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Controls and Thresholds",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "majorSpendThreshold", label: "Major expenditure threshold", type: "text", required: false },
+      { name: "contractThreshold", label: "Contract threshold reference", type: "text", required: false },
+      { name: "bankruptcyDays", label: "Bankruptcy dismissal days", type: "text", required: false },
+      { name: "noticesAddress", label: "Notice addresses", type: "textarea", required: false },
+      { name: "ownerSignDate", label: "Owner sign date", type: "date", required: false },
+      { name: "developerSignDate", label: "Developer sign date", type: "date", required: false },
     ],
   },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
   let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Real Estate Development", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
+  const u = (v?: string, n = 18) => (v || "").trim() || "_".repeat(n);
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string, min = 20, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
   doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
-  doc.save("real_estate_development.pdf");
+  doc.setFontSize(12.5);
+  const title = "REAL ESTATE DEVELOPMENT AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
+
+  p(`This Real Estate Development Agreement ("Agreement") is made and entered into as of the ${u(values.agreementDay, 2)} day of ${u(values.agreementMonth, 8)}, ${u(values.agreementYear, 4)}, by and between Owner: ${u(values.owner, 16)} ("Owner"), and Developer: ${u(values.developer, 16)} ("Developer").`);
+  p("Owner and Developer may be referred to individually as a \"Party\" and collectively as the \"Parties.\"");
+  p("1. Purpose of the Agreement", true);
+  p(`Owner engages Developer to develop certain lots of land described as: ${u(values.propertyDescription, 24)} into a cost-efficient residential project targeted toward first-time homebuyers (${u(values.projectDescription, 16)}). Developer agrees to develop, market, and oversee the Project in accordance with this Agreement.`);
+  p("2. Developer's Responsibilities", true);
+  p("2.1 Development Plan: Developer prepares detailed phased plan including design, budgets, schedule, and marketing. No phase commences without Owner's written approval.");
+  p("2.2 Periodic Review: Development plan reviewed quarterly; modifications submitted in writing for Owner approval.");
+  p("2.3 Timing of Development: Owner reserves right to delay or decline any phase.");
+  p("2.4 Books, Accounts, and Records: Developer maintains complete/current/accurate records open to Owner inspection and audit on reasonable notice.");
+  p("2.5 Financial and Progress Reporting: Quarterly financial reports with projections; weekly sales reports after sales commencement; monthly activity/progress/milestone reports.");
+  p("2.6 Governmental Reports and Permits: Developer obtains permits/licenses/approvals and provides Owner copies of filings and significant correspondence.");
+  p("2.7 Meetings: Parties meet weekly or as mutually agreed.");
+  p("3. Funds and Financial Controls", true);
+  p("3.1 All project funds belong exclusively to Owner and are deposited into Owner-designated account. Developer may draw only with written authorization and has no ownership interest.");
+  p("3.2 Accounting procedures are determined by Owner after consultation with Developer.");
+  p("4. Owner's Representative", true);
+  p("Owner may appoint onsite observer with access to relevant non-proprietary information. Observer is monitoring/educational only and has no operational control.");
+  p("5. Indemnification", true);
+  p("Each Party indemnifies, defends, and holds the other harmless from losses/liabilities/claims/damages/expenses including reasonable attorneys' fees caused by its own negligence, omissions, or breaches.");
+  p("6. Insurance Requirements", true);
+  p("Developer maintains comprehensive general liability and required endorsements for agreement term.");
+  p("Developer maintains workers' compensation and employers' liability and requires subcontractors to maintain similar coverage.");
+  p("Subcontractors provide certificates of insurance on request.");
+  p("Owner maintains all-risk property insurance at least equal to estimated cost of work, and deductible losses are borne by Developer.");
+  p("Parties and their officers/employees/agents/subcontractors waive subrogation rights under project insurance policies.");
+  p("7. Delegation and Subcontracts", true);
+  p("Developer may delegate duties to qualified third parties (including architects/engineers) with Owner's written approval. Subcontracts are for Developer account and may be assigned to Owner upon request.");
+  p("8. Phases and Entitlements", true);
+  p("Developer provides services in defined phases and advises Owner on entitlements/governmental compliance and modifications.");
+  p("9. General and Administrative Costs", true);
+  p("Developer uses own personnel/resources and is compensated by General and Administrative Fee per project phase (excluding Planning Phase).");
+  p("10. Project Costs and Financing", true);
+  p("Owner provides or arranges funding for approved project costs via equity or financing. Developer is reimbursed for documented project costs. Owner may obtain financing from lenders of choice.");
+  p("11. Developer's Authority and Standard of Performance", true);
+  p(`Developer acts solely as independent contractor, may not bind Owner except for permits and acknowledging deposits, and shall perform diligently and lawfully from ${u(values.startDate, 12)} forward.`);
+  p("12. Major Decisions Requiring Owner Approval", true);
+  p(`Requires prior written Owner consent for: changes in development plan, single expenditure exceeding ${u(values.majorSpendThreshold, 8)}, execution/modification of contracts exceeding ${u(values.contractThreshold, 8)}, and material reserve/budget changes.`);
+  p("13. Termination", true);
+  p("13.1 Either Party may terminate upon failure to agree/submit development plan, material breach, or transfer of all/part of property to non-affiliated entity.");
+  p("13.2 Owner may terminate if significant development plan changes are required due to unforeseen circumstances or market conditions.");
+  p(`13.3 Automatic termination if either Party files bankruptcy/insolvency and filing is not dismissed within ${u(values.bankruptcyDays, 4)} days.`);
+  p("14. Representations and Warranties", true);
+  p("Each Party represents no broker commissions/fees are owed in connection with this Agreement and indemnifies for breach.");
+  p("15. Notices", true);
+  p(`All notices are in writing and delivered personally, by facsimile/telecopier, or by first-class certified mail return receipt requested to addresses specified in agreement: ${u(values.noticesAddress, 18)}.`);
+  p("16. Related Party Transactions", true);
+  p("Developer shall notify Owner before entering contracts with affiliates for project goods/services. Owner may reject if performance is inadequate or costs excessive.");
+  p("17. Assignment and Binding Effect", true);
+  p("Developer may not assign rights/obligations without Owner prior written consent. Agreement binds and benefits Parties and permitted successors/assigns.");
+  p("18. Attorneys' Fees | 19. No Third Party Beneficiaries | 20. Governing Law | 21. Entire Agreement; Amendments", true);
+  p(`Prevailing Party in litigation/arbitration is entitled to reasonable attorneys' fees/costs. No third-party beneficiaries. Governing law: State of ${u(values.governingState, 14)}. Entire agreement applies; amendments require writing signed by both Parties.`, false, 3);
+  p("22. Execution", true);
+  p("IN WITNESS WHEREOF, Parties execute this Agreement as of date first written above.");
+  p(`OWNER (${u(values.owner, 10)}): ___________________________`);
+  uf("Signature Date", values.ownerSignDate, 22, 2.5);
+  p(`DEVELOPER (${u(values.developer, 10)}): _______________________`);
+  uf("Signature Date", values.developerSignDate, 22);
+
+  doc.save("real_estate_development_agreement.pdf");
 };
 
 export default function RealEstateDevelopment() {
   return (
     <FormWizard
       steps={steps}
-      title="Real Estate Development"
+      title="Real Estate Development Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="realestatedevelopment"

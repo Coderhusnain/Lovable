@@ -1,541 +1,174 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "clientName", label: "Client name", type: "text", required: true },
+      { name: "clientAddress", label: "Client address", type: "text", required: true },
+      { name: "providerName", label: "Service provider name", type: "text", required: true },
+      { name: "providerAddress", label: "Service provider address", type: "text", required: true },
+      { name: "background", label: "Service provider background", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Service and Financial Terms",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "serviceStartDate", label: "Service start date", type: "date", required: false },
+      { name: "descriptionOfServices", label: "Description of services", type: "textarea", required: true },
+      { name: "commissionMeans", label: "Means of commission payment", type: "text", required: false },
+      { name: "commissionBasis", label: "Basis of commission", type: "text", required: false },
+      { name: "travelExpenses", label: "Travel expense details", type: "text", required: false },
+      { name: "otherExpenses", label: "Other reimbursable expenses", type: "text", required: false },
+      { name: "supportServices", label: "Other support services", type: "text", required: false },
+      { name: "terminationDate", label: "Termination date", type: "date", required: false },
+      { name: "noticeDays", label: "Termination notice days", type: "text", required: false },
+      { name: "termLength", label: "Term length for renewal", type: "text", required: false },
+      { name: "conflictDescription", label: "Conflict disclosure scope", type: "text", required: false },
+      { name: "governingLaw", label: "Governing law state/commonwealth", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Signatures",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "clientSignerName", label: "Client signer name", type: "text", required: false },
+      { name: "clientSignerDesignation", label: "Client signer designation", type: "text", required: false },
+      { name: "clientSignerDate", label: "Client sign date", type: "date", required: false },
+      { name: "providerSignerName", label: "Service provider signer name", type: "text", required: false },
+      { name: "providerSignerDesignation", label: "Service provider signer designation", type: "text", required: false },
+      { name: "providerSignerDate", label: "Service provider sign date", type: "date", required: false },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-// ─── Shared PDF helpers ──────────────────────────────────────────────────────
-
-/** Render "Label:  " (normal) + underlined value on the same baseline */
-const fieldRow = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  const vx = x + doc.getTextWidth(label);
-  doc.text(value, vx, y);
-  doc.line(vx, y + 0.7, vx + doc.getTextWidth(value), y + 0.7);
-};
-
-/** Underline a word/phrase that appears inline within running text.
- *  `textBefore` is already rendered; this just draws the underline under `word`
- *  at absolute position (wx, wy). */
-const inlineUnderline = (doc: jsPDF, word: string, wx: number, wy: number) => {
-  doc.line(wx, wy + 0.7, wx + doc.getTextWidth(word), wy + 0.7);
-};
-
-/** Bold + underlined centred title */
-const boldUnderlinedCentre = (doc: jsPDF, text: string, y: number, fontSize = 13) => {
-  doc.setFontSize(fontSize);
-  doc.setFont("helvetica", "bold");
-  const w = doc.getTextWidth(text);
-  const x = (210 - w) / 2;
-  doc.text(text, x, y);
-  doc.line(x, y + 0.9, x + w, y + 0.9);
-};
-
-/** Wrapped paragraph – returns updated y */
-const para = (doc: jsPDF, text: string, x: number, y: number, maxW: number, lh: number): number => {
-  const lines: string[] = doc.splitTextToSize(text, maxW);
-  doc.text(lines, x, y);
-  return y + lines.length * lh;
-};
-
-// ─── generatePDF ─────────────────────────────────────────────────────────────
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const L = 25;
-  const W = 160;   // text width
-  const lh = 7;    // line height
-  let y = 22;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.5;
+  const limit = 280;
+  let y = 20;
 
-  const durMap: Record<string, string> = {
-    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
-    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
-    "indefinite": "Indefinite/Ongoing", "custom": "Custom Duration",
+  const u = (value?: string, min = 18) => (value || "").trim() || " ".repeat(min);
+  const p = (text: string, bold = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
-  const noticeMap: Record<string, string> = {
-    "immediate": "Immediate", "7days": "7 Days", "14days": "14 Days",
-    "30days": "30 Days", "60days": "60 Days", "90days": "90 Days",
-  };
-  const disputeMap: Record<string, string> = {
-    "mediation": "Mediation", "arbitration": "Binding Arbitration",
-    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  const uf = (label: string, value?: string, min = 20) => {
+    const labelText = `${label}: `;
+    const shown = (value || "").trim();
+    if (y + lh + 1.8 > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.line(x, y + 1.1, x + Math.max(14, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1);
+    }
+    y += lh + 1.8;
   };
 
-  // ── Title ──
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
-  boldUnderlinedCentre(doc, "SERVICE AGREEMENT", y, 13);
-  y += lh * 2;
+  const title = "SERVICE AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  // ── Header rows ──
-  doc.setFontSize(11);
-  fieldRow(doc, "Date:  ", values.effectiveDate || "N/A", L, y); y += lh;
-  fieldRow(doc, "To:  ", values.party2Name || "N/A", L, y); y += lh;
-  fieldRow(
-    doc,
-    "Address:  ",
-    `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`,
-    L, y
-  ); y += lh * 1.6;
+  p(`This Service Agreement ("Agreement") is made and entered into as of ${u(values.effectiveDate, 12)}.`);
+  p(`By and Between ${u(values.clientName, 18)}, having its principal place of business at ${u(values.clientAddress, 18)} (hereinafter referred to as the "Client"), and ${u(values.providerName, 18)}, having its principal place of business at ${u(values.providerAddress, 18)} (hereinafter referred to as the "Service Provider"). The Client and the Service Provider may hereinafter be referred to individually as a "Party" and collectively as the "Parties."`);
+  p(`WHEREAS, the Service Provider possesses the requisite background, experience, skill, and expertise in ${u(values.background, 14)};`);
+  p("AND WHEREAS, the Client desires to engage the Service Provider to provide certain professional services, and the Service Provider is willing to render such services under the terms and conditions set forth herein;");
+  p("NOW, THEREFORE, in consideration of the mutual covenants and undertakings contained herein, the Parties hereby agree as follows:", false, 3);
 
-  // ── Subject (bold) ──
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text(
-    `Subject: Service Agreement – ${values.party1Name || "First Party"} & ${values.party2Name || "Second Party"}`,
-    L, y
-  );
-  y += lh * 1.6;
+  p("1. DESCRIPTION OF SERVICES", true);
+  p("1.1 Scope of Services", true);
+  p(`Commencing on ${u(values.serviceStartDate, 12)}, the Service Provider shall provide the following services (collectively, the "Services") to the Client as detailed in the attached proposal and/or Schedule A, which forms an integral part of this Agreement: ${u(values.descriptionOfServices, 24)}.`);
+  p("1.2 Performance of Services", true);
+  p("The manner, method, and timing of performance of the Services, including working hours and modes of execution, shall be determined by the Service Provider, subject to the reasonable expectations and objectives of the Client. The Service Provider undertakes to devote such time, attention, and effort as may be reasonably necessary to fulfill its obligations in a professional and diligent manner.");
 
-  // ── Body ──
-  doc.setFont("helvetica", "normal");
+  p("2. COMPENSATION AND COMMISSION", true);
+  p("2.1 Commission Payments", true);
+  p(`In addition to any fixed or agreed remuneration, the Client shall pay commission to the Service Provider by ${u(values.commissionMeans, 16)}, calculated on the basis of ${u(values.commissionBasis, 16)}, as mutually agreed for the purposes of this Agreement.`);
+  p("2.2 Expense Reimbursement", true);
+  p("The Service Provider shall bear its own general out-of-pocket expenses unless otherwise agreed. The Client shall reimburse the Service Provider for the following approved expenses upon submission of reasonable proof:");
+  p(`- Travel expenses: ${u(values.travelExpenses, 16)}`);
+  p(`- Other expenses: ${u(values.otherExpenses, 16)}`);
 
-  doc.text("Dear Sir or Madam:", L, y);
-  y += lh;
+  p("3. SUPPORT SERVICES", true);
+  p("The Client shall provide the following support services to facilitate the performance of the Services, where applicable:");
+  p("- Office space");
+  p("- Staff and secretarial assistance");
+  p("- Office supplies");
+  p(`- Other support services: ${u(values.supportServices, 14)}`);
 
-  // Para 1 – mention party2Name underlined inline
-  const p1a = "I am writing to formally confirm the Service Agreement with ";
-  const p2name = values.party2Name || "the Second Party";
-  const p1b = ", effective immediately.";
-  doc.text(p1a, L, y);
-  const p2x = L + doc.getTextWidth(p1a);
-  doc.text(p2name, p2x, y);
-  inlineUnderline(doc, p2name, p2x, y);
-  doc.text(p1b, p2x + doc.getTextWidth(p2name), y);
-  y += lh;
+  p("4. TERM AND TERMINATION", true);
+  p(`This Agreement shall remain in force until the completion of the Services or until ${u(values.terminationDate, 12)}, whichever occurs first.`);
+  p(`It may be terminated by either Party by providing ${u(values.noticeDays, 6)} days' prior written notice.`);
+  p(`Upon expiry of the agreed term of ${u(values.termLength, 10)}, the term may renew for successive periods of the same duration unless terminated by written notice prior to expiry.`);
 
-  // Para 2
-  const body2 =
-    values.description ||
-    "The parties agree to provide services as described in the terms of this agreement. " +
-    "All obligations and deliverables shall be performed in a professional and timely manner.";
-  y = para(doc, body2, L, y, W, lh);
-  y += lh * 0.4;
+  p("5. RELATIONSHIP OF PARTIES", true);
+  p("The Service Provider shall perform the Services as an independent contractor. Nothing contained herein shall be deemed to create an employer-employee, agency, partnership, or joint venture relationship between the Parties. The Service Provider shall not be entitled to any employee benefits, including but not limited to health insurance or paid leave.");
+  p("6. DISCLOSURE OF CONFLICTS", true);
+  p(`The Service Provider shall promptly disclose any outside activity, interest, or participation that conflicts or may reasonably be deemed to conflict with the Client's best interests, particularly those relating to: ${u(values.conflictDescription, 14)}.`);
+  p("7. INDEMNIFICATION", true);
+  p("Each Party agrees to indemnify, defend, and hold harmless the other Party against any claims, losses, damages, costs, and expenses, including legal fees, arising out of the negligent acts, omissions, or misconduct of the indemnifying Party or its employees, agents, or representatives.");
+  p("8. EMPLOYEES", true);
+  p("Any employees or personnel engaged by the Service Provider to perform Services under this Agreement shall be bound by its provisions. Upon request, the Service Provider shall provide satisfactory evidence regarding the employment status of such individuals.");
+  p("9. INTELLECTUAL PROPERTY RIGHTS", true);
+  p("Any intellectual property created in the course of providing the Services shall vest in the Client unless otherwise agreed. Any pre-existing intellectual property of the Service Provider listed in Exhibit A shall remain the exclusive property of the Service Provider.");
+  p("10. OWNERSHIP OF SOCIAL MEDIA CONTACTS", true);
+  p("All social media contacts, followers, and digital assets created or acquired while performing Services for the Client shall remain the exclusive property of the Client.");
+  p("11. CONFIDENTIALITY", true);
+  p("The Service Provider acknowledges that it may have access to confidential and proprietary information belonging to the Client, including but not limited to trade secrets, technical information, customer data, and business methodologies. The Service Provider shall not disclose or use such information except as necessary for the fulfillment of this Agreement.");
+  p("12. RETURN OF RECORDS", true);
+  p("Upon termination, the Service Provider shall immediately return all property, documents, and records belonging to the Client.");
+  p("13. ASSIGNMENT", true);
+  p("Neither Party may assign its rights or obligations without prior written consent, save for assignment to a successor or affiliated entity in the event of merger or sale of substantially all assets.");
+  p("14. INTERRUPTION OF SERVICE (FORCE MAJEURE)", true);
+  p("Either Party shall be excused from performance delays caused by events beyond reasonable control, including natural disasters, governmental actions, or labor disputes.");
+  p("15. GOVERNING LAW", true);
+  p(`This Agreement shall be governed by and construed in accordance with the laws of ${u(values.governingLaw, 14)}.`);
+  p("16. WAIVER", true);
+  p("Failure by either Party to enforce any provision shall not constitute a waiver of future enforcement rights.");
+  p("17. ENTIRE AGREEMENT", true);
+  p("This Agreement constitutes the entire understanding between the Parties and supersedes all prior agreements.");
+  p("18. AMENDMENT", true);
+  p("This Agreement may only be amended by a written document signed by both Parties.");
+  p("19. SEVERABILITY", true);
+  p("If any provision is held invalid, the remaining provisions shall remain enforceable.");
+  p("20. NOTICES", true);
+  p("All notices shall be in writing and delivered to the addresses stated above.");
+  p("21. SIGNATORIES", true);
+  p("IN WITNESS WHEREOF, the Parties hereto have executed this Agreement as of the Effective Date first written above.");
 
-  // Para 3 – terms summary
-  const body3 =
-    `This agreement is governed by the laws of ${values.state || ""}, ${(values.country || "").toUpperCase()}. ` +
-    `Duration: ${durMap[values.duration] || values.duration || "N/A"}. ` +
-    `Termination notice: ${noticeMap[values.terminationNotice] || values.terminationNotice || "N/A"}. ` +
-    `Confidentiality: ${values.confidentiality === "yes" ? "Included" : "Not included"}. ` +
-    `Dispute resolution: ${disputeMap[values.disputeResolution] || values.disputeResolution || "N/A"}.`;
-  y = para(doc, body3, L, y, W, lh);
-  y += lh * 0.4;
+  p("For and on behalf of the Client:");
+  uf("Name", values.clientSignerName || values.clientName, 24);
+  uf("Designation", values.clientSignerDesignation, 20);
+  p("Signature: ________________________");
+  uf("Date", values.clientSignerDate, 14,);
 
-  // Para 4 – financial (if any)
-  if (values.paymentAmount) {
-    const body4 =
-      `Financial terms: A payment of ${values.paymentAmount} is agreed on a ` +
-      `${values.paymentSchedule || "N/A"} schedule.`;
-    y = para(doc, body4, L, y, W, lh);
-    y += lh * 0.4;
-  }
-
-  // Para 5 – additional (if any)
-  if (values.additionalTerms) {
-    y = para(doc, values.additionalTerms, L, y, W, lh);
-    y += lh * 0.4;
-  }
-
-  // Para 6 – closing
-  const body6 =
-    "Please contact us should you require any additional information to process this agreement. " +
-    "We appreciate your prompt attention to this matter and look forward to written confirmation " +
-    "of the terms herein.";
-  y = para(doc, body6, L, y, W, lh);
-  y += lh;
-
-  doc.text("Thank you for your cooperation.", L, y);
-  y += lh * 1.8;
-
-  doc.text("Sincerely,", L, y);
-  y += lh * 2.8;
-
-  // ── Signature block ──
-  const sigName = values.party1Signature || values.party1Name || "First Party";
-  doc.setFont("helvetica", "bold");
-  doc.text(sigName, L, y);
-  doc.line(L, y + 0.9, L + doc.getTextWidth(sigName), y + 0.9);
-  y += lh;
-
-  doc.setFont("helvetica", "normal");
-  doc.text(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, L, y); y += lh;
-  doc.text(`Email: ${values.party1Email || ""}`, L, y); y += lh;
-  doc.text(`Phone: ${values.party1Phone || ""}`, L, y); y += lh;
-
-  if (values.witnessName) {
-    y += lh * 0.5;
-    doc.text(`Witness: ${values.witnessName}`, L, y);
-  }
+  p("For and on behalf of the Service Provider:");
+  uf("Name", values.providerSignerName || values.providerName, 24);
+  uf("Designation", values.providerSignerDesignation, 20);
+  p("Signature: ________________________");
+  uf("Date", values.providerSignerDate, 14);
 
   doc.save("service_agreement.pdf");
 };
