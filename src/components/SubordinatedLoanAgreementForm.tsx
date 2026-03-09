@@ -4,574 +4,126 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Parties and Core Terms",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-        
-        ],
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "seniorCreditor", label: "Senior Creditor", type: "text", required: true },
+      { name: "juniorCreditor", label: "Junior Creditor", type: "text", required: true },
+      { name: "borrower", label: "Borrower", type: "text", required: true },
+      { name: "governingState", label: "Governing law state", type: "text", required: true },
+      { name: "seniorSignName", label: "Senior Creditor signing name", type: "text", required: false },
+      { name: "seniorSignDate", label: "Senior Creditor sign date", type: "date", required: true },
+      { name: "juniorSignName", label: "Junior Creditor signing name", type: "text", required: false },
+      { name: "juniorSignDate", label: "Junior Creditor sign date", type: "date", required: true },
     ],
   },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-            if (value=== "us") {
-              return [
-                { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-                { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-                { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-                { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-                { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-                { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-                { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-                { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-                { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-                { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-                { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-                { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-                { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-                { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-                { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-                { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-                { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-                { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-                { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-                { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-                { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-                { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-                { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-                { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-                { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-                { value: "DC", label: "District of Columbia" },
-              ];
-            } 
-            return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
   let y = 20;
-
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const bottom = 280;
+  const p = (t: string, b = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(t, tw);
+    if (y + lines.length * lh + gap > bottom) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
+    doc.setFont("helvetica", b ? "bold" : "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > bottom) {
+      doc.addPage();
+      y = 20;
+    }
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
+    doc.setFontSize(10.5);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
     }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
+    y += lh + gap;
   };
 
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
-  };
-
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
+  const title = "SUBORDINATED LOAN AGREEMENT";
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(12.5);
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  const title = "Subordinated Loan Agreement Confirmation Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  p(`This Subordinated Loan Agreement (this "Agreement") is entered into as of ${v.effectiveDate || "__________"} (the "Effective Date"), by and among:`);
+  p(`- ${v.seniorCreditor || "__________________"}, as senior creditor (the "Senior Creditor");`);
+  p(`- ${v.juniorCreditor || "__________________"}, as junior creditor (the "Junior Creditor"); and`);
+  p(`- ${v.borrower || "__________________"}, as borrower (the "Borrower").`);
+  p("The parties agree as follows:", false, 3);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  p("1. DEFINITIONS", true);
+  p('1.1 Junior Debt: "Junior Debt" means all present and future loans, advances, indebtedness, liabilities, and obligations of every kind and nature of the Borrower to the Junior Creditor, whether now existing or hereafter arising, whether direct or indirect, absolute or contingent, matured or unmatured, secured or unsecured.');
+  p('1.2 Senior Debt: "Senior Debt" means all present and future indebtedness, liabilities, and obligations of the Borrower to the Senior Creditor, including principal, interest (including post-insolvency accrual), fees, costs, expenses, and attorneys\' fees.', false, 3);
+  p("2. SUBORDINATION OF PAYMENT", true);
+  p("The Junior Creditor agrees payment of Junior Debt is fully and irrevocably subordinated to prior payment in full of all Senior Debt. Until Senior Debt is indefeasibly paid in full in cash, no payment/distribution shall be made on Junior Debt except as expressly permitted.", false, 3);
+  p("3. DEFAULT UNDER SENIOR DEBT", true);
+  p("Upon and during any default with respect to Senior Debt, Junior Creditor shall not demand payment of Junior Debt, commence/participate in collection action, or receive/accept payment from Borrower on account of Junior Debt.", false, 3);
+  p("4. PAYMENTS HELD IN TRUST", true);
+  p("Any payment/distribution received by Junior Creditor in violation of this Agreement is deemed held in trust for Senior Creditor and must be immediately delivered to Senior Creditor for application to Senior Debt.", false, 3);
+  p("5. NO INDEPENDENT ACTION", true);
+  p("Until Senior Debt is paid in full, Junior Creditor shall not commence/prosecute/participate in insolvency or similar proceeding against Borrower unless Senior Creditor joins or has been paid in full prior to such action.", false, 3);
+  p("6. BANKRUPTCY; ATTORNEY-IN-FACT", true);
+  p("In any bankruptcy/insolvency involving Borrower, Junior Creditor irrevocably appoints Senior Creditor as attorney-in-fact to file proofs of claim and receive/apply distributions attributable to Junior Debt as required hereunder, to extent Junior Creditor fails/refuses to do so.", false, 3);
+  p("7. SUBORDINATION OF LIENS", true);
+  p("Any lien/security interest/collateral held by Junior Creditor securing Junior Debt remains junior and subordinate in all respects to liens/security interests securing Senior Debt, regardless of perfection order.", false, 3);
+  p("8. RIGHTS OF SENIOR CREDITOR", true);
+  p("Senior Creditor may, without notice/consent of Junior Creditor, extend/renew/modify Senior Debt, waive/compromise/settle Senior Debt, release/substitute collateral, or amend loan documents. No such action impairs subordination provisions.", false, 3);
+  p("9. AFFIRMATIVE COVENANTS OF JUNIOR CREDITOR", true);
+  p("Junior Creditor shall reflect subordination in books/records/financial statements and take actions reasonably requested by Senior Creditor to evidence/enforce subordination.", false, 3);
+  p("10. NEGATIVE COVENANTS OF JUNIOR CREDITOR", true);
+  p("Until Senior Debt is paid in full, Junior Creditor shall not, without prior written consent of Senior Creditor: materially waive/release/modify Junior Debt or related security; compromise/settle Junior Debt or allow setoff/counterclaim; exchange Junior Debt for equity/ownership interests.", false, 3);
+  p("11. ASSIGNMENT", true);
+  p("11.1 Junior Creditor: no assignment/transfer while Senior Debt remains outstanding unless expressly subject to this Agreement; binding on successors/assigns.");
+  p("11.2 Senior Creditor: may assign this Agreement with assignment/transfer of Senior Debt; this Agreement benefits Senior Creditor and successors/assigns.", false, 3);
+  p("12. GENERAL PROVISIONS", true);
+  p(`12.1 Governing Law: This Agreement is governed by laws of the State of ${v.governingState || "__________"}.`);
+  p("12.2 Headings: headings are for convenience only and do not affect interpretation.", false, 3);
+  p("13. EXECUTION", true);
+  p("IN WITNESS WHEREOF, parties have executed this Agreement as of the Effective Date first written above.");
+  p("SENIOR CREDITOR:", true);
+  uf("Name", v.seniorSignName);
+  p("Signature: _____________________");
+  uf("Date", v.seniorSignDate, 22, 2.6);
+  p("JUNIOR CREDITOR:", true);
+  uf("Name", v.juniorSignName);
+  p("Signature: _____________________");
+  uf("Date", v.juniorSignDate);
 
-  y += 15;
-
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Subordinated Loan Agreement Confirmation",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Parties
-const lenderName = values.party1Name || "________";
-const borrowerName = values.party2Name || "________";
-
-
-
-// Introduction
-addParagraph(
-  "This letter confirms the terms of a subordinated loan arrangement between the parties identified below."
-);
-
-// Parties identification
-addParagraphWithUnderline(
-  "Lender: ",
-  lenderName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Borrower: ",
-  borrowerName,
-  ""
-);
-
-
-addParagraph(
-  "The parties agree that this loan shall be subordinate in right of payment to all present and future obligations of the Borrower to any senior lender identified above or otherwise designated as senior indebtedness."
-);
-
-addParagraph(
-  "No payment of principal or interest shall be made on this subordinated loan if such payment would violate the terms of any senior debt agreement or if the Borrower is in default under any senior obligation."
-);
-
-// Purpose and acknowledgment
-addParagraph(
-  "The Borrower acknowledges the obligation to repay the loan in accordance with the agreed terms, subject to the subordination provisions described herein."
-);
-
-addParagraph(
-  "This agreement is intended to formalize the subordination of the loan and may be relied upon by senior creditors and other interested parties."
-);
-
-// Closing
-addParagraph(
-  "Please retain this document for your records and contact the undersigned if further clarification or documentation is required."
-);
-
-
-  y += 4;
-  addParagraph("Thank you for your cooperation.");
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 10;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
-
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
-  );
-
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== SAVE =====
   doc.save("subordinated_loan_agreement.pdf");
 };
-
 
 export default function SubordinatedLoanAgreementForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Subordinated Agreement"
+      title="Subordinated Loan Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="subordinatedagreement"
+      documentType="subordinatedloanagreement"
     />
   );
 }

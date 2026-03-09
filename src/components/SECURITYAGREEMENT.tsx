@@ -4,104 +4,118 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Security Agreement Details",
+    label: "Parties and Security Terms",
     fields: [
-      { name: "lenderName", label: "Lender/Secured Party name", type: "text", required: false },
-      { name: "borrowerName", label: "Borrower/Debtor name", type: "text", required: false },
-      { name: "loanAmount", label: "Total loan amount", type: "text", required: false },
-      { name: "collateralDescription", label: "Collateral description", type: "text", required: false },
-      { name: "collateralLocation", label: "Collateral location", type: "text", required: false },
-      { name: "governingLaw", label: "Governing law", type: "text", required: false },
+      { name: "agreementDate", label: "Agreement date text", type: "text", required: true },
+      { name: "debtorName", label: "Debtor name", type: "text", required: true },
+      { name: "debtorAddressLine", label: "Debtor address line", type: "text", required: true },
+      { name: "securedPartyName", label: "Secured Party name", type: "text", required: true },
+      { name: "securedAddressLine", label: "Secured Party address line", type: "text", required: true },
+      { name: "principalAmount", label: "Promissory note principal amount", type: "text", required: true },
+      { name: "premisesAddress", label: "Premises address (for collateral)", type: "text", required: true },
+      { name: "debtorNoticeAddress", label: "Debtor notice address", type: "text", required: true },
+      { name: "securedNoticeAddress", label: "Secured Party notice address", type: "text", required: true },
+      { name: "governingLaw", label: "Governing law jurisdiction", type: "text", required: true },
+      { name: "performableLocation", label: "Obligations performable location", type: "text", required: true },
+      { name: "execEntity1", label: "Entity 1 in execution clause", type: "text", required: false },
+      { name: "execSigner1", label: "Signer 1 name", type: "text", required: false },
+      { name: "execTitle1", label: "Signer 1 title", type: "text", required: false },
+      { name: "execEntity2", label: "Entity 2 in execution clause", type: "text", required: false },
+      { name: "execSigner2", label: "Signer 2 name", type: "text", required: false },
+      { name: "execTitle2", label: "Signer 2 title", type: "text", required: false },
+      { name: "signDate", label: "Signature date", type: "date", required: true },
     ],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
   const w = 210;
   const m = 18;
   const tw = w - m * 2;
   const lh = 5.6;
-  const limit = 280;
   let y = 20;
-
-  const p = (text: string, bold = false, gap = 1.8) => {
-    const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
+  const bottom = 280;
+  const p = (t: string, b = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(t, tw);
+    if (y + lines.length * lh + gap > bottom) {
       doc.addPage();
       y = 20;
     }
-    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFont("helvetica", b ? "bold" : "normal");
     doc.setFontSize(10.5);
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
 
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > bottom) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
+  const title = "SECURITY AGREEMENT";
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12.5);
-  const title = "SECURITY AGREEMENT";
   doc.text(title, w / 2, y, { align: "center" });
   const tW = doc.getTextWidth(title);
-  doc.setLineWidth(0.35);
   doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
 
-  if (values.lenderName) p(`Secured Party/Lender: ${values.lenderName}`);
-  if (values.borrowerName) p(`Debtor/Borrower: ${values.borrowerName}`);
-  if (values.loanAmount) p(`Principal Debt Amount: ${values.loanAmount}`);
-  if (values.collateralDescription) p(`Collateral: ${values.collateralDescription}`);
-  if (values.collateralLocation) p(`Collateral Location: ${values.collateralLocation}`);
-  if (values.governingLaw) p(`Governing Law: ${values.governingLaw}`, false, 3);
+  p(`This Security Agreement (this "Agreement") is made on ${v.agreementDate || ""}, by and between ${v.debtorName || "----"}, of ${v.debtorAddressLine || "__________, __________, __________"}, hereinafter referred to as the "Debtor," and ${v.securedPartyName || "__________"}, of ${v.securedAddressLine || "__________, __________, __________"}, hereinafter referred to as the "Secured Party."`);
+  p('The Debtor and the Secured Party are sometimes referred to individually as a "Party" and collectively as the "Parties."');
+  p("The Parties agree as follows:", false, 3);
 
-  p("Other Names:", true);
-  p("- Collateral Agreement");
-  p("- Vehicle Security Agreement");
-  p("- Security Agreement Form", false, 3);
-
-  p("What is a Security Agreement?", true);
-  p("A Security Agreement is a legally binding contract that grants the lender (secured party) a legal interest in specific personal property (collateral) if the borrower fails to repay a loan. It protects the lender and provides repayment security through pledged assets.");
-  p("If you are a borrower, the lender may claim collateral upon default. If you are a lender, this draft Security Agreement provides legal assurance and financial protection.");
-  p("This Security Agreement on Legalgram allows clear definition of collateral, lender rights, borrower obligations, and legal protections for both parties.");
-  p("You can download Security Agreement in the best format from Legalgram for personal, business, or commercial transactions.", false, 3);
-
-  p("What is Security or Collateral?", true);
-  p("Collateral is personal property used to guarantee a loan, such as vehicles, machinery, jewelry, paintings, coin collections, equipment, and valuable personal property.");
-  p("Note: To secure debt using real estate/land, use a Mortgage Deed or Deed of Trust instead of a Security Agreement.", false, 3);
-
-  p("When to Use a Security Agreement?", true);
-  p("✔ You are lending money and want collateral protection");
-  p("✔ You are borrowing money and lender requires security");
-  p("✔ You want a legally enforceable loan structure");
-  p("✔ You need a formal collateral agreement");
-  p("✔ You want a professional draft Security Agreement", false, 3);
-
-  p("Why Download a Security Agreement from Legalgram?", true);
-  p("- Legally binding and enforceable");
-  p("- Best format Security Agreement from Legalgram");
-  p("- Professionally structured legal template");
-  p("- Easy to edit and customize");
-  p("- Ready-to-sign legal document");
-  p("- Trusted format for lenders and borrowers");
-  p("- Free download Security Agreement");
-  p("- Secure and reliable document format");
-  p("- Valid for personal and business use");
-  p("Download Security Agreement on Legalgram and get a professionally drafted legal document in minutes.", false, 3);
-
-  p("Security Agreement FAQs", true);
-  p("How do you write a Security Agreement?");
-  p("With Legalgram you typically provide: total loan amount, collateral description, collateral location, governing law, lender details, and borrower details.");
-  p("Does a Security Agreement have to be notarized?");
-  p("Notarization is generally not mandatory, but highly recommended for stronger legal protection and dispute prevention.", false, 3);
-
-  p("Download Security Agreement - Best Legal Format from Legalgram", true);
-  p("Get your Security Agreement, Collateral Agreement, or Vehicle Security Agreement today:");
-  p("✔ Free download Security Agreement");
-  p("✔ Best format this Security Agreement from Legalgram");
-  p("✔ Editable legal template");
-  p("✔ Ready for signing");
-  p("✔ Professional structure");
-  p("✔ Easy customization");
-  p("✔ Trusted by users");
+  p("1. Creation of Security Interest", true);
+  p(`The Secured Party shall secure payment/performance of Debtor's promissory note in principal amount of ${v.principalAmount || "__________"}, together with all other liabilities/obligations of Debtor to Secured Party, now existing or hereafter arising (collectively, "Obligations"). Debtor grants Secured Party a security interest in Collateral described in Paragraph 2 to secure Obligations under Paragraph 4.`);
+  p("2. Collateral", true);
+  p("Collateral consists of: all machinery/equipment/tools/furniture/fixtures/office equipment now owned or hereafter acquired; all inventory/goods/materials/supplies/products held for sale/lease; and all accounts/receivables/contract rights/general intangibles and proceeds including cash/deposits/insurance proceeds/replacements/substitutions.");
+  p("3. Security Interest", true);
+  p(`Debtor grants Secured Party security interest in Collateral now owned or hereafter acquired, now or hereafter located at ${v.premisesAddress || "__________, __________, __________, __________"} or used in connection therewith, together with all proceeds. Debtor further assigns security interest in any other rights/interests now held or later acquired.`);
+  p("4. Warranties and Covenants", true);
+  p("Debtor covenants: pay sums evidenced by promissory note(s) per terms; do not remove Collateral without prior written consent; keep Collateral free of unpaid charges/taxes/liens/encumbrances; maintain insurance against fire/theft/other risks in required amounts; make repairs/replacements/additions/improvements to maintain good working order.");
+  p("5. Default", true);
+  p("Debtor is in default upon failure to comply with any obligation under this Agreement. Upon default, Secured Party may declare all Obligations immediately due and payable and exercise all rights/remedies of a secured party under applicable law.");
+  p("6. Waiver", true);
+  p("No waiver by Secured Party of any default operates as waiver of any other default or same default on future occasion.");
+  p("7. Notices", true);
+  p("Notices must be in writing and may be delivered personally or by registered/certified mail, postage prepaid, return receipt requested. Notice deemed given upon delivery if personal, or upon mailing if by registered/certified mail.");
+  p(`Debtor notice address: ${v.debtorNoticeAddress || "__________, __________, __________, __________"}.`);
+  p(`Secured Party notice address: ${v.securedNoticeAddress || "__________, __________, __________, __________"}.`);
+  p("Either Party may change notice address by written notice.");
+  p("8. Governing Law", true);
+  p(`This Agreement is governed by laws of ${v.governingLaw || "__________"}, and obligations are performable in ${v.performableLocation || "__________"}.`);
+  p("9. Binding Effect", true);
+  p("Agreement binds and benefits Parties and respective heirs, executors, administrators, legal representatives, successors, and assigns as permitted.");
+  p("10. Legal Construction (Severability)", true);
+  p("If any provision is invalid/illegal/unenforceable, remaining provisions remain in full force and Agreement is construed as if invalid provision were omitted.");
+  p("11. Prior Agreements Superseded", true);
+  p("This Agreement is entire agreement on subject matter and supersedes all prior or contemporaneous oral/written agreements, understandings, or representations.");
+  p("12. Amendments", true);
+  p("This Agreement may be amended only by written agreement executed by both Parties.");
+  p("13. Attorney's Fees", true);
+  p("In any action at law/equity to enforce or interpret this Agreement, prevailing Party is entitled to recover reasonable attorneys' fees in addition to other relief.");
+  p("14. Execution", true);
+  p(`This Agreement shall be executed on behalf of ${v.execEntity1 || "__________"} by ${v.execSigner1 || "__________"}, its ${v.execTitle1 || "__________"}, and on behalf of ${v.execEntity2 || "__________"} by ${v.execSigner2 || "__________"}, its ${v.execTitle2 || "__________"}, and effective as of date first written above.`);
+  p("IN WITNESS WHEREOF, the Parties have executed this Security Agreement as of the date first written above.");
+  p("By: __________________________");
+  uf("Date", v.signDate);
 
   doc.save("security_agreement.pdf");
 };

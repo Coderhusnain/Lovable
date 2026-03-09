@@ -4,87 +4,97 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Privacy Request Details",
+    label: "Removal Request",
     fields: [
-      { name: "requesterName", label: "Requester name", type: "text", required: false },
-      { name: "companyName", label: "Company name", type: "text", required: false },
-      { name: "requestDate", label: "Request date", type: "date", required: false },
+      { name: "requestDate", label: "Date", type: "date", required: true },
+      { name: "toName", label: "To", type: "text", required: true },
+      { name: "toAddress", label: "Address", type: "text", required: true },
+      { name: "requesterName", label: "Requester full name", type: "text", required: true },
+      { name: "companyName", label: "Company to delete data", type: "text", required: true },
+      { name: "categories", label: "Categories of personal information", type: "textarea", required: true },
+      { name: "contactPhone", label: "Contact phone", type: "text", required: false },
+      { name: "contactEmail", label: "Contact email", type: "email", required: false },
+      { name: "signDate", label: "Signature date", type: "date", required: true },
     ],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
   const w = 210;
   const m = 18;
   const tw = w - m * 2;
   const lh = 5.6;
-  const limit = 280;
   let y = 20;
-
-  const p = (text: string, bold = false, gap = 1.8) => {
-    const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
+  const bottom = 280;
+  const p = (t: string, b = false, gap = 1.8) => {
+    const lines = doc.splitTextToSize(t, tw);
+    if (y + lines.length * lh + gap > bottom) {
       doc.addPage();
       y = 20;
     }
-    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFont("helvetica", b ? "bold" : "normal");
     doc.setFontSize(10.5);
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
 
+  const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
+    const shown = (value || "").trim();
+    const labelText = `${label}: `;
+    if (y + lh + gap > bottom) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+    }
+    y += lh + gap;
+  };
+
+  const title = "REQUEST TO REMOVE PERSONAL INFORMATION";
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12.5);
-  const title = "REQUEST TO REMOVE PERSONAL INFORMATION AGREEMENT";
   doc.text(title, w / 2, y, { align: "center" });
   const tW = doc.getTextWidth(title);
-  doc.setLineWidth(0.35);
   doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
 
-  if (values.requestDate) p(`Date: ${values.requestDate}`);
-  if (values.requesterName) p(`Requester: ${values.requesterName}`);
-  if (values.companyName) p(`Company: ${values.companyName}`, false, 3);
+  uf("Date", v.requestDate);
+  uf("To", v.toName);
+  uf("Address", v.toAddress);
+  p("Subject: Formal Request for Deletion of Personal Data");
+  p("Dear Sir or Madam:");
+  p(`I, ${v.requesterName || "________________________"}, hereby formally request that ${v.companyName || "________________________"} delete and remove all personal data relating to me that is held, processed, or stored by your company, whether in electronic or physical form.`);
+  p("This request applies, without limitation, to the following categories of personal information:");
+  p(v.categories || "________________________________________\n________________________________________\n________________________________________");
+  p("Please confirm in writing that the requested deletion has been completed. If any portion of my personal data cannot be deleted due to legal, contractual, or regulatory obligations, kindly provide written justification identifying the specific basis for retention.");
+  p(`Should you require any additional information to process this request, I may be contacted at ${v.contactPhone || "________________________"} or ${v.contactEmail || "________________________"}.`);
+  p("Thank you for your prompt attention to this matter.");
+  p("Sincerely,");
+  p("Signature: ________________________________");
+  uf("Printed Name", v.requesterName);
+  uf("Date", v.signDate, 22, 4);
 
-  p("What is a Request to Remove Personal Information Agreement?", true);
-  p("A Request to Remove Personal Information Agreement is a formal document sent to companies requesting deletion of personal data. Also known as a Delete Personal Information Letter, this draft helps protect privacy and supports compliance with deletion requests.");
-  p("Whether you want to remove personal information from websites, online accounts, or business records, this agreement on Legalgram is designed to communicate your rights clearly and legally.");
-  p("Download the best format from Legalgram and safeguard your personal information.", false, 3);
+  p("Request to Remove Personal Information - Checklist", true);
+  p("Legal Formalities");
+  p("- [ ] This request must be signed by the individual whose personal data is the subject of the request.");
+  p("Distribution");
+  p("- [ ] All parties named in this document should receive a copy of the signed request.");
+  p("- [ ] Retain a copy of the signed document for personal records.");
+  p("Legal Assistance");
+  p("- If clarification is required regarding applicable data protection rights or obligations, consult a qualified legal professional or data privacy counsel.");
 
-  p("When to Use a Request to Remove Personal Information Agreement", true);
-  p("- You want websites or businesses to delete your personal information.");
-  p("- You are concerned about online privacy or data protection.");
-  p("- You need a written record to request deletion under CCPA or other privacy laws.", false, 3);
-
-  p("Why Use Legalgram for Your Request", true);
-  p("- Draft Request to Remove Personal Information agreement easily.");
-  p("- Legally recognized deletion-request structure.");
-  p("- Includes personal details, company contact details, and privacy request content.");
-  p("- Best format from Legalgram with professional, enforceable layout.");
-  p("- Download in PDF or Word for email, print, or sharing.");
-  p("Using this agreement increases the likelihood that companies comply with your privacy requests.", false, 3);
-
-  p("Request to Remove Personal Information Agreement FAQs", true);
-  p("Do I need a document to request removal?");
-  p("Yes. A formal written request helps ensure companies treat it seriously.");
-  p("What is the CCPA?");
-  p("The California Consumer Privacy Act allows eligible California residents to request deletion of personal information from qualifying businesses.");
-  p("How can I remove personal information online for free?");
-  p("- Delete unused accounts");
-  p("- Restrict phone permissions");
-  p("- Enable privacy settings on browsers/search/social platforms");
-  p("Can I edit or share my agreement?");
-  p("Yes. You can store securely, download, print, and share as needed.", false, 3);
-
-  p("Related Consumer Protection Documents on Legalgram", true);
-  p("- Complaint Letter to BBB or Attorney General");
-  p("- Demand for Delivery");
-  p("- Membership Cancellation Letter");
-  p("- Complaint Letter to a Company");
-  p("Download your Request to Remove Personal Information Agreement on Legalgram in the best format and protect your privacy.");
-
-  doc.save("request_remove_personal_information_agreement.pdf");
+  doc.save("request_to_remove_personal_information.pdf");
 };
 
 export default function RemovePersonalInfoRequestForm() {
