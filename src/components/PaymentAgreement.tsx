@@ -1,98 +1,88 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Payment Agreement Info",
+    label: "Loan Terms",
     fields: [
-      { name: "requesterName", label: "Requester name (optional)", type: "text", required: false },
-      { name: "loanAmount", label: "Loan amount (optional)", type: "text", required: false },
-      { name: "interestRate", label: "Interest rate (optional)", type: "text", required: false },
-      { name: "repaymentType", label: "Repayment type (optional)", type: "text", required: false },
-      { name: "collateral", label: "Collateral details (optional)", type: "text", required: false },
+      { name: "agreementDate", label: "Agreement date", type: "date", required: true },
+      { name: "loanAmount", label: "Loan amount", type: "text", required: true },
+      { name: "borrowerName", label: "Borrower name", type: "text", required: true },
+      { name: "borrowerAddress", label: "Borrower address", type: "text", required: true },
+      { name: "lenderName", label: "Lender name", type: "text", required: true },
+      { name: "lenderAddress", label: "Lender address", type: "text", required: true },
+      { name: "monthlyInstallment", label: "Monthly installment", type: "text", required: true },
+      { name: "firstPaymentDate", label: "First payment date", type: "date", required: true },
+      { name: "maturityDate", label: "Maturity date", type: "date", required: true },
+      { name: "defaultInterest", label: "Default interest rate (%)", type: "text", required: true },
+      { name: "lateCharge", label: "Late charge amount", type: "text", required: true },
+      { name: "lateDays", label: "Late days threshold", type: "text", required: true },
+      { name: "governingLaw", label: "Governing law", type: "text", required: true },
+    ],
+  },
+  {
+    label: "Signatures",
+    fields: [
+      { name: "executionDay", label: "Execution day", type: "text", required: true },
+      { name: "executionMonth", label: "Execution month", type: "text", required: true },
+      { name: "executionYear", label: "Execution year", type: "text", required: true },
+      { name: "executionPlace", label: "Execution place", type: "text", required: true },
+      { name: "borrowerSignature", label: "Borrower signature (typed)", type: "text", required: true },
+      { name: "borrowerDate", label: "Borrower date", type: "date", required: true },
+      { name: "lenderSignature", label: "Lender signature (typed)", type: "text", required: true },
+      { name: "lenderDate", label: "Lender date", type: "date", required: true },
+      { name: "assigneeName", label: "Assignee name (optional)", type: "text", required: false },
+      { name: "assigneeLocation", label: "Assignee city/state/country (optional)", type: "text", required: false },
+      { name: "assignmentDate", label: "Assignment date (optional)", type: "date", required: false },
     ],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const w = 210;
-  const m = 18;
-  const tw = w - m * 2;
-  const lh = 5.6;
-  const limit = 280;
-  let y = 20;
-
-  const p = (text: string, bold = false, gap = 1.8) => {
-    const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
-      doc.addPage();
-      y = 20;
-    }
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(10.5);
-    doc.text(lines, m, y);
-    y += lines.length * lh + gap;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  let y = 18;
+  const L = 16, W = 178, LH = 5.7;
+  const p = (t: string, b = false, gap = 1.8) => {
+    doc.setFont("helvetica", b ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    const lines = doc.splitTextToSize(t, W);
+    if (y + lines.length * LH > 282) { doc.addPage(); y = 18; }
+    doc.text(lines, L, y); y += lines.length * LH + gap;
   };
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12.5);
+  const uf = (label: string, value?: string) => {
+    doc.text(`${label}: `, L, y);
+    const x = L + doc.getTextWidth(`${label}: `);
+    const t = (value || "").trim();
+    if (t) { doc.text(t, x, y); doc.line(x, y + 1, x + Math.max(24, doc.getTextWidth(t)), y + 1); }
+    else doc.text("________________________", x, y);
+    y += LH + 1;
+  };
   const title = "PAYMENT AGREEMENT";
-  doc.text(title, w / 2, y, { align: "center" });
-  const tW = doc.getTextWidth(title);
-  doc.setLineWidth(0.35);
-  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
-  y += 9;
-
-  p("Other Names:", true);
-  p("Repayment Agreement");
-  p("Installment Agreement");
-  p("Payment Contract");
-  p("Contract Payment Agreement", false, 3);
-  p("What is a Payment Agreement?", true);
-  p("A Payment Agreement is a legally binding contract used to document and manage the repayment of a loan or outstanding amount. This payment agreement format clearly outlines the terms under which money is borrowed or lent, helping both parties avoid confusion and future disputes.");
-  p("A well-drafted payment agreement typically includes the total loan amount, applicable interest rate (if any), repayment schedule, installment details, and other important conditions. Whether you are lending money or borrowing it, using a draft payment agreement ensures transparency and legal protection.");
-  p("Agreements can sometimes fall apart - especially when money is involved. That's why having a written payment agreement is essential. A properly structured agreement gives both parties peace of mind and acts as proof of obligation if disputes arise. Creating a payment agreement on Legalgram is a smart first step toward a smooth and secure financial arrangement.");
-  p("You can now download a payment agreement from Legalgram in the best format of payment agreement, ready to use and customize according to your needs.", false, 3);
-  p("When Should You Use a Payment Agreement?", true);
-  p("You should use a payment agreement if:");
-  p("- You plan to borrow money");
-  p("- You are thinking about lending money");
-  p("- You want to prepare an amortization table");
-  p("- You need to calculate and document monthly payments and interest");
-  p("- You want a legally enforceable record of money owed");
-  p("This payment agreement draft is suitable for personal loans, business loans, and installment-based repayments from Legalgram.", false, 3);
-  p("Sample Payment Agreement", true);
-  p("The terms in your payment agreement document will automatically update based on the information you provide.");
-  p("Yes Customized over 320,000+ times");
-  p("Yes Legally binding and enforceable");
-  p("Yes Reviewed and trusted by legal professionals");
-  p("Yes Option to consult a legal expert for review");
-  p("Yes Sign online for free");
-  p("You can download this payment agreement instantly in a professional and legally accepted format from Legalgram", false, 3);
-  p("Payment Agreement FAQs", true);
-  p("How do I write a Payment Agreement?");
-  p("You can easily create a payment agreement online by answering a few simple questions from Legalgram. To prepare a complete and accurate payment agreement draft, you should consider:");
-  p(`- Will the borrower pay interest on the loan? ${values.interestRate ? `(Selected: ${values.interestRate})` : ""}`);
-  p(`- How will the payment agreement be paid (lump sum or installments)? ${values.repaymentType ? `(Selected: ${values.repaymentType})` : ""}`);
-  p("- Is there an early payment discount?");
-  p(`- Will the payment agreement be secured with collateral (property or assets)? ${values.collateral ? `(Selected: ${values.collateral})` : ""}`);
-  p("If you don't have all the details ready, you can save your payment agreement and complete it later.");
-  p("How do I make a Payment Agreement?");
-  p("Making a payment agreement is quick and straightforward. Start with a reliable payment agreement format, define the loan terms, and ensure both parties sign the document. Once signed, the payment agreement becomes legally enforceable.");
-  p("You can create, customize, and download a payment agreement within minutes from Legalgram.");
-  p("How do you write a legal document for money owed?");
-  p("A payment agreement is the most effective legal document for money owed. It clearly states the loan amount, interest rate, repayment terms, and other conditions. Using a professionally prepared draft payment agreement ensures clarity and legal validity.");
-  p("With Legalgram, you can access a free download payment agreement, prepared in the best format of payment agreement, ready for immediate use.", false, 3);
-  p("Download Payment Agreement", true);
-  p("Get your payment agreement on Legalgram today.");
-  p("Yes Free download");
-  p("Yes Editable format");
-  p("Yes Legally compliant");
-  p("Yes Suitable for personal and business use");
-  p("Download Payment Agreement now and protect your financial interests with confidence.");
-
+  doc.setFont("helvetica", "bold"); doc.setFontSize(13);
+  doc.text(title, 105, y, { align: "center" });
+  const tw = doc.getTextWidth(title); doc.line(105 - tw / 2, y + 1, 105 + tw / 2, y + 1); y += 10;
+  p(`Loan Amount: $${v.loanAmount || "<insert amount>"}  |  Date: ${v.agreementDate || "__________"}`);
+  p(`FOR VALUE RECEIVED, ${v.borrowerName || "Borrower"}, residing at ${v.borrowerAddress || "__________"}, promises to pay ${v.lenderName || "Lender"} at ${v.lenderAddress || "__________"}, principal sum of $${v.loanAmount || "<insert amount>"}.`);
+  p("I. TERMS OF REPAYMENT", true);
+  p(`Installments: $${v.monthlyInstallment || "<insert amount>"} monthly starting ${v.firstPaymentDate || "__________"} through ${v.maturityDate || "<insert date>"} (Maturity Date).`);
+  p(`Unpaid principal after maturity accrues interest at ${v.defaultInterest || "-----"}% per annum until paid in full.`);
+  p("Payments apply first to accrued interest, then principal.");
+  p(`Late charge: $${v.lateCharge || "<insert amount>"} for installments unpaid more than ${v.lateDays || "___"} day(s) after due date.`);
+  p("Lender may accelerate entire unpaid balance on payment default.");
+  p("II. PREPAYMENT", true); p("Borrower may prepay in whole or part before maturity without penalty.");
+  p("III. COLLECTION COSTS", true); p("Borrower pays reasonable collection costs, including attorney fees.");
+  p("IV. EVENTS OF DEFAULT", true);
+  p("Default events include nonpayment, liquidation/dissolution/incompetency/death, insolvency/bankruptcy proceedings, receiver appointment, assignment for creditors, material misrepresentation, or sale/transfer of material business/assets.");
+  p("V. SEVERABILITY", true); p("Invalid/unenforceable provisions do not affect remaining terms.");
+  p("VI. MISCELLANEOUS", true); p("US lawful currency; borrower waives presentment/protest/notices; no waiver by delay/acceptance of late partial payments; amendments must be written.");
+  p("VII. GOVERNING LAW", true); p(`Governed by laws of ${v.governingLaw || "__________"}.`);
+  p("VIII. EXECUTION", true);
+  p(`Executed on this ${v.executionDay || "___"} day of ${v.executionMonth || "__________"}, ${v.executionYear || "___"}, at ${v.executionPlace || "__________"}.`);
+  uf("BORROWER - Signature", v.borrowerSignature); uf("Date", v.borrowerDate);
+  y += 1.2; uf("LENDER - Signature", v.lenderSignature); uf("Date", v.lenderDate);
+  p("ASSIGNMENT (complete only if assigning this Agreement)", true);
+  p(`For value received, assignor transfers rights in this Payment Agreement to ${v.assigneeName || "__________"}, of ${v.assigneeLocation || "__________"}.`);
+  uf("Dated", v.assignmentDate);
   doc.save("payment_agreement.pdf");
 };
 
@@ -107,3 +97,4 @@ export default function PaymentAgreement() {
     />
   );
 }
+
