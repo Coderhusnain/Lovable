@@ -1,403 +1,123 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Affiant",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "affiantName", label: "Affiant full name", type: "text", required: true },
+      { name: "unemploymentStatement", label: "Employment statement", type: "text", required: true, placeholder: "I am unemployed" },
     ],
   },
   {
-    label: "State/Province",
+    label: "Financial Summary",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "incomeSource", label: "Income source", type: "text", required: true },
+      { name: "incomeDescription", label: "Income description", type: "text", required: true },
+      { name: "incomeAmount", label: "Gross monthly income amount", type: "text", required: true },
+      { name: "deductionsSummary", label: "Monthly deductions summary", type: "textarea", required: true },
+      { name: "netMonthlyIncome", label: "Present net monthly income", type: "text", required: true },
+      { name: "averageMonthlyExpense", label: "Average monthly expense", type: "text", required: true },
+      { name: "householdExpenses", label: "Household expenses summary", type: "textarea", required: true },
+      { name: "debtsSummary", label: "Debt details summary", type: "textarea", required: true },
+      { name: "assetsSummary", label: "Assets owned summary", type: "textarea", required: true },
+      { name: "totalMonthlyExpenses", label: "Total monthly expenses", type: "text", required: true },
+      { name: "totalAssets", label: "Total assets", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Notary",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
+      { name: "affidavitDate", label: "Affidavit date", type: "date", required: true },
+      { name: "notaryDate", label: "Notary sworn date", type: "date", required: true },
+      { name: "notaryName", label: "Notary public name", type: "text", required: true },
+      { name: "notaryCommissionExpires", label: "Notary commission expires", type: "text", required: false },
     ],
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
-
-  const checkPageBreak = (s = 10) => {
-    if (y + s > pageHeight - margin) { doc.addPage(); y = margin; }
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.4;
+  const limit = 282;
+  let y = 20;
+  const u = (v?: string, n = 14) => (v || "").trim() || "_".repeat(n);
+  const ensure = (n = 8) => {
+    if (y + n > limit) {
+      doc.addPage();
+      y = 20;
+    }
   };
-
-  const addField = (label: string, value: string, min = 80) => {
-    checkPageBreak();
-    doc.setFontSize(11);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const x = margin + lw + 3;
-    doc.text(value || "", x, y);
-    doc.line(x, y + 1, x + (value ? doc.getTextWidth(value) : min), y + 1);
-    y += 9;
+  const p = (text: string, bold = false, gap = 1.6) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
-
-  const addParagraph = (t: string) => {
-    checkPageBreak(12);
-    const lines = doc.splitTextToSize(t, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
+  const uf = (label: string, value?: string) => {
+    ensure(lh + 2);
+    const l = `${label}: `;
+    doc.text(l, m, y);
+    const x = m + doc.getTextWidth(l);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(20, doc.getTextWidth(t)), y + 1);
+    } else {
+      doc.text("________________________", x, y);
+    }
+    y += lh + 0.8;
   };
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("FINANCIAL SUPPORT AFFIDAVIT", pageWidth / 2, y, { align: "center" });
-  y += 18;
+  doc.setFontSize(12.8);
+  const title = "AFFIDAVIT OF FINANCIAL SUPPORT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+  doc.setFontSize(10.5);
 
-  addField("Affiant:", values.party1Name || "");
-  addField("Beneficiary:", values.party2Name || "");
-  addField("Date:", values.effectiveDate || "");
-
-  y += 6;
-
-  addParagraph("I hereby swear and affirm that I am financially capable and willing to provide financial support to the above-named beneficiary.");
-  addParagraph("This support may include housing, food, medical expenses, education, and other basic living costs.");
-  addParagraph("This affidavit is made in good faith and is legally binding upon execution.");
-
-  y += 10;
-
-  doc.text(values.party1Name || "Affiant", margin, y);
-  doc.line(margin, y + 1, margin + 80, y + 1);
+  p(`I, ${u(values.affiantName)}, being duly sworn, do depose and say:`);
+  p(`${u(values.unemploymentStatement)}.`);
+  p("1. Gross Monthly Income from All Sources:", true);
+  uf("Source", values.incomeSource);
+  uf("Description", values.incomeDescription);
+  uf("Income", values.incomeAmount);
+  p("2. Total Present Monthly Deduction", true);
+  p(values.deductionsSummary || "Federal/State/Local income tax, FICA/self-employment taxes, Medicare, mandatory union dues, mandatory retirement payments, health insurance, child support, alimony.");
+  uf("Present Net Monthly Income", values.netMonthlyIncome);
+  p("3. Average Monthly Expense", true);
+  uf("Average Monthly Expense", values.averageMonthlyExpense);
+  p("Household Expenses:", true);
+  p(values.householdExpenses);
+  p("Debts:", true);
+  p(values.debtsSummary);
+  p("4. Assets Owned by the Parties:", true);
+  p(values.assetsSummary);
+  p("5. Summary:", true);
+  uf("Total Present Net Monthly Income", values.netMonthlyIncome);
+  uf("Total Monthly Expenses", values.totalMonthlyExpenses);
+  uf("Total Assets", values.totalAssets);
+  p("The undersigned certifies that the information and statements in this affidavit are true and complete.");
+  uf("Affiant's Name", values.affiantName);
+  uf("Affiant's Signature Date", values.affidavitDate);
+  p(
+    `Subscribed and sworn to (or affirmed) before me on this ${u(values.notaryDate, 8)} by ${u(values.affiantName)}, who is personally known to me or has provided satisfactory proof of identity.`
+  );
+  uf("Signature of Notary Public", values.notaryName);
+  uf("Name of Notary Public", values.notaryName);
+  uf("My Commission Expires", values.notaryCommissionExpires);
+  p("Notary Seal: __________________________");
+  p("Make It Legal", true);
+  p(`This Affidavit should be signed in front of a notary public by ${u(values.affiantName)}.`);
+  p("Once signed in front of a notary, this document should be delivered to the appropriate court for filing.");
+  p("Copies: The original should be filed and the Affiant should maintain a copy in a safe place.");
+  p("Additional Assistance: Seek legal counsel for special situations or legal questions.");
 
   doc.save("financial_support_affidavit.pdf");
 };

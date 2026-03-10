@@ -1,102 +1,106 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Reservation Request",
+    label: "Reservation Letter",
     fields: [
-      { name: "requestDate", label: "Date", type: "date", required: false },
-      { name: "toName", label: "To", type: "text", required: false },
-      { name: "toAddress", label: "Address", type: "text", required: false },
-      { name: "startDate", label: "Reservation start date", type: "date", required: false },
-      { name: "endDate", label: "Reservation end date", type: "date", required: false },
-      { name: "requirements", label: "Room requirements", type: "textarea", required: false },
-      { name: "arrivalDate", label: "Arrival date", type: "date", required: false },
-      { name: "signature", label: "Signature", type: "text", required: false },
-      { name: "printedName", label: "Printed name", type: "text", required: false },
-      { name: "address", label: "Address", type: "text", required: false },
-      { name: "contactInfo", label: "Contact information", type: "text", required: false },
-      { name: "forName", label: "Checklist For", type: "text", required: false },
+      { name: "requestDate", label: "Date", type: "date", required: true },
+      { name: "toName", label: "To", type: "text", required: true },
+      { name: "toAddress", label: "Address", type: "text", required: true },
+      { name: "toCity", label: "City", type: "text", required: true },
+      { name: "periodStart", label: "Reservation start date", type: "date", required: true },
+      { name: "periodEnd", label: "Reservation end date", type: "date", required: true },
+      { name: "roomRequirements", label: "Room requirements", type: "textarea", required: true },
+      { name: "arrivalDate", label: "Anticipated arrival date", type: "date", required: true },
+      { name: "printedName", label: "Printed name", type: "text", required: true },
+      { name: "senderAddress", label: "Sender address", type: "text", required: true },
+      { name: "senderCity", label: "Sender city", type: "text", required: true },
+      { name: "contactInfo", label: "Contact information", type: "text", required: true },
+      { name: "checklistFor", label: "Checklist For", type: "text", required: true },
     ],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
   const w = 210;
-  const m = 18;
+  const m = 16;
   const tw = w - m * 2;
-  const lh = 5.6;
-  const limit = 280;
+  const lh = 5.5;
+  const limit = 282;
   let y = 20;
 
-  const p = (text: string, bold = false, gap = 1.8) => {
-    const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
+  const u = (value?: string, n = 14) => (value || "").trim() || "_".repeat(n);
+  const ensure = (need = 8) => {
+    if (y + need > limit) {
       doc.addPage();
       y = 20;
     }
+  };
+  const p = (text: string, bold = false, gap = 1.6) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(10.5);
+    doc.setFontSize(10.4);
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
-  const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
-    const shown = (value || "").trim();
-    if (y + lh + gap > limit) {
-      doc.addPage();
-      y = 20;
-    }
+  const uf = (label: string, value?: string, min = 20) => {
+    ensure(lh + 2);
+    const lt = `${label}: `;
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10.5);
-    const labelText = `${label}: `;
-    doc.text(labelText, m, y);
-    const x = m + doc.getTextWidth(labelText);
-    if (shown) {
-      doc.text(shown, x, y);
-      doc.setLineWidth(0.22);
-      doc.line(x, y + 1.1, x + Math.max(12, doc.getTextWidth(shown)), y + 1.1);
+    doc.setFontSize(10.4);
+    doc.text(lt, m, y);
+    const x = m + doc.getTextWidth(lt);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(20, doc.getTextWidth(t)), y + 1);
     } else {
-      doc.setLineWidth(0.22);
-      doc.line(x, y + 1.1, x + doc.getTextWidth("_".repeat(min)), y + 1.1);
+      doc.line(x, y + 1, x + doc.getTextWidth("_".repeat(min)), y + 1);
     }
-    y += lh + gap;
+    y += lh + 0.8;
   };
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(12.5);
+  doc.setFontSize(12.6);
   const title = "CONFIRMATION OF RESERVATIONS";
   doc.text(title, w / 2, y, { align: "center" });
   const tW = doc.getTextWidth(title);
-  doc.setLineWidth(0.35);
   doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
 
-  uf("Date", values.requestDate, 20);
-  uf("To", values.toName, 24);
-  uf("Address", values.toAddress, 32);
+  uf("Date", v.requestDate);
+  uf("To", v.toName);
+  uf("Address", v.toAddress);
+  uf("City", v.toCity);
   p("Subject: Request for Reservation Confirmation", true);
   p("Dear Sir or Madam:");
-  p(`I write to formally request the reservation of a room at your establishment for the period commencing on ${values.startDate || "________________________"} and ending on ${values.endDate || "________________________"}.`);
+  p(
+    `I write to formally request the reservation of a room at your establishment for the period commencing on ${u(v.periodStart)} and ending on ${u(v.periodEnd)}.`
+  );
   p("The room is requested to meet the following requirements:");
-  uf("Requirements", values.requirements, 40);
-  p(`I anticipate arriving on ${values.arrivalDate || "________________________"}.`);
+  uf("Requirements", v.roomRequirements, 30);
+  p(`I anticipate arriving on ${u(v.arrivalDate)}.`);
   p("Enclosed herewith is payment by check in the amount required to secure the reservation. Kindly confirm receipt of payment and provide written confirmation of the reservation at your earliest convenience.");
   p("Please contact me should you require any additional information to process this request.");
   p("Thank you for your assistance.");
   p("Sincerely,", false, 3);
-  uf("Signature", values.signature, 30);
-  uf("Printed Name", values.printedName, 28);
-  uf("Address", values.address, 34);
-  uf("Contact Information", values.contactInfo, 34, 3);
+  p("Signature");
+  uf("Printed Name", v.printedName);
+  uf("Address", v.senderAddress);
+  uf("City", v.senderCity);
+  uf("Contact Information", v.contactInfo);
+
+  y += 2;
   p("Final Checklist - Reservation Confirmation", true);
-  uf("For", values.forName, 20);
+  uf("For", v.checklistFor);
   p("Legal Formalities", true, 1);
-  p("[ ] Ensure the letter is signed by the requesting party.");
-  p("[ ] Attach payment, if required to secure the reservation.", false, 2.6);
+  p("- [ ] Ensure the letter is signed by the requesting party.");
+  p("- [ ] Attach payment, if required to secure the reservation.", false, 2.2);
   p("Recordkeeping", true, 1);
-  p("[ ] Retain a copy of the signed letter and proof of payment for your records.", false, 2.6);
+  p("- [ ] Retain a copy of the signed letter and proof of payment for your records.", false, 2.2);
   p("Reasons to Update or Reissue", true, 1);
   p("- To submit a follow-up request regarding a pending reservation.");
   p("- To make or confirm additional reservations.");
