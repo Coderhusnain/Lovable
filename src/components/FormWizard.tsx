@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CheckCircle2, Circle, ChevronLeft, FileText, ArrowRight, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,6 +46,10 @@ const isContentStep = (step: Step): step is ContentStep => {
   return 'content' in step;
 };
 
+const isFieldStep = (step: Step): step is FieldStep => {
+  return "fields" in step;
+};
+
 export const FormWizard: React.FC<FormWizardProps> = ({ 
   steps, 
   onFinish, 
@@ -54,18 +58,137 @@ export const FormWizard: React.FC<FormWizardProps> = ({
   subtitle,
   documentType 
 }) => {
+  const transformedSteps = useMemo<Step[]>(() => {
+    // Only auto-transform purely field-based forms.
+    if (!steps.every(isFieldStep)) return steps;
+
+    const jurisdictionSteps: FieldStep[] = [
+      {
+        label: "Country",
+        fields: [
+          {
+            name: "country",
+            label: "Which country?",
+            type: "select",
+            required: true,
+            options: [
+              { value: "us", label: "United States" },
+              { value: "ca", label: "Canada" },
+              { value: "uk", label: "United Kingdom" },
+              { value: "au", label: "Australia" },
+              { value: "other", label: "Other" },
+            ],
+          },
+        ],
+      },
+      {
+        label: "Province / State",
+        fields: [
+          {
+            name: "province",
+            label: "Which province/state/region?",
+            type: "select",
+            required: true,
+            dependsOn: "country",
+            getOptions: (values) => {
+              if (values.country === "us") {
+                return [
+                  { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
+                  { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
+                  { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+                  { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
+                  { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
+                  { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+                  { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
+                  { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
+                  { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+                  { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
+                  { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
+                  { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+                  { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
+                  { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
+                  { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+                  { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
+                  { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
+                  { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+                  { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
+                  { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
+                  { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+                  { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
+                  { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
+                  { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+                  { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
+                  { value: "DC", label: "District of Columbia" },
+                ];
+              }
+              if (values.country === "ca") {
+                return [
+                  { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
+                  { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
+                  { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
+                  { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
+                  { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
+                  { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
+                  { value: "YT", label: "Yukon" },
+                ];
+              }
+              if (values.country === "uk") {
+                return [
+                  { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
+                  { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
+                ];
+              }
+              if (values.country === "au") {
+                return [
+                  { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
+                  { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
+                  { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
+                  { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
+                ];
+              }
+              return [{ value: "other", label: "Other Region" }];
+            },
+          },
+        ],
+      },
+    ];
+
+    const existingFields = steps.flatMap((s) => s.fields);
+    // Avoid duplicating these fields if any form already defined them.
+    const deduped = existingFields.filter(
+      (f) => !["country", "province", "state"].includes(f.name)
+    );
+
+    if (deduped.length === 0) return jurisdictionSteps;
+
+    // Target total steps: 5 or 6. We already have 2 jurisdiction steps.
+    const targetTotal = deduped.length > 12 ? 6 : 5;
+    const remainingGroups = Math.max(3, targetTotal - 2);
+    const chunkSize = Math.ceil(deduped.length / remainingGroups);
+
+    const grouped: FieldStep[] = [];
+    for (let i = 0; i < deduped.length; i += chunkSize) {
+      grouped.push({
+        label: `Details ${grouped.length + 1}`,
+        fields: deduped.slice(i, i + chunkSize),
+      });
+    }
+
+    return [...jurisdictionSteps, ...grouped];
+  }, [steps]);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [touched, setTouched] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [formData, setFormData] = useState<Record<string, any>>({});
 
-  const isLastStep = currentStep === steps.length - 1;
+  const isLastStep = currentStep === transformedSteps.length - 1;
   const isFirstStep = currentStep === 0;
-  const progress = Math.round(((currentStep + 1) / steps.length) * 100);
+  const progress = Math.round(((currentStep + 1) / transformedSteps.length) * 100);
 
   // Validate current step
   const validateStep = (): boolean => {
-    const step = steps[currentStep];
+    const step = transformedSteps[currentStep];
     if (isContentStep(step)) {
       return step.validate ? step.validate() : true;
     }
@@ -169,7 +292,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
 
   // Render step content
   const renderStepContent = () => {
-    const step = steps[currentStep];
+    const step = transformedSteps[currentStep];
     if (isContentStep(step)) {
       return step.content;
     }
@@ -192,7 +315,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
               <span className="font-semibold text-gray-800">{title || documentType || "Document Builder"}</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">Step {currentStep + 1} of {steps.length}</span>
+              <span className="text-sm text-gray-500">Step {currentStep + 1} of {transformedSteps.length}</span>
               <span className="text-sm font-semibold text-orange-600">{progress}% Complete</span>
             </div>
           </div>
@@ -213,7 +336,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
         {/* Left Sidebar - Step Navigator */}
         <aside className="w-64 bg-white border-r hidden lg:block overflow-y-auto py-6">
           <nav className="px-4 space-y-1">
-            {steps.map((step, index) => {
+            {transformedSteps.map((step, index) => {
               const isCompleted = completedSteps.has(index);
               const isCurrent = index === currentStep;
               const isClickable = isCompleted || index <= maxCompleted + 1;
@@ -258,7 +381,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
           <div className="max-w-2xl mx-auto">
             {/* Mobile Step Indicator */}
             <div className="lg:hidden flex items-center gap-2 mb-6 text-sm text-gray-500 overflow-x-auto pb-2">
-              {steps.slice(Math.max(0, currentStep - 1), currentStep + 3).map((step, idx) => {
+              {transformedSteps.slice(Math.max(0, currentStep - 1), currentStep + 3).map((step, idx) => {
                 const actualIdx = Math.max(0, currentStep - 1) + idx;
                 const isCurrent = actualIdx === currentStep;
                 return (
@@ -278,11 +401,11 @@ export const FormWizard: React.FC<FormWizardProps> = ({
             <div className="mb-8">
               <div className="flex items-center gap-2 text-sm text-orange-600 font-medium mb-2">
                 <span className="bg-orange-100 px-2 py-0.5 rounded">Step {currentStep + 1}</span>
-                {currentStep < steps.length - 1 && (
-                  <span className="text-gray-400">→ Next: {steps[currentStep + 1]?.label}</span>
+                {currentStep < transformedSteps.length - 1 && (
+                  <span className="text-gray-400">→ Next: {transformedSteps[currentStep + 1]?.label}</span>
                 )}
               </div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">{steps[currentStep].label}</h2>
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">{transformedSteps[currentStep].label}</h2>
             </div>
 
             {/* Form Content */}
@@ -296,7 +419,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
                 <Sparkles className="w-5 h-5 text-orange-500 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-orange-800">Almost done!</p>
-                  <p className="text-sm text-orange-600">Click "Generate Document" below to create your personalized legal document as a PDF.</p>
+              <p className="text-sm text-orange-600">Click "Generate Document" below to create your personalized legal document as a PDF.</p>
                 </div>
               </div>
             )}
@@ -323,10 +446,10 @@ export const FormWizard: React.FC<FormWizardProps> = ({
 
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span className="hidden sm:inline">
-              {completedSteps.size} of {steps.length} steps completed
+              {completedSteps.size} of {transformedSteps.length} steps completed
             </span>
             <div className="flex gap-1">
-              {steps.map((_, i) => (
+              {transformedSteps.map((_, i) => (
                 <div
                   key={i}
                   className={`w-2 h-2 rounded-full transition-all ${

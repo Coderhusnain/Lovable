@@ -3,57 +3,123 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Parties",
+    label: "Contract Basics",
     fields: [
       { name: "contractDate", label: "Contract date", type: "date", required: true },
-      { name: "accountantName", label: "Accountant name", type: "text", required: true },
-      { name: "licensedState", label: "Licensed state", type: "text", required: false },
-      { name: "accountantAddress", label: "Accountant principal business address", type: "text", required: false },
+      { name: "accountantName", label: "Accountant/Firm name", type: "text", required: true },
+      { name: "accountantAddress", label: "Accountant address", type: "text", required: true },
       { name: "clientName", label: "Client name", type: "text", required: true },
-      { name: "clientAddress", label: "Client address", type: "text", required: false },
-      { name: "effectiveDate", label: "Contract effective date", type: "date", required: false },
-      { name: "services", label: "Specific accounting services", type: "textarea", required: false },
+      { name: "clientAddress", label: "Client address", type: "text", required: true },
       { name: "governingLaw", label: "Governing law", type: "text", required: true },
-      { name: "signatory1", label: "First signatory", type: "text", required: false },
-      { name: "signatory2", label: "Second signatory", type: "text", required: false },
+    ],
+  },
+  {
+    label: "Services",
+    fields: [
+      { name: "services", label: "Accounting services scope", type: "textarea", required: true, placeholder: "Bookkeeping, payroll, tax, reporting, advisory..." },
+      { name: "feeStructure", label: "Fee structure", type: "text", required: true, placeholder: "Hourly, fixed monthly, milestone..." },
+      { name: "invoiceTerms", label: "Invoice/payment terms", type: "text", required: true, placeholder: "e.g., Net 15 days" },
+      { name: "startDate", label: "Service start date", type: "date", required: true },
+      { name: "endDate", label: "Service end/renewal date", type: "date", required: false },
+    ],
+  },
+  {
+    label: "Signatures",
+    fields: [
+      { name: "accountantSignatory", label: "Accountant signatory", type: "text", required: true },
+      { name: "clientSignatory", label: "Client signatory", type: "text", required: true },
+      { name: "signatureDate", label: "Signature date", type: "date", required: true },
     ],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const w = 210, m = 16, tw = w - m * 2, lh = 5.5, limit = 280;
-  let y = 20;
-  const u = (v?: string, min = 14) => (v || "").trim() || " ".repeat(min);
-  const p = (t: string, b = false, g = 1.8) => { const lines = doc.splitTextToSize(t, tw); if (y + lines.length * lh + g > limit) { doc.addPage(); y = 20; } doc.setFont("helvetica", b ? "bold" : "normal"); doc.text(lines, m, y); y += lines.length * lh + g; };
-  const uf = (l: string, v?: string, min = 20) => { const s = (v || "").trim(), lt = `${l}: `; if (y + lh + 1.8 > limit) { doc.addPage(); y = 20; } doc.text(lt, m, y); const x = m + doc.getTextWidth(lt); if (s) { doc.text(s, x, y); doc.line(x, y + 1.1, x + Math.max(14, doc.getTextWidth(s)), y + 1.1); } else { doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1); } y += lh + 1.8; };
-  doc.setFont("helvetica", "bold"); doc.setFontSize(13); const title = "ACCOUNTING CONTRACT"; doc.text(title, w / 2, y, { align: "center" }); const titleW = doc.getTextWidth(title); doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1); y += 9; doc.setFontSize(10.5);
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const L = 16;
+  const W = 178;
+  const LH = 5.6;
+  let y = 18;
 
-  p(`This CONTRACT is made on ${u(values.contractDate, 12)} by and between ${u(values.accountantName, 12)} ("Accountant"), duly licensed in ${u(values.licensedState, 10)} as a certified public accountant with principal place of business at ${u(values.accountantAddress, 14)}, and ${u(values.clientName, 12)} ("Client"), of ${u(values.clientAddress, 12)}.`, false, 3);
-  p("I. CONTRACT TERM", true);
-  p(`This Contract is effective ${u(values.effectiveDate, 12)} and remains in effect until services are satisfactorily completed unless sooner terminated per this Contract.`);
-  p("II. ACCOUNTING SERVICES", true);
-  p(`Accountant shall perform the following specific accounting services and incidental tasks: ${u(values.services, 16)}.`);
-  p("Services shall be performed under applicable professional standards (GAAP as applicable), with due professional care, within reasonable timelines, and based on information provided by Client unless otherwise stated in writing.");
-  p("Additional services beyond listed scope require mutual written agreement and are subject to Section III fee structure.");
-  p("III. FEES FOR SERVICES", true);
-  p("Client shall compensate Accountant for all services rendered according to standard billing practices, reflecting time spent, complexity of work, and itemized reasonable additional costs (filing/courier/third-party costs).");
-  p("Invoices are due within specified period; timely payment is required and failure may constitute breach with late charges/suspension as permitted by law.");
-  p("IV. CLIENT'S COOPERATION", true);
-  p("Accountant is authorized to communicate with Client custodian for account and relevant data. Client is solely responsible for custodian acts/omissions and must ensure timely, true, complete data delivery required for services.");
-  p("V. MUTUAL REPRESENTATIONS", true);
-  p("Client and Accountant each represent legal authority and compliance with applicable law, and that execution/performance do not conflict with obligations. Accountant further represents valid binding obligations and sufficient rights to provide services.");
-  p("VI. CONFIDENTIALITY", true);
-  p("All confidential information exchanged is held in trust for Client benefit and shall not be disclosed during or after term except as required for performance or law.");
-  p("VII. TERMINATION", true);
-  p("Either party may terminate with 30 days written notice; termination also for insolvency/non-payment/cessation/death; and for uncured breach after 30 days detailed written notice.");
-  p("VIII. NOTICES", true); p("Notices by personal delivery or registered/certified mail with return receipt to party addresses, subject to written address change.");
-  p("IX. MISCELLANEOUS", true);
-  p("Includes independent legal advice acknowledgment, no third-party beneficiaries, counterpart execution, headings for convenience, non-exclusivity, further assurances, time of essence, and survival of obligations.");
-  p("X-XV. LEGAL PROVISIONS", true);
-  p(`Governing law: ${u(values.governingLaw, 12)}. Parties bound includes heirs/successors/assigns. Severability applies. Prior contracts superseded. Entire agreement controls. Prevailing party recovers reasonable attorneys' fees.`);
-  p("XVI. SIGNATORIES", true);
-  p(`This Contract shall be signed by ${u(values.signatory1, 10)} and by ${u(values.signatory2, 10)}.`);
+  const ensure = (h = 10) => {
+    if (y + h > 282) {
+      doc.addPage();
+      y = 18;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.8) => {
+    ensure(12);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.3);
+    const lines = doc.splitTextToSize(text, W);
+    doc.text(lines, L, y);
+    y += lines.length * LH + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8);
+    const safeValue = (value || "").trim();
+    doc.setFont("helvetica", "normal");
+    doc.text(`${label}: `, L, y);
+    const x = L + doc.getTextWidth(`${label}: `);
+    if (safeValue) {
+      doc.text(safeValue, x, y);
+      doc.line(x, y + 1, x + Math.max(24, doc.getTextWidth(safeValue)), y + 1);
+    } else {
+      doc.text("________________________", x, y);
+    }
+    y += LH + 1.2;
+  };
+
+  const title = "ACCOUNTING CONTRACT";
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text(title, 105, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  doc.line(105 - tw / 2, y + 1, 105 + tw / 2, y + 1);
+  y += 10;
+
+  p("Other names: Accounting Contract, Accounting Agreement, Accountancy Agreement.", true);
+  p(
+    `This Accounting Contract is made on ${v.contractDate || "____________"} between ${v.accountantName || "____________"} of ` +
+      `${v.accountantAddress || "____________"} ("Accountant") and ${v.clientName || "____________"} of ${v.clientAddress || "____________"} ("Client").`,
+  );
+  p(
+    "What Is an Accounting Contract? It is a legally binding document governing the professional relationship between an accountant and client. " +
+      "It defines service scope, fee structure, timelines, confidentiality, compliance, and termination terms.",
+  );
+  p(
+    "This agreement establishes expectations at engagement outset, reduces dispute risk, and ensures services are delivered in accordance with agreed terms.",
+  );
+  p(
+    `Services under this agreement: ${v.services || "____________"}. Fee structure: ${v.feeStructure || "____________"}. ` +
+      `Invoice terms: ${v.invoiceTerms || "____________"}. Start date: ${v.startDate || "____________"}. ` +
+      `${v.endDate ? `End/renewal date: ${v.endDate}.` : "End date as agreed by the Parties."}`,
+  );
+  p("When Should You Use an Accounting Contract?", true);
+  p(
+    "- When onboarding a new client for accounting/bookkeeping.\n" +
+      "- When an individual hires an accountant for personal tax/accounting matters.\n" +
+      "- When a business hires accountant/firm for specific financial responsibilities requiring legal clarity and compliance.",
+  );
+  p("Sample Accounting Agreement Note", true);
+  p(
+    "This template is designed to update terms based on provided information. It is a practical professional starting point and can be reviewed by legal counsel " +
+      "for added assurance prior to final execution.",
+  );
+  p("Download/Use Note", true);
+  p(
+    "The agreement can be downloaded and customized in professionally drafted format suitable for individuals, startups, and established businesses.",
+  );
+  p("Core Legal Terms", true);
+  p(
+    "Confidentiality applies to all client records and proprietary information. Amendments must be in writing signed by both parties. " +
+      `Governing law: ${v.governingLaw || "____________"}. In disputes, parties should first attempt amicable resolution and then pursue available legal remedies.`,
+  );
+  p("IN WITNESS WHEREOF, the Parties have executed this Accounting Contract as of the date first above written.", true);
+
+  uf("Accountant Signatory", v.accountantSignatory);
+  uf("Client Signatory", v.clientSignatory);
+  uf("Date", v.signatureDate);
+
   doc.save("accounting_contract.pdf");
 };
 
@@ -68,3 +134,4 @@ export default function AccountingContractForm() {
     />
   );
 }
+
