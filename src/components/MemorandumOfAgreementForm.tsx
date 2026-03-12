@@ -1,316 +1,192 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Jurisdiction",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "state", label: "State/Jurisdiction", type: "text", required: true },
+      { name: "province", label: "Province", type: "text", required: false },
+      { name: "city", label: "City", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Parties and Effective Date",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "effectiveDate", label: "Effective Date", type: "date", required: true },
+      { name: "firstPartyName", label: "First Party Name", type: "text", required: true },
+      { name: "firstPartyAddress", label: "First Party Address", type: "textarea", required: true },
+      { name: "secondPartyName", label: "Second Party Name", type: "text", required: true },
+      { name: "secondPartyAddress", label: "Second Party Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Term, Goals and Consideration",
     fields: [
-      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
+      { name: "termLength", label: "Term of Agreement", type: "text", required: true },
+      { name: "goal1", label: "Goal 1", type: "text", required: true },
+      { name: "goal2", label: "Goal 2", type: "text", required: true },
+      { name: "goal3", label: "Additional Objective (Optional)", type: "text", required: false },
+      { name: "scheduleC", label: "Schedule C Consideration", type: "textarea", required: true },
+      { name: "workProductOwner", label: "Work Product Owner", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Obligations and Confidentiality",
     fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
+      { name: "scheduleA", label: "Schedule A Obligations", type: "textarea", required: true },
+      { name: "scheduleB", label: "Schedule B Obligations", type: "textarea", required: true },
+      { name: "firstPartyAdditionalObligations", label: "First Party Additional Obligations (Optional)", type: "textarea", required: false },
+      { name: "secondPartyAdditionalObligations", label: "Second Party Additional Obligations (Optional)", type: "textarea", required: false },
+      { name: "noticeAddressOverride", label: "Alternate Notice Address (Optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Legal Terms and Governing Law",
     fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
+      { name: "cureDays", label: "Default Cure Days", type: "text", required: true },
+      { name: "governingJurisdiction", label: "Governing Jurisdiction", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Signatories and Witnesses",
     fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
+      { name: "firstSignerName", label: "First Party Signer Name", type: "text", required: true },
+      { name: "firstSignerTitle", label: "First Party Signer Title", type: "text", required: true },
+      { name: "firstSignerSignature", label: "First Party Signature Text", type: "text", required: true },
+      { name: "firstSignerDate", label: "First Party Sign Date", type: "date", required: true },
+      { name: "secondSignerName", label: "Second Party Signer Name", type: "text", required: true },
+      { name: "secondSignerTitle", label: "Second Party Signer Title", type: "text", required: true },
+      { name: "secondSignerSignature", label: "Second Party Signature Text", type: "text", required: true },
+      { name: "secondSignerDate", label: "Second Party Sign Date", type: "date", required: true },
+      { name: "witness1Name", label: "Witness 1 Name", type: "text", required: false },
+      { name: "witness1Id", label: "Witness 1 CNIC/ID No.", type: "text", required: false },
+      { name: "witness1Signature", label: "Witness 1 Signature Text", type: "text", required: false },
+      { name: "witness1Date", label: "Witness 1 Date", type: "date", required: false },
+      { name: "witness2Name", label: "Witness 2 Name", type: "text", required: false },
+      { name: "witness2Id", label: "Witness 2 CNIC/ID No.", type: "text", required: false },
+      { name: "witness2Signature", label: "Witness 2 Signature Text", type: "text", required: false },
+      { name: "witness2Date", label: "Witness 2 Date", type: "date", required: false },
     ],
   },
-  {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
-  let y = 20;
-
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const durationMap: Record<string, string> = { "1month": "1 Month", "3months": "3 Months", "6months": "6 Months", "1year": "1 Year", "2years": "2 Years", "5years": "5 Years", "indefinite": "Indefinite/Ongoing", "custom": "Custom" };
-  const terminationMap: Record<string, string> = { "immediate": "immediately", "7days": "7 days", "14days": "14 days", "30days": "30 days", "60days": "60 days", "90days": "90 days" };
-  const disputeMap: Record<string, string> = { "mediation": "Mediation", "arbitration": "Binding Arbitration", "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation" };
-
-  const para = (text: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 16;
+  const width = 178;
+  const lh = 5.3;
+  let y = 18;
+  const u = (val?: string, n = 14) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => {
+    if (y + need > 285) {
+      doc.addPage();
+      y = 18;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, width);
+    ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, left, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8);
+    doc.text(label, left, y);
+    const x = left + doc.getTextWidth(label);
+    const s = u(value);
+    doc.text(s, x, y);
+    doc.line(x, y + 1, x + doc.getTextWidth(s), y + 1);
+    y += 6.2;
   };
 
-  // TITLE
-  doc.setFont("helvetica", "bold");
+  doc.setFont("times", "bold");
   doc.setFontSize(13);
   const title = "MEMORANDUM OF AGREEMENT";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  doc.text(title, 105, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  doc.line(105 - tw / 2, y + 1.1, 105 + tw / 2, y + 1.1);
+  y += 10;
 
-  // HEADER FIELDS
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
-  };
+  uf("Jurisdiction: ", `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`);
+  p(`This Memorandum of Agreement (the "Agreement") is made and entered into as of ${u(v.effectiveDate, 12)}, by and between ${u(v.firstPartyName)}, having its principal place of business at ${u(v.firstPartyAddress)} (the "First Party"), and ${u(v.secondPartyName)}, having its principal place of business at ${u(v.secondPartyAddress)} (the "Second Party"). Collectively referred to as the "Parties" and individually as a "Party."`);
+  p("The Parties hereby agree to be bound by the terms and conditions set forth herein for the purpose of defining their respective rights, obligations, and responsibilities.");
 
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
+  p("1. TERM OF AGREEMENT", true);
+  p(`1.1 Duration: This Agreement shall remain in full force and effect for a period of ${u(v.termLength)} (the "Term"), unless earlier terminated in accordance with the provisions herein.`);
+  p("1.2 Early Termination: Either Party may terminate this Agreement in the event that the other Party materially breaches any provision and fails to remedy such breach within thirty (30) days of receipt of written notice specifying the nature of the breach. Termination of a portion of this Agreement shall not affect other provisions unless the breach results in substantial loss of overall value to the non-breaching Party. Termination shall not relieve either Party from confidentiality, non-disclosure, or other continuing covenants.");
 
-  // SUBJECT
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Notice of Memorandum of Agreement and Terms of Engagement", margin, y);
-  y += 7;
+  p("2. GOALS AND OBJECTIVES", true);
+  p(`The Parties agree to cooperate and perform obligations to achieve objectives: ${u(v.goal1)}; ${u(v.goal2)}; ${(v.goal3 || "").trim() ? v.goal3 : "additional objectives as applicable"}. The Parties shall act in good faith to further these goals and implement this Agreement effectively.`);
 
-  // SALUTATION
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
+  p("3. OBLIGATIONS OF THE PARTIES", true);
+  p("3.1 First Party Obligations: Perform duties/tasks/services as specified in Schedule A; provide timely reports and updates to the Second Party; comply with applicable laws/regulations/standards.");
+  p(`Schedule A: ${u(v.scheduleA)}.${(v.firstPartyAdditionalObligations || "").trim() ? ` Additional obligations: ${v.firstPartyAdditionalObligations}.` : ""}`);
+  p("3.2 Second Party Obligations: Perform duties/tasks/services as specified in Schedule B; cooperate fully with the First Party; maintain accurate records and provide access for inspection as reasonably requested.");
+  p(`Schedule B: ${u(v.scheduleB)}.${(v.secondPartyAdditionalObligations || "").trim() ? ` Additional obligations: ${v.secondPartyAdditionalObligations}.` : ""}`);
 
-  // BODY
-  para(`I am writing to formally confirm the Memorandum of Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Second Party"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`);
+  p("4. CONFIDENTIALITY AND INFORMATION DISCLOSURE", true);
+  p("4.1 Confidentiality: Each Party shall treat as strictly confidential all information received in connection with this Agreement.");
+  p("4.2 Permitted Disclosures: Only if (i) required by applicable law/governmental authority, (ii) already in public domain through no fault of disclosing Party, or (iii) authorized in writing by the other Party after consultation and notice.");
+  p("4.3 Return of Information: Upon request, all documents/records/materials containing Confidential Information shall be returned or destroyed, with written confirmation.");
 
-  para(values.description || "Both parties agree to the terms and intentions outlined in this Memorandum of Agreement, which establishes the framework for cooperation, mutual responsibilities, and the general understanding between the parties prior to or in lieu of a formal binding contract.");
+  p("5. RELATIONSHIP OF THE PARTIES", true);
+  p("The Parties acknowledge their relationship as partners in a partnership solely for the purpose of achieving objectives of this Agreement. Nothing creates a joint venture, employment, agency, or other fiduciary relationship.");
+  p("6. CONSIDERATION", true);
+  p(`This Agreement is entered into in consideration of mutual covenants/promises/undertakings, including Schedule C: ${u(v.scheduleC)}, acknowledged as adequate and sufficient.`);
+  p("7. REPRESENTATIONS AND WARRANTIES", true);
+  p("Each Party represents and warrants full legal capacity/power/authority, necessary approvals, legal/valid/binding enforceability, and good-faith action to effectuate the intent and purpose of this Agreement.");
 
-  para(`This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed financial commitment is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`);
+  p("8. WORK PRODUCT AND INTELLECTUAL PROPERTY", true);
+  p(`Any copyrightable works, inventions, discoveries, ideas, patents, or other proprietary materials developed wholly or partly in connection with performance of this Agreement (the "Work Product") shall be exclusive property of ${u(v.workProductOwner)}. Parties agree to execute documents necessary to confirm or perfect ownership rights.`);
 
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
+  p("9. NOTICE", true);
+  p(`Any notice required/permitted shall be deemed sufficiently given if delivered personally or by certified mail return receipt requested to listed addresses${(v.noticeAddressOverride || "").trim() ? `, including alternate address: ${v.noticeAddressOverride}` : ""}. Notices are deemed received upon personal delivery, on acknowledgment date for certified mail, or on third day after mailing if not acknowledged.`);
+  p("10. TERMINATION AND REMEDIES", true);
+  p(`Either Party may terminate for material breach if uncured within thirty (30) days of written notice. In addition, default cure period is ${u(v.cureDays, 2)} days where specified; failure to cure entitles non-defaulting Party to terminate and exercise legal remedies.`);
+  p("11. AMENDMENT | 12. SEVERABILITY | 13. WAIVER OF RIGHTS", true);
+  p("Amendment only by written instrument executed by all Parties. Invalid/illegal/unenforceable provisions are severed or limited as necessary; remaining provisions remain in force. Failure to enforce is not a waiver of future enforcement.");
+  p("14. GOVERNING LAW | 15. ENTIRE AGREEMENT", true);
+  p(`This Agreement is governed by and construed in accordance with laws of ${u(v.governingJurisdiction)}, without regard to conflict-of-laws principles. This Agreement constitutes the entire understanding and supersedes prior oral/written agreements/representations/understandings.`);
 
-  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  // SENDER BLOCK
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "First Party";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  // SIGNATURES
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("First Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("First Party Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Second Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Second Party Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
+  p("16. SIGNATORIES", true);
+  p("IN WITNESS WHEREOF, the Parties, intending to be legally bound, have executed this Memorandum of Agreement as of the Effective Date.");
+  p("FIRST PARTY", true);
+  uf("Name: ", v.firstSignerName);
+  uf("Title: ", v.firstSignerTitle);
+  uf("Signature: ", v.firstSignerSignature);
+  uf("Date: ", v.firstSignerDate);
+  p("SECOND PARTY", true);
+  uf("Name: ", v.secondSignerName);
+  uf("Title: ", v.secondSignerTitle);
+  uf("Signature: ", v.secondSignerSignature);
+  uf("Date: ", v.secondSignerDate);
+  p("WITNESSES", true);
+  if ((v.witness1Name || "").trim()) {
+    uf("1. Name: ", v.witness1Name);
+    uf("CNIC/ID No.: ", v.witness1Id);
+    uf("Signature: ", v.witness1Signature);
+    uf("Date: ", v.witness1Date);
+  }
+  if ((v.witness2Name || "").trim()) {
+    uf("2. Name: ", v.witness2Name);
+    uf("CNIC/ID No.: ", v.witness2Id);
+    uf("Signature: ", v.witness2Signature);
+    uf("Date: ", v.witness2Date);
   }
 
   doc.save("memorandum_of_agreement.pdf");
 };
 
-export default function MemorandumOfAgreement() {
+export default function MemorandumOfAgreementForm() {
   return (
     <FormWizard
       steps={steps}
       title="Memorandum Of Agreement"
-      subtitle="Complete each step to generate your document"
+      subtitle="Complete all steps to generate your document"
       onGenerate={generatePDF}
       documentType="memorandumofagreement"
     />

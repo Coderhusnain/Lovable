@@ -1,495 +1,207 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Agreement Date and Jurisdiction",
     fields: [
+      { name: "agreementDay", label: "Agreement Day (e.g., 23rd)", type: "text", required: true },
+      { name: "agreementMonth", label: "Agreement Month", type: "text", required: true },
+      { name: "agreementYearSuffix", label: "Agreement Year Suffix (for 20__)", type: "text", required: true, placeholder: "e.g., 25" },
       {
         name: "country",
-        label: "Which country's laws will govern this document?",
+        label: "Country",
         type: "select",
         required: true,
         options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
+          { value: "United States", label: "United States" },
+          { value: "Canada", label: "Canada" },
+          { value: "United Kingdom", label: "United Kingdom" },
+          { value: "Australia", label: "Australia" },
+          { value: "Pakistan", label: "Pakistan" },
+          { value: "Other", label: "Other" },
         ],
       },
-    ],
-  },
-  {
-    label: "State/Province",
-    fields: [
       {
-        name: "state",
-        label: "Which state or province?",
+        name: "province",
+        label: "Province/State/Region",
         type: "select",
         required: true,
         dependsOn: "country",
         getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
+          if (values.country === "United States") return [{ value: "California", label: "California" }, { value: "New York", label: "New York" }, { value: "Texas", label: "Texas" }, { value: "Other US State", label: "Other US State" }];
+          if (values.country === "Canada") return [{ value: "Ontario", label: "Ontario" }, { value: "Quebec", label: "Quebec" }, { value: "British Columbia", label: "British Columbia" }, { value: "Other Canadian Province", label: "Other Canadian Province" }];
+          if (values.country === "United Kingdom") return [{ value: "England", label: "England" }, { value: "Scotland", label: "Scotland" }, { value: "Wales", label: "Wales" }, { value: "Northern Ireland", label: "Northern Ireland" }];
+          if (values.country === "Australia") return [{ value: "New South Wales", label: "New South Wales" }, { value: "Victoria", label: "Victoria" }, { value: "Queensland", label: "Queensland" }, { value: "Other Australian State", label: "Other Australian State" }];
+          if (values.country === "Pakistan") return [{ value: "Punjab", label: "Punjab" }, { value: "Sindh", label: "Sindh" }, { value: "Khyber Pakhtunkhwa", label: "Khyber Pakhtunkhwa" }, { value: "Balochistan", label: "Balochistan" }, { value: "Islamabad Capital Territory", label: "Islamabad Capital Territory" }];
+          return [{ value: "Other Region", label: "Other Region" }];
         },
       },
+      { name: "city", label: "City", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Parties",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "mortgageeName", label: "Mortgagee Name", type: "text", required: true },
+      { name: "mortgageeAddress", label: "Mortgagee Address", type: "textarea", required: true },
+      { name: "tenantName", label: "Tenant Name", type: "text", required: true },
+      { name: "tenantAddress", label: "Tenant Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Lease and Recitals",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "leaseDate", label: "Lease Date", type: "date", required: true },
+      { name: "landlordName", label: "Landlord Name", type: "text", required: true },
+      { name: "landlordAddress", label: "Landlord Address", type: "textarea", required: true },
+      { name: "legalDescription", label: "Legal Description", type: "textarea", required: true },
+      { name: "propertyAddress", label: "Property Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Core Agreement Clauses",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "subordinationExtra", label: "Subordination additional detail (optional)", type: "textarea", required: false },
+      { name: "nonDisturbanceExtra", label: "Non-Disturbance additional detail (optional)", type: "textarea", required: false },
+      { name: "attornmentExtra", label: "Attornment additional detail (optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Legal Process",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "notarySigner", label: "Signed before notary public by", type: "text", required: true },
+      { name: "courtOrFilingOffice", label: "Court/Filing office for delivery", type: "text", required: true },
+      { name: "requestingBusiness", label: "Requesting business name (if applicable)", type: "text", required: false },
     ],
   },
   {
-    label: "Second Party Name",
+    label: "Signatories",
     fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "mortgageeBy", label: "Mortgagee By", type: "text", required: true },
+      { name: "mortgageeSignName", label: "Mortgagee Signatory Name", type: "text", required: true },
+      { name: "mortgageeSignTitle", label: "Mortgagee Signatory Title", type: "text", required: true },
+      { name: "mortgageeSignDate", label: "Mortgagee Sign Date", type: "date", required: true },
+      { name: "tenantBy", label: "Tenant By", type: "text", required: true },
+      { name: "tenantSignName", label: "Tenant Signatory Name", type: "text", required: true },
+      { name: "tenantSignTitle", label: "Tenant Signatory Title", type: "text", required: true },
+      { name: "tenantSignDate", label: "Tenant Sign Date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Address",
+    label: "Final Review",
     fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "additionalAssistanceNotes", label: "Additional assistance notes (optional)", type: "textarea", required: false },
     ],
   },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Non Disturbance Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 16;
+  const width = 178;
+  const lh = 5.3;
+  let y = 18;
+
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => {
+    if (y + need > 285) {
+      doc.addPage();
+      y = 18;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, width);
+    ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, left, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8);
+    doc.setFont("times", "normal");
+    doc.text(label, left, y);
+    const x = left + doc.getTextWidth(label);
+    const show = u(value, 12);
+    doc.text(show, x, y);
+    doc.line(x, y + 1, x + doc.getTextWidth(show), y + 1);
+    y += 6.2;
+  };
+
+  doc.setFont("times", "bold");
+  doc.setFontSize(13);
+  const title = "NON-DISTURBANCE AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+
+  uf("Jurisdiction: ", `${u(v.city)}, ${u(v.province)}, ${u(v.country)}`);
+
+  p(`This Agreement ("Agreement") is made and entered into on the ${u(v.agreementDay, 3)} day of ${u(v.agreementMonth)}, 20${u(v.agreementYearSuffix, 2)}, by and between ${u(v.mortgageeName)}, of ${u(v.mortgageeAddress)} (hereinafter referred to as the "Mortgagee"), and ${u(v.tenantName)}, of ${u(v.tenantAddress)} (hereinafter referred to as the "Tenant").`);
+
+  p("RECITALS", true);
+  p(`WHEREAS, Tenant entered into a lease agreement (the "Lease") dated ${u(v.leaseDate, 12)}, with ${u(v.landlordName)} (the "Landlord"), of ${u(v.landlordAddress)}, for the lease of a portion of the real property legally described as ${u(v.legalDescription)}, commonly known as ${u(v.propertyAddress)} (the "Real Property");`);
+  p("WHEREAS, Mortgagee has made a loan to Landlord secured, in part, by a mortgage (the \"Mortgage\") encumbering the Real Property;");
+  p("WHEREAS, Tenant has agreed to subordinate its leasehold interest to the Mortgage in exchange for the Mortgagee's agreement not to disturb Tenant's possession of the Real Property under the Lease so long as Tenant is not in default under the terms of the Lease.");
+
+  p("AGREEMENT", true);
+  p("NOW, THEREFORE, in consideration of the mutual covenants herein and intending to be legally bound, the parties agree as follows:");
+
+  p("1. Subordination", true);
+  p("Tenant agrees that the Lease, and all rights of the Tenant under it, shall be and remain subordinate in all respects to the lien, terms, and conditions of the Mortgage, including any renewals, extensions, modifications, replacements, or consolidations thereof, and to any future mortgage or mortgages placed on the Real Property by or through the Mortgagee.");
+  if ((v.subordinationExtra || "").trim()) p(v.subordinationExtra);
+
+  p("2. Non-Disturbance", true);
+  p("Provided Tenant is not in default under the Lease beyond applicable notice and cure periods, the Mortgagee agrees that:");
+  p("- The Lease shall not be terminated,");
+  p("- Tenant's possession, use, or enjoyment of the Premises shall not be disturbed, and");
+  p("- The leasehold estate shall not otherwise be affected");
+  p("in the event of foreclosure or any action or proceeding under or related to the Mortgage, or in the event the Mortgagee takes possession of the Real Property.");
+  p("Notwithstanding the foregoing, any person or entity acquiring the interest of the Landlord as a result of such foreclosure or proceeding, including their successors and assigns (collectively, the \"Purchaser\"), shall not be:");
+  p("(a) liable for any act or omission of any prior landlord;");
+  p("(b) subject to any defenses or offsets Tenant may have against any prior landlord;");
+  p("(c) bound by any rent prepayment exceeding one month; or");
+  p("(d) bound by any amendment or modification of the Lease made without the Mortgagee's prior written consent.");
+  if ((v.nonDisturbanceExtra || "").trim()) p(v.nonDisturbanceExtra);
+
+  p("3. Attornment", true);
+  p("In the event of a transfer of the Landlord's interest by foreclosure, deed in lieu of foreclosure, or otherwise, Tenant agrees to attorn to and recognize the Purchaser (including the Mortgagee, if applicable) as its landlord under the Lease. Such attornment shall be effective automatically and without the execution of any further instrument. Following such attornment, the Lease shall remain in full force and effect between the Purchaser and Tenant, with the same terms, covenants, and conditions as though the Purchaser were the original landlord.");
+  if ((v.attornmentExtra || "").trim()) p(v.attornmentExtra);
+
+  p("4. Successors and Assigns", true);
+  p("This Agreement shall be binding upon and inure to the benefit of the parties hereto, and their respective successors, legal representatives, and assigns.");
+
+  p("5. Execution", true);
+  p("This Agreement may be executed in counterparts, each of which shall constitute an original, but all of which together shall constitute one and the same instrument. Facsimile or electronic signatures shall be deemed to have the same force and effect as originals.");
+
+  p("IN WITNESS WHEREOF, the undersigned have executed this Lease Subordination and Non-Disturbance Agreement as of the date first written above.", true);
+
+  p("MORTGAGEE", true);
+  uf("By: ", v.mortgageeBy);
+  uf("Name: ", v.mortgageeSignName);
+  uf("Title: ", v.mortgageeSignTitle);
+  uf("Date: ", v.mortgageeSignDate);
+
+  p("TENANT", true);
+  uf("By: ", v.tenantBy);
+  uf("Name: ", v.tenantSignName);
+  uf("Title: ", v.tenantSignTitle);
+  uf("Date: ", v.tenantSignDate);
+
+  p("Make It Legal", true);
+  p(`This Agreement should be signed in front of a notary public by ${u(v.notarySigner, 16)}.`);
+  p(`Once signed in front of a notary, this document should be delivered to ${u(v.courtOrFilingOffice, 18)} for filing.`);
+
+  p("Copies", true);
+  p(`The original Agreement should be filed with the Clerk of Court or delivered to ${u(v.requestingBusiness, 18)}.`);
+  p("The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.");
+
+  p("Additional Assistance", true);
+  p("If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
+  if ((v.additionalAssistanceNotes || "").trim()) p(v.additionalAssistanceNotes);
+
   doc.save("non_disturbance_agreement.pdf");
 };
 
@@ -497,8 +209,123 @@ export default function NonDisturbanceAgreement() {
   return (
     <FormWizard
       steps={steps}
-      title="Non Disturbance Agreement"
-      subtitle="Complete each step to generate your document"
+      title="Non-Disturbance Agreement"
+      subtitle="Complete all 7 steps to generate your document"
+      onGenerate={generatePDF}
+      documentType="nondisturbanceagreement"
+      preserveStepLayout
+    />
+  );
+}
+import { FormWizard, FieldDef } from "./FormWizard";
+import { jsPDF } from "jspdf";
+
+const steps: Array<{ label: string; fields: FieldDef[] }> = [
+  { label: "Jurisdiction", fields: [
+    { name: "country", label: "Country", type: "text", required: true },
+    { name: "state", label: "State", type: "text", required: true },
+    { name: "province", label: "Province", type: "text", required: false },
+    { name: "city", label: "City", type: "text", required: false },
+  ]},
+  { label: "Parties and Recitals", fields: [
+    { name: "agreementDay", label: "Agreement Day", type: "text", required: true },
+    { name: "agreementMonth", label: "Agreement Month", type: "text", required: true },
+    { name: "agreementYear", label: "Agreement Year", type: "text", required: true },
+    { name: "mortgageeName", label: "Mortgagee Name", type: "text", required: true },
+    { name: "mortgageeAddress", label: "Mortgagee Address", type: "textarea", required: true },
+    { name: "tenantName", label: "Tenant Name", type: "text", required: true },
+    { name: "tenantAddress", label: "Tenant Address", type: "textarea", required: true },
+    { name: "leaseDate", label: "Lease Date", type: "date", required: true },
+    { name: "landlordName", label: "Landlord Name", type: "text", required: true },
+    { name: "landlordAddress", label: "Landlord Address", type: "textarea", required: true },
+    { name: "legalDescription", label: "Legal Description", type: "textarea", required: true },
+    { name: "propertyAddress", label: "Property Address", type: "textarea", required: true },
+  ]},
+  { label: "Subordination and Attornment", fields: [
+    { name: "extraSubordinationText", label: "Extra Subordination Text (Optional)", type: "textarea", required: false },
+  ]},
+  { label: "Execution", fields: [
+    { name: "notarySignerLabel", label: "Make It Legal - Signed before notary by", type: "text", required: false },
+    { name: "mortgageeBy", label: "Mortgagee By (Signature Text)", type: "text", required: true },
+    { name: "mortgageeSignName", label: "Mortgagee Name", type: "text", required: true },
+    { name: "mortgageeSignTitle", label: "Mortgagee Sign Title", type: "text", required: true },
+    { name: "mortgageeSignDate", label: "Mortgagee Sign Date", type: "date", required: true },
+    { name: "tenantBy", label: "Tenant By (Signature Text)", type: "text", required: true },
+    { name: "tenantSignName", label: "Tenant Name", type: "text", required: true },
+    { name: "tenantSignTitle", label: "Tenant Sign Title", type: "text", required: true },
+    { name: "tenantSignDate", label: "Tenant Sign Date", type: "date", required: true },
+  ]},
+];
+
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 16, width = 178, lh = 5.3;
+  let y = 18;
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => { if (y + need > 285) { doc.addPage(); y = 18; } };
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, width); ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal"); doc.setFontSize(10.4); doc.text(lines, left, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8); doc.setFont("times", "normal"); doc.text(label, left, y);
+    const x = left + doc.getTextWidth(label); const show = u(value, 12); doc.text(show, x, y); doc.line(x, y + 1, x + doc.getTextWidth(show), y + 1); y += 6.2;
+  };
+
+  doc.setFont("times", "bold"); doc.setFontSize(13);
+  const title = "NON-DISTURBANCE AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title); doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1); y += 10;
+
+  uf("Jurisdiction: ", `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`);
+
+  p(`This Agreement ("Agreement") is made and entered into on the ${u(v.agreementDay, 2)} day of ${u(v.agreementMonth)}, ${u(v.agreementYear, 4)}, by and between ${u(v.mortgageeName)} of ${u(v.mortgageeAddress)} ("Mortgagee"), and ${u(v.tenantName)} of ${u(v.tenantAddress)} ("Tenant").`);
+  p("RECITALS", true);
+  p(`WHEREAS, Tenant entered into a lease agreement dated ${u(v.leaseDate, 12)} with ${u(v.landlordName)} of ${u(v.landlordAddress)} for lease of part of real property legally described as ${u(v.legalDescription)}, commonly known as ${u(v.propertyAddress)} ("Real Property");`);
+  p("WHEREAS, Mortgagee has made a loan to Landlord secured in part by a mortgage encumbering the Real Property;");
+  p("WHEREAS, Tenant agreed to subordinate leasehold interest in exchange for Mortgagee's agreement not to disturb possession so long as Tenant is not in default under Lease.");
+  p("AGREEMENT", true);
+  p("NOW, THEREFORE, in consideration of mutual covenants and intending to be legally bound, the parties agree as follows:");
+  p("1. Subordination", true);
+  p("Tenant agrees Lease and all tenant rights are subordinate to Mortgage lien/terms/conditions including renewals/extensions/modifications/replacements/consolidations and any future mortgage(s) placed by or through Mortgagee.");
+  if ((v.extraSubordinationText || "").trim()) p(v.extraSubordinationText);
+  p("2. Non-Disturbance", true);
+  p("Provided Tenant is not in default beyond applicable notice/cure periods, Mortgagee agrees Lease shall not be terminated, Tenant possession/use/enjoyment shall not be disturbed, and leasehold estate shall not otherwise be affected by foreclosure or actions/proceedings related to Mortgage or if Mortgagee takes possession.");
+  p("Notwithstanding the foregoing, any Purchaser succeeding Landlord interest by foreclosure/proceeding shall not be: (a) liable for prior landlord acts/omissions; (b) subject to Tenant offsets/defenses against prior landlord; (c) bound by rent prepayment exceeding one month; (d) bound by lease amendment/modification without Mortgagee prior written consent.");
+  p("3. Attornment", true);
+  p("On transfer of Landlord interest by foreclosure, deed in lieu, or otherwise, Tenant shall automatically attorn to and recognize Purchaser (including Mortgagee, if applicable) as landlord under Lease without further instrument. Lease remains in full force between Purchaser and Tenant on same terms.");
+  p("4. Successors and Assigns", true);
+  p("This Agreement binds and benefits parties and their successors, legal representatives, and assigns.");
+  p("5. Execution", true);
+  p("Agreement may be executed in counterparts. Facsimile/electronic signatures have same force and effect as originals.");
+  p("Make It Legal", true);
+  p(`This Agreement should be signed in front of a notary public by ${u(v.notarySignerLabel, 16)}. Once signed in front of a notary, this document should be delivered to the appropriate court for filing.`);
+  p("Copies", true);
+  p("The original Agreement should be filed with the Clerk of Court or delivered to the requesting business. The Affiant should maintain a copy of the Agreement in a safe place.");
+  p("Additional Assistance", true);
+  p("If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use a lawyer referral search to find counsel in your area.");
+  p("IN WITNESS WHEREOF, the undersigned have executed this Lease Subordination and Non-Disturbance Agreement as of the date first written above.", true);
+  p("MORTGAGEE", true);
+  uf("By: ", v.mortgageeBy);
+  uf("Name: ", v.mortgageeSignName);
+  uf("Title: ", v.mortgageeSignTitle);
+  uf("Date: ", v.mortgageeSignDate);
+  p("TENANT", true);
+  uf("By: ", v.tenantBy);
+  uf("Name: ", v.tenantSignName);
+  uf("Title: ", v.tenantSignTitle);
+  uf("Date: ", v.tenantSignDate);
+
+  doc.save("non_disturbance_agreement.pdf");
+};
+
+export default function NonDisturbanceAgreement() {
+  return (
+    <FormWizard
+      steps={steps}
+      title="Non-Disturbance Agreement"
+      subtitle="Complete all steps to generate your document"
       onGenerate={generatePDF}
       documentType="nondisturbanceagreement"
     />

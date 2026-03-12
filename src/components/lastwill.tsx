@@ -1,408 +1,156 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Testator and Family",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "testatorName", label: "Testator full name", type: "text", required: true },
+      { name: "testatorAddress", label: "Testator residence address", type: "text", required: true },
+      { name: "spouseName", label: "Spouse name", type: "text", required: true },
+      { name: "childrenNames", label: "Children names", type: "textarea", required: true },
+      { name: "specificBequests", label: "Specific bequests", type: "textarea", required: true },
+      { name: "tangibleBeneficiary", label: "Tangible property beneficiary", type: "text", required: true },
+      { name: "residuaryAltBeneficiary", label: "Residuary alternate beneficiary", type: "text", required: true },
+      { name: "heirsLawState", label: "Heirs-at-law state", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Executors and Guardians",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "petsNames", label: "Pet names", type: "text", required: true },
+      { name: "petCaretaker1", label: "Primary pet caretaker", type: "text", required: true },
+      { name: "petCaretaker1Address", label: "Primary pet caretaker address", type: "text", required: true },
+      { name: "petCaretaker2", label: "Successor pet caretaker", type: "text", required: true },
+      { name: "petCaretaker2Address", label: "Successor pet caretaker address", type: "text", required: true },
+      { name: "petCareFunds", label: "Pet care funds amount", type: "text", required: true },
+      { name: "independentExecutor", label: "Independent executor", type: "text", required: true },
+      { name: "independentExecutorAddress", label: "Executor address", type: "text", required: true },
+      { name: "successorExecutor", label: "Successor independent executor", type: "text", required: true },
+      { name: "successorExecutorAddress", label: "Successor executor address", type: "text", required: true },
+      { name: "digitalExecutor", label: "Digital executor", type: "text", required: true },
+      { name: "digitalExecutorAddress", label: "Digital executor address", type: "text", required: true },
+      { name: "successorDigitalExecutor", label: "Successor digital executor", type: "text", required: true },
+      { name: "successorDigitalExecutorAddress", label: "Successor digital executor address", type: "text", required: true },
+      { name: "guardianName", label: "Guardian for minor children", type: "text", required: true },
+      { name: "guardianAddress", label: "Guardian address", type: "text", required: true },
+      { name: "successorGuardianName", label: "Successor guardian", type: "text", required: true },
+      { name: "successorGuardianAddress", label: "Successor guardian address", type: "text", required: true },
+      { name: "specialDirectives", label: "Special directives", type: "textarea", required: true },
     ],
   },
   {
-    label: "Effective Date",
+    label: "Execution and Witnesses",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "executionDay", label: "Execution day", type: "text", required: true },
+      { name: "executionMonth", label: "Execution month", type: "text", required: true },
+      { name: "executionYear", label: "Execution year", type: "text", required: true },
+      { name: "testatorSignatureName", label: "Testator signature name", type: "text", required: true },
+      { name: "witnessPages", label: "Number of pages in instrument", type: "text", required: true },
+      { name: "witness1Signature", label: "Witness #1 signature name", type: "text", required: true },
+      { name: "witness1Name", label: "Witness #1 full name", type: "text", required: true },
+      { name: "witness1Address", label: "Witness #1 address", type: "text", required: true },
+      { name: "witness1CityState", label: "Witness #1 city/state", type: "text", required: true },
+      { name: "witness2Signature", label: "Witness #2 signature name", type: "text", required: true },
+      { name: "witness2Name", label: "Witness #2 full name", type: "text", required: true },
+      { name: "witness2Address", label: "Witness #2 address", type: "text", required: true },
+      { name: "witness2CityState", label: "Witness #2 city/state", type: "text", required: true },
     ],
   },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "phone",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Duration",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Signatures",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.4;
+  const limit = 282;
+  let y = 20;
 
-  const checkPageBreak = (s = 10) => {
-    if (y + s > pageHeight - margin) {
+  const u = (value?: string, n = 14) => (value || "").trim() || "_".repeat(n);
+  const ensure = (need = 8) => {
+    if (y + need > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
   };
-
-  const addField = (label: string, value: string, min = 80) => {
-    checkPageBreak();
-    doc.setFontSize(11);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const x = margin + lw + 3;
-    doc.text(value || "", x, y);
-    doc.line(x, y + 1, x + (value ? doc.getTextWidth(value) : min), y + 1);
-    y += 9;
+  const p = (text: string, bold = false, gap = 1.6) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.2);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
-
-  const addParagraph = (t: string) => {
-    checkPageBreak(12);
-    const lines = doc.splitTextToSize(t, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
+  const uf = (label: string, value?: string) => {
+    ensure(lh + 2);
+    const lt = `${label}: `;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.2);
+    doc.text(lt, m, y);
+    const x = m + doc.getTextWidth(lt);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(20, doc.getTextWidth(t)), y + 1);
+    } else {
+      doc.text("____________________", x, y);
+    }
+    y += lh + 0.8;
   };
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("LAST WILL AND TESTAMENT", pageWidth / 2, y, { align: "center" });
-  y += 18;
+  doc.setFontSize(12.6);
+  const title = "LAST WILL AND TESTAMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  addField("Testator:", values.party1Name || "");
-  addField("Date:", values.effectiveDate || "");
-  addField("Executor:", values.party2Name || "");
-
-  y += 6;
-
-  addParagraph("This Last Will and Testament declares how the testator’s property and affairs shall be handled upon death.");
-
-  addParagraph("The executor is authorized to administer the estate, pay debts, and distribute assets to beneficiaries according to this Will.");
-
-  addParagraph("This Will revokes all prior wills and codicils.");
-
-  y += 10;
-
-  doc.text(values.party1Name || "Testator", margin, y);
-  doc.line(margin, y + 1, margin + 80, y + 1);
+  p(`I, ${u(v.testatorName)}, residing at ${u(v.testatorAddress)}, hereby revoke all prior Wills and Codicils heretofore made by me and declare this instrument to be my Last Will and Testament ("Will").`);
+  p("ARTICLE I - Identification of Family", true);
+  p(`I am lawfully married to ${u(v.spouseName)}, and all references in this Will to "my spouse" shall mean and refer to said ${u(v.spouseName)}.`);
+  p(`The names of my children are ${u(v.childrenNames, 20)}. All references in this Will to "my children" shall include the above-named children and any other child or children hereafter born to or adopted by me after execution.`);
+  p("ARTICLE II - Payment of Debts and Expenses", true);
+  p("I direct that all of my just debts, including but not limited to funeral expenses and expenses of my last illness, be first paid from my estate as soon as practicable after my death.");
+  p("ARTICLE III - Disposition of Property", true);
+  p(`A. Specific Bequests: I direct that the following specific bequests be made from my estate: ${u(v.specificBequests, 22)}.`);
+  p("B. Digital Assets: All of my digital assets shall be distributed in accordance with Schedule \"A\" attached and incorporated into this Will.");
+  p("For purposes of this Will, digital assets include any electronic, online, or virtual property, accounts, content, credentials, and associated data.");
+  p("A Letter of Instructions with usernames/passwords/access information is incorporated by reference and shall be delivered exclusively to my appointed Digital Executor.");
+  p(`C. Tangible Personal Property: All remaining tangible personal property not otherwise specifically bequeathed shall be distributed to ${u(v.tangibleBeneficiary)}. If this beneficiary fails to survive me, such property becomes part of my residuary estate.`);
+  p(`D. Residuary Estate: I direct that the remainder of my estate be distributed to my spouse, ${u(v.spouseName)}. If spouse does not survive me, distribute equally among surviving children with right of representation for descendants. If none survive, distribute to ${u(v.residuaryAltBeneficiary)}; if this beneficiary also fails, pass to heirs-at-law under laws of ${u(v.heirsLawState)}.`);
+  p("ARTICLE IV - Pet Care Directives", true);
+  p(`A. Appointment of Pet Caretaker: I give my pets, namely ${u(v.petsNames)}, and any other companion animals I may own at my death, to ${u(v.petCaretaker1)} of ${u(v.petCaretaker1Address)}, requesting proper care and companionship.`);
+  p(`If unable/unwilling, I give said animals to ${u(v.petCaretaker2)} of ${u(v.petCaretaker2Address)}. If neither accepts custody, my Executor shall select an appropriate caretaker.`);
+  p(`B. Funds for Pet Care: I direct my Executor to deliver ${u(v.petCareFunds)} from my estate to the person accepting custody, requested solely for pet care without creating a legally binding obligation.`);
+  p("ARTICLE V - Nomination of Independent Executor", true);
+  p(`I nominate ${u(v.independentExecutor)}, of ${u(v.independentExecutorAddress)}, to serve as my Independent Executor. If unable or unwilling, I nominate ${u(v.successorExecutor)}, of ${u(v.successorExecutorAddress)}, as successor Independent Executor.`);
+  p("ARTICLE VI - Nomination of Digital Executor", true);
+  p(`I nominate ${u(v.digitalExecutor)}, of ${u(v.digitalExecutorAddress)}, to serve as my Digital Executor. If unable or unwilling, I nominate ${u(v.successorDigitalExecutor)}, of ${u(v.successorDigitalExecutorAddress)}, as successor Digital Executor.`);
+  p("ARTICLE VII - Nomination of Guardian", true);
+  p(`If necessary at my death, I nominate ${u(v.guardianName)}, of ${u(v.guardianAddress)}, as Guardian of my minor children's persons and estates. If unable/unwilling, I nominate ${u(v.successorGuardianName)}, of ${u(v.successorGuardianAddress)}, as successor Guardian. No bond/security required.`);
+  p("ARTICLE VIII - Executor Powers", true);
+  p("My Independent Executor has full authority without court order to collect/manage assets, settle debts/claims, file/pay taxes, sell/lease/mortgage property, invest/reinvest assets, redirect mail/close accounts, fund trusts, and perform all necessary acts; estate administered through independent probate.");
+  p("ARTICLE IX - Digital Executor Powers", true);
+  p("My Digital Executor has full authority to manage, access, distribute, transfer, archive, and delete digital assets; engage professionals; receive reasonable compensation; and continue powers until all digital assets are fully administered.");
+  p("ARTICLE X - Special Directives", true);
+  p(u(v.specialDirectives, 24));
+  p("ARTICLE XI - Miscellaneous Provisions", true);
+  p("Paragraph titles are convenience only; gender and singular/plural are interpreted inclusively. Beneficiary must survive me by thirty (30) days. Common-disaster presumption applies if order of death cannot be determined. Fiduciaries are protected for good-faith actions and entitled to reasonable compensation/reimbursement. Independent Executor may fairly divide disputed bequests.");
+  p(`IN WITNESS WHEREOF, I have hereunto subscribed my name this ${u(v.executionDay, 3)} day of ${u(v.executionMonth)} ${u(v.executionYear)}.`);
+  uf("Testator", v.testatorSignatureName);
+  p("Witness Certification", true);
+  p(`We certify that the foregoing instrument, consisting of ${u(v.witnessPages, 2)} pages, was signed by ${u(v.testatorSignatureName)} (the Testator) in our presence, who declared it to be their Last Will and Testament, and we signed as witnesses in the presence of Testator and each other.`);
+  uf("Witness #1", v.witness1Signature);
+  uf("Name", v.witness1Name);
+  uf("Address", v.witness1Address);
+  uf("City/State", v.witness1CityState);
+  uf("Witness #2", v.witness2Signature);
+  uf("Name", v.witness2Name);
+  uf("Address", v.witness2Address);
+  uf("City/State", v.witness2CityState);
 
   doc.save("last_will_and_testament.pdf");
 };
@@ -411,7 +159,7 @@ export default function LastWillForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Last Will"
+      title="Last Will and Testament"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="lastwill"

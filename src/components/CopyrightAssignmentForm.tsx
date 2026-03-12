@@ -1,321 +1,172 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
+
+const countryOptions = [
+  { value: "United States", label: "United States" },
+  { value: "Canada", label: "Canada" },
+  { value: "United Kingdom", label: "United Kingdom" },
+  { value: "Australia", label: "Australia" },
+  { value: "Pakistan", label: "Pakistan" },
+  { value: "Other", label: "Other" },
+];
+
+const getStateOptions = (country?: string) => {
+  if (country === "United States") return [{ value: "California", label: "California" }, { value: "New York", label: "New York" }, { value: "Texas", label: "Texas" }, { value: "Florida", label: "Florida" }, { value: "Other US State", label: "Other US State" }];
+  if (country === "Canada") return [{ value: "Ontario", label: "Ontario" }, { value: "Quebec", label: "Quebec" }, { value: "British Columbia", label: "British Columbia" }, { value: "Alberta", label: "Alberta" }, { value: "Other Canadian Province", label: "Other Canadian Province" }];
+  if (country === "United Kingdom") return [{ value: "England", label: "England" }, { value: "Scotland", label: "Scotland" }, { value: "Wales", label: "Wales" }, { value: "Northern Ireland", label: "Northern Ireland" }];
+  if (country === "Australia") return [{ value: "New South Wales", label: "New South Wales" }, { value: "Victoria", label: "Victoria" }, { value: "Queensland", label: "Queensland" }, { value: "Western Australia", label: "Western Australia" }, { value: "Other Australian State", label: "Other Australian State" }];
+  if (country === "Pakistan") return [{ value: "Punjab", label: "Punjab" }, { value: "Sindh", label: "Sindh" }, { value: "Khyber Pakhtunkhwa", label: "Khyber Pakhtunkhwa" }, { value: "Balochistan", label: "Balochistan" }, { value: "Islamabad Capital Territory", label: "Islamabad Capital Territory" }];
+  return [{ value: "Other State/Province/Region", label: "Other State/Province/Region" }];
+};
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Date and Jurisdiction",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "executionDay", label: "Execution Day", type: "text", required: true, placeholder: "___" },
+      { name: "executionMonth", label: "Execution Month", type: "text", required: true, placeholder: "__________" },
+      { name: "executionYear", label: "Execution Year", type: "text", required: true, placeholder: "20__" },
+      { name: "country", label: "Country", type: "select", required: true, options: countryOptions },
+      { name: "state", label: "State/Province/Region", type: "select", required: true, dependsOn: "country", getOptions: (values) => getStateOptions(values.country) },
+      { name: "city", label: "City", type: "text", required: true },
+      { name: "governingLawState", label: "Governing Law State", type: "select", required: true, dependsOn: "country", getOptions: (values) => getStateOptions(values.country) },
     ],
   },
   {
-    label: "State/Province",
+    label: "Assignor and Assignee",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "assignorName", label: "Assignor Name", type: "text", required: true },
+      { name: "assignorAddress", label: "Assignor Address", type: "textarea", required: true },
+      { name: "assigneeName", label: "Assignee Name", type: "text", required: true },
+      { name: "assigneeAddress", label: "Assignee Address", type: "textarea", required: true },
+      { name: "copyrightTitle", label: "Title of Copyrighted Work", type: "text", required: true },
+      { name: "exhibitADescription", label: "Exhibit A Description", type: "textarea", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Assignment and Scope",
     fields: [
-      { name: "effectiveDate", label: "What is the effective date of this agreement?", type: "date", required: true },
+      { name: "rightsScopeNotes", label: "Rights scope notes (optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Warranties and Moral Rights",
     fields: [
-      { name: "party1Name", label: "What is the full legal name of the first party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party1Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
+      { name: "warrantyNotes", label: "Warranties/moral rights notes (optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Legal Terms",
     fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
+      { name: "legalTermsNotes", label: "Assignment legal terms notes (optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Signatures",
     fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
+      { name: "assignorSignName", label: "Assignor Name (Signature Block)", type: "text", required: true },
+      { name: "assignorSignature", label: "Assignor Signature", type: "text", required: true },
+      { name: "assignorDate", label: "Assignor Date", type: "date", required: true },
+      { name: "assigneeSignName", label: "Assignee Name (Signature Block)", type: "text", required: true },
+      { name: "assigneeSignature", label: "Assignee Signature", type: "text", required: true },
+      { name: "assigneeDate", label: "Assignee Date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Name",
-    fields: [
-      { name: "party2Name", label: "What is the full legal name of the second party?", type: "text", required: true, placeholder: "Enter full legal name" },
-      { name: "party2Type", label: "Is this party an individual or a business?", type: "select", required: true, options: [{ value: "individual", label: "Individual" }, { value: "business", label: "Business/Company" }] },
-    ],
+    label: "Final Review",
+    fields: [{ name: "finalNotes", label: "Final notes (optional)", type: "textarea", required: false }],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      { name: "description", label: "Describe the purpose and scope of this agreement", type: "textarea", required: true, placeholder: "Provide a detailed description of the agreement terms..." },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      { name: "duration", label: "What is the duration of this agreement?", type: "select", required: true, options: [{ value: "1month", label: "1 Month" }, { value: "3months", label: "3 Months" }, { value: "6months", label: "6 Months" }, { value: "1year", label: "1 Year" }, { value: "2years", label: "2 Years" }, { value: "5years", label: "5 Years" }, { value: "indefinite", label: "Indefinite/Ongoing" }, { value: "custom", label: "Custom Duration" }] },
-      { name: "terminationNotice", label: "How much notice is required to terminate?", type: "select", required: true, options: [{ value: "immediate", label: "Immediate" }, { value: "7days", label: "7 Days" }, { value: "14days", label: "14 Days" }, { value: "30days", label: "30 Days" }, { value: "60days", label: "60 Days" }, { value: "90days", label: "90 Days" }] },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      { name: "paymentSchedule", label: "Payment Schedule", type: "select", required: false, options: [{ value: "onetime", label: "One-time Payment" }, { value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Bi-weekly" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annually", label: "Annually" }, { value: "milestone", label: "Milestone-based" }] },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      { name: "confidentiality", label: "Include confidentiality clause?", type: "select", required: true, options: [{ value: "yes", label: "Yes - Include confidentiality provisions" }, { value: "no", label: "No - Not needed" }] },
-      { name: "disputeResolution", label: "How should disputes be resolved?", type: "select", required: true, options: [{ value: "mediation", label: "Mediation" }, { value: "arbitration", label: "Binding Arbitration" }, { value: "litigation", label: "Court Litigation" }, { value: "negotiation", label: "Good Faith Negotiation First" }] },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      { name: "additionalTerms", label: "Any additional terms or special conditions?", type: "textarea", required: false, placeholder: "Enter any additional terms, conditions, or special provisions..." },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 25;
-  const contentWidth = pageWidth - margin * 2;
-  let y = 20;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 16;
+  const width = 178;
+  const lh = 5.25;
+  let y = 18;
 
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const durationMap: Record<string, string> = { "1month": "1 Month", "3months": "3 Months", "6months": "6 Months", "1year": "1 Year", "2years": "2 Years", "5years": "5 Years", "indefinite": "Indefinite/Ongoing", "custom": "Custom" };
-  const terminationMap: Record<string, string> = { "immediate": "immediately", "7days": "7 days", "14days": "14 days", "30days": "30 days", "60days": "60 days", "90days": "90 days" };
-  const disputeMap: Record<string, string> = { "mediation": "Mediation", "arbitration": "Binding Arbitration", "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation" };
-  const scheduleMap: Record<string, string> = { "onetime": "one-time", "weekly": "weekly", "biweekly": "bi-weekly", "monthly": "monthly", "quarterly": "quarterly", "annually": "annual", "milestone": "milestone-based" };
-
-  const field = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 35), y + 1.2);
-    y += 6;
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => {
+    if (y + need > 285) {
+      doc.addPage();
+      y = 18;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.6) => {
+    const lines = doc.splitTextToSize(text, width);
+    ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.35);
+    doc.text(lines, left, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8);
+    doc.setFont("times", "normal");
+    doc.text(label, left, y);
+    const x = left + doc.getTextWidth(label);
+    const show = u(value, 12);
+    doc.text(show, x, y);
+    doc.line(x, y + 1, x + doc.getTextWidth(show), y + 1);
+    y += 6.2;
   };
 
-  const para = (text: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 3;
-  };
-
-  const underlined = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(label, margin, y);
-    const lw = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.2, margin + lw + Math.max(doc.getTextWidth(val), 40), y + 1.2);
-    y += 6;
-  };
-
-  // TITLE
-  doc.setFont("helvetica", "bold");
+  doc.setFont("times", "bold");
   doc.setFontSize(13);
   const title = "COPYRIGHT ASSIGNMENT";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 11;
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
+  y += 10;
 
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  field("State/Province:  ", jurisdiction || "N/A");
-  y += 3;
+  uf("Jurisdiction: ", `${u(v.city)}, ${u(v.state)}, ${u(v.country)}`);
+  p(`This Copyright Assignment (hereinafter referred to as the "Assignment") is made and entered into on this ${u(v.executionDay, 3)} day of ${u(v.executionMonth)}, ${u(v.executionYear, 4)}, by and between:`);
+  p(`${u(v.assignorName)}, residing at ${u(v.assignorAddress)} (hereinafter referred to as "Assignor"),`);
+  p("AND");
+  p(`${u(v.assigneeName)}, residing at ${u(v.assigneeAddress)} (hereinafter referred to as "Assignee").`);
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Subject: Notice of Copyright Assignment", margin, y);
-  y += 7;
+  p("1. Ownership and Representation", true);
+  p(`The Assignor hereby represents, warrants, and affirms that they are the sole creator and exclusive owner of the copyrighted work entitled "${u(v.copyrightTitle)}" (hereinafter referred to as the "Copyrighted Work").`);
 
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 6;
+  p("2. Assignment of Rights", true);
+  p(`For good and valuable consideration, the receipt and sufficiency of which is hereby acknowledged, the Assignor irrevocably assigns, transfers, and conveys to the Assignee all right, title, and interest, including all copyrights and associated rights, in and to the Copyrighted Work, as described in Exhibit A, which is attached hereto and made a part of this Assignment. Exhibit A: ${u(v.exhibitADescription)}.`);
 
-  underlined("Assignor (Copyright Owner):  ", values.party1Name || "N/A");
-  underlined("Assignor Address:  ", party1Address || "N/A");
-  underlined("Assignor Email:  ", values.party1Email || "N/A");
-  underlined("Assignee (Recipient):  ", values.party2Name || "N/A");
-  underlined("Assignee Address:  ", party2Address || "N/A");
-  underlined("Assignee Email:  ", values.party2Email || "N/A");
-  y += 2;
+  p("3. Scope of Assigned Rights", true);
+  p("The rights assigned to the Assignee include, without limitation, the full and exclusive right to exploit, reproduce, publish, distribute, perform, display, license, modify, and otherwise use the Copyrighted Work in any manner and in all forms, media, or technologies now known or hereafter developed. The Assignee shall have the right to take any and all actions necessary or desirable to enforce and protect these rights, including initiating legal proceedings in the name of the Assignor, the Assignee, or both.");
+  if ((v.rightsScopeNotes || "").trim()) p(v.rightsScopeNotes);
 
-  para(`I am writing to formally confirm the Copyright Assignment entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the Assignor"} and ${values.party2Name || "the Assignee"}, governed by the laws of ${jurisdiction || "the applicable jurisdiction"}.`);
+  p("4. Registrations and Renewals", true);
+  p("The Assignor further assigns and conveys all rights necessary for the Assignee to obtain and maintain copyright registrations, renewals, extensions, and reissues in relation to the Copyrighted Work, and agrees to cooperate with and assist the Assignee in executing any documents or taking any action required to perfect or enforce the rights assigned herein.");
 
-  para(values.description || "The Assignor hereby irrevocably assigns to the Assignee all rights, title, and interest in and to the copyright(s) described herein, including all rights to reproduce, distribute, create derivative works, publicly display, and otherwise exploit the work in any medium or format, throughout the world, in perpetuity.");
+  p("5. Warranties and Representations", true);
+  p("The Assignor hereby covenants, warrants, and represents that:");
+  p("(a) The Assignor is the sole and exclusive creator and owner of the Copyrighted Work and has full authority to assign the rights granted herein;");
+  p("(b) The Copyrighted Work is original, free from any third-party claims, liens, encumbrances, licenses, or obligations, and does not infringe upon the rights of any third party;");
+  p("(c) There are no existing agreements or understandings that would conflict with or impair the rights transferred under this Assignment.");
+  if ((v.warrantyNotes || "").trim()) p(v.warrantyNotes);
 
-  para(`This assignment shall take effect as of ${values.effectiveDate || "the effective date"} and shall continue for ${durationMap[values.duration] || values.duration || "the agreed duration"}. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included." : ""}${values.paymentAmount ? ` Consideration for this assignment is ${values.paymentAmount} payable on a ${scheduleMap[values.paymentSchedule] || values.paymentSchedule || "mutually agreed"} basis.` : ""}`);
+  p("6. Waiver of Moral Rights", true);
+  p("To the maximum extent permitted by applicable law, the Assignor hereby irrevocably waives any and all moral rights, including, but not limited to:");
+  p("- The right of attribution or the right to be identified as the author of the Copyrighted Work;");
+  p("- The right to object to any modification, alteration, distortion, or mutilation of the Copyrighted Work;");
+  p("- The right to withdraw the work from circulation;");
+  p("- The right to prevent others from being falsely credited or attributed as the author of the Copyrighted Work;");
+  p("- Any other right recognized under applicable moral rights or authorship laws.");
 
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
+  p("7. Governing Law", true);
+  p(`This Assignment shall be governed by and construed in accordance with the laws of the State of ${u(v.governingLawState)}, without regard to its conflict of laws provisions.`);
+  if ((v.legalTermsNotes || "").trim()) p(v.legalTermsNotes);
 
-  para("Please retain a signed copy of this assignment for your records. Both parties are bound by the terms stated herein from the effective date.");
-
-  y += 2;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 8;
-  doc.text("Sincerely,", margin, y);
-  y += 12;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  const senderName = values.party1Name || "Assignor";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.2, margin + doc.getTextWidth(senderName), y + 1.2);
-  y += 6;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 5; }
-
-  y += 5;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("Assignor Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party1Signature || "________________________", margin + doc.getTextWidth("Assignor Signature:  "), y);
-  y += 7;
-  doc.setFont("helvetica", "bold");
-  doc.text("Assignee Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(values.party2Signature || "________________________", margin + doc.getTextWidth("Assignee Signature:  "), y);
-  y += 7;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.2, wx + doc.getTextWidth(values.witnessName), y + 1.2);
-  }
+  p("IN WITNESS WHEREOF, the Assignor has executed this Assignment voluntarily and with full authority, as of the day and year first above written.", true);
+  p("ASSIGNOR:", true);
+  uf("Name: ", v.assignorSignName);
+  uf("Signature: ", v.assignorSignature);
+  uf("Date: ", v.assignorDate);
+  p("ASSIGNEE:", true);
+  uf("Name: ", v.assigneeSignName);
+  uf("Signature: ", v.assigneeSignature);
+  uf("Date: ", v.assigneeDate);
+  if ((v.finalNotes || "").trim()) p(v.finalNotes);
 
   doc.save("copyright_assignment.pdf");
 };
@@ -325,9 +176,10 @@ export default function CopyrightAssignment() {
     <FormWizard
       steps={steps}
       title="Copyright Assignment"
-      subtitle="Complete each step to generate your document"
+      subtitle="Complete all 7 steps to generate your document"
       onGenerate={generatePDF}
       documentType="copyrightassignment"
+      preserveStepLayout
     />
   );
 }

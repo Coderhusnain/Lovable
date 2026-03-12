@@ -20,7 +20,7 @@ const BalloonPaymentPromissoryNoteForm = lazy(() => import("@/components/Balloon
 const GiftAffidavitForm = lazy(() => import("@/components/GiftAffidavitForm"));
 const FinancialSupportAffidavitForm = lazy(() => import("@/components/FinancialSupportAffidavitForm"));
 const ServicesContractForm = lazy(() => import("@/components/ServicesContractForm"));
-const DomesticServiceAgreementForm = lazy(() => import("@/components/DomesticServiceAgreementForm"));
+const DomesticServiceAgreementForm = lazy(() => import("@/components/DomesticServiceAgreementDocumentForm"));
 const AgreementToSellForm = lazy(() => import("@/components/AgreementToSellForm"));
 const GeneralPowerOfAttorneyForm = lazy(() => import("@/components/GeneralPowerOfAttorneyForm"));
 const SpecialPowerOfAttorneyForm = lazy(() => import("@/components/SpecialPowerOfAttorneyForm"));

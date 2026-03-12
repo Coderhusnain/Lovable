@@ -1,593 +1,181 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Step 1: Parties and Effective Date",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Effective Date", type: "date", required: true },
+      { name: "supplierName", label: "Supplier Name", type: "text", required: true },
+      { name: "supplierAddress", label: "Supplier Address", type: "textarea", required: true },
+      { name: "distributorName", label: "Distributor Name", type: "text", required: true },
+      { name: "distributorAddress", label: "Distributor Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Step 2: Appointment and Territory",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "territory", label: "Defined Territory", type: "text", required: true },
+      { name: "productsSummary", label: "Products Summary", type: "textarea", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Step 3: Commercial Terms",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "proceedsPercent", label: "Supplier Share % of Net Proceeds", type: "text", required: true },
+      { name: "installments", label: "Installments Count", type: "text", required: true },
+      { name: "dueDay", label: "Due Day After Accounting Period", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Step 4: Default, Insurance, and Disputes",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "noticeDays", label: "Termination Notice Days", type: "text", required: true },
+      { name: "disputeMethod", label: "Dispute method detail", type: "textarea", required: true },
+      { name: "insuranceDetail", label: "Insurance/Replacement value detail", type: "textarea", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Step 5: Governing Law",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "state", label: "State / Jurisdiction", type: "text", required: true },
+      { name: "province", label: "Province", type: "text", required: false },
+      { name: "city", label: "City", type: "text", required: false },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Step 6: Execution",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "supplierSignName", label: "Supplier Signatory Name", type: "text", required: true },
+      { name: "supplierSignDesignation", label: "Supplier Designation", type: "text", required: true },
+      { name: "supplierSignDate", label: "Supplier Sign Date", type: "date", required: true },
+      { name: "distributorSignName", label: "Distributor Signatory Name", type: "text", required: true },
+      { name: "distributorSignDesignation", label: "Distributor Designation", type: "text", required: true },
+      { name: "distributorSignDate", label: "Distributor Sign Date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
+    label: "Step 7: Final Review",
+    fields: [{ name: "reviewNote", label: "Optional Internal Review Note", type: "textarea", required: false }],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-// ─── PDF Helpers ─────────────────────────────────────────────────────────────
-
-/** Draw plain label then UNDERLINED value on the same line. Returns x after value. */
-const fieldRow = (doc: jsPDF, label: string, value: string, x: number, y: number): number => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  const vx = x + doc.getTextWidth(label);
-  doc.text(value, vx, y);
-  const vw = doc.getTextWidth(value);
-  doc.line(vx, y + 0.7, vx + vw, y + 0.7);
-  return vx + vw;
-};
-
-/** Draw plain text then UNDERLINED credential inline; returns new x cursor. */
-const inlineVal = (doc: jsPDF, before: string, value: string, x: number, y: number): number => {
-  doc.text(before, x, y);
-  const vx = x + doc.getTextWidth(before);
-  doc.text(value, vx, y);
-  const vw = doc.getTextWidth(value);
-  doc.line(vx, y + 0.7, vx + vw, y + 0.7);
-  return vx + vw;
-};
-
-/** Bold + underlined centred title */
-const boldUnderlinedCentre = (doc: jsPDF, text: string, y: number, fontSize = 13) => {
-  doc.setFontSize(fontSize);
-  doc.setFont("helvetica", "bold");
-  const w = doc.getTextWidth(text);
-  const x = (210 - w) / 2;
-  doc.text(text, x, y);
-  doc.line(x, y + 0.9, x + w, y + 0.9);
-};
-
-/** Render a line with label (normal) + underlined value; advance y by lh */
-const credLine = (doc: jsPDF, label: string, value: string, x: number, y: number): number => {
-  fieldRow(doc, label, value, x, y);
-  return y;
-};
-
-// ─── generatePDF ─────────────────────────────────────────────────────────────
-const generatePDF = (values: Record<string, string>) => {
+const generatePDF = (v: Record<string, string>) => {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const L = 25;
-  const lh = 7;
-  let y = 22;
-
-  const durMap: Record<string, string> = {
-    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
-    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
-    "indefinite": "Indefinite/Ongoing", "custom": "Custom Duration",
+  const left = 16;
+  const width = 178;
+  const lh = 5.3;
+  let y = 18;
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => {
+    if (y + need > 285) {
+      doc.addPage();
+      y = 18;
+    }
   };
-  const noticeMap: Record<string, string> = {
-    "immediate": "Immediate", "7days": "7 Days", "14days": "14 Days",
-    "30days": "30 Days", "60days": "60 Days", "90days": "90 Days",
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, width);
+    ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, left, y);
+    y += lines.length * lh + gap;
   };
-  const disputeMap: Record<string, string> = {
-    "mediation": "Mediation", "arbitration": "Binding Arbitration",
-    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
-  };
 
-  const p1name  = values.party1Name  || "First Party";
-  const p2name  = values.party2Name  || "Second Party";
-  const p1addr  = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`;
-  const p2addr  = `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`;
-  const eDate   = values.effectiveDate || "N/A";
-  const juris   = `${values.state || ""}, ${(values.country || "").toUpperCase()}`;
-  const dur     = durMap[values.duration]     || values.duration     || "N/A";
-  const notice  = noticeMap[values.terminationNotice] || values.terminationNotice || "N/A";
-  const confid  = values.confidentiality === "yes" ? "Included" : "Not Included";
-  const dispute = disputeMap[values.disputeResolution] || values.disputeResolution || "N/A";
-  const sig1    = values.party1Signature || p1name;
-  const sig2    = values.party2Signature || p2name;
+  doc.setFont("times", "bold");
+  doc.setFontSize(12.8);
+  const title = "PRODUCT DISTRIBUTION AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
+  y += 9;
 
-  doc.setFontSize(11);
+  p(
+    `This Product Distribution Agreement ("Agreement") is made and entered into as of ${u(v.effectiveDate, 12)} ("Effective Date"), by and between ${u(
+      v.supplierName
+    )}, having principal place of business at ${u(v.supplierAddress)} ("Supplier"), and ${u(
+      v.distributorName
+    )}, having principal place of business at ${u(v.distributorAddress)} ("Distributor").`
+  );
+  p('Supplier and Distributor are collectively the "Parties" and individually a "Party."');
 
-  // ── Title ──
-  boldUnderlinedCentre(doc, "PRODUCT DISTRIBUTION", y, 13);
-  y += lh * 2;
+  p("I. RIGHT TO SELL AND APPOINTMENT", true);
+  p(`1.1 Supplier is lawful owner of the products described in this Agreement (the "Products"): ${u(v.productsSummary)}.`);
+  p(`1.2 Supplier grants Distributor an exclusive right to distribute and sell Products within territory: ${u(v.territory)}.`);
+  p("1.3 Products are supplied on consignment basis; Distributor shall use best efforts, due diligence, and professional expertise to promote, market, and sell Products.");
+  p("1.4 Sales prices and commercial terms are determined solely by Supplier unless otherwise agreed in writing.");
 
-  // ── Header credential rows ──
-  doc.setFontSize(11);
-  fieldRow(doc, "Date:  ", eDate, L, y);   y += lh;
-  fieldRow(doc, "To:  ", p2name, L, y);    y += lh;
-  fieldRow(doc, "Address:  ", p2addr, L, y); y += lh * 1.6;
+  p("II. PROCEEDS OF SALES AND PAYMENT TERMS", true);
+  p(
+    `2.1 Distributor shall remit to Supplier ${u(v.proceedsPercent, 3)}% of net sales proceeds derived from Product sales.`
+  );
+  p(
+    `2.2 Payment shall be made in ${u(v.installments, 2)} installment(s), due on or before day ${u(
+      v.dueDay,
+      2
+    )} following each relevant accounting period.`
+  );
+  p("2.3 Each payment shall be accompanied by detailed written statement of net proceeds calculation, quantities sold, and current inventory status.");
 
-  // ── Subject (bold) ──
-  doc.setFont("helvetica", "bold");
-  doc.text("Subject: Product Distribution – ", L, y);
-  let sx = L + doc.getTextWidth("Subject: Product Distribution – ");
-  doc.text(p1name, sx, y);
-  doc.line(sx, y + 0.7, sx + doc.getTextWidth(p1name), y + 0.7);
-  sx += doc.getTextWidth(p1name);
-  doc.text(" & ", sx, y);
-  sx += doc.getTextWidth(" & ");
-  doc.text(p2name, sx, y);
-  doc.line(sx, y + 0.7, sx + doc.getTextWidth(p2name), y + 0.7);
-  y += lh * 1.6;
+  p("III. RECORD KEEPING AND INSPECTION", true);
+  p("3.1 Distributor shall maintain complete, accurate, and current records relating to receipt, storage, sale, and inventory.");
+  p("3.2 Supplier may inspect such records during normal business hours with reasonable prior notice for verification/audit.");
 
-  // ── Salutation ──
-  doc.setFont("helvetica", "normal");
-  doc.text("Dear Sir or Madam:", L, y);
-  y += lh;
+  p("IV. TITLE TO MERCHANDISE", true);
+  p("All consigned Products remain sole property of Supplier until sold to third-party purchasers, at which point title transfers per terms of sale.");
 
-  // ── Para 1: opening with underlined party name ──
-  let cx = inlineVal(doc, "I am writing to formally confirm the Product Distribution with ", p2name, L, y);
-  doc.text(", effective ", cx, y);
-  cx += doc.getTextWidth(", effective ");
-  cx = inlineVal(doc, "", eDate, cx, y);
-  doc.text(".", cx, y);
-  y += lh;
+  p("V. LOSS, DAMAGE AND INSURANCE", true);
+  p(
+    `5.1 Distributor is fully responsible for shortage, loss, theft, or damage while Products are in its possession, custody, or control. 5.2 Distributor shall maintain insurance coverage sufficient for full replacement value: ${u(
+      v.insuranceDetail
+    )}.`
+  );
 
-  // ── Para 2: description (each line underlined) ──
-  const descText = values.description || "The parties agree to provide services as described in the terms of this agreement.";
-  const descLines: string[] = doc.splitTextToSize(descText, 160);
-  descLines.forEach((line: string) => {
-    doc.text(line, L, y);
-    doc.line(L, y + 0.7, L + doc.getTextWidth(line), y + 0.7);
-    y += lh;
-  });
-  y += lh * 0.3;
+  p("VI. PAYROLL TAXES AND EMPLOYMENT OBLIGATIONS", true);
+  p("Distributor is solely liable for payroll taxes, social security contributions, insurance premiums, and statutory obligations for its personnel and shall indemnify Supplier for related claims.");
 
-  // ── Para 3: terms — each credential value underlined inline ──
-  doc.text("This agreement is governed by the laws of ", L, y);
-  cx = L + doc.getTextWidth("This agreement is governed by the laws of ");
-  cx = inlineVal(doc, "", juris, cx, y);
-  doc.text(".", cx, y);
-  y += lh;
+  p("VII. DEFAULT AND TERMINATION", true);
+  p(
+    `If Distributor fails to comply with material obligations (including payment defaults), Supplier may terminate by giving ${u(
+      v.noticeDays,
+      2
+    )} days written notice. Distributor may prevent termination by full cure within notice period provided no further default occurs.`
+  );
 
-  cx = inlineVal(doc, "Duration: ", dur, L, y);
-  doc.text("  |  Termination Notice: ", cx, y);
-  cx += doc.getTextWidth("  |  Termination Notice: ");
-  cx = inlineVal(doc, "", notice, cx, y);
-  doc.text(".", cx, y);
-  y += lh;
+  p("VIII. DISPUTE RESOLUTION", true);
+  p(
+    `Parties shall first attempt amicable negotiations. If unresolved, dispute shall proceed to mediation, and if mediation fails, parties may pursue arbitration or court remedies as mutually agreed. Detail: ${u(
+      v.disputeMethod
+    )}.`
+  );
 
-  cx = inlineVal(doc, "Confidentiality: ", confid, L, y);
-  doc.text("  |  Dispute Resolution: ", cx, y);
-  cx += doc.getTextWidth("  |  Dispute Resolution: ");
-  inlineVal(doc, "", dispute, cx, y);
-  y += lh;
-  y += lh * 0.3;
+  p("IX. WARRANTIES AND LIMITATION OF LIABILITY", true);
+  p("Neither Party provides express/implied warranties regarding sale/use/transfer by the other Party or third parties. Neither Party is liable for indirect, incidental, consequential, special, or punitive damages.");
 
-  // ── Para 4: financial (if any) ──
-  if (values.paymentAmount) {
-    cx = inlineVal(doc, "Payment of ", values.paymentAmount, L, y);
-    doc.text(" on a ", cx, y);
-    cx += doc.getTextWidth(" on a ");
-    cx = inlineVal(doc, "", values.paymentSchedule || "N/A", cx, y);
-    doc.text(" schedule.", cx, y);
-    y += lh;
-    y += lh * 0.3;
-  }
+  p("X. ASSIGNMENT AND TRANSFER OF RIGHTS", true);
+  p("Agreement binds Parties and permitted successors/assigns. Neither Party may assign/transfer rights/obligations without prior written consent of the other.");
+  p("XI. ENTIRE AGREEMENT | XII. AMENDMENTS | XIII. SEVERABILITY | XIV. WAIVER", true);
+  p("This Agreement is complete and supersedes prior understandings; amendments require signed writing; invalid provisions are severed; non-enforcement is not waiver.");
+  p("XV. GOVERNING LAW", true);
+  p(`Governing law is the State/Jurisdiction of ${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? ` (${v.city})` : ""}.`);
 
-  // ── Para 5: additional terms (if any, each line underlined) ──
-  if (values.additionalTerms) {
-    const addLines: string[] = doc.splitTextToSize(values.additionalTerms, 160);
-    addLines.forEach((line: string) => {
-      doc.text(line, L, y);
-      doc.line(L, y + 0.7, L + doc.getTextWidth(line), y + 0.7);
-      y += lh;
-    });
-    y += lh * 0.3;
-  }
+  p("XVI. SIGNATORIES", true);
+  p(`For Supplier: Name ${u(v.supplierSignName)} | Designation ${u(v.supplierSignDesignation)} | Date ${u(v.supplierSignDate, 10)}`);
+  p(`For Distributor: Name ${u(v.distributorSignName)} | Designation ${u(v.distributorSignDesignation)} | Date ${u(v.distributorSignDate, 10)}`);
 
-  // ── Para 6: closing ──
-  const closeText = "Please contact us should you require any additional information to process this agreement. We appreciate your prompt attention to this matter and look forward to written confirmation of the terms herein.";
-  const closeLines: string[] = doc.splitTextToSize(closeText, 160);
-  doc.text(closeLines, L, y);
-  y += closeLines.length * lh + lh * 0.5;
-
-  doc.text("Thank you for your cooperation.", L, y);
-  y += lh * 1.8;
-
-  doc.text("Sincerely,", L, y);
-  y += lh * 2.8;
-
-  // ── Signature block – name bold+underlined ──
-  doc.setFont("helvetica", "bold");
-  doc.text(sig1, L, y);
-  doc.line(L, y + 0.9, L + doc.getTextWidth(sig1), y + 0.9);
-  y += lh;
-
-  doc.setFont("helvetica", "normal");
-  fieldRow(doc, "", p1addr, L, y); y += lh;
-  fieldRow(doc, "Email: ", values.party1Email || "", L, y); y += lh;
-  fieldRow(doc, "Phone: ", values.party1Phone || "", L, y); y += lh * 1.5;
-
-  // Second party signature
-  doc.setFont("helvetica", "bold");
-  doc.text(sig2, L, y);
-  doc.line(L, y + 0.9, L + doc.getTextWidth(sig2), y + 0.9);
-  y += lh;
-
-  doc.setFont("helvetica", "normal");
-  fieldRow(doc, "", p2addr, L, y); y += lh;
-  fieldRow(doc, "Email: ", values.party2Email || "", L, y); y += lh;
-  fieldRow(doc, "Phone: ", values.party2Phone || "", L, y); y += lh;
-
-  if (values.witnessName) {
-    y += lh * 0.5;
-    fieldRow(doc, "Witness: ", values.witnessName, L, y);
-  }
-
-  doc.save("product_distribution.pdf");
+  doc.save("product_distribution_agreement.pdf");
 };
 
-export default function ProductDistribution() {
+export default function ProductDistributionForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Product Distribution"
-      subtitle="Complete each step to generate your document"
+      title="Product Distribution Agreement"
+      subtitle="Complete all steps to generate your document"
       onGenerate={generatePDF}
       documentType="productdistribution"
+      preserveStepLayout
     />
   );
 }

@@ -1,463 +1,150 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Step 1: Parties and Date",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "agreementDate", label: "Agreement Date", type: "date", required: true },
+      { name: "employeeName", label: "Employee Full Legal Name", type: "text", required: true },
+      { name: "employeeAddress", label: "Employee Address", type: "textarea", required: true },
+      { name: "employerName", label: "Employer Full Legal Name", type: "text", required: true },
+      { name: "employerAddress", label: "Employer Principal Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Step 2: Termination and Pay",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "terminationDate", label: "Termination Date", type: "date", required: true },
+      { name: "severanceAmount", label: "Severance Payment Amount", type: "text", required: true },
+      { name: "paymentDays", label: "Severance Payment in [X] Business Days", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Step 3: Revocation and Property",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "revocationDays", label: "Revocation Period Days", type: "text", required: true },
+      { name: "revocationTime", label: "Revocation Cutoff Time", type: "text", required: true },
+      { name: "returnPropertyDate", label: "Company Property Return Date", type: "date", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Step 4: Law and Compliance",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "governingState", label: "Governing Law State", type: "text", required: true },
+      { name: "referenceText", label: "Reference Response Limitation Text", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Step 5: Employee Signature",
     fields: [
-      { name: "party1Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party1City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party1Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
+      { name: "employeeSign", label: "Employee Signature Name", type: "text", required: true },
+      { name: "employeeSignDate", label: "Employee Signature Date", type: "date", required: true },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Step 6: Employer Signature",
     fields: [
-      { name: "party1Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party1Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
+      { name: "employerSign", label: "Employer Signature Name", type: "text", required: true },
+      { name: "employerSignTitle", label: "Employer Signatory Title", type: "text", required: true },
+      { name: "employerSignDate", label: "Employer Signature Date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
+    label: "Step 7: Final Review",
+    fields: [{ name: "reviewNote", label: "Optional Internal Review Note", type: "textarea", required: false }],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      { name: "party2Street", label: "Street Address", type: "text", required: true, placeholder: "123 Main Street" },
-      { name: "party2City", label: "City", type: "text", required: true, placeholder: "City" },
-      { name: "party2Zip", label: "ZIP/Postal Code", type: "text", required: true, placeholder: "ZIP Code" },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      { name: "party2Email", label: "Email Address", type: "email", required: true, placeholder: "email@example.com" },
-      { name: "party2Phone", label: "Phone Number", type: "tel", required: false, placeholder: "(555) 123-4567" },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      { name: "paymentAmount", label: "What is the payment amount (if applicable)?", type: "text", required: false, placeholder: "$0.00" },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      { name: "party1Signature", label: "First Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "party2Signature", label: "Second Party Signature (Type full legal name)", type: "text", required: true, placeholder: "Type your full legal name as signature" },
-      { name: "witnessName", label: "Witness Name (Optional)", type: "text", required: false, placeholder: "Witness full legal name" },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "letter" });
-  const pageWidth  = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin      = 20;
-  const contentWidth = pageWidth - margin * 2;
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const m = 16;
+  const tw = 178;
+  const lh = 5.2;
   let y = 18;
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
 
-  const party1Address = [values.party1Street, values.party1City, values.party1Zip].filter(Boolean).join(", ");
-  const party2Address = [values.party2Street, values.party2City, values.party2Zip].filter(Boolean).join(", ");
-  const jurisdiction  = [values.state, values.country?.toUpperCase()].filter(Boolean).join(", ");
-
-  const durationMap: Record<string, string> = {
-    "1month": "1 Month", "3months": "3 Months", "6months": "6 Months",
-    "1year": "1 Year", "2years": "2 Years", "5years": "5 Years",
-    "indefinite": "Indefinite/Ongoing", "custom": "Custom",
-  };
-  const terminationMap: Record<string, string> = {
-    "immediate": "immediately", "7days": "7 days", "14days": "14 days",
-    "30days": "30 days", "60days": "60 days", "90days": "90 days",
-  };
-  const disputeMap: Record<string, string> = {
-    "mediation": "Mediation", "arbitration": "Binding Arbitration",
-    "litigation": "Court Litigation", "negotiation": "Good Faith Negotiation",
+  const p = (text: string, bold = false, gap = 1.4) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > 286) {
+      doc.addPage();
+      y = 18;
+    }
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  // ── auto page-break ──
-  const checkPage = (needed = 8) => {
-    if (y + needed > pageHeight - 15) { doc.addPage(); y = 18; }
-  };
-
-  // ── paragraph: 9pt, 4.2mm line-height, 2mm gap ──
-  const para = (text: string) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    const lines = doc.splitTextToSize(text, contentWidth);
-    checkPage(lines.length * 4.2 + 2);
-    doc.text(lines, margin, y);
-    y += lines.length * 4.2 + 2;
-  };
-
-  // ── TITLE: 13pt bold centered underlined ──
-  doc.setFont("helvetica", "bold");
+  doc.setFont("times", "bold");
   doc.setFontSize(13);
   const title = "SEVERANCE AGREEMENT";
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = (pageWidth - titleWidth) / 2;
-  doc.text(title, titleX, y);
-  doc.setLineWidth(0.5);
-  doc.line(titleX, y + 1.5, titleX + titleWidth, y + 1.5);
-  y += 9;
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1, 105 + tW / 2, y + 1);
+  y += 8;
 
-  // ── HEADER FIELDS: 9pt label + underlined value ──
-  const field = (label: string, value: string) => {
-    checkPage(6);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(9);
-    doc.text(label, margin, y);
-    const lw  = doc.getTextWidth(label);
-    const val = value || "N/A";
-    doc.text(val, margin + lw, y);
-    doc.setLineWidth(0.3);
-    doc.line(margin + lw, y + 1.1, margin + lw + Math.max(doc.getTextWidth(val), 30), y + 1.1);
-    y += 5.5;
-  };
-
-  field("Date:  ", values.effectiveDate || "N/A");
-  field("To:  ", values.party2Name || "N/A");
-  field("Address:  ", party2Address || "N/A");
-  y += 2;
-
-  // ── SUBJECT ──
-  checkPage(7);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("Subject: Notice of Severance Agreement and Terms of Engagement", margin, y);
-  y += 6;
-
-  // ── SALUTATION ──
-  checkPage(6);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text(`Dear ${values.party2Name || "Sir or Madam"},`, margin, y);
-  y += 5;
-
-  // ── BODY PARAGRAPHS ──
-  para(
-    `I am writing to formally confirm the Severance Agreement entered into as of ${values.effectiveDate || "N/A"}, between ${values.party1Name || "the First Party"} (${values.party1Type === "business" ? "a business entity" : "an individual"}) and ${values.party2Name || "the Second Party"} (${values.party2Type === "business" ? "a business entity" : "an individual"}), governed by the laws of ${jurisdiction || "the applicable jurisdiction"}, effective immediately.`
+  p(
+    `This Severance Agreement ("Agreement") is made and entered into as of ${u(v.agreementDate, 12)}, by and between ${u(v.employeeName)} residing at ${u(v.employeeAddress)} ("Employee"), and ${u(v.employerName)} having its principal place of business at ${u(v.employerAddress)} ("Employer" or "Company").`
   );
+  p("1. TERMINATION DATE", true);
+  p(`The Employee's final day of employment shall be ${u(v.terminationDate, 10)} ("Termination Date"). As of that date, employment shall be fully concluded, subject to this Agreement.`);
+  p("2. FINAL PAYCHECK", true);
+  p("2.1 Employee shall receive, on next regular payroll date after the Termination Date, all wages/salary/commissions earned through Termination Date, less lawful deductions.");
+  p("2.2 Except as expressly provided in this Agreement, no further compensation, benefits, bonuses, or other payments are due.");
+  p("3. SEVERANCE PAYMENT", true);
+  p(`3.1 Consideration - Employer shall pay a one-time lump sum severance payment of $${u(v.severanceAmount, 6)} ("Severance Payment").`);
+  p(`3.2 Severance Payment shall be made within ${u(v.paymentDays, 2)} business days after the Effective Date and is subject to applicable tax withholdings.`);
+  p("4. RELEASE OF CLAIMS", true);
+  p("4.1 General Release - The Employee, on behalf of themselves and their heirs, executors, administrators, successors, and assigns, hereby fully and forever releases, discharges, and covenants not to sue the Employer, its past, present, and future parents, subsidiaries, affiliates, officers, directors, shareholders, employees, agents, representatives, insurers, and assigns (\"Released Parties\") from any and all claims, demands, liabilities, and causes of action, known or unknown, arising out of or relating to:");
+  p("• the Employee's employment with the Employer;");
+  p("• the termination of such employment; and");
+  p("• any other acts, omissions, or events occurring prior to the Effective Date of this Agreement.");
+  p("4.2 No Pending Actions - The Employee represents and warrants that they have not filed, joined, or participated in any lawsuits, complaints, or administrative charges against the Employer as of the date of execution of this Agreement.");
+  p("5. REVIEW PERIOD AND REVOCATION", true);
+  p("5.1 Employee acknowledges a twenty-one (21) day review period.");
+  p(`5.2 Employee may revoke within ${u(v.revocationDays, 1)} calendar days after signing by written notice delivered no later than ${u(v.revocationTime, 6)} on the final day. This Agreement becomes effective after revocation period expires without revocation.`);
+  p("6. CONFIDENTIALITY AND NON-DISCLOSURE", true);
+  p("6.1 Employee shall execute a separate NDA as condition to receiving Severance Payment.");
+  p("6.2 Employee shall not use or disclose Employer confidential information except as required by law.");
+  p("7. NON-DISPARAGEMENT", true);
+  p("Employee shall refrain from false, malicious, or defamatory statements about Employer, products, services, clients, or personnel, except truthful statements required by law.");
+  p("8. RETURN OF COMPANY PROPERTY", true);
+  p(`8.1 No later than ${u(v.returnPropertyDate, 10)}, Employee shall return all Company property, physical and electronic materials, devices, keys, access items, and any business-related materials.`);
+  p("8.2 Failure to return property by deadline may delay Severance Payment processing.");
+  p("9. DISCLAIMER UNDER THE NATIONAL LABOR RELATIONS ACT (NLRA)", true);
+  p("Nothing in this Agreement shall be construed to prohibit or interfere with the Employee's rights, if applicable, under Section 7 of the NLRA, including but not limited to engaging in concerted activity or discussing terms and conditions of employment.");
+  p("10. NO ADMISSION OF LIABILITY", true);
+  p(`This Agreement is not an admission of wrongdoing by either party. Employer reference responses: ${u(v.referenceText || "job title and dates of employment only", 18)}.`);
+  p("11. ENTIRE AGREEMENT", true);
+  p("This Agreement constitutes the full and complete agreement between the parties regarding the subject matter herein, superseding all prior or contemporaneous agreements, understandings, and representations, whether written or oral. Any amendment or modification must be in writing and signed by both parties.");
+  p("12. SEVERABILITY", true);
+  p("If any provision of this Agreement is held invalid, illegal, or unenforceable by a court of competent jurisdiction, the remaining provisions shall remain in full force and effect. Any invalid provision shall be modified to the minimum extent necessary to make it valid and enforceable.");
+  p("13. GOVERNING LAW", true);
+  p(`This Agreement shall be governed by, construed, and enforced in accordance with the laws of the State of ${u(v.governingState)}, without regard to its conflicts-of-law principles.`);
+  p("ACKNOWLEDGEMENT", true);
+  p("By signing below, the Employee acknowledges that they have:");
+  p("• read and fully understand this Agreement;");
+  p("• had an opportunity to seek legal counsel;");
+  p("• entered into this Agreement voluntarily and without coercion; and");
+  p("• knowingly released the claims described herein in exchange for the consideration provided.");
+  p("EMPLOYEE:", true);
+  p(`Signature: ${u(v.employeeSign)}   Date: ${u(v.employeeSignDate, 10)}`);
+  p("EMPLOYER:", true);
+  p(`Signature: ${u(v.employerSign)}   Title: ${u(v.employerSignTitle)}   Date: ${u(v.employerSignDate, 10)}`);
 
-  para(
-    values.description ||
-    "Both parties agree to the terms of this severance arrangement, which outlines the conditions of separation, applicable compensation, benefits continuation, and all related obligations and releases in accordance with applicable laws and regulations."
-  );
-
-  para(
-    `This agreement shall remain in effect for ${durationMap[values.duration] || values.duration || "the agreed duration"} and may be terminated upon ${terminationMap[values.terminationNotice] || values.terminationNotice || "the agreed notice"} written notice to the other party. Disputes shall be resolved by ${disputeMap[values.disputeResolution] || values.disputeResolution || "the agreed method"}.${values.confidentiality === "yes" ? " A confidentiality clause is included and binding on both parties." : ""}${values.paymentAmount ? ` The agreed severance amount is ${values.paymentAmount} on a ${values.paymentSchedule || "mutually agreed"} basis.` : ""}`
-  );
-
-  if (values.additionalTerms?.trim()) para(values.additionalTerms.trim());
-
-  para("Please retain a signed copy of this agreement for your records. Both parties are bound by the terms stated herein from the effective date.");
-
-  y += 1;
-  checkPage(16);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text("Thank you for your cooperation.", margin, y);
-  y += 6;
-  doc.text("Sincerely,", margin, y);
-  y += 10;
-
-  // ── SENDER BLOCK ──
-  checkPage(18);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  const senderName = values.party1Name || "First Party";
-  doc.text(senderName, margin, y);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y + 1.1, margin + doc.getTextWidth(senderName), y + 1.1);
-  y += 5;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  if (party1Address)      { doc.text(party1Address,                  margin, y); y += 4.5; }
-  if (values.party1Email) { doc.text(`Email: ${values.party1Email}`, margin, y); y += 4.5; }
-  if (values.party1Phone) { doc.text(`Phone: ${values.party1Phone}`, margin, y); y += 4.5; }
-
-  // ── SIGNATURES ──
-  y += 4;
-  checkPage(20);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("First Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(
-    values.party1Signature || "________________________",
-    margin + doc.getTextWidth("First Party Signature:  "), y
-  );
-  y += 6;
-  doc.setFont("helvetica", "bold");
-  doc.text("Second Party Signature:", margin, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(
-    values.party2Signature || "________________________",
-    margin + doc.getTextWidth("Second Party Signature:  "), y
-  );
-  y += 6;
-  if (values.witnessName) {
-    doc.setFont("helvetica", "bold");
-    doc.text("Witness:", margin, y);
-    doc.setFont("helvetica", "normal");
-    const wx = margin + doc.getTextWidth("Witness:  ");
-    doc.text(values.witnessName, wx, y);
-    doc.setLineWidth(0.3);
-    doc.line(wx, y + 1.1, wx + doc.getTextWidth(values.witnessName), y + 1.1);
-  }
-
-  doc.save("severance.pdf");
+  doc.save("severance_agreement.pdf");
 };
 
 export default function Severance() {
   return (
     <FormWizard
       steps={steps}
-      title="Severance"
+      title="Severance Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="severance"
+      preserveStepLayout
     />
   );
 }

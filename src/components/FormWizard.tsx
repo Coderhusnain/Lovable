@@ -3,7 +3,6 @@ import { CheckCircle2, Circle, ChevronLeft, FileText, ArrowRight, Sparkles } fro
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Field definition for dynamic field rendering
 export interface FieldDef {
@@ -39,6 +38,7 @@ interface FormWizardProps {
   title?: string;
   subtitle?: string;
   documentType?: string;
+  preserveStepLayout?: boolean;
 }
 
 // Type guard to check if step has content
@@ -56,9 +56,11 @@ export const FormWizard: React.FC<FormWizardProps> = ({
   onGenerate,
   title,
   subtitle,
-  documentType 
+  documentType,
+  preserveStepLayout,
 }) => {
   const transformedSteps = useMemo<Step[]>(() => {
+    if (preserveStepLayout) return steps;
     // Only auto-transform purely field-based forms.
     if (!steps.every(isFieldStep)) return steps;
 
@@ -175,7 +177,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
     }
 
     return [...jurisdictionSteps, ...grouped];
-  }, [steps]);
+  }, [steps, preserveStepLayout]);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [touched, setTouched] = useState(false);
@@ -233,8 +235,31 @@ export const FormWizard: React.FC<FormWizardProps> = ({
     }
   };
 
+  const dependentFieldMap = useMemo(() => {
+    const map = new Map<string, string[]>();
+    transformedSteps.forEach((step) => {
+      if (isFieldStep(step)) {
+        step.fields.forEach((field) => {
+          if (!field.dependsOn) return;
+          const list = map.get(field.dependsOn) || [];
+          list.push(field.name);
+          map.set(field.dependsOn, list);
+        });
+      }
+    });
+    return map;
+  }, [transformedSteps]);
+
   const handleFieldChange = (name: string, value: any) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const next = { ...prev, [name]: value };
+      // Reset dependent field values when parent field changes.
+      const dependents = dependentFieldMap.get(name) || [];
+      dependents.forEach((depName) => {
+        if (next[depName] !== undefined) next[depName] = "";
+      });
+      return next;
+    });
   };
 
   // Render a single field
@@ -263,16 +288,22 @@ export const FormWizard: React.FC<FormWizardProps> = ({
             rows={3}
           />
         ) : field.type === "select" ? (
-          <Select value={value} onValueChange={(v) => handleFieldChange(field.name, v)}>
-            <SelectTrigger className={showError ? "border-red-500" : ""}>
-              <SelectValue placeholder={`Select ${field.label}`} />
-            </SelectTrigger>
-            <SelectContent className="max-h-60">
-              {options.map(opt => (
-                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <select
+            value={value || ""}
+            onChange={(e) => handleFieldChange(field.name, e.target.value)}
+            className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background ${
+              showError ? "border-red-500" : "border-input"
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+          >
+            <option value="" disabled>
+              {`Select ${field.label}`}
+            </option>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         ) : (
           <Input
             type={field.type === "number" ? "number" : field.type === "date" ? "date" : field.type === "email" ? "email" : "text"}

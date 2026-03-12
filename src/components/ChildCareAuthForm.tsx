@@ -1,536 +1,216 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Jurisdiction",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "stateOrProvince", label: "State / Province", type: "text", required: true },
+      { name: "city", label: "City", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Parties",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "agreementDay", label: "Agreement day", type: "text", required: true },
+      { name: "agreementMonth", label: "Agreement month", type: "text", required: true },
+      { name: "agreementYear", label: "Agreement year", type: "text", required: true },
+      { name: "parent1Name", label: "Parent/Guardian 1 name", type: "text", required: true },
+      { name: "parent2Name", label: "Parent/Guardian 2 name", type: "text", required: true },
+      { name: "parentAddress", label: "Parent/Guardian address", type: "text", required: true },
+      { name: "parentPhones", label: "Parent/Guardian phone number(s)", type: "text", required: true },
+      { name: "parentEmails", label: "Parent/Guardian email(s)", type: "text", required: true },
+      { name: "caretaker1Name", label: "Caretaker 1 name", type: "text", required: true },
+      { name: "caretaker2Name", label: "Caretaker 2 name", type: "text", required: true },
+      { name: "caretakerAddress", label: "Caretaker address", type: "text", required: true },
+      { name: "caretakerPhones", label: "Caretaker phone number(s)", type: "text", required: true },
+      { name: "caretakerRelationship", label: "Caretaker relationship to child(ren)", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Children and Duration",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "child1Name", label: "Child 1 full name", type: "text", required: true },
+      { name: "child1Dob", label: "Child 1 date of birth", type: "date", required: true },
+      { name: "child2Name", label: "Child 2 full name", type: "text", required: false },
+      { name: "child2Dob", label: "Child 2 date of birth", type: "date", required: false },
+      { name: "startDay", label: "Authorization start day", type: "text", required: true },
+      { name: "startMonth", label: "Authorization start month", type: "text", required: true },
+      { name: "startYear", label: "Authorization start year", type: "text", required: true },
+      { name: "endDay", label: "Authorization end day", type: "text", required: true },
+      { name: "endMonth", label: "Authorization end month", type: "text", required: true },
+      { name: "endYear", label: "Authorization end year", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Emergency and Governing Law",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "primaryContactName", label: "Primary emergency contact name", type: "text", required: true },
+      { name: "primaryContactPhone", label: "Primary emergency contact phone", type: "text", required: true },
+      { name: "primaryContactEmail", label: "Primary emergency contact email", type: "text", required: true },
+      { name: "secondaryContactName", label: "Secondary emergency contact name", type: "text", required: true },
+      { name: "secondaryContactPhone", label: "Secondary emergency contact phone", type: "text", required: true },
+      { name: "secondaryContactEmail", label: "Secondary emergency contact email", type: "text", required: true },
+      { name: "governingLawState", label: "Governing law state", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Signatures",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "parent1Sign", label: "Parent/Guardian 1 signature name", type: "text", required: true },
+      { name: "parent1Date", label: "Parent/Guardian 1 date", type: "date", required: true },
+      { name: "parent2Sign", label: "Parent/Guardian 2 signature name", type: "text", required: true },
+      { name: "parent2Date", label: "Parent/Guardian 2 date", type: "date", required: true },
+      { name: "caretaker1Sign", label: "Caretaker 1 signature name", type: "text", required: true },
+      { name: "caretaker1Date", label: "Caretaker 1 date", type: "date", required: true },
+      { name: "caretaker2Sign", label: "Caretaker 2 signature name", type: "text", required: false },
+      { name: "caretaker2Date", label: "Caretaker 2 date", type: "date", required: false },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Notary Acknowledgment",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "notaryState", label: "Notary state", type: "text", required: false },
+      { name: "notaryCounty", label: "Notary county", type: "text", required: false },
+      { name: "notaryDay", label: "Notary day", type: "text", required: false },
+      { name: "notaryMonth", label: "Notary month", type: "text", required: false },
+      { name: "notaryYear", label: "Notary year", type: "text", required: false },
+      { name: "notaryAppeared1", label: "Notary appeared person 1", type: "text", required: false },
+      { name: "notaryAppeared2", label: "Notary appeared person 2", type: "text", required: false },
+      { name: "notarySignature", label: "Notary public signature name", type: "text", required: false },
+      { name: "notaryCommissionExpires", label: "Commission expires", type: "text", required: false },
     ],
   },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.3;
+  const limit = 282;
+  let y = 20;
 
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
-
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
+  const u = (value?: string, n = 14) => (value || "").trim() || "_".repeat(n);
+  const ensure = (need = 8) => {
+    if (y + need > limit) {
       doc.addPage();
-      y = margin;
+      y = 20;
     }
   };
-
-  // ===== UNDERLINED FIELD =====
-  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-    const startX = margin + labelWidth + 3;
-    const display = value || "";
-
-    if (display) doc.text(display, startX, y);
-
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 9;
-  };
-
-  // ===== PARAGRAPH =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(12);
-
+  const p = (text: string, bold = false, gap = 1.5) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
+    doc.setFontSize(10.1);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(lh + 2);
+    const lt = `${label}: `;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.1);
+    doc.text(lt, m, y);
+    const x = m + doc.getTextWidth(lt);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(18, doc.getTextWidth(t)), y + 1);
+    } else {
+      doc.text("____________________", x, y);
+    }
+    y += lh + 0.8;
   };
 
-  // ===== PARAGRAPH WITH UNDERLINE =====
-  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
-    const full = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(full, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(10);
-      doc.text(line, margin, y);
-
-      if (value && line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 7;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  doc.setFontSize(12.6);
+  const title = "CHILD CARE AUTHORIZATION AGREEMENT";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 9;
 
-  const title = "CHILD CARE AUTHORIZATION FORM";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  p(`This Child Care Authorization Agreement ("Agreement") is made and entered into on this ${u(v.agreementDay, 2)} day of ${u(v.agreementMonth)}, ${u(v.agreementYear, 4)}, by and between the undersigned parents and/or legal guardians and the designated caretaker(s).`);
+  p("I. PARTIES", true);
+  uf("Parent(s)/Guardian(s) Names", `${u(v.parent1Name)} and ${u(v.parent2Name)}`);
+  uf("Parent(s)/Guardian(s) Address", v.parentAddress);
+  uf("Parent(s)/Guardian(s) Phone Number(s)", v.parentPhones);
+  uf("Parent(s)/Guardian(s) Email(s)", v.parentEmails);
+  uf("Caretaker(s) Names", `${u(v.caretaker1Name)} and ${u(v.caretaker2Name)}`);
+  uf("Caretaker(s) Address", v.caretakerAddress);
+  uf("Caretaker(s) Phone Number(s)", v.caretakerPhones);
+  uf("Relationship to Child(ren)", v.caretakerRelationship);
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  p("II. SUBJECT CHILD(REN)", true);
+  uf("1. Full Name", v.child1Name);
+  uf("1. Date of Birth", v.child1Dob);
+  uf("2. Full Name", v.child2Name);
+  uf("2. Date of Birth", v.child2Dob);
+  p("(Attach additional pages if necessary)");
 
-  y += 18;
+  p("III. PURPOSE", true);
+  p("This Agreement delegates temporary caregiving authority to the Caretaker(s) to act in the best interests of the minor child(ren) during the duration of this Agreement when Parent(s)/Guardian(s) are unavailable due to travel, emergency, illness, or other circumstances.");
 
-  // ===== DATE / PARENT =====
-  addUnderlinedField("Date:", values.effectiveDate || "");
-  addUnderlinedField("Parent/Guardian:", values.party1Name || "");
+  p("IV. DURATION OF AUTHORIZATION", true);
+  p(`This authorization commences on the ${u(v.startDay, 2)} day of ${u(v.startMonth)}, ${u(v.startYear, 4)} and remains in effect until the ${u(v.endDay, 2)} day of ${u(v.endMonth)}, ${u(v.endYear, 4)} unless earlier revoked in writing.`);
 
-  const parentAddress = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`.trim();
-  addUnderlinedField("Address:", parentAddress, 140);
+  p("V. GRANT OF AUTHORITY", true);
+  p("The Caretaker(s) are granted temporary legal authority to perform and make decisions regarding: (1) medical and health care, including emergency treatment and records access; (2) educational matters, including enrollment and school communication; (3) daily welfare and routine, including food, shelter, activities, medications, and transportation; and (4) domestic U.S. travel authorization. International travel requires separate written consent.");
 
-  y += 6;
+  p("VI. LIMITATIONS OF AUTHORITY", true);
+  p("This authorization does not permit consent to adoption or marriage, transfer of permanent custody/guardianship, or passport/international travel document applications without explicit permission.");
 
-  addParagraph("Dear Sir or Madam:");
+  p("VII. EMERGENCY CONTACT INFORMATION", true);
+  uf("Primary Contact Name", v.primaryContactName);
+  uf("Primary Contact Phone", v.primaryContactPhone);
+  uf("Primary Contact Email", v.primaryContactEmail);
+  uf("Secondary Contact Name", v.secondaryContactName);
+  uf("Secondary Contact Phone", v.secondaryContactPhone);
+  uf("Secondary Contact Email", v.secondaryContactEmail);
 
-  const parentName = values.party1Name || "________";
-  const caregiverName = values.party2Name || "________";
+  p("VIII. INDEMNIFICATION", true);
+  p("Parent(s)/Guardian(s) agree to indemnify and hold harmless the Caretaker(s) for reasonable and good-faith actions under this Agreement, except for willful misconduct, gross negligence, or violation of law.");
+  p("IX. REVOCATION", true);
+  p("This authorization may be revoked at any time by written notice from either Parent/Guardian delivered personally, by certified mail, or by electronic transmission with acknowledgment.");
+  p("X. GOVERNING LAW", true);
+  p(`This Agreement is governed by the laws of the State of ${u(v.governingLawState)}.`);
+  p("XI. ENTIRE AGREEMENT", true);
+  p("This Agreement is the entire understanding between the parties and supersedes prior written or oral agreements on the same subject. Any modification must be in writing and signed by all parties.");
 
-  // ===== BODY =====
-  addParagraphWithUnderline(
-    "I, ",
-    parentName,
-    ", hereby authorize "
-  );
+  p("XII. SIGNATURES", true);
+  p("By signing below, Parent(s)/Guardian(s) affirm legal authority to grant caregiving authority and that all information provided is true and accurate to the best of their knowledge.");
+  uf("Parent/Guardian 1 Signature", v.parent1Sign);
+  uf("Parent/Guardian 1 Full Name", v.parent1Name);
+  uf("Parent/Guardian 1 Date", v.parent1Date);
+  uf("Parent/Guardian 2 Signature", v.parent2Sign);
+  uf("Parent/Guardian 2 Full Name", v.parent2Name);
+  uf("Parent/Guardian 2 Date", v.parent2Date);
+  uf("Caretaker 1 Signature", v.caretaker1Sign);
+  uf("Caretaker 1 Full Name", v.caretaker1Name);
+  uf("Caretaker 1 Date", v.caretaker1Date);
+  uf("Caretaker 2 Signature", v.caretaker2Sign);
+  uf("Caretaker 2 Full Name", v.caretaker2Name);
+  uf("Caretaker 2 Date", v.caretaker2Date);
 
-  addParagraphWithUnderline(
-    "",
-    caregiverName,
-    " to act as the temporary caregiver for my child during my absence."
-  );
+  p("XIII. NOTARY ACKNOWLEDGMENT (Optional but Recommended)", true);
+  uf("STATE OF", v.notaryState);
+  uf("COUNTY OF", v.notaryCounty);
+  p(`On this ${u(v.notaryDay, 2)} day of ${u(v.notaryMonth)}, ${u(v.notaryYear, 4)}, before me, a Notary Public, personally appeared ${u(v.notaryAppeared1)} and ${u(v.notaryAppeared2)}, known to me to be the persons whose names are subscribed to this instrument, and acknowledged execution for the purposes therein contained.`);
+  uf("Notary Public Signature", v.notarySignature);
+  uf("My Commission Expires", v.notaryCommissionExpires);
+  p(`Jurisdiction: ${u(v.city)}, ${u(v.stateOrProvince)}, ${u(v.country)}`);
 
-  addParagraph(
-    "This authorization grants the caregiver permission to supervise, transport, and make day-to-day care decisions for my child, including picking up my child from school, daycare, activities, and providing general supervision and support."
-  );
-
-  addParagraph(
-    "This form does not grant permanent custody and is intended only to provide temporary authority for childcare and supervision purposes."
-  );
-
-  addParagraph(
-    "This authorization shall become effective immediately and remain valid until revoked in writing by the undersigned parent or guardian."
-  );
-
-  addParagraph(
-    "In witness whereof, I have executed this Child Care Authorization Form on the date written above."
-  );
-
-  y += 6;
-  addParagraph("Sincerely,");
-
-  y += 12;
-
-  // ===== SIGNATURE =====
-  checkPageBreak();
-
-  doc.setFont("helvetica", "bold");
-  doc.text(parentName, margin, y);
-
-  const nameWidth = doc.getTextWidth(parentName);
-  doc.line(margin, y + 1, margin + nameWidth, y + 1);
-
-  y += 10;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== CAREGIVER SECTION =====
-  y += 6;
-  addParagraph("Authorized Caregiver:");
-
-  doc.setFont("helvetica", "bold");
-  doc.text(caregiverName, margin, y);
-
-  const careWidth = doc.getTextWidth(caregiverName);
-  doc.line(margin, y + 1, margin + careWidth, y + 1);
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
-  addParagraph(`Email: ${values.party2Email || ""}`);
-
-  if (values.party2Phone) {
-    addParagraph(`Phone: ${values.party2Phone}`);
-  }
-
-  // ===== SAVE =====
-  doc.save("child_care_authorization_form.pdf");
+  doc.save("child_care_authorization_agreement.pdf");
 };
-
 
 export default function ChildCareAuth() {
   return (
     <FormWizard
       steps={steps}
-      title="Child Care Auth"
+      title="Child Care Authorization Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="childcareauth"

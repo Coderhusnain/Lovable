@@ -1,541 +1,100 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
-  {
-    label: "Jurisdiction",
-    fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-         
-        ],
-      },
-    ],
-  },
-  {
-    label: "State/Province",
-    fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
-    ],
-  },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+  { label: "Jurisdiction", fields: [
+    { name: "country", label: "Country", type: "text", required: true },
+    { name: "state", label: "State / Province", type: "text", required: true },
+    { name: "province", label: "Province / Region", type: "text", required: false },
+    { name: "city", label: "City", type: "text", required: true },
+  ]},
+  { label: "Principal and Attorney", fields: [
+    { name: "executantName", label: "Executant / Principal name", type: "text", required: true },
+    { name: "attorneyName", label: "Attorney name", type: "text", required: true },
+    { name: "matter", label: "Matter / proceedings description", type: "textarea", required: true },
+  ]},
+  { label: "Authority Clauses 1-3", fields: [
+    { name: "clause1", label: "Clause 1 details", type: "text", required: true },
+    { name: "clause2", label: "Clause 2 details", type: "text", required: true },
+    { name: "clause3", label: "Clause 3 details", type: "textarea", required: true },
+  ]},
+  { label: "Authority Clauses 4-6", fields: [
+    { name: "clause4", label: "Clause 4 details", type: "text", required: true },
+    { name: "clause5", label: "Clause 5 details", type: "textarea", required: true },
+    { name: "clause6", label: "Clause 6 details", type: "text", required: true },
+  ]},
+  { label: "Authority Clauses 7-8", fields: [
+    { name: "clause7", label: "Clause 7 details", type: "text", required: true },
+    { name: "clause8", label: "Clause 8 details", type: "text", required: true },
+    { name: "deedDate", label: "Date of deed", type: "date", required: true },
+  ]},
+  { label: "Witness 1", fields: [
+    { name: "w1Name", label: "Witness 1 name", type: "text", required: true },
+    { name: "w1Address", label: "Witness 1 address", type: "text", required: true },
+    { name: "w1Nic", label: "Witness 1 NIC No.", type: "text", required: true },
+  ]},
+  { label: "Witness 2 and Signatures", fields: [
+    { name: "w2Name", label: "Witness 2 name", type: "text", required: true },
+    { name: "w2Address", label: "Witness 2 address", type: "text", required: true },
+    { name: "w2Nic", label: "Witness 2 NIC No.", type: "text", required: true },
+    { name: "executantSignature", label: "Executant signature", type: "text", required: true },
+    { name: "attorneySignature", label: "Specimen signature of attorney", type: "text", required: true },
+  ]},
+];
 
-const generatePDF = (values: Record<string, string>) => {
+const generatePDF = (v: Record<string, string>) => {
   const doc = new jsPDF();
-
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 25;
-
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
+  const left = 20;
+  const width = 170;
+  let y = 20;
+  const u = (s?: string, n = 22) => (s && s.trim() ? s.trim() : "_".repeat(n));
+  const add = (t: string, bold = false) => {
+    doc.setFont("times", bold ? "bold" : "normal");
+    const lines = doc.splitTextToSize(t, width);
+    if (y + lines.length * 6 > 280) { doc.addPage(); y = 20; }
+    doc.text(lines, left, y);
+    y += lines.length * 6;
   };
 
-  // ===== UNDERLINED FIELD =====
-  const addUnderlinedField = (label: string, value: string, minWidth = 80) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 3;
-    const display = value || "";
-
-    if (display) doc.text(display, startX, y);
-
-    const width = display ? doc.getTextWidth(display) : minWidth;
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 9;
-  };
-
-  // ===== PARAGRAPH =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(12);
-
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 6 + 3;
-  };
-
-  // ===== PARAGRAPH WITH UNDERLINE =====
-  const addParagraphWithUnderline = (before: string, value: string, after: string) => {
-    const full = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(full, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(10);
-      doc.text(line, margin, y);
-
-      if (value && line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 7;
-    });
-
-    y += 2;
-  };
-
-  // ===== TITLE =====
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-
+  doc.setFont("times", "bold");
+  doc.setFontSize(14);
   const title = "SPECIAL POWER OF ATTORNEY";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
-
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
-
-  y += 18;
-
-  // ===== DATE / PRINCIPAL / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "");
-  addUnderlinedField("Principal:", values.party1Name || "");
-
-  const principalAddress = `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`.trim();
-  addUnderlinedField("Address:", principalAddress, 140);
-
-  y += 6;
-
-  // ===== INTRO =====
-  addParagraph("Dear Sir or Madam:");
-
-  const principalName = values.party1Name || "________";
-  const agentName = values.party2Name || "________";
-
-  // ===== BODY =====
-  addParagraphWithUnderline(
-    "I, ",
-    principalName,
-    ", hereby appoint "
-  );
-
-  addParagraphWithUnderline(
-    "",
-    agentName,
-    " as my true and lawful Attorney-in-Fact to act on my behalf for the specific purposes described herein."
-  );
-
-  addParagraph(
-    "This Special Power of Attorney authorizes the above-named agent to perform only the following acts on my behalf, including but not limited to signing documents, managing specific financial transactions, representing me before institutions, and completing the particular matters for which this authority is granted."
-  );
-
-  addParagraph(
-    "The agent shall not exceed the authority granted under this Special Power of Attorney and shall act in my best interest and in accordance with applicable laws and regulations."
-  );
-
-  addParagraph(
-    "This Special Power of Attorney shall take effect immediately and shall remain valid until the specified task is completed or until revoked by me in writing, whichever occurs first."
-  );
-
-  addParagraph(
-    "In witness whereof, I have executed this Special Power of Attorney on the date written above."
-  );
-
-  y += 6;
-  addParagraph("Sincerely,");
-
+  const tw = doc.getTextWidth(title);
+  doc.text(title, 105, y, { align: "center" });
+  doc.line(105 - tw / 2, y + 1.5, 105 + tw / 2, y + 1.5);
   y += 12;
+  doc.setFontSize(12);
+  add(`Jurisdiction: Country ${u(v.country, 12)}, State ${u(v.state, 12)}, Province ${u(v.province, 12)}, City ${u(v.city, 12)}.`);
 
-  // ===== PRINCIPAL SIGNATURE =====
-  checkPageBreak();
+  add(`KNOW ALL MEN BY THESE PRESENTS THAT I, ${u(v.executantName)} do hereby appoint, constitute and nominate ${u(v.attorneyName)} as my Special Attorney to do the following acts, deeds, things and matters in:`);
+  add(`1. To appear and act on my behalf in all Courts: ${u(v.matter)}. ${u(v.clause1)}`);
+  add(`2. ${u(v.clause2)}`);
+  add(`3. ${u(v.clause3)}`);
+  add(`4. ${u(v.clause4)}`);
+  add(`5. ${u(v.clause5)}`);
+  add(`6. ${u(v.clause6)}`);
+  add(`7. ${u(v.clause7)}`);
+  add(`8. ${u(v.clause8)}`);
+  add("All acts, deeds, matters and things done by the said Special Attorney shall be construed as having been done by me, and I hereby ratify and confirm the same.");
+  add("This Special Power of Attorney is made by me without undue influence or coercion and in full knowledge of facts and consequences.");
+  add(`WHEREOF I have put my hands to this Deed of Special Power of Attorney on ${u(v.deedDate)}.`);
 
-  doc.setFont("helvetica", "bold");
-  doc.text(principalName, margin, y);
+  add(`Signature of Executant: ${u(v.executantSignature)}      Specimen Signature of Attorney: ${u(v.attorneySignature)}`);
+  add(`Witness No. 1: ${u(v.w1Name)} | Address: ${u(v.w1Address)} | NIC No.: ${u(v.w1Nic)}`);
+  add(`Witness No. 2: ${u(v.w2Name)} | Address: ${u(v.w2Address)} | NIC No.: ${u(v.w2Nic)}`);
 
-  const nameWidth = doc.getTextWidth(principalName);
-  doc.line(margin, y + 1, margin + nameWidth, y + 1);
-
-  y += 10;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`);
-  addParagraph(`Email: ${values.party1Email || ""}`);
-
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
-
-  // ===== AGENT SECTION =====
-  y += 6;
-  addParagraph("Attorney-in-Fact:");
-
-  doc.setFont("helvetica", "bold");
-  doc.text(agentName, margin, y);
-
-  const agentWidth = doc.getTextWidth(agentName);
-  doc.line(margin, y + 1, margin + agentWidth, y + 1);
-
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(`${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`);
-  addParagraph(`Email: ${values.party2Email || ""}`);
-
-  if (values.party2Phone) {
-    addParagraph(`Phone: ${values.party2Phone}`);
-  }
-
-  // ===== SAVE =====
   doc.save("special_power_of_attorney.pdf");
 };
-
 
 export default function SpecialPowerOfAttorney() {
   return (
     <FormWizard
       steps={steps}
       title="Special Power Of Attorney"
-      subtitle="Complete each step to generate your document"
+      subtitle="Fill in the form to generate your PDF"
       onGenerate={generatePDF}
       documentType="specialpowerofattorney"
     />
   );
 }
+

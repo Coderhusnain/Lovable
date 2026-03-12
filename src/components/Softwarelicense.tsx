@@ -1,504 +1,163 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Step 1: Parties",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "effectiveDate", label: "Agreement Date", type: "date", required: true },
+      { name: "licenseeName", label: "Licensee Full Legal Name", type: "text", required: true },
+      { name: "licenseeAddress", label: "Licensee Principal Address", type: "textarea", required: true },
+      { name: "licensorName", label: "Licensor Full Legal Name", type: "text", required: true },
+      { name: "licensorAddress", label: "Licensor Principal Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Step 2: Software and License",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "scheduleA", label: "Schedule A - Software Description", type: "textarea", required: true },
+      { name: "singleComputer", label: "Single Designated Computer System", type: "text", required: true },
+      { name: "scheduleB", label: "Schedule B - License Fee Terms", type: "textarea", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Step 3: Support Services",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "supportHours", label: "Support Business Hours Text", type: "text", required: true },
+      { name: "responseHours", label: "Support Response (Business Hours)", type: "text", required: true },
+      { name: "criticalDays", label: "Critical Issue Resolution (Business Days)", type: "text", required: true },
+      { name: "includedMonths", label: "Support Included Months", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Step 4: Dispute and Governing Law",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "arbitrationCityState", label: "Arbitration City, State", type: "text", required: true },
+      { name: "governingLawState", label: "Governing Law State", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Step 5: Licensor Signature",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "licensorBy", label: "Licensor - By", type: "text", required: true },
+      { name: "licensorSignName", label: "Licensor - Name", type: "text", required: true },
+      { name: "licensorSignTitle", label: "Licensor - Title", type: "text", required: true },
+      { name: "licensorSignDate", label: "Licensor - Date", type: "date", required: true },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Step 6: Licensee Signature",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "licenseeBy", label: "Licensee - By", type: "text", required: true },
+      { name: "licenseeSignName", label: "Licensee - Name", type: "text", required: true },
+      { name: "licenseeSignTitle", label: "Licensee - Title", type: "text", required: true },
+      { name: "licenseeSignDate", label: "Licensee - Date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
+    label: "Step 7: Final Review",
+    fields: [{ name: "reviewNote", label: "Optional Internal Review Note", type: "textarea", required: false }],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-// Helper: draw underlined text
-const underlineText = (doc: jsPDF, text: string, x: number, y: number) => {
-  doc.text(text, x, y);
-  const textWidth = doc.getTextWidth(text);
-  doc.setLineWidth(0.3);
-  doc.line(x, y + 1, x + textWidth, y + 1);
-};
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const m = 16;
+  const tw = 178;
+  const lh = 5.2;
+  let y = 18;
+  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
 
-// Helper: label + underlined value on same line
-const labelWithUnderline = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  const labelWidth = doc.getTextWidth(label);
-  underlineText(doc, value, x + labelWidth + 1, y);
-};
+  const p = (text: string, bold = false, gap = 1.4) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > 286) {
+      doc.addPage();
+      y = 18;
+    }
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Software License", 105, y, { align: "center" });
-  const titleWidth = doc.getTextWidth("Software License");
-  doc.setLineWidth(0.5);
-  doc.line(105 - titleWidth / 2, y + 1.5, 105 + titleWidth / 2, y + 1.5);
-  y += 15;
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  labelWithUnderline(doc, "Effective Date:  ", values.effectiveDate || "N/A", 20, y);
-  labelWithUnderline(doc, "Jurisdiction:  ", (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
+  doc.setFont("times", "bold");
+  doc.setFontSize(13);
+  const title = "SOFTWARE LICENSE AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1, 105 + tW / 2, y + 1);
   y += 8;
 
-  doc.setFontSize(10);
-  labelWithUnderline(doc, "First Party:  ", values.party1Name || "N/A", 20, y);
-  y += 6;
-  labelWithUnderline(doc, "Address:  ", (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  labelWithUnderline(doc, "Email:  ", values.party1Email || "", 20, y);
-  if (values.party1Phone) {
-    const emailLineWidth = doc.getTextWidth("Email:  " + (values.party1Email || ""));
-    labelWithUnderline(doc, "   Phone:  ", values.party1Phone, 20 + emailLineWidth, y);
-  }
-  y += 10;
+  p(
+    `This Software License Agreement ("Agreement") is made and entered into as of ${u(v.effectiveDate, 12)}, by and between ${u(v.licenseeName)}, with its principal address at ${u(v.licenseeAddress)} ("Licensee"), and ${u(v.licensorName)}, with its principal place of business at ${u(v.licensorAddress)} ("Licensor").`
+  );
+  p("1. DEFINITIONS", true);
+  p(
+    `(a) "Software" means the computer programs, including object code and source code (if provided), related documentation, and all modifications, enhancements, updates, or upgrades thereto, as more fully described in Schedule A attached hereto: ${u(v.scheduleA)}.`
+  );
+  p(
+    '(b) "Install" means the act of placing, loading, or copying the Software onto a computer\'s hard drive, solid-state drive, CD-ROM, or any other storage medium.'
+  );
+  p(
+    '(c) "Use" means: i. Executing or loading the Software into the random access memory (RAM) or other primary storage device of a computer; and ii. Making a single copy of the Software solely for archival or emergency restart purposes, provided such copy is not installed or used on any other computer.'
+  );
+  p("2. GRANT OF LICENSE", true);
+  p(
+    `Licensor hereby grants to Licensee a personal, non-exclusive, non-transferable license to install and use the Software on a single designated computer system owned or controlled by Licensee (${u(v.singleComputer)}), subject to the terms and conditions of this Agreement.`
+  );
+  p("3. TERM OF LICENSE", true);
+  p("This License shall commence on the Effective Date and shall remain in force until terminated in accordance with Clause 5 herein.");
+  p("4. LICENSE FEE", true);
+  p(`Licensee shall pay to Licensor the license fee specified in Schedule B, in the manner and within the time frame stated therein: ${u(v.scheduleB)}.`);
+  p("5. TERMINATION", true);
+  p("Licensor may terminate this Agreement immediately upon written notice if Licensee breaches any material provision herein or becomes bankrupt or insolvent.");
+  p("6. RETURN OR DESTRUCTION OF SOFTWARE", true);
+  p("Upon termination, Licensee shall immediately cease using the Software and return or destroy all copies, in whole or in part, including any modifications. Licensor may verify compliance through inspection.");
+  p("7. TITLE AND OWNERSHIP", true);
+  p("The Software is licensed, not sold. All rights, title, and interest, including all intellectual property rights therein, remain vested in Licensor.");
+  p("8. MODIFICATIONS AND ENHANCEMENTS", true);
+  p("Licensee shall not reverse engineer, decompile, disassemble, adapt, translate, or create derivative works of the Software without prior written consent of Licensor.");
+  p("9. WARRANTY DISCLAIMER", true);
+  p('The Software is provided "AS IS", without any warranties, whether express, implied, or statutory, including but not limited to merchantability, fitness for a particular purpose, and non-infringement.');
+  p("10. LIMITED REMEDIES", true);
+  p("(a) Refund of the license fee paid for the affected period; or (b) Repair or replacement of the defective Software.");
+  p("11. LIMITATION OF LIABILITY", true);
+  p("Neither party shall be liable for any indirect, incidental, special, or consequential damages. Licensor's total liability shall not exceed the total license fees paid in the twelve (12) months preceding the claim.");
+  p("12. CONFIDENTIALITY", true);
+  p("Licensee shall treat the Software and Licensor's proprietary information as confidential and protect it with the same degree of care as its own confidential information.");
+  p("13. MAINTENANCE & SUPPORT SERVICES", true);
+  p(`13.1 Scope of Services - Subject to payment of applicable fees, Licensor shall provide updates/upgrades, technical support during ${u(v.supportHours)}, and commercially reasonable error correction.`);
+  p("13.2 Exclusions - No custom development, no support for misuse/unauthorized modifications/third-party conflicts, and no on-site support unless separately agreed in writing.");
+  p(`13.3 Service Levels - Licensor will use reasonable commercial efforts to respond within ${u(v.responseHours, 2)} business hours and resolve critical issues within ${u(v.criticalDays, 2)} business days, subject to Licensee cooperation.`);
+  p(`13.4 Fees - Maintenance and support are included for the first ${u(v.includedMonths, 2)} months from the Effective Date; thereafter support is subject to renewal and annual maintenance fees.`);
+  p("13.5 Termination of Support - Licensor may discontinue support for any version of the Software twelve (12) months after release of a subsequent major version.");
+  p("14. DISPUTE RESOLUTION", true);
+  p(`Any dispute shall be resolved through binding arbitration under the American Arbitration Association rules in ${u(v.arbitrationCityState)}.`);
+  p("15. ATTORNEYS' FEES", true);
+  p("The prevailing party in any action to enforce this Agreement shall be entitled to reasonable attorneys' fees and costs.");
+  p("16. GENERAL PROVISIONS", true);
+  p(`(a) Entire Agreement. (b) Amendments must be in writing and signed by authorized representatives. (c) Governing Law: State of ${u(v.governingLawState)}. (d) Notices must be in writing and deemed given on delivery via approved methods. (e) Independent Parties: nothing creates agency, partnership, or joint venture.`);
+  p("17. ASSIGNMENT", true);
+  p("Licensee shall not assign or transfer this Agreement without Licensor's prior written consent.");
+  p("18. EXECUTION", true);
+  p("This Agreement may be executed in counterparts, each deemed an original.");
+  p("LICENSOR:", true);
+  p(`By: ${u(v.licensorBy)}   Name: ${u(v.licensorSignName)}   Title: ${u(v.licensorSignTitle)}   Date: ${u(v.licensorSignDate, 10)}`);
+  p("LICENSEE:", true);
+  p(`By: ${u(v.licenseeBy)}   Name: ${u(v.licenseeSignName)}   Title: ${u(v.licenseeSignTitle)}   Date: ${u(v.licenseeSignDate, 10)}`);
 
-  labelWithUnderline(doc, "Second Party:  ", values.party2Name || "N/A", 20, y);
-  y += 6;
-  labelWithUnderline(doc, "Address:  ", (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  labelWithUnderline(doc, "Email:  ", values.party2Email || "", 20, y);
-  if (values.party2Phone) {
-    const emailLineWidth = doc.getTextWidth("Email:  " + (values.party2Email || ""));
-    labelWithUnderline(doc, "   Phone:  ", values.party2Phone, 20 + emailLineWidth, y);
-  }
-  y += 15;
-
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  underlineText(doc, values.party1Name || "First Party", 20, y);
-  underlineText(doc, values.party2Name || "Second Party", 110, y);
-  y += 6;
-  labelWithUnderline(doc, "Signature:  ", values.party1Signature || "", 20, y);
-  labelWithUnderline(doc, "Signature:  ", values.party2Signature || "", 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    labelWithUnderline(doc, "Name:  ", values.witnessName, 20, y);
-  }
-
-  doc.save("software_license.pdf");
+  doc.save("software_license_agreement.pdf");
 };
 
 export default function SoftwareLicense() {
   return (
     <FormWizard
       steps={steps}
-      title="Software License"
-      subtitle="Complete each step to generate your document"
+      title="Software License Agreement"
+      subtitle="Complete all steps to generate your document"
       onGenerate={generatePDF}
       documentType="softwarelicense"
+      preserveStepLayout
     />
   );
 }

@@ -111,7 +111,7 @@ const CoursePartnershipAgreementForm = lazy(() => import("@/components/CoursePar
 const DEBTSETTLEMENTAGREEMENT = lazy(() => import("@/components/DEBTSETTLEMENTAGREEMENT"));
 const DivorceSettlementAgreementForm = lazy(() => import("@/components/DivorceSettlementAgreementForm"));
 const DJServicesAgreementForm = lazy(() => import("@/components/DJServicesAgreementForm"));
-const DomesticServiceAgreementForm = lazy(() => import("@/components/DomesticServiceAgreementForm"));
+const DomesticServiceAgreementForm = lazy(() => import("@/components/DomesticServiceAgreementDocumentForm"));
 const DrywallServicesAgreementForm = lazy(() => import("@/components/DrywallServicesAgreementForm"));
 const Employeehandbook = lazy(() => import("@/components/Employeehandbook"));
 const Employeeretirement = lazy(() => import("@/components/Employeeretirement"));
@@ -163,7 +163,7 @@ const MarketingAgreementFormSimple = lazy(() => import("@/components/MarketingAg
 const MasterServiceAgreementForm = lazy(() => import("@/components/MasterServiceAgreementForm"));
 const MasterUseLicenseForm = lazy(() => import("@/components/MasterUseLicenseForm"));
 const MediationAgreementForm = lazy(() => import("@/components/MediationAgreementForm"));
-const MemorandumOfAgreementForm = lazy(() => import("@/components/MemorandumOfAgreementForm"));
+const MemorandumOfAgreementForm = lazy(() => import("@/components/MemorandumOfAgreementDocumentForm"));
 const MerchandisingAgreementForm = lazy(() => import("@/components/MerchandisingAgreementForm"));
 const MergerAgreementForm = lazy(() => import("@/components/MergerAgreementForm"));
 const MOUForm = lazy(() => import("@/components/MOUForm"));
@@ -188,14 +188,14 @@ const PartnershipDissolutionForm = lazy(() => import("@/components/PartnershipDi
 const PatentAssignmentForm = lazy(() => import("@/components/PatentAssignmentForm"));
 const PaymentAgreement = lazy(() => import("@/components/PaymentAgreement"));
 const PersonalTrainingAgreementForm = lazy(() => import("@/components/PersonalTrainingAgreementForm"));
-const PostnuptialAgreementForm = lazy(() => import("@/components/PostnuptialAgreementForm"));
+const PostnuptialAgreementForm = lazy(() => import("@/components/PostnuptialAgreementFormFixed"));
 const PrenuptialAgreementForm = lazy(() => import("@/components/PrenuptialAgreementForm"));
 const ProductDistributionAgreementForm = lazy(() => import("@/components/ProductDistributionAgreementForm"));
 const ProductDistributionForm = lazy(() => import("@/components/ProductDistributionForm"));
 const ProductionContractForm = lazy(() => import("@/components/ProductionContractForm"));
 const PROMISSORYNOTEAGREEMENT = lazy(() => import("@/components/PROMISSORYNOTEAGREEMENT"));
 const PropertyManagerAgreementForm = lazy(() => import("@/components/PropertyManagerAgreementForm"));
-const RealEstateDevelopmentForm = lazy(() => import("@/components/RealEstateDevelopmentForm"));
+const RealEstateDevelopmentForm = lazy(() => import("@/components/RealEstateDevelopmentFormFixed"));
 const ReferralAndWarrantyForm = lazy(() => import("@/components/ReferralAndWarrantyForm"));
 const ReferralFeeAgreementForm = lazy(() => import("@/components/ReferralFeeAgreementForm"));
 const RentIncreaseForm = lazy(() => import("@/components/RentIncreaseForm"));

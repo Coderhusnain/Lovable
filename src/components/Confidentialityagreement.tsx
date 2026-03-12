@@ -1,460 +1,182 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Jurisdiction",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "state", label: "State / Province", type: "text", required: true },
+      { name: "city", label: "City", type: "text", required: true },
+      { name: "zip", label: "ZIP / Postal Code", type: "text", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Effective Date and Owner",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "ownerName", label: "Owner / Disclosing party full legal name", type: "text", required: true },
+      { name: "ownerAddress", label: "Owner address", type: "text", required: true },
+      { name: "ownerBusinessDescription", label: "Owner business description", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Recipient",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this document?",
-        type: "date",
-        required: true,
-      },
+      { name: "recipientName", label: "Recipient / Receiving party full legal name", type: "text", required: true },
+      { name: "recipientAddress", label: "Recipient address", type: "text", required: true },
+      { name: "recipientBusinessDescription", label: "Recipient business description", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Confidentiality Terms",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "permittedPurpose", label: "Permitted purpose (authorized in writing by Owner)", type: "text", required: true },
+      { name: "returnDestroyDays", label: "Return/destruction timeline in business days", type: "text", required: true, placeholder: "5" },
+      { name: "survivalYears", label: "Confidentiality survival period in years", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Governing Law",
+    fields: [{ name: "governingLawState", label: "Governing law state", type: "text", required: true }],
+  },
+  {
+    label: "Owner Signature",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "ownerSignName", label: "Owner name", type: "text", required: true },
+      { name: "ownerSignature", label: "Owner signature name", type: "text", required: true },
+      { name: "ownerSignDate", label: "Owner signature date", type: "date", required: true },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Recipient Signature",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "recipientSignName", label: "Recipient name", type: "text", required: true },
+      { name: "recipientSignature", label: "Recipient signature name", type: "text", required: true },
+      { name: "recipientSignDate", label: "Recipient signature date", type: "date", required: true },
     ],
   },
   {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
+    label: "Final Review",
+    fields: [{ name: "reviewedBy", label: "Reviewed by (optional)", type: "text", required: false }],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Document Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and details of this document",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.2;
+  const limit = 282;
   let y = 20;
-  
-  doc.setFontSize(18);
+
+  const u = (value?: string, n = 14) => (value || "").trim() || "_".repeat(n);
+  const ensure = (need = 8) => {
+    if (y + need > limit) {
+      doc.addPage();
+      y = 20;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.5) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.1);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(lh + 2);
+    const lt = `${label}: `;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.1);
+    doc.text(lt, m, y);
+    const x = m + doc.getTextWidth(lt);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(18, doc.getTextWidth(t)), y + 1);
+    } else {
+      doc.text("____________________", x, y);
+    }
+    y += lh + 0.8;
+  };
+
+  const title = "CONFIDENTIALITY AGREEMENT";
   doc.setFont("helvetica", "bold");
-  doc.text("Confidentiality Agreement", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("DOCUMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  
+  doc.setFontSize(12.7);
+  doc.text(title, w / 2, y, { align: "center" });
+  const titleW = doc.getTextWidth(title);
+  doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
+  y += 9;
+
+  p(
+    `This Confidentiality Agreement ("Agreement") is made and entered into as of ${u(v.effectiveDate)} ("Effective Date") by and between: ${u(v.ownerName)}, of ${u(v.ownerAddress)} ("Owner" or "Disclosing Party"); and ${u(v.recipientName)}, of ${u(v.recipientAddress)} ("Recipient" or "Receiving Party").`
+  );
+  p("RECITALS", true);
+  p(`WHEREAS, the Owner is engaged in the business of ${u(v.ownerBusinessDescription)};`);
+  p(`WHEREAS, the Recipient is engaged in the business of ${u(v.recipientBusinessDescription)};`);
+  p("WHEREAS, the Owner possesses certain confidential, proprietary, and trade secret information of substantial commercial value and has agreed to disclose certain of such information to the Recipient solely for the limited purposes contemplated under this Agreement;");
+  p("WHEREAS, the Recipient agrees to receive such information in strict confidence and to use it only in accordance with the terms of this Agreement;");
+  p("NOW, THEREFORE, in consideration of the mutual covenants and agreements contained herein, and intending to be legally bound, the parties agree as follows:");
+
+  p("1. DEFINITION OF CONFIDENTIAL INFORMATION", true);
+  p("1.1 Meaning");
+  p(
+    `"Confidential Information" means any and all non-public, proprietary, or confidential data, information, and material, whether in written, oral, electronic, graphic, or other tangible or intangible form, disclosed or made available by the Owner to the Recipient, whether before, on, or after the Effective Date, including without limitation: business records/operational data/strategic plans; financial statements/projections/budgets; product designs/specifications/prototypes/technical data; software/source code/algorithms; customer lists/supplier details/pricing information/marketing plans; trade secrets and know-how; and any analyses, compilations, or other documents prepared by the Recipient containing or reflecting such information.`
+  );
+  p("1.2 Exclusions");
+  p(
+    "Confidential Information shall not include information which: (a) is or becomes publicly available through no breach of this Agreement; (b) is lawfully received by Recipient from a third party without restriction; (c) is independently developed by Recipient without use/reference; (d) is disclosed pursuant to valid legal process, with prompt notice/cooperation where permitted; (e) is approved for release in writing by Owner; or (f) both parties agree in writing is not confidential."
+  );
+
+  p("2. OBLIGATIONS OF THE RECIPIENT", true);
+  p("2.1 Non-Disclosure and Non-Use");
+  p(
+    `Recipient shall hold all Confidential Information in strict confidence using at least the same degree of care it uses for its own confidential information, and in no event less than reasonable care. Recipient shall not disclose/publish/disseminate Confidential Information to any third party without prior written consent of Owner, and shall not use Confidential Information for any purpose other than ${u(v.permittedPurpose)} authorized in writing by Owner.`
+  );
+  p("2.2 No Copying or Modification");
+  p("Recipient shall not copy, reproduce, summarize, or otherwise duplicate Confidential Information, in whole or in part, without prior written approval of Owner, except as strictly necessary for the permitted purpose.");
+  p("2.3 Disclosure to Employees/Agents");
+  p("Disclosure shall be limited to Recipient employees/contractors/agents with legitimate need to know for the permitted purpose and bound by written confidentiality obligations no less restrictive than this Agreement.");
+  p("2.4 Injunctive Relief");
+  p("Recipient acknowledges unauthorized disclosure/use causes immediate and irreparable harm for which monetary damages may be inadequate; Owner may seek injunctive relief without bond in addition to other legal/equitable remedies.");
+
+  p("3. RETURN OR DESTRUCTION OF CONFIDENTIAL INFORMATION", true);
+  p(
+    `Upon Owner's written request, Recipient shall, within ${u(v.returnDestroyDays, 1)} business days: (a) return all documents/tangible materials containing Confidential Information; (b) permanently delete or destroy all electronic copies; and (c) provide written certification signed by an authorized representative confirming compliance.`
+  );
+
+  p("4. RELATIONSHIP OF THE PARTIES", true);
+  p("Nothing in this Agreement obligates either party to enter any business relationship/transaction and does not create agency, partnership, joint venture, employment, or fiduciary relationship.");
+  p("5. NO WARRANTY", true);
+  p("Owner makes no representations/warranties (express or implied) regarding accuracy/completeness of Confidential Information, disclaims implied warranties of merchantability/fitness, and is not liable for damages resulting from Recipient use.");
+  p("6. NO LICENSE", true);
+  p("Except for limited right to use Confidential Information for permitted purpose, no license/ownership/IP rights are granted by implication, estoppel, or otherwise; all rights/title/interest remain solely with Owner.");
+  p("7. TERM AND SURVIVAL", true);
+  p(
+    `Agreement commences on Effective Date and continues until terminated by mutual written agreement. Confidentiality and non-use obligations survive for ${u(v.survivalYears)} years following disclosure, or longer while information remains confidential/proprietary.`
+  );
+  p("8. MISCELLANEOUS", true);
+  p("8.1 Entire Agreement - Entire understanding and supersedes prior oral/written discussions and agreements on subject matter.");
+  p("8.2 Amendment - May be amended only in writing signed by both parties.");
+  p("8.3 Assignment - Neither party may assign rights/delegate duties without prior written consent of the other.");
+  p(`8.4 Governing Law - Governed by laws of the State of ${u(v.governingLawState)}, without regard to conflict of law principles.`);
+  p("8.5 Severability - Invalid/unenforceable provision does not affect remaining provisions.");
+  p("8.6 Waiver - Failure to enforce any provision is not a waiver of rights.");
+
+  p("IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective Date.", true);
+  p("Owner (Disclosing Party):", true);
+  uf("Name", v.ownerSignName);
+  uf("Signature", v.ownerSignature);
+  uf("Date", v.ownerSignDate);
+  p("Recipient (Receiving Party):", true);
+  uf("Name", v.recipientSignName);
+  uf("Signature", v.recipientSignature);
+  uf("Date", v.recipientSignDate);
+  p(`Jurisdiction: ${u(v.city)}, ${u(v.state)}, ${u(v.country)} ${u(v.zip)}`);
+
   doc.save("confidentiality_agreement.pdf");
 };
 

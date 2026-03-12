@@ -1,495 +1,182 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Step 1: Parties and Premises",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "agreementDate", label: "Agreement Date", type: "date", required: true },
+      { name: "landlordName", label: "Landlord Name", type: "text", required: true },
+      { name: "landlordAddress", label: "Landlord Address", type: "textarea", required: true },
+      { name: "tenantName", label: "Tenant Name", type: "text", required: true },
+      { name: "tenantAddress", label: "Tenant Address", type: "textarea", required: true },
+      { name: "restaurantName", label: "Restaurant Name / Unit Number", type: "text", required: true },
+      { name: "premisesAddress", label: "Premises Address", type: "textarea", required: true },
+      { name: "legalDescription", label: "Legal Description", type: "textarea", required: true },
     ],
   },
   {
-    label: "State/Province",
+    label: "Step 2: Lease Term and Rent",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "startDate", label: "Lease Start Date", type: "date", required: true },
+      { name: "endDate", label: "Lease End Date", type: "date", required: true },
+      { name: "monthlyRent", label: "Monthly Rent Amount", type: "text", required: true },
+      { name: "paymentAddress", label: "Rent Payment Address", type: "textarea", required: true },
+      { name: "securityDeposit", label: "Security Deposit Amount", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Step 3: Use and Operations",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "furnishings", label: "Furnishings List", type: "textarea", required: true },
+      { name: "parkingSpaces", label: "Customer/Guest Parking Spaces", type: "text", required: true },
+      { name: "storageArea", label: "Storage Area", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Step 4: Insurance and Renewal",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "liabilityInsurance", label: "Liability Insurance Minimum", type: "text", required: true },
+      { name: "renewalDuration", label: "Renewal Term Duration", type: "text", required: true },
+      { name: "nonRenewalNoticeDays", label: "Non-Renewal Notice Days", type: "text", required: true },
+      { name: "renewalRent", label: "Renewal Rent", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Step 5: Defaults and Fees",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "saleTerminationDays", label: "Termination Upon Sale Notice Days", type: "text", required: true },
+      { name: "repairCostThreshold", label: "Repair Cost Threshold", type: "text", required: true },
+      { name: "lateFeeDays", label: "Late Payment Grace Days", type: "text", required: true },
+      { name: "lateFeeAmount", label: "Late Fee Amount", type: "text", required: true },
+      { name: "returnedCheckFee", label: "Returned Check Fee", type: "text", required: true },
     ],
   },
   {
-    label: "First Party Contact",
+    label: "Step 6: Governing Law and Notices",
     fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
+      { name: "governingState", label: "Governing Law State", type: "text", required: true },
+      { name: "landlordNoticeAddress", label: "Landlord Notice Address", type: "textarea", required: true },
+      { name: "tenantNoticeAddress", label: "Tenant Notice Address", type: "textarea", required: true },
     ],
   },
   {
-    label: "Second Party Name",
+    label: "Step 7: Signatures",
     fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "landlordSign", label: "Landlord Signature Name", type: "text", required: true },
+      { name: "landlordSignDate", label: "Landlord Signature Date", type: "date", required: true },
+      { name: "tenantSign", label: "Tenant Signature Name", type: "text", required: true },
+      { name: "tenantSignDate", label: "Tenant Signature Date", type: "date", required: true },
     ],
   },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
-  let y = 20;
-  
-  doc.setFontSize(18);
-  doc.setFont("helvetica", "bold");
-  doc.text("Restaurant Lease", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const m = 16;
+  const tw = 178;
+  const lh = 5.15;
+  let y = 18;
+  const u = (val?: string, n = 12) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const p = (text: string, bold = false, gap = 1.35) => {
+    const lines = doc.splitTextToSize(text, tw);
+    if (y + lines.length * lh + gap > 286) {
+      doc.addPage();
+      y = 18;
+    }
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  doc.setFont("times", "bold");
+  doc.setFontSize(13);
+  const title = "RESTAURANT LEASE AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
   y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
-  y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
-  y += 12;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
-  y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
-  }
-  
+
+  p(`This Lease Agreement ("Lease") is entered into on ${u(v.agreementDate, 10)}, by and between ${u(v.landlordName)} ("Landlord"), ${u(v.landlordAddress)}, and ${u(v.tenantName)} ("Tenant"), ${u(v.tenantAddress)}. Landlord and Tenant may collectively be referred to as the "Parties."`);
+  p("1. Leased Premises", true);
+  p(`Landlord hereby leases to Tenant the restaurant space known as ${u(v.restaurantName)}, located at ${u(v.premisesAddress)} (the "Restaurant"), in consideration of the lease payments and covenants set forth herein.`);
+  p("2. Legal Description", true);
+  p(`The legal description of the Restaurant is as follows: ${u(v.legalDescription)}.`);
+  p("3. Term", true);
+  p(`The term of this Lease shall commence on ${u(v.startDate, 10)} and shall expire on ${u(v.endDate, 10)}, unless extended or terminated earlier in accordance with this Lease.`);
+  p("4. Rent", true);
+  p(`Tenant agrees to pay monthly rent in the amount of $${u(v.monthlyRent, 4)}, payable in advance on or before the first day of each month. All rental payments shall be delivered to Landlord at ${u(v.paymentAddress)} or other designated address.`);
+  p("5. Security Deposit", true);
+  p(`Upon execution of this Lease, Tenant shall pay Landlord a security deposit of $${u(v.securityDeposit, 4)}, to be held in trust for performance of Tenant obligations and to cover damages beyond normal wear and tear.`);
+  p("6. Possession", true);
+  p("Tenant shall take possession on first day of Lease term and vacate/return possession at end of term unless otherwise agreed in writing. Upon expiration/termination, Tenant shall remove personal property and surrender premises in good condition, reasonable wear and tear excepted.");
+  p("7. Use of Premises", true);
+  p("Tenant shall use premises solely for operating a restaurant or coffee shop business and related incidental purposes. Sale of alcoholic beverages is prohibited except beer and wine and only if properly licensed. Other use requires Landlord prior written consent.");
+  p("8. Furnishings", true);
+  p(`Furnishings provided: ${u(v.furnishings)}. Tenant shall return furnishings in same condition as received, normal wear and tear excepted.`);
+  p("9. Parking", true);
+  p(`Tenant is entitled to use ${u(v.parkingSpaces, 1)} parking spaces for customers and guests, and exclusive designated carry-out spaces as assigned by Landlord. Tenant is responsible for monitoring/enforcement.`);
+  p("10. Signage and Awnings", true);
+  p("Tenant shall install signage and awnings at own expense subject to Landlord prior approval of design/location/aesthetics, maintain them in good condition, and remove/repair on lease termination.");
+  p("11. Quiet Enjoyment", true);
+  p("Landlord warrants good title and legal right to lease. Tenant is entitled to quiet enjoyment while in compliance with Lease.");
+  p("12. Storage", true);
+  p(`Tenant may store personal property in ${u(v.storageArea)} at own risk. Landlord shall not be liable for stored property loss/damage.`);
+  p("13. Insurance", true);
+  p(`Property insurance maintained by each party for respective property/interests. Tenant names Landlord as additional insured. Tenant shall maintain commercial general liability insurance with combined single limit at least $${u(v.liabilityInsurance, 4)} naming Landlord as additional insured.`);
+  p("14. Renewal", true);
+  p(`Lease renews automatically for successive terms of ${u(v.renewalDuration)} unless either party gives written notice of non-renewal at least ${u(v.nonRenewalNoticeDays, 2)} days before current term expiration. Renewal rent shall be $${u(v.renewalRent, 4)} per period unless otherwise agreed.`);
+  p("15. Maintenance", true);
+  p("Landlord shall maintain restaurant structure/systems in good repair. Tenant is responsible for cleanliness and sanitary condition of leased area.");
+  p("16. Pest Control", true);
+  p("Tenant shall provide regular pest control services at own cost in all food handling/trash/delivery areas.");
+  p("17. Janitorial Services", true);
+  p("Tenant shall provide janitorial services for leased premises at own expense.");
+  p("18. Waste and Grease Management", true);
+  p("Tenant shall prevent waste and maintain cleanliness, including sewer lines free of grease/blockages. Grease must be professionally removed/recycled where required.");
+  p("19. Utilities and Services", true);
+  p("Tenant shall be responsible for all utility charges and service costs associated with use of Restaurant.");
+  p("20. Taxes", true);
+  p("Real estate taxes paid by Landlord. Personal property/use taxes allocated in accordance with Lease terms.");
+  p("21. Termination Upon Sale", true);
+  p(`Landlord may terminate this Lease upon ${u(v.saleTerminationDays, 2)} days written notice in event the Restaurant is sold.`);
+  p("22. Destruction or Condemnation", true);
+  p(`If partially destroyed but repairable within 60 days and cost under $${u(v.repairCostThreshold, 4)}, Landlord repairs and rent abates proportionately during repairs. If repair not feasible or condemnation occurs, either party may terminate by twenty (20) days notice.`);
+  p("23. Default", true);
+  p("If Tenant fails to comply and does not cure monetary default within five (5) days or other breach within ten (10) days after notice, Landlord may re-enter and pursue legal remedies including attorney's fees.");
+  p("24. Late Payments", true);
+  p(`Any payment not made within ${u(v.lateFeeDays, 1)} days of due date shall incur late fee of $${u(v.lateFeeAmount, 4)}.`);
+  p("25. Holdover", true);
+  p("If Tenant remains after expiration, holdover rent is due at same renewal-rate unless otherwise agreed in writing.");
+  p("26. Cumulative Rights", true);
+  p("All rights/remedies under Lease are cumulative and may be exercised concurrently or separately.");
+  p("27. Returned Checks", true);
+  p(`Tenant shall be charged $${u(v.returnedCheckFee, 4)} for each returned check due to insufficient funds.`);
+  p("28. Governing Law", true);
+  p(`This Lease shall be governed by and construed in accordance with laws of the State of ${u(v.governingState)}.`);
+  p("29. Entire Agreement / Amendment", true);
+  p("This Lease is full and final agreement and supersedes prior discussions/agreements. Modifications must be in writing signed by both Parties.");
+  p("30. Severability", true);
+  p("If any provision is invalid/unenforceable, remaining provisions remain effective and court may limit offending provision to enforceable extent.");
+  p("31. Waiver", true);
+  p("Failure by either party to enforce any term is not waiver of that or other provisions.");
+  p("32. Binding Effect", true);
+  p("This Lease binds and benefits Parties and respective heirs, successors, legal representatives, and assigns.");
+  p("33. Notices", true);
+  p(`All notices must be in writing delivered personally or by certified mail to Landlord at ${u(v.landlordNoticeAddress)} and Tenant at ${u(v.tenantNoticeAddress)} unless changed by written designation.`);
+  p("IN WITNESS WHEREOF", true);
+  p(`LANDLORD Signature: ${u(v.landlordSign)}   Date: ${u(v.landlordSignDate, 10)}`);
+  p(`TENANT Signature: ${u(v.tenantSign)}   Date: ${u(v.tenantSignDate, 10)}`);
+  p("Make It Legal", true);
+  p("This Agreement should be signed in front of a notary public by ____________________.");
+  p("Once signed in front of a notary, this document should be delivered to the appropriate court for filing.");
+  p("Copies", true);
+  p("The original Agreement should be filed with the Clerk of Court or delivered to the requesting business.");
+  p("The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place.");
+  p("Additional Assistance", true);
+  p("If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legal Gram Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
+
   doc.save("restaurant_lease.pdf");
 };
 
@@ -501,6 +188,7 @@ export default function RestaurantLease() {
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="restaurantlease"
+      preserveStepLayout
     />
   );
 }

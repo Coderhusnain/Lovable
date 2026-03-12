@@ -3,87 +3,100 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Affiant & Subject",
+    label: "Jurisdiction",
     fields: [
-      { name: "affiantName", label: "Affiant full name", type: "text", required: true },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "stateName", label: "State / Province", type: "text", required: true },
+      { name: "city", label: "City", type: "text", required: true },
+      { name: "countyName", label: "County", type: "text", required: true },
+    ],
+  },
+  {
+    label: "Affiant and Subject",
+    fields: [
+      { name: "affiantName", label: "Affiant name", type: "text", required: true },
       { name: "affiantAddress", label: "Affiant address", type: "text", required: true },
-      { name: "subjectName", label: "Subject full name", type: "text", required: true },
+      { name: "subjectName", label: "Subject name", type: "text", required: true },
       { name: "affiantDob", label: "Affiant date of birth", type: "date", required: true },
+    ],
+  },
+  {
+    label: "Acquaintance Details",
+    fields: [
       { name: "yearsKnown", label: "Years known", type: "text", required: true },
-      { name: "monthsKnown", label: "Additional months known", type: "text", required: true },
-      { name: "capacityKnown", label: "Capacity in which affiant knows subject", type: "text", required: true },
-      { name: "signedByName", label: "This affidavit must be signed by", type: "text", required: true },
+      { name: "monthsKnown", label: "Months known", type: "text", required: true },
+      { name: "capacityKnown", label: "Capacity known", type: "text", required: true },
+    ],
+  },
+  {
+    label: "Execution",
+    fields: [
+      { name: "signedName", label: "Signed by", type: "text", required: true },
+      { name: "signedDate", label: "Date", type: "date", required: true },
     ],
   },
   {
     label: "Notary",
-    fields: [
-      { name: "signedName", label: "Signed name (affiant)", type: "text", required: true },
-      { name: "signedDate", label: "Signed date", type: "date", required: true },
-      { name: "state", label: "State", type: "text", required: true },
-      { name: "county", label: "County", type: "text", required: true },
-      { name: "notaryName", label: "Notary public name", type: "text", required: true },
-    ],
+    fields: [{ name: "notaryName", label: "Notary Public", type: "text", required: true }],
   },
 ];
 
 const generatePDF = (v: Record<string, string>) => {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  let y = 18;
-  const L = 16;
-  const W = 178;
-  const LH = 5.7;
-  const p = (t: string, b = false, gap = 1.8) => {
-    doc.setFont("helvetica", b ? "bold" : "normal");
-    doc.setFontSize(10.5);
-    const lines = doc.splitTextToSize(t, W);
-    if (y + lines.length * LH > 282) {
+  const w = 210;
+  const m = 16;
+  const tw = w - m * 2;
+  const lh = 5.5;
+  const limit = 282;
+  let y = 20;
+
+  const u = (value?: string, n = 14) => (value || "").trim() || "_".repeat(n);
+  const ensure = (need = 8) => {
+    if (y + need > limit) {
       doc.addPage();
-      y = 18;
+      y = 20;
     }
-    doc.text(lines, L, y);
-    y += lines.length * LH + gap;
+  };
+  const p = (text: string, bold = false, gap = 1.6) => {
+    const lines = doc.splitTextToSize(text, tw);
+    ensure(lines.length * lh + gap);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
   const uf = (label: string, value?: string) => {
+    ensure(lh + 2);
+    const lt = `${label}: `;
     doc.setFont("helvetica", "normal");
-    doc.text(`${label}: `, L, y);
-    const x = L + doc.getTextWidth(`${label}: `);
-    const txt = (value || "").trim();
-    if (txt) {
-      doc.text(txt, x, y);
-      doc.line(x, y + 1, x + Math.max(24, doc.getTextWidth(txt)), y + 1);
+    doc.setFontSize(10.4);
+    doc.text(lt, m, y);
+    const x = m + doc.getTextWidth(lt);
+    const t = (value || "").trim();
+    if (t) {
+      doc.text(t, x, y);
+      doc.line(x, y + 1, x + Math.max(20, doc.getTextWidth(t)), y + 1);
     } else {
-      doc.text("________________________", x, y);
+      doc.text("____________________", x, y);
     }
-    y += LH + 1;
+    y += lh + 0.8;
   };
 
-  const title = "AFFIDAVIT OF CHARACTER";
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
-  doc.text(title, 105, y, { align: "center" });
-  const tw = doc.getTextWidth(title);
-  doc.line(105 - tw / 2, y + 1, 105 + tw / 2, y + 1);
+  doc.setFontSize(12.6);
+  const title = "AFFIDAVIT OF CHARACTER";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 10;
 
-  p(
-    `I, ${v.affiantName || "__________"}, of ${v.affiantAddress || "__________"}, do hereby certify that ` +
-      `${v.subjectName || "___________"} is personally known to me and is of good moral character.`,
-  );
-  p(
-    `My date of birth is ${v.affiantDob || "__________"} and I have been personally acquainted with ` +
-      `${v.subjectName || "__________"} for ${v.yearsKnown || "__"} years and ${v.monthsKnown || "__"} months ` +
-      `in the following capacity: ${v.capacityKnown || "__________"}.`,
-  );
+  p(`I, ${u(v.affiantName)}, of ${u(v.affiantAddress)}, do hereby certify that ${u(v.subjectName)} is personally known to me and is of good moral character.`);
+  p(`My date of birth is ${u(v.affiantDob)} and I have been personally acquainted with ${u(v.subjectName)} for ${u(v.yearsKnown, 2)} years and ${u(v.monthsKnown, 2)} months in the following capacity: ${u(v.capacityKnown)}.`);
   uf("Signed", v.signedName);
   uf("Date", v.signedDate);
-  uf("STATE OF", v.state);
-  uf("COUNTY OF", v.county);
+  uf("STATE OF", v.stateName);
+  uf("COUNTY OF", v.countyName);
   uf("Notary Public", v.notaryName);
-  p("Final Checklist for Affidavit of Character", true);
-  p("Review the document; seek legal advice if necessary; execute before a notary public; and file/submit after notarization.");
-  p(`This Affidavit must be signed by ${v.signedByName || "______________________"} in presence of a duly authorized notary.`);
-  p("Copies and Recordkeeping: File original with clerk/requesting authority and keep a secure copy for records.");
 
   doc.save("affidavit_of_character.pdf");
 };
@@ -99,4 +112,3 @@ export default function AffidavitCharacterForm() {
     />
   );
 }
-

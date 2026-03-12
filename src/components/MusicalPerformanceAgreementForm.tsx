@@ -1,536 +1,196 @@
-import { FormWizard } from "./FormWizard";
-import { FieldDef } from "./FormWizard";
+import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Jurisdiction",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          { value: "ca", label: "Canada" },
-          { value: "uk", label: "United Kingdom" },
-          { value: "au", label: "Australia" },
-          { value: "other", label: "Other" },
-        ],
-      },
+      { name: "country", label: "Country", type: "text", required: true },
+      { name: "state", label: "State/Commonwealth", type: "text", required: true },
+      { name: "province", label: "Province", type: "text", required: false },
+      { name: "city", label: "City", type: "text", required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Parties and Dates",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } else if (values.country === "ca") {
-            return [
-              { value: "AB", label: "Alberta" }, { value: "BC", label: "British Columbia" },
-              { value: "MB", label: "Manitoba" }, { value: "NB", label: "New Brunswick" },
-              { value: "NL", label: "Newfoundland and Labrador" }, { value: "NS", label: "Nova Scotia" },
-              { value: "ON", label: "Ontario" }, { value: "PE", label: "Prince Edward Island" },
-              { value: "QC", label: "Quebec" }, { value: "SK", label: "Saskatchewan" },
-              { value: "NT", label: "Northwest Territories" }, { value: "NU", label: "Nunavut" },
-              { value: "YT", label: "Yukon" },
-            ];
-          } else if (values.country === "uk") {
-            return [
-              { value: "ENG", label: "England" }, { value: "SCT", label: "Scotland" },
-              { value: "WLS", label: "Wales" }, { value: "NIR", label: "Northern Ireland" },
-            ];
-          } else if (values.country === "au") {
-            return [
-              { value: "NSW", label: "New South Wales" }, { value: "VIC", label: "Victoria" },
-              { value: "QLD", label: "Queensland" }, { value: "WA", label: "Western Australia" },
-              { value: "SA", label: "South Australia" }, { value: "TAS", label: "Tasmania" },
-              { value: "ACT", label: "Australian Capital Territory" }, { value: "NT", label: "Northern Territory" },
-            ];
-          }
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "effectiveDate", label: "Effective Date", type: "date", required: true },
+      { name: "clientName", label: "Client Name/Entity", type: "text", required: true },
+      { name: "clientAddress", label: "Client Address", type: "textarea", required: true },
+      { name: "musicianName", label: "Musician Name/Entity", type: "text", required: true },
+      { name: "musicianAddress", label: "Musician Address", type: "textarea", required: true },
+      { name: "serviceStartDate", label: "Performance Start Date", type: "date", required: true },
+      { name: "terminationDate", label: "Termination Date/Event Completion", type: "text", required: true },
     ],
   },
   {
-    label: "Agreement Date",
+    label: "Commercial Terms",
     fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
+      { name: "depositAmount", label: "Deposit Amount", type: "text", required: true },
+      { name: "cancelNoticePeriod", label: "Cancellation Notice Period", type: "text", required: true },
+      { name: "refundDays", label: "Refund Days if Musician Cancels", type: "text", required: true },
+      { name: "mediationDays", label: "Mediation Window in Days", type: "text", required: true },
+      { name: "arbitrationInstitution", label: "Arbitration Institution", type: "text", required: true, placeholder: "American Arbitration Association" },
     ],
   },
   {
-    label: "First Party Name",
+    label: "Legal Clauses",
     fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
+      { name: "governingLawState", label: "Governing Law State/Commonwealth", type: "text", required: true },
+      { name: "additionalAddressNotice", label: "Alternate Notice Address (Optional)", type: "textarea", required: false },
     ],
   },
   {
-    label: "First Party Address",
+    label: "Signatures",
     fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
+      { name: "clientSign", label: "Client Authorized Representative", type: "text", required: true },
+      { name: "clientTitle", label: "Client Title (if applicable)", type: "text", required: false },
+      { name: "clientDate", label: "Client Signature Date", type: "date", required: true },
+      { name: "musicianSign", label: "Musician Authorized Representative", type: "text", required: true },
+      { name: "musicianTitle", label: "Musician Title (if applicable)", type: "text", required: false },
+      { name: "musicianDate", label: "Musician Signature Date", type: "date", required: true },
     ],
   },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
+const generatePDF = (v: Record<string, string>) => {
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 16;
+  const width = 178;
+  const lh = 5.3;
+  let y = 18;
 
-const ulText = (doc: jsPDF, text: string, x: number, y: number) => {
-  doc.text(text, x, y);
-  const w = doc.getTextWidth(text);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.25);
-  doc.line(x, y + 1.1, x + w, y + 1.1);
-};
-
-const labelUl = (doc: jsPDF, label: string, value: string, x: number, y: number) => {
-  doc.setFont("helvetica", "normal");
-  doc.text(label, x, y);
-  ulText(doc, value, x + doc.getTextWidth(label), y);
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// PDF GENERATOR
-// ─────────────────────────────────────────────────────────────────────────────
-const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-
-  const PW       = 210;
-  const M        = 20;
-  const TW       = PW - M * 2;
-  const FS       = 10.5;
-  const LH       = 5.8;
-  const SAFE_BOT = 270;
-  let y = 22;
-
-  const checkPage = (needed = 12) => {
-    if (y + needed > SAFE_BOT) { doc.addPage(); y = 22; }
+  const u = (val?: string, n = 14) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
+  const ensure = (need = 10) => {
+    if (y + need > 285) {
+      doc.addPage();
+      y = 18;
+    }
+  };
+  const p = (text: string, bold = false, gap = 1.7) => {
+    const lines = doc.splitTextToSize(text, width);
+    ensure(lines.length * lh + gap);
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, left, y);
+    y += lines.length * lh + gap;
+  };
+  const uf = (label: string, value?: string) => {
+    ensure(8);
+    doc.text(label, left, y);
+    const x = left + doc.getTextWidth(label);
+    const s = u(value);
+    doc.text(s, x, y);
+    doc.line(x, y + 1, x + doc.getTextWidth(s), y + 1);
+    y += 6.2;
   };
 
-  // ── TITLE ────────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
-  const TITLE = "MUSICAL PERFORMANCE AGREEMENT";
-  doc.text(TITLE, PW / 2, y, { align: "center" });
-  const tw = doc.getTextWidth(TITLE);
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.4);
-  doc.line(PW / 2 - tw / 2, y + 1.5, PW / 2 + tw / 2, y + 1.5);
-  y += 12;
+  doc.setFont("times", "bold");
+  doc.setFontSize(13);
+  const title = "MUSICAL PERFORMANCE AGREEMENT";
+  doc.text(title, 105, y, { align: "center" });
+  const tw = doc.getTextWidth(title);
+  doc.line(105 - tw / 2, y + 1.1, 105 + tw / 2, y + 1.1);
+  y += 10;
 
-  // ── DATE / JURISDICTION ──────────────────────────────────────────────────
-  doc.setFontSize(FS);
-  doc.setTextColor(0, 0, 0);
-  labelUl(doc, "Date:  ", values.effectiveDate || "N/A", M, y);
-  y += LH + 1;
-  labelUl(doc, "Jurisdiction:  ", `${values.state || ""}, ${values.country?.toUpperCase() || ""}`, M, y);
-  y += LH + 6;
+  uf("Jurisdiction: ", `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`);
 
-  // ── PARTIES ──────────────────────────────────────────────────────────────
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(FS);
-  doc.text("PARTIES", M, y);
-  y += LH + 1;
+  p(
+    `This Musical Performance Agreement (the "Agreement") is made and entered into as of ${u(v.effectiveDate, 12)} (the "Effective Date"), by and between ${u(v.clientName)}, residing at/with a principal place of business at ${u(v.clientAddress)} ("Client"), and ${u(v.musicianName)}, residing at/with a principal place of business at ${u(v.musicianAddress)} ("Musician"). Client and Musician may hereinafter be referred to individually as a "Party" and collectively as the "Parties."`
+  );
 
-  doc.setFont("helvetica", "normal");
-  labelUl(doc, "First Party:  ", values.party1Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party1Email || "N/A", M, y); y += LH;
-  if (values.party1Phone) { labelUl(doc, "Phone:  ", values.party1Phone, M, y); y += LH; }
-  y += 4;
+  p("1. Description of Services", true);
+  p(`1.1 Beginning on ${u(v.serviceStartDate, 12)}, the Musician shall provide to the Client live musical performance services for the event described below (the "Services").`);
+  p("1.2 The Services shall include, but not be limited to:");
+  p("- Live performance of songs selected by the Musician and/or pre-approved by the Client, suitable to the mood and atmosphere of the event;");
+  p("- Continuous musical entertainment for the agreed duration, without significant interruptions other than brief, reasonable breaks as necessary;");
+  p("- The provision of professional sound equipment, microphones, and related gear to ensure optimum quality of performance; and");
+  p("- Compliance with reasonable artistic and event-related directions from the Client.");
 
-  labelUl(doc, "Second Party:  ", values.party2Name || "N/A", M, y); y += LH;
-  labelUl(doc, "Address:  ", `${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""}`, M, y); y += LH;
-  labelUl(doc, "Email:  ", values.party2Email || "N/A", M, y); y += LH;
-  if (values.party2Phone) { labelUl(doc, "Phone:  ", values.party2Phone, M, y); y += LH; }
-  y += 6;
+  p("2. Performance Obligations of the Musician", true);
+  p("2.1 The Musician shall arrive at least one (1) hour prior to the scheduled commencement time to conduct set-up and sound checks.");
+  p("2.2 The Musician shall ensure that high-quality microphones and sound equipment are used and that sound reproduction is suitable for the size and acoustics of the venue.");
+  p("2.3 The Client shall provide the Musician with adequate and private dressing room facilities, together with reasonable access to food and refreshments during the performance.");
+  p("2.4 The Musician warrants that he/she/they have an extensive and diverse collection of songs and will ensure that the performance remains consistent and without undue interruptions for the agreed period.");
 
-  // ── AGREEMENT DETAILS ────────────────────────────────────────────────────
-  checkPage(20);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", TW);
-  doc.text(descLines, M, y);
-  y += descLines.length * LH + 6;
+  p("3. Deposit and Fees", true);
+  p(`3.1 Upon execution of this Agreement, the Client shall pay to the Musician a non-refundable deposit of ${u(v.depositAmount)}, which shall be applied towards the total performance fee.`);
+  p("3.2 The balance of all sums due under this Agreement shall be payable by the Client to the Musician immediately upon completion of the Services, unless otherwise agreed in writing.");
 
-  // ── TERMS ────────────────────────────────────────────────────────────────
-  checkPage(30);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", M, y); y += LH + 1;
-  doc.setFont("helvetica", "normal");
-  labelUl(doc, "Duration:  ", values.duration || "N/A", M, y); y += LH;
-  labelUl(doc, "Termination Notice:  ", values.terminationNotice || "N/A", M, y); y += LH;
-  labelUl(doc, "Confidentiality:  ", values.confidentiality === "yes" ? "Included" : "Not Included", M, y); y += LH;
-  labelUl(doc, "Dispute Resolution:  ", values.disputeResolution || "N/A", M, y); y += LH + 6;
+  p("4. Cancellation Policy", true);
+  p("4.1 All deposits paid by the Client shall be non-refundable.");
+  p(`4.2 A minimum of ${u(v.cancelNoticePeriod)} written notice shall be required for cancellation by the Client. In the event of cancellation by the Client with less than the required notice, the Client shall remain liable to pay the full agreed fee.`);
+  p(`4.3 In the event of cancellation by the Musician, all sums paid by the Client, including the deposit, shall be refunded in full within ${u(v.refundDays, 2)} days of cancellation.`);
 
-  // ── FINANCIAL TERMS ──────────────────────────────────────────────────────
-  if (values.paymentAmount) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", M, y); y += LH + 1;
-    doc.setFont("helvetica", "normal");
-    labelUl(doc, "Payment Amount:  ", values.paymentAmount, M, y); y += LH;
-    labelUl(doc, "Schedule:  ", values.paymentSchedule || "N/A", M, y); y += LH + 6;
-  }
+  p("5. Term", true);
+  p(`5.1 This Agreement shall commence on the Effective Date and terminate on ${u(v.terminationDate)}, unless extended or renewed by mutual written agreement of the Parties.`);
 
-  // ── ADDITIONAL TERMS ─────────────────────────────────────────────────────
-  if (values.additionalTerms) {
-    checkPage(20);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", M, y); y += LH + 1;
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, TW);
-    doc.text(addLines, M, y);
-    y += addLines.length * LH + 6;
-  }
+  p("6. Relationship of the Parties", true);
+  p("6.1 The Parties acknowledge that the Musician is engaged as an independent contractor and not as an employee, agent, partner, or joint venturer of the Client.");
+  p("6.2 Nothing in this Agreement shall be construed as creating any employer-employee relationship between the Parties.");
 
-  // ── SIGNATURES ───────────────────────────────────────────────────────────
-  checkPage(45);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", M, y); y += LH + 3;
-  doc.setFont("helvetica", "normal");
+  p("7. Indemnification", true);
+  p("7.1 The Client agrees to indemnify, defend, and hold harmless the Musician, together with his/her/their members, employees, agents, and representatives, against any claims, damages, losses, liabilities, costs, and expenses (including reasonable attorney's fees) arising out of:");
+  p("- The actions or omissions of the Client, its guests, invitees, or staff;");
+  p("- Any breach of this Agreement by the Client; or");
+  p("- Any claims arising from the use of the venue, except to the extent caused by the gross negligence or willful misconduct of the Musician.");
 
-  const C2 = 110;
-  doc.text("_______________________________", M, y);
-  doc.text("_______________________________", C2, y);
-  y += LH;
+  p("8. Force Majeure", true);
+  p("8.1 Neither Party shall be liable for any delay or failure in performing its obligations under this Agreement if such delay or failure results from events beyond its reasonable control, including but not limited to acts of God, fire, flood, natural disasters, pandemic, epidemic, public health emergencies, labor strikes, acts of terrorism, governmental restrictions, or other similar events (\"Force Majeure Event\").");
+  p("8.2 In the event of a Force Majeure Event, the affected Party shall promptly notify the other Party in writing. Obligations shall be suspended for the duration of the Force Majeure Event, and the Parties shall work in good faith to reschedule the performance. If rescheduling is not possible within a reasonable time, either Party may terminate this Agreement without liability, and the Musician shall refund any fees paid in advance, less any non-recoverable costs incurred.");
 
-  ulText(doc, values.party1Name || "First Party", M, y);
-  ulText(doc, values.party2Name || "Second Party", C2, y);
-  y += LH;
+  p("9. Dispute Resolution", true);
+  p("9.1 In the event of any dispute, controversy, or claim arising out of or relating to this Agreement, the Parties shall first attempt to resolve the matter amicably through good-faith negotiations.");
+  p(`9.2 If negotiations fail, the Parties agree to submit the dispute to mediation administered by a mutually agreed mediator within ${u(v.mediationDays, 2)} days.`);
+  p(`9.3 If mediation is unsuccessful, the dispute shall be finally resolved by binding arbitration under the rules of ${u(v.arbitrationInstitution)}, and judgment on the arbitral award may be entered in any court of competent jurisdiction.`);
+  p("9.4 Each Party shall bear its own costs of mediation and arbitration, except as otherwise determined by the arbitrator.");
 
-  labelUl(doc, "Signature:  ", values.party1Signature || "", M, y);
-  labelUl(doc, "Signature:  ", values.party2Signature || "", C2, y);
-  y += LH;
+  p("10. Entire Agreement", true);
+  p("10.1 This Agreement contains the entire understanding of the Parties with respect to the subject matter herein and supersedes all prior agreements, negotiations, or representations, whether written or oral.");
 
-  doc.text("Date: " + new Date().toLocaleDateString(), M, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), C2, y);
+  p("11. Severability", true);
+  p("11.1 If any provision of this Agreement is held to be invalid or unenforceable, such provision shall be deemed severed, and the remainder of this Agreement shall remain in full force and effect.");
+  p("11.2 Where permissible, such invalid provision shall be reformed to the minimum extent necessary to render it enforceable.");
 
-  if (values.witnessName) {
-    y += LH + 6;
-    doc.text("Witness: _______________________________", M, y); y += LH;
-    labelUl(doc, "Name:  ", values.witnessName, M, y);
-  }
+  p("12. Amendment", true);
+  p("12.1 This Agreement may not be modified, amended, or waived except by a written instrument duly signed by both Parties.");
 
-  // ── FOOTER ───────────────────────────────────────────────────────────────
-  doc.setFontSize(7);
-  doc.setTextColor(150, 150, 150);
-  doc.text(`Generated  •  ${new Date().toLocaleDateString()}`, PW / 2, 288, { align: "center" });
+  p("13. Governing Law", true);
+  p(`13.1 This Agreement shall be governed by and construed in accordance with the laws of the State/Commonwealth of ${u(v.governingLawState)}, without regard to its conflict of law provisions.`);
+
+  p("14. Notices", true);
+  p(
+    `14.1 Any notice required or permitted under this Agreement shall be deemed duly given if delivered personally, or if sent by certified mail, return receipt requested, to the addresses set forth in the preamble of this Agreement${(v.additionalAddressNotice || "").trim() ? `, and to the following additional address: ${v.additionalAddressNotice}` : ""}, or to such other address as may be designated by a Party in writing.`
+  );
+
+  p("15. Waiver of Contractual Rights", true);
+  p("15.1 The failure of either Party to enforce any provision of this Agreement shall not constitute a waiver of that Party's right thereafter to enforce such provision or any other provision of this Agreement.");
+
+  p("16. Assignment", true);
+  p("16.1 Neither Party may assign or transfer its rights or obligations under this Agreement without the prior written consent of the other Party, which consent shall not be unreasonably withheld.");
+
+  p("17. Execution and Signatures", true);
+  p("17.1 This Agreement shall be executed by the duly authorized representatives of the Parties and shall be effective as of the Effective Date.");
+
+  p("CLIENT:", true);
+  uf("Name: ", v.clientSign);
+  uf("Title (if applicable): ", v.clientTitle);
+  uf("Date: ", v.clientDate);
+
+  p("MUSICIAN:", true);
+  uf("Name: ", v.musicianSign);
+  uf("Title (if applicable): ", v.musicianTitle);
+  uf("Date: ", v.musicianDate);
 
   doc.save("musical_performance_agreement.pdf");
 };
 
-export default function MusicalPerformanceAgreement() {
+export default function MusicalPerformanceAgreementForm() {
   return (
     <FormWizard
       steps={steps}
       title="Musical Performance Agreement"
-      subtitle="Complete each step to generate your document"
+      subtitle="Complete all steps to generate your document"
       onGenerate={generatePDF}
       documentType="musicalperformanceagreement"
     />
