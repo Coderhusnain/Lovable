@@ -1,6 +1,24 @@
 import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
+const countryOptions = [
+  { value: "United States", label: "United States" },
+  { value: "Canada", label: "Canada" },
+  { value: "United Kingdom", label: "United Kingdom" },
+  { value: "Australia", label: "Australia" },
+  { value: "Pakistan", label: "Pakistan" },
+  { value: "Other", label: "Other" },
+];
+
+const getStateOptions = (country?: string) => {
+  if (country === "United States") return [{ value: "California", label: "California" }, { value: "New York", label: "New York" }, { value: "Texas", label: "Texas" }, { value: "Florida", label: "Florida" }, { value: "Other US State", label: "Other US State" }];
+  if (country === "Canada") return [{ value: "Ontario", label: "Ontario" }, { value: "Quebec", label: "Quebec" }, { value: "British Columbia", label: "British Columbia" }, { value: "Alberta", label: "Alberta" }, { value: "Other Canadian Province", label: "Other Canadian Province" }];
+  if (country === "United Kingdom") return [{ value: "England", label: "England" }, { value: "Scotland", label: "Scotland" }, { value: "Wales", label: "Wales" }, { value: "Northern Ireland", label: "Northern Ireland" }];
+  if (country === "Australia") return [{ value: "New South Wales", label: "New South Wales" }, { value: "Victoria", label: "Victoria" }, { value: "Queensland", label: "Queensland" }, { value: "Western Australia", label: "Western Australia" }, { value: "Other Australian State", label: "Other Australian State" }];
+  if (country === "Pakistan") return [{ value: "Punjab", label: "Punjab" }, { value: "Sindh", label: "Sindh" }, { value: "Khyber Pakhtunkhwa", label: "Khyber Pakhtunkhwa" }, { value: "Balochistan", label: "Balochistan" }, { value: "Islamabad Capital Territory", label: "Islamabad Capital Territory" }];
+  return [{ value: "Other State/Province/Region", label: "Other State/Province/Region" }];
+};
+
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Agreement Date and Place",
@@ -9,9 +27,9 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       { name: "agreementMonth", label: "Agreement month", type: "text", required: true, placeholder: "June" },
       { name: "agreementYear", label: "Agreement year", type: "number", required: true, placeholder: "2025" },
       { name: "agreementPlace", label: "Agreement place", type: "text", required: true, placeholder: "Islamabad" },
-      { name: "country", label: "Country", type: "text", required: true },
-      { name: "state", label: "State", type: "text", required: true },
-      { name: "province", label: "Province", type: "text", required: false },
+      { name: "country", label: "Country", type: "select", required: true, options: countryOptions },
+      { name: "state", label: "State/Province/Region", type: "select", required: true, dependsOn: "country", getOptions: (values) => getStateOptions(values.country) },
+      { name: "province", label: "Province (optional)", type: "text", required: false },
       { name: "city", label: "City", type: "text", required: false },
     ],
   },
@@ -97,7 +115,7 @@ const generatePDF = (v: Record<string, string>) => {
   const uf = (label: string, value?: string) => { ensure(8); doc.text(label, left, y); const x = left + doc.getTextWidth(label); const s = u(value); doc.text(s, x, y); doc.line(x, y + 1, x + doc.getTextWidth(s), y + 1); y += 6.2; };
 
   const rel = (v.servantRelationType || "son").toLowerCase();
-  const relText = rel === "daughter" ? "daughter/wife of" : rel === "wife" ? "wife of" : "son/daughter/wife of";
+  const relText = rel === "daughter" ? "daughter of" : rel === "wife" ? "wife of" : "son of";
   const jurisdiction = `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`;
 
   doc.setFont("times", "bold"); doc.setFontSize(13);

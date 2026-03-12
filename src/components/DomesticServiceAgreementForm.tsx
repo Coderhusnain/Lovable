@@ -1,4 +1,8 @@
 export { default } from "./DomesticServiceAgreementDocumentForm";
+export { default } from "./DomesticServiceAgreementDocumentForm";
+export { default } from "./DomesticServiceAgreementDocumentForm";
+// Legacy content intentionally disabled below.
+// Wrapper file should only re-export from document form.
 /*
 import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
@@ -229,7 +233,7 @@ export default function DomesticServiceAgreementForm() {
   );
 }
 */
-` EWimport { FormWizard, FieldDef } from "./FormWizard";
+/* ` EWimport { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
@@ -347,3 +351,4 @@ export default function DomesticServiceAgreementForm() {
     />
   );
 }
+*/

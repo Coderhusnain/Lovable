@@ -121,7 +121,7 @@ const generatePDF = (v: Record<string, string>) => {
   const tW = doc.getTextWidth(title);
   doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
   y += 10;
-
+  
   uf("Effective Date: ", v.effectiveDate);
   uf("Jurisdiction: ", `${u(v.city)}, ${u(v.state)}, ${u(v.country)}`);
 
@@ -228,7 +228,7 @@ const generatePDF = (v: Record<string, string>) => {
   uf("Date: ", v.contractorSignDate);
   if ((v.riskComplianceNotes || "").trim()) p(v.riskComplianceNotes);
   if ((v.finalNotes || "").trim()) p(v.finalNotes);
-
+  
   doc.save("drywall_services_agreement.pdf");
 };
 
