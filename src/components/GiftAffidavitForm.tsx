@@ -183,24 +183,23 @@ const generatePDF = (v: Record<string, string>) => {
   p("The undersigned certifies that the information and statements in this affidavit are true and complete.");
   p("");
 
-  // Keep notary/signature block on page 2 for clean spacing
-  doc.addPage();
-  y = 20;
-  p(`Affiant's Name: ${line(v.affiantName, 36)}`, true, 0.9);
-  p(`Affiant's Signature: ${line(v.affiantSignature, 32)}`, true, 0.9);
-  p(`Date: ${line(v.affidavitDate, 20)}`, true, 1.6);
+  // Keep affiant/notary block on page 1 like the draft.
+  p(`Affiant's Name: ${line(v.affiantName, 36)}`, true, 0.7);
+  p(`Affiant's Signature: ${line(v.affiantSignature, 32)}`, true, 0.7);
+  p(`Date: ${line(v.affidavitDate, 20)}`, true, 1.1);
   p(
     `Subscribed and sworn to (or affirmed) before me on this ${u(v.notaryDay, 4)} day of ${u(v.notaryMonth, 7)}, ${u(v.notaryYear, 2)}, by ${line(v.appearingPerson, 28)}, who ${u(v.identityType, 14)}.`,
     true
   );
   if ((v.identityProofDetail || "").trim()) p(`Identity proof details: ${v.identityProofDetail}`);
-  p(`Signature of Notary Public: ${line(v.notarySignature, 30)}`, true, 0.9);
-  p(`Name of Notary Public: ${line(v.notaryName, 33)}`, true, 0.9);
-  p(`My Commission Expires: ${line(v.commissionExpires, 30)}`, true, 0.9);
-  p("Notary Seal:", true, 1.2);
+  p(`Signature of Notary Public: ${line(v.notarySignature, 30)}`, true, 0.7);
+  p(`Name of Notary Public: ${line(v.notaryName, 33)}`, true, 0.7);
+  p(`My Commission Expires: ${line(v.commissionExpires, 30)}`, true, 0.7);
+  p("Notary Seal:", true, 0.9);
 
+  // Page 2 starts here for legal guidance sections.
   doc.addPage();
-  y = 30;
+  y = 24;
   title("Make It Legal", 12, 7);
   p(`This Affidavit should be signed in front of a notary public by ${u(v.makeItLegalSigner)}.`);
   p("Once signed in front of a notary, this document should be delivered to the appropriate court for filing.");

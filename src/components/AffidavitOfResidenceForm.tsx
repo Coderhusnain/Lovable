@@ -153,32 +153,31 @@ const generatePDF = (v: Record<string, string>) => {
 
   centeredUnderlinedTitle("Affidavit of Residence", 12, 9);
   p(
-    `I-${line(v.affiantName, 7)} being of lawful age and a resident at-${line(v.residenceAddress, 12)} in-${line(v.residenceCity, 12)} do on oath and under penalties of perjury, depose and say:`,
+    `I ${line(v.affiantName, 8)} being of lawful age and a resident at ${line(v.residenceAddress, 12)} in ${line(v.residenceCity, 12)} do on oath and under penalties of perjury, depose and say:`,
     false,
-    1.4
+    1.35
   );
   p(
-    `That I am a disinterested party in the estate of-${line(v.estateName, 12)} who died on ${line(v.deathDate, 12)}.`,
+    `That I am a disinterested party in the estate of ${line(v.estateName, 14)} who died on ${line(v.deathDate, 12)}.`,
     false,
-    1.4
+    1.35
   );
   p(
-    `At the time of death-${line(v.estateName, 8)}'s legal residence was at ${line(v.deathResidenceAddress, 8)}, ${line(v.deathResidenceCity, 8)}, ${line(v.deathResidenceCounty, 4)}- County and ${line(v.deathResidenceState, 8)} was a resident of state of ${line(v.deathResidenceState, 8)} for prior to death, and was not the resident of any other state at the time of death.`,
+    `At the time of death ${line(v.estateName, 10)}'s legal residence was at ${line(v.deathResidenceAddress, 10)}, ${line(v.deathResidenceCity, 8)}, ${line(v.deathResidenceCounty, 4)} County and ${line(v.deathResidenceState, 8)} was a resident of state of ${line(v.deathResidenceState, 8)} for prior to death, and was not the resident of any other state at the time of death.`,
     false,
-    1.4
+    1.35
   );
   p(
-    `I certify under penalty of perjury under-${line(v.applicableLaw, 10)} law that I know the contents of this Affidavit signed by me and that the statements are true and correct.`,
+    `I certify under penalty of perjury under ${line(v.applicableLaw, 12)} law that I know the contents of this Affidavit signed by me and that the statements are true and correct.`,
     false,
-    1.6
+    1.5
   );
-  p("");
-  p("_____________________________", false, 0.8);
-  p(`Date: ${u(v.affidavitDate, 10)}`, false, 1.0);
-  p(`STATE OF ${line(v.state, 10)}, COUNTRY OF ${line(v.country, 16)}`, false, 1.0);
-  p("                                           ______________________", false, 0.7);
-  p(`                                                     ${u(v.notaryPublicName, 12)}`, false, 0.7);
-  p("                                                         Notary Public", false, 1.4);
+  p("", false, 0.9);
+  p("_____________________________", false, 0.7);
+  p(`Date`, false, 0.9);
+  p(`STATE OF ${line(v.state, 12)}, COUNTRY OF ${line(v.country, 18)}`, false, 0.9);
+  p("                                           ______________________", false, 0.55);
+  p("                                                     Notary Public", false, 1.2);
 
   doc.addPage();
   y = 30;
