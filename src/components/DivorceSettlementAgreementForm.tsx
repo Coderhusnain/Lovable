@@ -127,7 +127,7 @@ const generatePDF = (v: Record<string, string>) => {
   const tW = doc.getTextWidth(title);
   doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
   y += 10;
-
+  
   uf("Jurisdiction: ", `${u(v.city)}, ${u(v.state)}, ${u(v.country)}`);
   p(`Party 1: ${u(v.party1Info)}`);
   p(`Party 2: ${u(v.party2Info)}`);
@@ -212,7 +212,7 @@ const generatePDF = (v: Record<string, string>) => {
   uf("Date: ", v.witnessDate);
   if ((v.legalNotes || "").trim()) p(v.legalNotes);
   if ((v.finalNotes || "").trim()) p(v.finalNotes);
-
+  
   doc.save("divorce_settlement_agreement.pdf");
 };
 

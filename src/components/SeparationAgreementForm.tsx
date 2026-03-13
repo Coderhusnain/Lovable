@@ -3,157 +3,181 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Parties",
+    label: "Parties and Intro",
     fields: [
       { name: "partyAName", label: "Party A name", type: "text", required: true },
-      { name: "partyABorn", label: "Party A date of birth", type: "date", required: false },
-      { name: "partyAResidence", label: "Party A residence", type: "text", required: false },
+      { name: "partyABorn", label: "Party A birth date text", type: "text", required: true },
+      { name: "partyAResidence", label: "Party A residence", type: "textarea", required: true },
       { name: "partyBName", label: "Party B name", type: "text", required: true },
-      { name: "partyBBorn", label: "Party B date of birth", type: "date", required: false },
-      { name: "partyBResidence", label: "Party B residence", type: "text", required: false },
+      { name: "partyBBorn", label: "Party B birth date text", type: "text", required: true },
+      { name: "partyBResidence", label: "Party B residence", type: "textarea", required: true },
+      { name: "agreementDay", label: "Agreement execution day", type: "text", required: true },
+      { name: "agreementMonth", label: "Agreement execution month", type: "text", required: true },
+      { name: "agreementYear", label: "Agreement execution year", type: "text", required: true },
     ],
   },
   {
-    label: "Marriage and Jurisdiction",
+    label: "Jurisdiction and Marriage",
     fields: [
-      { name: "agreementDate", label: "Agreement date", type: "date", required: true },
-      { name: "countyName", label: "County name", type: "text", required: false },
-      { name: "residencyYears", label: "Residency years", type: "text", required: false },
-      { name: "residencyMonths", label: "Residency months", type: "text", required: false },
+      { name: "countyName", label: "Jurisdiction county", type: "text", required: true },
+      { name: "residencyYears", label: "Residency years", type: "text", required: true },
+      { name: "residencyMonths", label: "Residency months", type: "text", required: true },
       { name: "stateName", label: "State", type: "text", required: true },
-      { name: "marriageDate", label: "Marriage date", type: "date", required: false },
-      { name: "marriageCounty", label: "Marriage county", type: "text", required: false },
-      { name: "marriageState", label: "Marriage state", type: "text", required: false },
-      { name: "separationDate", label: "Separation date", type: "date", required: false },
+      { name: "marriageDate", label: "Marriage date text", type: "text", required: true },
+      { name: "marriageCounty", label: "Marriage county", type: "text", required: true },
+      { name: "marriageState", label: "Marriage state", type: "text", required: true },
+      { name: "separationDate", label: "Separation date text", type: "text", required: true },
     ],
   },
   {
     label: "Financial and Property Terms",
     fields: [
-      { name: "monthlyIncomeA", label: "Party A monthly income statement", type: "text", required: false },
-      { name: "monthlyIncomeB", label: "Party B monthly income statement", type: "text", required: false },
-      { name: "maritalHomeOccupant", label: "Who remains in marital home", type: "text", required: false },
-      { name: "maritalHomeAddress", label: "Marital home address", type: "text", required: false },
-      { name: "mortgageResponsibleParty", label: "Mortgage responsible party", type: "text", required: false },
-      { name: "expenseSharing", label: "Property expense sharing proportions", type: "text", required: false },
-      { name: "liquidatorOrOwnerAfterDissolution", label: "Owner after dissolution conversion", type: "text", required: false },
+      { name: "monthlyIncomeA", label: "Party A income statement", type: "text", required: true },
+      { name: "monthlyIncomeB", label: "Party B income statement", type: "text", required: true },
+      { name: "maritalHomeOccupant", label: "Marital home occupant", type: "text", required: true },
+      { name: "maritalHomeAddress", label: "Marital home address", type: "textarea", required: true },
+      { name: "mortgageResponsibleParty", label: "Mortgage responsible party", type: "text", required: true },
+      { name: "expenseSharing", label: "Property expense sharing proportions", type: "text", required: true },
+      { name: "liquidatorOrOwnerAfterDissolution", label: "Owner after dissolution conversion", type: "text", required: true },
     ],
   },
   {
-    label: "Execution and Notary",
+    label: "Remaining Clauses",
     fields: [
-      { name: "notaryState", label: "Notary state", type: "text", required: false },
-      { name: "notaryCounty", label: "Notary county", type: "text", required: false },
-      { name: "notaryDate", label: "Notary acknowledgment date", type: "date", required: false },
-      { name: "notaryName", label: "Notary public name", type: "text", required: false },
-      { name: "commissionExpiry", label: "Notary commission expiry", type: "text", required: false },
+      { name: "medicalInsuranceNote", label: "Medical insurance note (optional)", type: "textarea", required: false },
+      { name: "taxLiabilityNote", label: "Tax liabilities note (optional)", type: "textarea", required: false },
+      { name: "disputeMediationNote", label: "Dispute mediation note (optional)", type: "textarea", required: false },
+      { name: "fullDisclosureNote", label: "Full disclosure note (optional)", type: "textarea", required: false },
     ],
+  },
+  {
+    label: "Execution and Signatures",
+    fields: [
+      { name: "executionDay", label: "Execution day", type: "text", required: true },
+      { name: "executionMonth", label: "Execution month", type: "text", required: true },
+      { name: "executionYear", label: "Execution year", type: "text", required: true },
+      { name: "partyASignature", label: "Party A signature text", type: "text", required: true },
+      { name: "partyBSignature", label: "Party B signature text", type: "text", required: true },
+    ],
+  },
+  {
+    label: "Notary Acknowledgment",
+    fields: [
+      { name: "notaryState", label: "Notary state", type: "text", required: true },
+      { name: "notaryCounty", label: "Notary county", type: "text", required: true },
+      { name: "notaryDay", label: "Notary day", type: "text", required: true },
+      { name: "notaryMonth", label: "Notary month", type: "text", required: true },
+      { name: "notaryYear", label: "Notary year", type: "text", required: true },
+      { name: "notaryAppeared1", label: "Notary appeared person 1", type: "text", required: true },
+      { name: "notaryAppeared2", label: "Notary appeared person 2", type: "text", required: true },
+      { name: "notaryName", label: "Notary public name", type: "text", required: true },
+      { name: "commissionExpiry", label: "Notary commission expiry", type: "text", required: true },
+    ],
+  },
+  {
+    label: "Final Review",
+    fields: [{ name: "reviewNote", label: "Final review note (optional)", type: "textarea", required: false }],
   },
 ];
 
-const generatePDF = (values: Record<string, string>) => {
+const generatePDF = (v: Record<string, string>) => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const w = 210;
   const m = 16;
   const tw = w - m * 2;
-  const lh = 5.5;
-  const limit = 280;
-  let y = 20;
+  const lh = 5.2;
+  const bottom = 281;
+  let y = 18;
 
-  const u = (value?: string, min = 16) => (value || "").trim() || " ".repeat(min);
-  const p = (text: string, bold = false, gap = 1.8) => {
+  const u = (value?: string, min = 16) => (value || "").trim() || "_".repeat(min);
+  const p = (text: string, bold = false, gap = 1.3) => {
+    doc.setFont("times", bold ? "bold" : "normal");
+    doc.setFontSize(10.6);
     const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
+    if (y + lines.length * lh + gap > bottom) {
       doc.addPage();
-      y = 20;
+      y = 18;
     }
-    doc.setFont("helvetica", bold ? "bold" : "normal");
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
-  const uf = (label: string, value?: string, min = 20) => {
-    const labelText = `${label}: `;
-    const shown = (value || "").trim();
-    if (y + lh + 1.8 > limit) {
+  const section = (text: string) => p(text, true, 1.9);
+  const sectionBreak = (needed = 85) => {
+    if (y + needed > bottom) {
       doc.addPage();
-      y = 20;
-    }
-    doc.setFont("helvetica", "normal");
-    doc.text(labelText, m, y);
-    const x = m + doc.getTextWidth(labelText);
-    if (shown) {
-      doc.text(shown, x, y);
-      doc.line(x, y + 1.1, x + Math.max(14, doc.getTextWidth(shown)), y + 1.1);
+      y = 18;
     } else {
-      doc.line(x, y + 1.1, x + doc.getTextWidth(" ".repeat(min)), y + 1.1);
+      y += 1.5;
     }
-    y += lh + 1.8;
   };
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(13);
+  doc.setFont("times", "bold");
+  doc.setFontSize(12.8);
   const title = "SEPARATION AGREEMENT";
   doc.text(title, w / 2, y, { align: "center" });
   const titleW = doc.getTextWidth(title);
-  doc.setLineWidth(0.35);
   doc.line(w / 2 - titleW / 2, y + 1.1, w / 2 + titleW / 2, y + 1.1);
-  y += 9;
-  doc.setFontSize(10.5);
+  y += 10;
 
-  p(`This Separation Agreement ("Agreement") is entered into by and between ${u(values.partyAName, 14)} ("Party A"), born ${u(values.partyABorn, 10)}, residing at ${u(values.partyAResidence, 18)}, and ${u(values.partyBName, 14)} ("Party B"), born ${u(values.partyBBorn, 10)}, residing at ${u(values.partyBResidence, 18)}, collectively referred to herein as the "Parties."`);
-  p("The Parties, having been duly sworn, state that the following provisions are true, correct, and voluntarily agreed upon. Except as expressly provided herein, this Agreement constitutes a full, final, and binding settlement of all matters of joint concern between the Parties, including but not limited to all property rights, allocation of debts, and any rights to spousal support. The Parties agree that the terms contained herein provide a fair, just, and equitable division of property and obligations, and that such terms are mutually satisfactory.", false, 3);
-
-  p("1. Jurisdiction of the Court", true);
-  p(`The Parties affirm that both ${u(values.partyAName, 12)} and ${u(values.partyBName, 12)} have been bona fide residents of ${u(values.countyName, 14)} County for a continuous period of ${u(values.residencyYears, 4)} years and ${u(values.residencyMonths, 4)} months immediately preceding the execution of this Agreement. Such residency satisfies the statutory jurisdictional and venue requirements of the State of ${u(values.stateName, 12)} for the purpose of entering into and enforcing this Agreement and obtaining a decree of legal separation.`);
-  p("2. Military Status of the Parties", true);
+  p(`This Separation Agreement (“Agreement”) is entered into by and between ${u(v.partyAName, 8)} (“Party A”), born ${u(v.partyABorn, 8)}, residing at ${u(v.partyAResidence, 10)}, and ${u(v.partyBName, 8)} (“Party B”), born ${u(v.partyBBorn, 8)}, residing at ${u(v.partyBResidence, 10)}, collectively referred to herein as the “Parties.” The Parties, having been duly sworn, state that the following provisions are true, correct, and voluntarily agreed upon. Except as expressly provided herein, this Agreement constitutes a full, final, and binding settlement of all matters of joint concern between the Parties, including but not limited to all property rights, allocation of debts, and any rights to spousal support. The Parties agree that the terms contained herein provide a fair, just, and equitable division of property and obligations, and that such terms are mutually satisfactory.`);
+  section("1. Jurisdiction of the Court");
+  p(`The Parties affirm that both ${u(v.partyAName, 8)} and ${u(v.partyBName, 8)} have been bona fide residents of ${u(v.countyName, 12)} County for a continuous period of ${u(v.residencyYears, 3)} years and ${u(v.residencyMonths, 3)} months immediately preceding the execution of this Agreement. Such residency satisfies the statutory jurisdictional and venue requirements of the State of ${u(v.stateName, 10)} for the purpose of entering into and enforcing this Agreement and obtaining a decree of legal separation.`);
+  section("2. Military Status of the Parties");
   p("Each Party affirms that neither is presently a member of the Armed Forces of the United States or any other military service that would affect the jurisdiction of the Court or the enforceability of this Agreement.");
-  p("3. Date and Place of Marriage", true);
-  p(`The Parties were lawfully married to one another on ${u(values.marriageDate, 12)}, in the County of ${u(values.marriageCounty, 12)}, State of ${u(values.marriageState, 12)}. No children were born of this marriage, and no minor children are the subject of this Agreement.`);
-  p("4. Date of Separation", true);
-  p(`The Parties mutually acknowledge that they separated on ${u(values.separationDate, 12)}, at which time they ceased to cohabit as spouses.`);
-  p("5. Grounds for Dissolution of Marriage", true);
+  section("3. Date and Place of Marriage");
+  p(`The Parties were lawfully married to one another on ${u(v.marriageDate, 10)}, in the County of ${u(v.marriageCounty, 10)}, State of ${u(v.marriageState, 10)}. No children were born of this marriage, and no minor children are the subject of this Agreement.`);
+  section("4. Date of Separation");
+  p(`The Parties mutually acknowledge that they separated on ${u(v.separationDate, 10)}, at which time they ceased to cohabit as spouses.`);
+  section("5. Grounds for Dissolution of Marriage");
   p("The Parties agree and stipulate that due to irreconcilable differences, the marriage has suffered an irretrievable breakdown, and there exists no reasonable prospect of reconciliation.");
-  p("6. Disclosure of Assets and Liabilities", true);
+
+  sectionBreak(95);
+  section("6. Disclosure of Assets and Liabilities");
   p("Each Party represents and warrants that they have made a full, frank, and complete disclosure of all assets, liabilities, and financial obligations owned individually or jointly. No property, whether community, marital, or separate, has been intentionally concealed or withheld. Both Parties acknowledge reliance on the truthfulness of the other's disclosures in entering into this Agreement.");
-  p("7. Statement of Income", true);
-  p(`${u(values.partyAName, 12)} declares that he/she currently has monthly income stated as ${u(values.monthlyIncomeA, 10)}.`);
-  p(`${u(values.partyBName, 12)} declares that he/she currently has monthly income stated as ${u(values.monthlyIncomeB, 10)}.`);
-  p("8. Mutual Cooperation in Execution of Documents", true);
+  section("7. Statement of Income");
+  p(`${u(v.partyAName, 10)} declares that he/she currently has monthly income stated as ${u(v.monthlyIncomeA, 10)}.`);
+  p(`${u(v.partyBName, 10)} declares that he/she currently has monthly income stated as ${u(v.monthlyIncomeB, 10)}.`);
+  section("8. Mutual Cooperation in Execution of Documents");
   p("The Parties agree to cooperate fully in executing any and all deeds, assignments, title certificates, or other legal documents necessary to carry out the terms of this Agreement and any resulting decree of legal separation. Such execution shall occur within ten (10) days of notification of entry of judgment. In the event a Party fails to execute any required document, the final decree of legal separation shall serve as an instrument of conveyance or transfer of title, enforceable as though executed by the defaulting Party.");
-  p("9. Division of Assets and Property Rights", true);
+  section("9. Division of Assets and Property Rights");
   p("Except as otherwise provided herein, each Party shall retain sole ownership, possession, and control over all tangible and intangible property currently in his/her possession.");
-  p("a. Marital Home", true);
-  p(`The Parties agree that ${u(values.maritalHomeOccupant, 12)} shall remain in possession of the marital residence located at ${u(values.maritalHomeAddress, 20)} and shall have exclusive rights to occupy the property during the period of legal separation. ${u(values.mortgageResponsibleParty, 12)} shall remain solely responsible for all mortgage obligations associated with said property during the separation. The Parties agree to share property-related expenses in the following proportions: ${u(values.expenseSharing, 12)}.`);
-  p(`In the event the legal separation is converted to a decree of dissolution of marriage, ${u(values.liquidatorOrOwnerAfterDissolution, 12)} shall retain sole and absolute ownership of the marital residence, together with all rights of title and possession, subject to any encumbrances thereon, for which the same party shall remain solely liable.`);
-  p("10. Allocation of Debts and Financial Obligations", true);
+  p("a. Marital Home", true, 1.0);
+  p(`The Parties agree that ${u(v.maritalHomeOccupant, 10)} shall remain in possession of the marital residence located at ${u(v.maritalHomeAddress, 18)} and shall have exclusive rights to occupy the property during the period of legal separation. ${u(v.mortgageResponsibleParty, 10)} shall remain solely responsible for all mortgage obligations associated with said property during the separation. The Parties agree to share property-related expenses in the following proportions: ${u(v.expenseSharing, 10)}.`);
+  p(`In the event the legal separation is converted to a decree of dissolution of marriage, ${u(v.liquidatorOrOwnerAfterDissolution, 10)} shall retain sole and absolute ownership of the marital residence located at ${u(v.maritalHomeAddress, 16)}, together with all rights of title and possession, subject to any encumbrances thereon, for which ${u(v.liquidatorOrOwnerAfterDissolution, 10)} shall remain solely liable.`);
+  section("10. Allocation of Debts and Financial Obligations");
   p("Each Party shall remain solely liable for any indebtedness incurred in his or her individual name prior to the marriage, subsequent to the date of separation, and during the marriage unless expressly stated otherwise herein. Each Party shall indemnify and hold the other harmless from any claim, liability, or expense arising from debts so allocated.");
-  p("11. Waiver of Spousal Support / Alimony", true);
+
+  sectionBreak(95);
+  section("11. Waiver of Spousal Support / Alimony");
   p("The Parties expressly, knowingly, and voluntarily waive any present or future claim to spousal support, maintenance, or alimony. This waiver shall be binding, absolute, and irrevocable, and the Court shall have no continuing jurisdiction to modify or award such support at any future date.");
-  p("12. Medical Insurance and Continuation Benefits", true);
+  section("12. Medical Insurance and Continuation Benefits");
   p("On or before the date of the final hearing, each Party shall notify the other, in writing, of the availability of COBRA or any other statutory continuation benefits under their existing health care coverage.");
-  p("13. Name Change Rights", true);
+  if ((v.medicalInsuranceNote || "").trim()) p(v.medicalInsuranceNote);
+  section("13. Name Change Rights");
   p("Neither Party is presently seeking a legal change of name. However, each reserves the right to petition the Court for a name change at a later date without restriction from the other.");
-  p("14. Tax Matters and Liabilities", true);
+  section("14. Tax Matters and Liabilities");
   p("The Parties affirm that there are no outstanding tax disputes, audits, or liabilities known to either at the time of execution of this Agreement.");
-  p("15. Procedure for Future Dispute Resolution", true);
+  if ((v.taxLiabilityNote || "").trim()) p(v.taxLiabilityNote);
+  section("15. Procedure for Future Dispute Resolution");
   p("The Parties agree to negotiate in good faith to resolve any future disputes arising from or related to this Agreement. If such negotiations fail, the Parties shall submit the matter to mediation before a mutually agreed upon mediator. Mediation may be terminated by either Party at any time. Should mediation prove unsuccessful, either Party may petition the Court for resolution of the dispute.");
-  p("16. Confirmation of Full and Fair Disclosure", true);
+  if ((v.disputeMediationNote || "").trim()) p(v.disputeMediationNote);
+  section("16. Confirmation of Full and Fair Disclosure");
   p("The Parties reaffirm that they have exchanged complete and accurate financial statements disclosing all assets, income, debts, and liabilities. Each acknowledges that this Agreement is fair, equitable, and free from fraud, coercion, or undue influence.");
-  p("17. Submission of Agreement for Court Approval", true);
+  if ((v.fullDisclosureNote || "").trim()) p(v.fullDisclosureNote);
+  section("17. Submission of Agreement for Court Approval");
   p("The Parties agree to submit this Agreement to the Court for review and approval, and for incorporation into a Final Order and Decree of Legal Separation. Should the Parties later file for divorce or dissolution, they shall request that this Agreement be incorporated by reference into any final judgment issued by the Court.");
-  p("18. Execution and Acknowledgment", true);
-  p(`IN WITNESS WHEREOF, the Parties have executed this Agreement freely and voluntarily on ${u(values.agreementDate, 12)}, intending to be legally bound by its terms.`);
+  section("18. Execution and Acknowledgment");
+  p(`IN WITNESS WHEREOF, the Parties have executed this Agreement freely and voluntarily on this ${u(v.executionDay, 3)} day of ${u(v.executionMonth, 8)}, ${u(v.executionYear, 2)}, intending to be legally bound by its terms.`);
+  p(`Party A: ${u(v.partyASignature || v.partyAName, 18)}`);
+  p(`Party B: ${u(v.partyBSignature || v.partyBName, 18)}`);
 
-  uf("Party A", values.partyAName, 24);
-  uf("Party B", values.partyBName, 24);
-
-  p("STATE OF _____ ) ss:");
-  p("COUNTY OF ____ ) ss:");
-  p(`On this ${u(values.notaryDate, 12)} day, before me, the undersigned authority, personally appeared ${u(values.partyAName, 12)} and ${u(values.partyBName, 12)}, known to me or satisfactorily proven to be the persons whose names are subscribed to this instrument, and acknowledged that they executed the same for the purposes therein contained.`);
-  uf("Notary Public", values.notaryName, 24);
-  uf("My Commission Expires", values.commissionExpiry, 18);
-  uf("Notary State", values.notaryState, 16);
-  uf("Notary County", values.notaryCounty, 16);
+  sectionBreak(95);
+  p(`STATE OF ${u(v.notaryState, 10)} ) ss:`, true, 1.0);
+  p(`COUNTY OF ${u(v.notaryCounty, 10)} ) ss:`, true, 1.0);
+  p(`On this ${u(v.notaryDay, 3)} day of ${u(v.notaryMonth, 8)}, ${u(v.notaryYear, 2)}, before me, the undersigned authority, personally appeared ${u(v.notaryAppeared1, 12)} and ${u(v.notaryAppeared2, 12)}, known to me or satisfactorily proven to be the persons whose names are subscribed to this instrument, and acknowledged that they executed the same for the purposes therein contained.`);
+  p(`Notary Public: ${u(v.notaryName, 16)}`);
+  p(`My Commission Expires: ${u(v.commissionExpiry, 12)}`);
+  if ((v.reviewNote || "").trim()) p(`Review Note: ${v.reviewNote}`);
 
   doc.save("separation_agreement.pdf");
 };
@@ -163,9 +187,10 @@ export default function SeparationAgreementForm() {
     <FormWizard
       steps={steps}
       title="Separation Agreement"
-      subtitle="Complete each step to generate your document"
+      subtitle="Complete all 7 steps to generate your document"
       onGenerate={generatePDF}
       documentType="separationagreement"
+      preserveStepLayout
     />
   );
 }
