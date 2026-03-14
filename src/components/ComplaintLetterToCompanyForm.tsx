@@ -4,581 +4,240 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Letter Details",
     fields: [
-      {
-        name: "country",
-        label: "Which country's laws will govern this document?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "us", label: "United States" },
-          
-        ],
-      },
+      { name: "letterDate",      label: "Date",                               type: "date",  required: false },
+      { name: "companyName",     label: "Company name (service provider)",     type: "text",  required: false },
+      { name: "amountPaid",      label: "Amount paid ($)",                    type: "text",  required: false },
+      { name: "checkNumber",     label: "Check number",                       type: "text",  required: false },
+      { name: "checkDate",       label: "Check date",                         type: "date",  required: false },
+      { name: "contactDate",     label: "Date you contacted the company",     type: "date",  required: false },
+      { name: "bbbContactDate",  label: "Date you contacted BBB",             type: "date",  required: false },
+      { name: "bbbCity",         label: "BBB city / location",                type: "text",  required: false },
+      { name: "refundAmount",    label: "Refund amount requested ($)",        type: "text",  required: false },
+      { name: "responseDays",    label: "Response requested within (days)",   type: "text",  required: false },
     ],
   },
   {
-    label: "State/Province",
+    label: "Your Details",
     fields: [
-      {
-        name: "state",
-        label: "Which state or province?",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (value) => {
-          if (value=== "us") {
-            return [
-              { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" },
-              { value: "AZ", label: "Arizona" }, { value: "AR", label: "Arkansas" },
-              { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
-              { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" },
-              { value: "FL", label: "Florida" }, { value: "GA", label: "Georgia" },
-              { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
-              { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" },
-              { value: "IA", label: "Iowa" }, { value: "KS", label: "Kansas" },
-              { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
-              { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" },
-              { value: "MA", label: "Massachusetts" }, { value: "MI", label: "Michigan" },
-              { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
-              { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" },
-              { value: "NE", label: "Nebraska" }, { value: "NV", label: "Nevada" },
-              { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
-              { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" },
-              { value: "NC", label: "North Carolina" }, { value: "ND", label: "North Dakota" },
-              { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
-              { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" },
-              { value: "RI", label: "Rhode Island" }, { value: "SC", label: "South Carolina" },
-              { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
-              { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" },
-              { value: "VT", label: "Vermont" }, { value: "VA", label: "Virginia" },
-              { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
-              { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" },
-              { value: "DC", label: "District of Columbia" },
-            ];
-          } 
-          return [{ value: "other", label: "Other Region" }];
-        },
-      },
+      { name: "senderName",    label: "Your full name",    type: "text",  required: false },
+      { name: "senderAddress", label: "Your address",      type: "text",  required: false },
+      { name: "senderPhone",   label: "Your phone number", type: "tel",   required: false },
+      { name: "senderEmail",   label: "Your email",        type: "email", required: false },
     ],
   },
-  {
-    label: "Agreement Date",
-    fields: [
-      {
-        name: "effectiveDate",
-        label: "What is the effective date of this agreement?",
-        type: "date",
-        required: true,
-      },
-    ],
-  },
-  {
-    label: "First Party Name",
-    fields: [
-      {
-        name: "party1Name",
-        label: "What is the full legal name of the first party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party1Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "First Party Address",
-    fields: [
-      {
-        name: "party1Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party1City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party1Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "First Party Contact",
-    fields: [
-      {
-        name: "party1Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party1Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Second Party Name",
-    fields: [
-      {
-        name: "party2Name",
-        label: "What is the full legal name of the second party?",
-        type: "text",
-        required: true,
-        placeholder: "Enter full legal name",
-      },
-      {
-        name: "party2Type",
-        label: "Is this party an individual or a business?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "individual", label: "Individual" },
-          { value: "business", label: "Business/Company" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Second Party Address",
-    fields: [
-      {
-        name: "party2Street",
-        label: "Street Address",
-        type: "text",
-        required: true,
-        placeholder: "123 Main Street",
-      },
-      {
-        name: "party2City",
-        label: "City",
-        type: "text",
-        required: true,
-        placeholder: "City",
-      },
-      {
-        name: "party2Zip",
-        label: "ZIP/Postal Code",
-        type: "text",
-        required: true,
-        placeholder: "ZIP Code",
-      },
-    ],
-  },
-  {
-    label: "Second Party Contact",
-    fields: [
-      {
-        name: "party2Email",
-        label: "Email Address",
-        type: "email",
-        required: true,
-        placeholder: "email@example.com",
-      },
-      {
-        name: "party2Phone",
-        label: "Phone Number",
-        type: "tel",
-        required: false,
-        placeholder: "(555) 123-4567",
-      },
-    ],
-  },
-  {
-    label: "Agreement Details",
-    fields: [
-      {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
-        type: "textarea",
-        required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
-      },
-    ],
-  },
-  {
-    label: "Terms & Conditions",
-    fields: [
-      {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
-      },
-      {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Financial Terms",
-    fields: [
-      {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
-        type: "text",
-        required: false,
-        placeholder: "$0.00",
-      },
-      {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
-        required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Legal Protections",
-    fields: [
-      {
-        name: "confidentiality",
-        label: "Include confidentiality clause?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "yes", label: "Yes - Include confidentiality provisions" },
-          { value: "no", label: "No - Not needed" },
-        ],
-      },
-      {
-        name: "disputeResolution",
-        label: "How should disputes be resolved?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mediation", label: "Mediation" },
-          { value: "arbitration", label: "Binding Arbitration" },
-          { value: "litigation", label: "Court Litigation" },
-          { value: "negotiation", label: "Good Faith Negotiation First" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Additional Terms",
-    fields: [
-      {
-        name: "additionalTerms",
-        label: "Any additional terms or special conditions?",
-        type: "textarea",
-        required: false,
-        placeholder: "Enter any additional terms, conditions, or special provisions...",
-      },
-    ],
-  },
-  {
-    label: "Review & Sign",
-    fields: [
-      {
-        name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
-        type: "text",
-        required: true,
-        placeholder: "Type your full legal name as signature",
-      },
-      {
-        name: "witnessName",
-        label: "Witness Name (Optional)",
-        type: "text",
-        required: false,
-        placeholder: "Witness full legal name",
-      },
-    ],
-  },
-] as Array<{ label: string; fields: FieldDef[] }>;
+];
 
 const generatePDF = (values: Record<string, string>) => {
-  const doc = new jsPDF();
+  const doc   = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageW = 210;
+  const m     = 20;
+  const tw    = pageW - m * 2;
+  const lh    = 6;
+  const limit = 275;
+  let   y     = 22;
 
-  // ===== PAGE SETUP =====
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 25;
-  const textWidth = pageWidth - margin * 2;
-  let y = 20;
+  /* ── font helpers ──────────────────────────────────────────────────────── */
+  const setN = (size = 10.5) => { doc.setFont("helvetica", "normal"); doc.setFontSize(size); };
+  const setB = (size = 10.5) => { doc.setFont("helvetica", "bold");   doc.setFontSize(size); };
 
-  // ===== AUTO PAGE BREAK =====
-  const checkPageBreak = (space = 10) => {
-    if (y + space > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
+  /* ── page-break guard ──────────────────────────────────────────────────── */
+  const guard = (needed = lh + 2) => {
+    if (y + needed > limit) { doc.addPage(); y = 22; }
+  };
+
+  /* ── plain paragraph ───────────────────────────────────────────────────── */
+  const p = (text: string, bold = false, gap = 2.5) => {
+    if (bold) setB(); else setN();
+    const lines = doc.splitTextToSize(text, tw);
+    guard(lines.length * lh + gap);
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  /* ── bold label + normal value on same line ────────────────────────────── */
+  const boldLabel = (label: string, value: string, gap = 2.5) => {
+    guard(lh + gap);
+    setB();
+    doc.text(label, m, y);
+    const lw = doc.getTextWidth(label);
+    setN();
+    doc.text(value, m + lw, y);
+    y += lh + gap;
+  };
+
+  /* ── underlined fill field ─────────────────────────────────────────────── */
+  const uf = (label: string, value?: string, minChars = 24, gap = 2.5) => {
+    guard(lh + gap);
+    setB();
+    const labelTxt = `${label}: `;
+    doc.text(labelTxt, m, y);
+    const x = m + doc.getTextWidth(labelTxt);
+    setN();
+    const shown = (value || "").trim();
+    doc.setLineWidth(0.22);
+    if (shown) {
+      doc.text(shown, x, y);
+      doc.line(x, y + 1.3, x + Math.max(10, doc.getTextWidth(shown) + 2), y + 1.3);
+    } else {
+      doc.line(x, y + 1.3, x + doc.getTextWidth("n".repeat(minChars)), y + 1.3);
     }
+    y += lh + gap;
   };
 
-  // ===== UNDERLINED FIELD (Date / To / Address) =====
-  const addUnderlinedField = (
-    label: string,
-    value: string,
-    minWidth = 60
-  ) => {
-    checkPageBreak();
-
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(11);
-
-    doc.text(label, margin, y);
-    const labelWidth = doc.getTextWidth(label);
-
-    const startX = margin + labelWidth + 2;
-    const display = value || "";
-
-    if (display) {
-      doc.text(display, startX, y);
-    }
-
-    const width = display
-      ? doc.getTextWidth(display)
-      : minWidth;
-
-    doc.line(startX, y + 1, startX + width, y + 1);
-
-    y += 8;
+  /* ── section heading (bold, underlined, extra space above) ─────────────── */
+  const secHeading = (text: string) => {
+    y += 3;
+    guard(lh + 10);
+    setB(12);
+    doc.text(text, pageW / 2, y, { align: "center" });
+    const hw = doc.getTextWidth(text);
+    doc.setLineWidth(0.4);
+    doc.line(pageW / 2 - hw / 2, y + 1.4, pageW / 2 + hw / 2, y + 1.4);
+    y += lh + 5;
   };
 
-  // ===== PARAGRAPH (tight spacing) =====
-  const addParagraph = (text: string, bold = false) => {
-    checkPageBreak(10);
-
-    doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(11);
-
-    const lines = doc.splitTextToSize(text, textWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 2; // tight spacing
-  };
-
-  // ===== PARAGRAPH WITH UNDERLINED VALUE (wrapped safe) =====
-  const addParagraphWithUnderline = (
-    before: string,
-    value: string,
-    after: string
-  ) => {
-    const fullText = `${before}${value}${after}`;
-    const lines = doc.splitTextToSize(fullText, textWidth);
-
-    lines.forEach((line: string) => {
-      checkPageBreak(8);
-
-      doc.text(line, margin, y);
-
-      if (line.includes(value)) {
-        const beforeText = line.substring(0, line.indexOf(value));
-        const startX = margin + doc.getTextWidth(beforeText);
-        const valueWidth = doc.getTextWidth(value);
-        doc.line(startX, y + 1, startX + valueWidth, y + 1);
-      }
-
-      y += 6;
-    });
-
+  /* ── bold sub-heading (left-aligned) ───────────────────────────────────── */
+  const subHeading = (text: string) => {
     y += 2;
+    p(text, true, 1.5);
   };
 
-  // ===== TITLE =====
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
+  /* ── checkbox bullet  ☐ text ───────────────────────────────────────────── */
+  const checkbox = (text: string, gap = 2) => {
+    const indent = m + 7;
+    const lines  = doc.splitTextToSize(text, tw - 7);
+    guard(lines.length * lh + gap);
+    setN();
+    doc.text("\u2610", m + 1, y);
+    doc.text(lines, indent, y);
+    y += lines.length * lh + gap;
+  };
 
-  const title = " Complaint to company Letter";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
+  /* ── bullet  • text ────────────────────────────────────────────────────── */
+  const bullet = (text: string, gap = 2, indent = 0) => {
+    const ix    = m + 6 + indent;
+    const lines = doc.splitTextToSize(text, tw - 6 - indent);
+    guard(lines.length * lh + gap);
+    setN();
+    doc.text("\u2022", m + 1.5 + indent, y);
+    doc.text(lines, ix, y);
+    y += lines.length * lh + gap;
+  };
 
-  const titleWidth = doc.getTextWidth(title);
-  const titleX = pageWidth / 2 - titleWidth / 2;
-  doc.line(titleX, y + 2, titleX + titleWidth, y + 2);
+  /* ════════════════════════════════════════════════════════════════════════
+     TITLE
+  ════════════════════════════════════════════════════════════════════════ */
+  setB(13);
+  const title = "COMPLAINT LETTER TO BBB / ATTORNEY GENERAL";
+  doc.text(title, pageW / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.45);
+  doc.line(pageW / 2 - tW / 2, y + 1.5, pageW / 2 + tW / 2, y + 1.5);
+  y += 9;
 
-  y += 15;
-
-  // ===== DATE / TO / ADDRESS =====
-  addUnderlinedField("Date:", values.effectiveDate || "", 50);
-
-  addUnderlinedField("To:", values.party2Name || "", 100);
-
-  const address = `${values.party2Street || ""}, ${
-    values.party2City || ""
-  } ${values.party2Zip || ""}`.trim();
-
-  addUnderlinedField("Address:", address, 120);
-
-  y += 4;
-// ===== SUBJECT =====
-doc.setFont("helvetica", "bold");
-doc.setFontSize(11);
-doc.text(
-  "Subject: Complaint to company Regarding Product/Service",
-  margin,
-  y
-);
-y += 10;
-
-// ===== GREETING =====
-addParagraph("Dear Sir or Madam:");
-
-// ===== BODY =====
-
-// Parties
-const companyName = values.party2Name || "________";
-const customerName = values.party1Name || "________";
-
-
-
-// Identification
-addParagraphWithUnderline(
-  "Customer Name: ",
-  customerName,
-  ""
-);
-
-addParagraphWithUnderline(
-  "Company: ",
-  companyName,
-  ""
-);
-
-
-
-// Introduction
-addParagraph(
-  "I am writing to formally submit a complaint regarding a recent issue involving your product or service."
-);
-
-
-
-// Problem description
-addParagraph(
-  "Description of the Issue:"
-);
-
-
-// Impact
-addParagraph(
-  "This matter has caused inconvenience and has not met the expected standards of quality and service."
-);
-
-// Requested resolution
-addParagraph(
-  "Requested Resolution:"
-);
-
-
-// Response request
-addParagraph(
-  "I respectfully request that this matter be reviewed and resolved promptly. Please contact me if additional information or documentation is required."
-);
-
-// Closing
-addParagraph(
-  "I appreciate your attention to this matter and look forward to your response."
-);
-
-addParagraph(
-  "Thank you for your cooperation."
-);
-
-  y += 6;
-  addParagraph("Sincerely,");
-
+  // subtitle
+  setN(10);
+  doc.setFont("helvetica", "italic");
+  doc.text("(BBB / Attorney General)", pageW / 2, y, { align: "center" });
   y += 10;
 
-  // ===== SIGNATURE =====
-  checkPageBreak();
+  /* ── Date ──────────────────────────────────────────────────────────────── */
+  uf("Date", values.letterDate, 28, 4);
 
-  doc.setFont("helvetica", "bold");
-  const name = values.party1Name || "";
-  doc.text(name, margin, y);
+  /* ── Salutation ────────────────────────────────────────────────────────── */
+  p("To Whom It May Concern:", true, 4);
 
-  if (name) {
-    const nameWidth = doc.getTextWidth(name);
-    doc.line(margin, y + 1, margin + nameWidth, y + 1);
-  }
+  /* ════════════════════════════════════════════════════════════════════════
+     BODY
+  ════════════════════════════════════════════════════════════════════════ */
+  const company     = values.companyName    || "__________";
+  const amtPaid     = values.amountPaid     ? `$${values.amountPaid}`    : "$------";
+  const checkNum    = values.checkNumber    || "__________";
+  const checkDt     = values.checkDate      || "__________";
+  const contactDt   = values.contactDate    || "__________";
+  const bbbDt       = values.bbbContactDate || "__________";
+  const bbbCity     = values.bbbCity        || "__________";
+  const refund      = values.refundAmount   ? `$${values.refundAmount}`  : "$-------";
+  const respDays    = values.responseDays   || "__________";
 
-  y += 8;
-
-  doc.setFont("helvetica", "normal");
-  addParagraph(
-    `${values.party1Street || ""}, ${values.party1City || ""} ${
-      values.party1Zip || ""
-    }`
+  p(
+    `I am writing to formally file a complaint regarding services I received from ${company}.`
   );
+  p(
+    `I paid a total amount of ${amtPaid} for these services. Payment was made by check, bearing check number ${checkNum}, dated ${checkDt}.`
+  );
+  p(
+    `On ${contactDt}, I contacted ${company} to report that the services provided were unsatisfactory and did not meet reasonable expectations. Despite my efforts to resolve the matter directly, I did not receive an adequate or satisfactory response, which has compelled me to seek your assistance.`
+  );
+  p(
+    `Subsequently, on ${bbbDt}, I contacted the Better Business Bureau in ${bbbCity} and reported the same concerns regarding the unsatisfactory service.`
+  );
+  p(
+    `I respectfully request your assistance in resolving this matter. Specifically, I am seeking a full refund from ${company} in the amount of ${refund}, representing the total cost of the services rendered.`
+  );
+  p(
+    `I would appreciate a written response regarding this complaint within ${respDays} days. Please feel free to contact me should you require any additional information or documentation.`
+  );
+  p("Thank you for your time and attention to this matter.", false, 4);
 
-  addParagraph(`Email: ${values.party1Email || ""}`);
+  /* ── Closing ───────────────────────────────────────────────────────────── */
+  p("Sincerely,", true, 3);
 
-  if (values.party1Phone) {
-    addParagraph(`Phone: ${values.party1Phone}`);
-  }
+  /* ── Sender block ──────────────────────────────────────────────────────── */
+  uf("Name",    values.senderName,    26);
+  uf("Address", values.senderAddress, 30);
+  uf("Phone",   values.senderPhone,   24);
+  uf("Email",   values.senderEmail,   26, 5);
 
-  // ===== SAVE =====
-  doc.save("complaintlettertocompany.pdf");
+  /* ════════════════════════════════════════════════════════════════════════
+     FINAL CHECKLIST
+  ════════════════════════════════════════════════════════════════════════ */
+  secHeading("Final Checklist for Complaint Letter");
+
+  // italic subtitle
+  setN(10);
+  doc.setFont("helvetica", "italic");
+  guard(lh + 4);
+  doc.text("(Better Business Bureau / Attorney General)", pageW / 2, y, { align: "center" });
+  y += lh + 4;
+
+  /* ── Legal Formalities ─────────────────────────────────────────────────── */
+  subHeading("Legal Formalities");
+  checkbox("Ensure the letter is signed.");
+  checkbox("Include the date and complete contact information.", 3);
+
+  /* ── Recordkeeping ─────────────────────────────────────────────────────── */
+  subHeading("Recordkeeping");
+  checkbox("Retain a copy of the signed letter for your personal records.");
+  checkbox("Maintain copies of all supporting documents and correspondence.", 3);
+
+  /* ── Reasons for Updating or Re-Sending ────────────────────────────────── */
+  subHeading("Reasons for Updating or Re-Sending");
+  bullet("To submit a follow-up complaint.");
+  bullet("To file a separate or revised complaint if circumstances change.", 3);
+
+  /* ── Supporting Documentation ──────────────────────────────────────────── */
+  subHeading("Supporting Documentation");
+  bullet("Enclose copies of any prior correspondence sent to the company in an effort to resolve the issue.");
+  bullet("Attach photocopies only (not original documents) of all relevant materials.");
+  bullet("Keep a written log of all communications, including:", 1.5);
+  bullet("Dates of letters sent or received",          2, 6);
+  bullet("Dates and summaries of telephone conversations", 2, 6);
+  bullet("Names and titles of individuals contacted",  2, 6);
+
+  doc.save("complaint_letter_to_bbb.pdf");
 };
 
-export default function ComplaintLetterToCompanyForm() {
+export default function ComplaintLetterToBBBForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Coomplaint letter to company"
+      title="Complaint Letter to BBB / Attorney General"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="complaintlettertocompany"
+      documentType="complaintlettertobbb"
     />
   );
 }

@@ -51,6 +51,7 @@ const generatePDF = (values: Record<string, string>) => {
   const limit = 280;
   let y = 20;
 
+  // Paragraph: plain or bold text block
   const p = (text: string, bold = false, gap = 1.8) => {
     const lines = doc.splitTextToSize(text, tw);
     if (y + lines.length * lh + gap > limit) {
@@ -62,6 +63,7 @@ const generatePDF = (values: Record<string, string>) => {
     y += lines.length * lh + gap;
   };
 
+  // Underfield: "Label: _value_" with underline
   const uf = (label: string, value?: string, min = 22, gap = 1.8) => {
     const shown = (value || "").trim();
     const labelText = `${label}: `;
@@ -83,8 +85,53 @@ const generatePDF = (values: Record<string, string>) => {
     y += lh + gap;
   };
 
-  const yesNo = (v?: string) => (v === "yes" ? "Yes" : "No");
+  // Bullet field: indented "   * Label: _value_" with underline
+  const bf = (label: string, value?: string, gap = 1.8) => {
+    const indent = m + 6;
+    const shown = (value || "").trim();
+    const labelText = `* ${label}: `;
+    const xStart = indent + doc.getTextWidth(labelText);
+    const remW = w - m - xStart;
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, indent, y);
+    if (shown) {
+      const valLines = doc.splitTextToSize(shown, remW);
+      doc.text(valLines[0], xStart, y);
+      doc.setLineWidth(0.22);
+      doc.line(xStart, y + 1.1, xStart + Math.max(12, doc.getTextWidth(valLines[0])), y + 1.1);
+      if (valLines.length > 1) {
+        for (let i = 1; i < valLines.length; i++) {
+          y += lh;
+          doc.text(valLines[i], xStart, y);
+          doc.setLineWidth(0.22);
+          doc.line(xStart, y + 1.1, xStart + doc.getTextWidth(valLines[i]), y + 1.1);
+        }
+      }
+    } else {
+      doc.setLineWidth(0.22);
+      doc.line(xStart, y + 1.1, xStart + doc.getTextWidth("_".repeat(18)), y + 1.1);
+    }
+    y += lh + gap;
+  };
 
+  // Underlined heading: bold text with underline beneath it
+  const uh = (text: string, gap = 1.8) => {
+    if (y + lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "bold");
+    doc.text(text, m, y);
+    doc.setLineWidth(0.3);
+    doc.line(m, y + 1.3, m + doc.getTextWidth(text), y + 1.3);
+    y += lh + gap;
+  };
+
+  // ── Title ──────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12.5);
   const title = "INFORMATION FOR POLICE REPORT";
@@ -92,51 +139,61 @@ const generatePDF = (values: Record<string, string>) => {
   const titleW = doc.getTextWidth(title);
   doc.setLineWidth(0.35);
   doc.line(w / 2 - titleW / 2, y + 1.2, w / 2 + titleW / 2, y + 1.2);
-  y += 9;
+  y += 10;
   doc.setFontSize(10.5);
 
-  p("1. CONTACT INFORMATION", true);
+  // ── 1. Contact Information ─────────────────────────────────────────
+  p("1.     CONTACT INFORMATION", true);
   uf("Name", values.fullName, 22);
   uf("Address", values.address, 22);
   uf("Phone Number", values.phone, 22);
-  uf("Email", values.email, 22, 2.6);
+  uf("Email", values.email, 22, 6);
 
-  p("2. PERSONAL INFORMATION", true);
+  // ── 2. Personal Information ────────────────────────────────────────
+  p("2.     PERSONAL INFORMATION", true);
   uf("Date of Birth", values.dob, 22);
   uf("Race", values.race, 22);
   uf("Sex", values.sex, 22);
   uf("Height", values.height, 22);
-  uf("Weight", values.weight ? `${values.weight} lbs` : "", 22, 2.6);
+  uf("Weight", values.weight ? `${values.weight} lbs` : "", 22, 6);
 
-  p("3. REPORT INFORMATION", true);
-  p("Type of Incident: Theft - Personal Identification");
+  // ── 3. Report Information ──────────────────────────────────────────
+  p("3.     REPORT INFORMATION", true);
+  p("Type of Incident: Theft – Personal Identification");
   p("The undersigned affirms that they have been the victim of the following theft(s):");
-  p(`[${yesNo(values.stolenDriversLicense) === "Yes" ? "X" : " "}] Driver's License`);
-  p(`[${yesNo(values.stolenWallet) === "Yes" ? "X" : " "}] Wallet`);
-  uf("Date of Incident", values.incidentDate, 22);
+  // Both checkboxes on the same line, matching draft layout
+  p(`${values.stolenDriversLicense === "yes" ? "☒" : "☐"} Driver's License     ${values.stolenWallet === "yes" ? "☒" : "☐"} Wallet`);
+  uf("Date of Incident", values.incidentDate, 22, 1);
   p("How Did You Become Aware of the Incident:", true, 1);
-  p(values.awarenessText || "I became aware of the incident when I attempted to retrieve my driver's license and found it missing from my wallet. I retraced my steps but could not locate the item. I suspect the theft occurred while I was in a public area.");
-  uf("Location of Incident", values.incidentLocation, 22);
+  p(values.awarenessText || "I became aware of the incident when I attempted to retrieve my driver's license and found it missing from my wallet. I immediately retraced my steps but could not locate the item. I suspect the theft occurred during the day while I was in a public area.");
+  uf("Location of Incident", values.incidentLocation, 22, 1);
   p("Brief Description of the Incident:", true, 1);
-  p(values.incidentDescription || "On the above-stated date, I was present at a public location. At some point, my driver's license was unlawfully taken from my possession without my knowledge or consent. The item was not misplaced by me, and I believe the loss was due to theft. No witnesses were available and no physical confrontation occurred.");
-  p("List of Items Lost or Stolen:", true);
+  const incidentLoc = (values.incidentLocation || "").trim() || "the specified location";
+  p(values.incidentDescription || `On the above-stated date, I was present at ${incidentLoc}. At some point during the day, my driver's license was unlawfully taken from my possession without my knowledge or consent. The item was not misplaced by me, and I believe the loss was due to theft. No witnesses were available at the time of the incident, and no physical confrontation occurred.`);
+  p("List of Items Lost or Stolen:", true, 1);
   p("1. Driver's License");
-  uf("Name on License", values.licenseName, 22);
-  uf("License Number", values.licenseNumber, 22);
-  uf("State of Issue", values.licenseState, 22);
-  uf("Description", values.licenseDescription || "Standard issue driver's license with a light scratch on the top-left corner.", 22);
-  uf("Issued On", values.licenseIssuedOn, 22);
-  uf("Expiry Date", values.licenseExpiry, 22, 2.6);
+  bf("Name on License", values.licenseName);
+  bf("License Number", values.licenseNumber);
+  bf("State of Issue", values.licenseState);
+  bf("Description", values.licenseDescription || "Standard issue driver's license with a light scratch on the top-left corner.");
+  bf("Issued On", values.licenseIssuedOn);
+  bf("Expiry Date", values.licenseExpiry, 6);
 
+  // ── To Do Checklist ────────────────────────────────────────────────
   p("To do Checklist for Police report:", true);
   p("Make it legal:");
-  p("Sign the document:");
-  p("Copies:");
-  p("The original report should be filed with the Clerk of Court or delivered to the requesting business.");
-  p("The report should maintain a copy in a safe place. If you signed a paper copy, you can store/share it using a secure file manager and access it from any computer for future reference.");
-  p("Additional Assistance:");
-  p("If unsure or if questions exist regarding this report or special circumstances, use a lawyer search service to find legal assistance in your area.", false, 3);
+  p("Sign the document:", false, 4);
 
+  // Copies — underlined heading matching __Copies__ in draft
+  uh("Copies");
+  p("The original report should be filed with the Clerk of Court or delivered to the requesting business.");
+  p("The report should maintain a copy. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Legal Gram to store and share it. Safe and secure in your Legal Gram File Manager, you can access it any time from any computer, as well as share it for future reference.", false, 4);
+
+  // Additional Assistance — bold heading, no colon, matching draft
+  p("Additional Assistance", true, 1);
+  p("If you are unsure or have questions regarding this report or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.", false, 6);
+
+  // ── Signature ──────────────────────────────────────────────────────
   p("Signature", true, 1);
   p("_______________________________");
   uf("Name", values.fullName, 22);

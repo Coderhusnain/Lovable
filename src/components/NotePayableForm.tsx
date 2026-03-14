@@ -37,6 +37,7 @@ const generatePDF = (values: Record<string, string>) => {
   const limit = 280;
   let y = 20;
 
+  // Plain paragraph — pass bold=true for section/sub-section headings
   const p = (text: string, bold = false, gap = 1.8) => {
     const lines = doc.splitTextToSize(text, tw);
     if (y + lines.length * lh + gap > limit) {
@@ -46,6 +47,22 @@ const generatePDF = (values: Record<string, string>) => {
     doc.setFont("helvetica", bold ? "bold" : "normal");
     doc.setFontSize(10.5);
     doc.text(lines, m, y);
+    y += lines.length * lh + gap;
+  };
+
+  // Bullet point item — • symbol with 6 mm indent, text wraps within indent
+  const bullet = (text: string, gap = 1.8) => {
+    const indent = m + 6;
+    const bulletTw = tw - 6;
+    const lines = doc.splitTextToSize(text, bulletTw);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text("\u2022", m + 1.5, y); // •
+    doc.text(lines, indent, y);
     y += lines.length * lh + gap;
   };
 
@@ -71,6 +88,7 @@ const generatePDF = (values: Record<string, string>) => {
     y += lh + gap;
   };
 
+  // ── Title ──────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12.5);
   const title = "NOTE PAYABLE";
@@ -80,55 +98,115 @@ const generatePDF = (values: Record<string, string>) => {
   doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
 
+  // ── Header fields ──────────────────────────────────────────────────────────
   p(`Principal Amount: $${values.principalAmount || "----------"}`);
   uf("Date", values.noteDate, 20);
   p('This Note Payable (this "Note") is made as of the date set forth above.');
-  p(`FOR VALUE RECEIVED, the undersigned ${values.borrowerName || "__________________"} (the "Borrower"), of ${values.borrowerAddress || "__________________"}, hereby promises to pay to the order of ${values.lenderName || "__________________"} (the "Lender"), at ${values.paymentPlace || "__________________"}, or at such other place as the Lender may designate in writing, the principal sum of $${values.principalAmount || "------"} (the "Loan Amount"), subject to and in accordance with the terms and conditions set forth in this Note (the "Agreement").`);
+  p(
+    `FOR VALUE RECEIVED, the undersigned ${values.borrowerName || "__________________"} (the "Borrower"), of ${values.borrowerAddress || "__________________"}, hereby promises to pay to the order of ${values.lenderName || "__________________"} (the "Lender"), at ${values.paymentPlace || "__________________"}, or at such other place as the Lender may designate in writing, the principal sum of $${values.principalAmount || "------"} (the "Loan Amount"), subject to and in accordance with the terms and conditions set forth in this Note (the "Agreement").`
+  );
 
+  // ── I. TERMS OF REPAYMENT ──────────────────────────────────────────────────
   p("I. TERMS OF REPAYMENT", true, 1);
+
   p("1.1 Installment Payments", true, 1);
-  p(`The Borrower shall repay the Loan Amount in monthly installments of $${values.monthlyInstallment || "--------"}, commencing on ${values.firstPaymentDate || "__________________"}, and continuing until ${values.dueDate || "------------------"} (the "Due Date"), at which time any remaining unpaid principal balance shall be due and payable in full.`);
-  p(`Any unpaid principal remaining after the Due Date shall accrue interest at the rate of ${values.postDueRate || "------"} percent (${values.postDueRate || "-------"}%) per annum until paid in full.`, false, 2.2);
+  p(
+    `The Borrower shall repay the Loan Amount in monthly installments of $${values.monthlyInstallment || "--------"}, commencing on ${values.firstPaymentDate || "__________________"}, and continuing until ${values.dueDate || "------------------"} (the "Due Date"), at which time any remaining unpaid principal balance shall be due and payable in full.`
+  );
+  p(
+    `Any unpaid principal remaining after the Due Date shall accrue interest at the rate of ${values.postDueRate || "------"} percent (${values.postDueRate || "-------"}%) per annum until paid in full.`,
+    false,
+    2.2
+  );
+
   p("1.2 Application of Payments", true, 1);
-  p("All payments made under this Note shall be applied first to accrued interest, if any, and thereafter to principal.", false, 2.2);
+  p(
+    "All payments made under this Note shall be applied first to accrued interest, if any, and thereafter to principal.",
+    false,
+    2.2
+  );
+
   p("1.3 Late Charges", true, 1);
-  p(`The Borrower agrees to pay a late charge of $${values.lateFeeAmount || "---------"} for each installment that remains unpaid more than ${values.lateDays || "____"} day(s) after its Due Date.`, false, 2.2);
+  p(
+    `The Borrower agrees to pay a late charge of $${values.lateFeeAmount || "---------"} for each installment that remains unpaid more than ${values.lateDays || "____"} day(s) after its Due Date.`,
+    false,
+    2.2
+  );
+
   p("1.4 Acceleration", true, 1);
-  p("If the Borrower fails to make any payment when due under this Note, the Lender may, at its option, declare the entire unpaid principal balance together with any accrued interest immediately due and payable.");
+  p(
+    "If the Borrower fails to make any payment when due under this Note, the Lender may, at its option, declare the entire unpaid principal balance together with any accrued interest immediately due and payable."
+  );
+
+  // ── II. PREPAYMENT ─────────────────────────────────────────────────────────
   p("II. PREPAYMENT", true, 1);
-  p("The Borrower may prepay this Note, in whole or in part, at any time prior to the Due Date without penalty, provided that all accrued interest through the date of prepayment is paid in full.");
+  p(
+    "The Borrower may prepay this Note, in whole or in part, at any time prior to the Due Date without penalty, provided that all accrued interest through the date of prepayment is paid in full."
+  );
+
+  // ── III. COLLECTION COSTS ──────────────────────────────────────────────────
   p("III. COLLECTION COSTS", true, 1);
-  p("If any payment obligation under this Note is not paid when due, the Borrower agrees to pay all costs of collection incurred by the Lender, including reasonable attorneys' fees, whether or not legal proceedings are commenced.");
+  p(
+    "If any payment obligation under this Note is not paid when due, the Borrower agrees to pay all costs of collection incurred by the Lender, including reasonable attorneys\u2019 fees, whether or not legal proceedings are commenced."
+  );
+
+  // ── IV. EVENTS OF DEFAULT ──────────────────────────────────────────────────
   p("IV. EVENTS OF DEFAULT", true, 1);
-  p("The occurrence of any of the following shall constitute an event of default, upon which this Note and all other obligations of the Borrower to the Lender shall become immediately due and payable, without notice or demand:");
-  p("a. Failure of the Borrower to pay principal or accrued interest when due;");
-  p("b. Liquidation, dissolution, incompetency, or death of the Borrower;");
-  p("c. Filing of bankruptcy proceedings involving the Borrower;");
-  p("d. Application for the appointment of a receiver for the Borrower;");
-  p("e. Making of a general assignment for the benefit of creditors;");
-  p("f. Insolvency of the Borrower;");
-  p("g. Any misrepresentation made by the Borrower for the purpose of obtaining or extending credit;");
-  p("h. Sale of a material portion of the business or assets of the Borrower.");
+  p(
+    "The occurrence of any of the following shall constitute an event of default, upon which this Note and all other obligations of the Borrower to the Lender shall become immediately due and payable, without notice or demand:"
+  );
+
+  bullet("Failure of the Borrower to pay principal or accrued interest when due;");
+  bullet("Liquidation, dissolution, incompetency, or death of the Borrower;");
+  bullet("Filing of bankruptcy proceedings involving the Borrower;");
+  bullet("Application for the appointment of a receiver for the Borrower;");
+  bullet("Making of a general assignment for the benefit of creditors;");
+  bullet("Insolvency of the Borrower;");
+  bullet("Any misrepresentation made by the Borrower for the purpose of obtaining or extending credit;");
+  bullet("Sale of a material portion of the business or assets of the Borrower.");
+
+  // ── V. SEVERABILITY ───────────────────────────────────────────────────────
   p("V. SEVERABILITY", true, 1);
-  p("If any provision of this Agreement is determined to be unenforceable, such determination shall not affect the validity or enforceability of the remaining provisions, which shall remain in full force and effect.");
+  p(
+    "If any provision of this Agreement is determined to be unenforceable, such determination shall not affect the validity or enforceability of the remaining provisions, which shall remain in full force and effect."
+  );
+
+  // ── VI. MISCELLANEOUS ─────────────────────────────────────────────────────
   p("VI. MISCELLANEOUS", true, 1);
   p("All payments under this Note shall be made in lawful currency of the United States of America.");
   p("The Borrower hereby waives presentment for payment, protest, notice of protest, and notice of demand.");
-  p("No delay or failure by the Lender to enforce any right under this Note shall be construed as a waiver of such right. All rights and remedies of the Lender are cumulative.");
+  p(
+    "No delay or failure by the Lender to enforce any right under this Note shall be construed as a waiver of such right. All rights and remedies of the Lender are cumulative."
+  );
   p("This Note may not be amended or modified except by a written instrument approved by the holder of this Note.");
+
+  // ── VII. GOVERNING LAW ────────────────────────────────────────────────────
   p("VII. GOVERNING LAW", true, 1);
-  p(`This Note shall be governed by and construed in accordance with the laws of ${values.governingLaw || "__________________"}.`);
+  p(
+    `This Note shall be governed by and construed in accordance with the laws of ${values.governingLaw || "__________________"}.`
+  );
+
+  // ── VIII. EXECUTION AND SIGNATURES ───────────────────────────────────────
   p("VIII. EXECUTION AND SIGNATURES", true, 1);
   p("This Note shall be executed by the Borrower and the Lender.");
-  p("IN WITNESS WHEREOF, this Note Payable has been executed and delivered in accordance with applicable law as of the date first written above.");
-  p(`Executed this ${values.executedDay || "___"} day of ${values.executedMonth || "________"}, at ${values.executedAt || "_____________"}.`, false, 2.2);
+  p(
+    "IN WITNESS WHEREOF, this Note Payable has been executed and delivered in accordance with applicable law as of the date first written above."
+  );
+  p(
+    `Executed this ${values.executedDay || "___"} day of ${values.executedMonth || "________"}, at ${values.executedAt || "_____________"}.`,
+    false,
+    2.2
+  );
+
+  // ── Signature Blocks ──────────────────────────────────────────────────────
   p("BORROWER", true, 1);
   uf("Name", values.borrowerName, 24);
-  uf("Signature", values.borrowerName, 24);
+  uf("Signature", "", 24);
   uf("Date", values.borrowerDate, 20, 2.4);
+
   p("LENDER", true, 1);
   uf("Name", values.lenderName, 24);
-  uf("Signature", values.lenderName, 24);
+  uf("Signature", "", 24);
   uf("Date", values.lenderDate, 20);
 
   doc.save("note_payable_agreement.pdf");

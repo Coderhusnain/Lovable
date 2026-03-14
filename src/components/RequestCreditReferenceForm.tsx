@@ -4,39 +4,19 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Request Type",
-    fields: [
-      {
-        name: "letterType",
-        label: "Which draft do you want to generate?",
-        type: "select",
-        required: true,
-        options: [
-          { value: "bank", label: "Request for bank or credit reference" },
-          { value: "personal", label: "Request a credit reference" },
-        ],
-      },
-    ],
-  },
-  {
     label: "Letter Details",
     fields: [
-      { name: "lineOne", label: "Top line 1", type: "text", required: false },
-      { name: "lineTwo", label: "Top line 2", type: "text", required: false },
-      { name: "applicantName", label: "Applicant name", type: "text", required: false },
-      { name: "institutionName", label: "Institution / creditor", type: "text", required: false },
-      { name: "dearName", label: "Dear (name)", type: "text", required: false },
-      { name: "signerName", label: "Name", type: "text", required: false },
-      { name: "signerTitle", label: "Title", type: "text", required: false },
-      { name: "organization", label: "Organization", type: "text", required: false },
-      { name: "conversationDate", label: "Telephone conversation date", type: "date", required: false },
-      { name: "sendToName", label: "Send reference to (name)", type: "text", required: false },
-      { name: "sendToLine1", label: "Send-to address line 1", type: "text", required: false },
-      { name: "sendToLine2", label: "Send-to address line 2", type: "text", required: false },
-      { name: "sendToLine3", label: "Send-to address line 3", type: "text", required: false },
+      { name: "senderName", label: "Sender name", type: "text", required: false },
+      { name: "senderAddress", label: "Sender address", type: "text", required: false },
+      { name: "recipientName", label: "Recipient name", type: "text", required: false },
+      { name: "recipientAddress", label: "Recipient address", type: "text", required: false },
+      { name: "phoneCallDate", label: "Date of telephone conversation", type: "date", required: false },
+      { name: "referenceRecipientName", label: "Credit reference recipient name", type: "text", required: false },
+      { name: "referenceStreet", label: "Credit reference recipient street", type: "text", required: false },
+      { name: "referenceCity", label: "Credit reference recipient city", type: "text", required: false },
+      { name: "referenceState", label: "Credit reference recipient state", type: "text", required: false },
       { name: "accountNumber", label: "Account number", type: "text", required: false },
-      { name: "requesterName", label: "Requester name", type: "text", required: false },
-      { name: "requesterSignature", label: "Requester signature", type: "text", required: false },
+      { name: "signerName", label: "Name", type: "text", required: false },
     ],
   },
 ];
@@ -50,24 +30,20 @@ const generatePDF = (values: Record<string, string>) => {
   const limit = 280;
   let y = 20;
 
+  // Plain paragraph — bold=true for headings
   const p = (text: string, bold = false, gap = 1.8) => {
     const lines = doc.splitTextToSize(text, tw);
-    if (y + lines.length * lh + gap > limit) {
-      doc.addPage();
-      y = 20;
-    }
+    if (y + lines.length * lh + gap > limit) { doc.addPage(); y = 20; }
     doc.setFont("helvetica", bold ? "bold" : "normal");
     doc.setFontSize(10.5);
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
 
+  // Underlined fill field
   const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
     const shown = (value || "").trim();
-    if (y + lh + gap > limit) {
-      doc.addPage();
-      y = 20;
-    }
+    if (y + lh + gap > limit) { doc.addPage(); y = 20; }
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10.5);
     const labelText = `${label}: `;
@@ -84,78 +60,107 @@ const generatePDF = (values: Record<string, string>) => {
     y += lh + gap;
   };
 
-  const drawTitle = (title: string) => {
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12.5);
-    doc.text(title, w / 2, y, { align: "center" });
-    const tW = doc.getTextWidth(title);
-    doc.setLineWidth(0.35);
-    doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
-    y += 9;
+  // ☐ Checkbox bullet
+  const checkbox = (text: string, gap = 1.8) => {
+    const indent = m + 6;
+    const lines = doc.splitTextToSize(text, tw - 6);
+    if (y + lines.length * lh + gap > limit) { doc.addPage(); y = 20; }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text("\u2610", m + 1, y); // ☐
+    doc.text(lines, indent, y);
+    y += lines.length * lh + gap;
   };
 
-  if (values.letterType === "personal") {
-    drawTitle("REQUEST A CREDIT REFERENCE");
-    uf("Line 1", values.lineOne, 20);
-    uf("Line 2", values.lineTwo, 20, 3);
-    p("Dear Sir or Madam:");
-    p(`As discussed during our telephone conversation on ${values.conversationDate || "__________"}, this letter serves as a formal written request that a positive credit reference concerning my account be provided to ${values.sendToName || "__________"}, at ${values.sendToLine1 || "__________"}, ${values.sendToLine2 || "__________"}, ${values.sendToLine3 || "__________"}.`);
-    p("I further request that a copy of this credit reference be sent to me for my records.");
-    p(`For your reference, my account number is ${values.accountNumber || "__________"}.`);
-    p("Should you require any additional information or have any questions regarding this request, please do not hesitate to contact me.");
-    p("Thank you for your prompt attention and cooperation.");
-    p("Sincerely,", false, 3);
-    uf("Name", values.requesterName, 24);
-    uf("Signature", values.requesterSignature, 24, 3);
-    p("FINAL CHECKLIST FOR LETTER TO REQUEST A CREDIT REFERENCE", true);
-    p("Make It Legal", true, 1);
-    p("[ ] Sign the letter prior to submission.", false, 2.6);
-    p("Copies", true, 1);
-    p("[ ] Retain a copy of the signed letter for your records.", false, 2.6);
-    p("Reasons to Update", true, 1);
-    p("- To issue a follow-up letter regarding a prior request; or");
-    p("- To request that an additional credit reference be sent to another individual or organization.");
-    doc.save("request_a_credit_reference.pdf");
-    return;
-  }
+  // • Bullet point
+  const bullet = (text: string, gap = 1.8) => {
+    const indent = m + 6;
+    const lines = doc.splitTextToSize(text, tw - 6);
+    if (y + lines.length * lh + gap > limit) { doc.addPage(); y = 20; }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text("\u2022", m + 1.5, y); // •
+    doc.text(lines, indent, y);
+    y += lines.length * lh + gap;
+  };
 
-  drawTitle("REQUEST FOR BANK OR CREDIT REFERENCE");
-  uf("Line 1", values.lineOne, 20);
-  uf("Line 2", values.lineTwo, 20, 3);
-  p(`Re: Credit Reference for ${values.applicantName || "__________"}`);
-  p(`Dear ${values.dearName || "__________"}:`);
-  p(`We are in receipt of a credit application submitted by ${values.applicantName || "__________"}, which identifies your institution as a credit reference. Enclosed herewith is a copy of the credit application in which your bank is named as a reference, together with the Applicant's authorization permitting the release of credit information.`);
-  p("We respectfully request that you provide the following information:");
-  p(`1. The types of accounts maintained by ${values.applicantName || "__________"} with your institution.`);
-  p("Should you have any questions regarding this request or require additional documentation, please do not hesitate to contact the undersigned.");
-  p("Thank you for your cooperation.");
-  p("Sincerely,", false, 3);
-  uf("Name", values.signerName, 24);
-  uf("Title", values.signerTitle, 20);
-  uf("Organization", values.organization, 24, 3);
+  // ── Title ──────────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12.5);
+  const title = "REQUEST A CREDIT REFERENCE";
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
+  y += 10;
 
-  p("FINAL CHECKLIST FOR REQUEST FOR BANK OR CREDIT REFERENCE", true);
-  uf("Creditor", values.institutionName, 24);
+  // ── Sender address block ───────────────────────────────────────────────────
+  const senderName = (values.senderName || "").trim();
+  const senderAddress = (values.senderAddress || "").trim();
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10.5);
+  doc.text(senderName || "__________,  __________", m, y);
+  y += lh + 1;
+  doc.text(senderAddress || "__________,  __________", m, y);
+  y += lh + 4;
+
+  // ── Recipient address block ────────────────────────────────────────────────
+  const recipientName = (values.recipientName || "").trim();
+  const recipientAddress = (values.recipientAddress || "").trim();
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10.5);
+  doc.text(recipientName || "__________,  __________", m, y);
+  y += lh + 1;
+  doc.text(recipientAddress || "__________,  __________", m, y);
+  y += lh + 6;
+
+  // ── Salutation ────────────────────────────────────────────────────────────
+  p("Dear Sir or Madam:", true);
+
+  // ── Body paragraphs ────────────────────────────────────────────────────────
+  p(
+    `As discussed during our telephone conversation on ${values.phoneCallDate || "__________"}, this letter serves as a formal written request that a positive credit reference concerning my account be provided to ${values.referenceRecipientName || "__________"}, at ${values.referenceStreet || "__________"}, ${values.referenceCity || "__________"}, ${values.referenceState || "__________"}.`
+  );
+
+  p("I further request that a copy of this credit reference be sent to me for my records.");
+
+  p(`For your reference, my account number is ${values.accountNumber || "__________"}.`);
+
+  p("Should you require any additional information or have any questions regarding this request, please do not hesitate to contact me.");
+
+  p("Thank you for your prompt attention and cooperation.");
+
+  y += 3;
+  p("Sincerely,", true, 3);
+
+  // ── Signature block ────────────────────────────────────────────────────────
+  uf("Name", values.signerName, 28);
+  uf("Signature", "", 28, 3);
+
+  // ── Final Checklist ────────────────────────────────────────────────────────
+  p("FINAL CHECKLIST FOR LETTER TO REQUEST A CREDIT REFERENCE", true);
+
   p("Make It Legal", true, 1);
-  p("[ ] Sign the letter prior to submission.", false, 2.6);
-  p("Copies", true, 1);
-  p("[ ] Retain a copy of this letter and the signed credit application (or other authorization) in the Applicant's file, together with any information received in response.");
-  p("[ ] If applicable, enclose a copy (not the original) of the credit application or other authorization executed by the Applicant.", false, 2.6);
-  p("Reasons to Update", true, 1);
-  p("- To request a bank or credit reference for another Applicant; or");
-  p("- To request information regarding additional accounts maintained by an Applicant with a bank or trade creditor.");
+  checkbox("Sign the letter prior to submission.", 2.6);
 
-  doc.save("request_bank_or_credit_reference.pdf");
+  p("Copies", true, 1);
+  checkbox("Retain a copy of the signed letter for your records.", 2.6);
+
+  p("Reasons to Update", true, 1);
+  bullet("To issue a follow-up letter regarding a prior request; or");
+  bullet("To request that an additional credit reference be sent to another individual or organization.");
+
+  doc.save("request_a_credit_reference.pdf");
 };
 
-export default function RequestCreditReferenceForm() {
+export default function RequestACreditReferenceForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Request for Bank or Credit Reference"
+      title="Request a Credit Reference"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
-      documentType="requestcreditreference"
+      documentType="requestacreditreference"
     />
   );
 }

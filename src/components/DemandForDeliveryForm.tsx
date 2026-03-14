@@ -30,6 +30,7 @@ const generatePDF = (values: Record<string, string>) => {
   const limit = 280;
   let y = 20;
 
+  // Plain paragraph — pass bold=true for headings
   const p = (text: string, bold = false, gap = 1.8) => {
     const lines = doc.splitTextToSize(text, tw);
     if (y + lines.length * lh + gap > limit) {
@@ -41,6 +42,37 @@ const generatePDF = (values: Record<string, string>) => {
     doc.text(lines, m, y);
     y += lines.length * lh + gap;
   };
+
+  // ☐ Checkbox bullet — indented with checkbox symbol
+  const checkbox = (text: string, gap = 1.8) => {
+    const indent = m + 6;
+    const lines = doc.splitTextToSize(text, tw - 6);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text("\u2610", m + 1, y); // ☐
+    doc.text(lines, indent, y);
+    y += lines.length * lh + gap;
+  };
+
+  // • Bullet point — indented with bullet symbol
+  const bullet = (text: string, gap = 1.8) => {
+    const indent = m + 6;
+    const lines = doc.splitTextToSize(text, tw - 6);
+    if (y + lines.length * lh + gap > limit) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text("\u2022", m + 1.5, y); // •
+    doc.text(lines, indent, y);
+    y += lines.length * lh + gap;
+  };
+
   const uf = (label: string, value?: string, min = 24, gap = 1.8) => {
     const shown = (value || "").trim();
     if (y + lh + gap > limit) {
@@ -63,6 +95,7 @@ const generatePDF = (values: Record<string, string>) => {
     y += lh + gap;
   };
 
+  // ── Title ──────────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
   doc.setFontSize(12.5);
   const title = "DEMAND FOR DELIVERY";
@@ -72,30 +105,49 @@ const generatePDF = (values: Record<string, string>) => {
   doc.line(w / 2 - tW / 2, y + 1.2, w / 2 + tW / 2, y + 1.2);
   y += 9;
 
+  // ── Header fields ──────────────────────────────────────────────────────────
   uf("Date", values.requestDate, 20);
   uf("To", values.toName, 24);
   uf("Address", values.toAddress, 32);
-  p(`Subject: Demand for Delivery - Order of ${values.orderItem || "__________________"}`, true);
+
+  // Subject line — em-dash matching the doc
+  p(`Subject: Demand for Delivery \u2014 Order of ${values.orderItem || "__________________"}`, true);
+
+  // ── Body ───────────────────────────────────────────────────────────────────
   p("Dear Sir or Madam:");
-  p(`I write with reference to my order for ${values.orderItem || "______________________"}, which was placed on ${values.orderPlacedDate || "______________________"}. At the time of purchase, I was advised that delivery would be completed within ${values.deliveryPeriod || "______________________"}.`);
-  p(`Despite the passage of the stated delivery period, the goods have not yet been delivered. On ${values.priorContactDate || "______________________"}, I contacted you in writing regarding this delay. Enclosed are copies of my prior correspondence relating to this order.`);
-  p("Please contact me promptly should you require any additional information to facilitate delivery. I respectfully request your immediate attention to this matter and look forward to confirmation of the delivery status without further delay.");
+  p(
+    `I write with reference to my order for ${values.orderItem || "________________________"}, which was placed on ${values.orderPlacedDate || "________________________"}. At the time of purchase, I was advised that delivery would be completed within ${values.deliveryPeriod || "________________________"}.`
+  );
+  p(
+    `Despite the passage of the stated delivery period, the goods have not yet been delivered. On ${values.priorContactDate || "________________________"}, I contacted you in writing regarding this delay. Enclosed are copies of my prior correspondence relating to this order.`
+  );
+  p(
+    "Please contact me promptly should you require any additional information to facilitate delivery. I respectfully request your immediate attention to this matter and look forward to confirmation of the delivery status without further delay."
+  );
   p("Thank you for your cooperation.");
   p("Sincerely,", false, 3);
+
+  // ── Signature block ────────────────────────────────────────────────────────
   uf("Signature", values.signature, 30);
   uf("Printed Name", values.printedName, 28);
   uf("Address", values.address, 34);
   uf("Contact Information", values.contactInfo, 34, 3);
-  p("Final Checklist - Demand for Delivery", true);
+
+  // ── Final Checklist ────────────────────────────────────────────────────────
+  p("Final Checklist \u2014 Demand for Delivery", true); // em-dash matching doc
+
   p("Legal Formalities", true, 1);
-  p("[ ] Ensure the letter is signed by the purchaser or authorized party.", false, 2.6);
+  checkbox("Ensure the letter is signed by the purchaser or authorized party.", 2.6);
+
   p("Recordkeeping", true, 1);
-  p("[ ] Retain a copy of the signed letter and all related correspondence for your records.", false, 2.6);
+  checkbox("Retain a copy of the signed letter and all related correspondence for your records.", 2.6);
+
   p("Attachments", true, 1);
-  p("[ ] Include copies of all previous letters, emails, or other communications exchanged with the company regarding the delayed delivery.", false, 2.6);
+  checkbox("Include copies of all previous letters, emails, or other communications exchanged with the company regarding the delayed delivery.", 2.6);
+
   p("Reasons to Update or Reissue", true, 1);
-  p("- To submit a follow-up demand concerning a prior delivery request.");
-  p("- To issue a demand for delivery of a different product or order.");
+  bullet("To submit a follow-up demand concerning a prior delivery request.");
+  bullet("To issue a demand for delivery of a different product or order.");
 
   doc.save("demand_for_delivery.pdf");
 };
@@ -104,7 +156,7 @@ export default function DemandForDeliveryForm() {
   return (
     <FormWizard
       steps={steps}
-      title="Demand for delivery"
+      title="Demand for Delivery"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="demandondelivery"
