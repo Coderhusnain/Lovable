@@ -3,164 +3,260 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Parties",
+    label: "Effective Date & Parties",
     fields: [
       { name: "effectiveDate", label: "Effective date", type: "date", required: true },
       { name: "buyerName", label: "Buyer name", type: "text", required: true },
       { name: "buyerAddress", label: "Buyer address", type: "text", required: true },
       { name: "referrerName", label: "Referrer name", type: "text", required: true },
       { name: "referrerAddress", label: "Referrer address", type: "text", required: true },
-      { name: "industry", label: "Industry", type: "text", required: true },
+      { name: "industry", label: "Industry (clause 1 & 2 recital)", type: "text", required: true },
     ],
   },
   {
-    label: "Commercial Terms",
+    label: "Term & Termination",
     fields: [
-      { name: "terminationDate", label: "Termination date", type: "date", required: true },
-      { name: "earlyTerminationDays", label: "Early termination notice days", type: "text", required: true, placeholder: "e.g., 30" },
-      { name: "referralFeePercent", label: "Referral fee percentage", type: "text", required: true, placeholder: "e.g., 5" },
-      { name: "paymentMethods", label: "Accepted payment methods", type: "text", required: true, placeholder: "Bank transfer, ACH, check" },
-      { name: "licensedStatus", label: "Referrer licensing status", type: "select", required: true, options: [
-        { value: "does", label: "Referrer does hold required licenses/certifications" },
-        { value: "does_not", label: "Referrer does not hold required licenses/certifications" },
-      ] },
-      { name: "governingLaw", label: "Governing law (State/Country)", type: "text", required: true },
+      { name: "terminationDate", label: "Termination date (clause 2)", type: "date", required: false },
+      { name: "earlyTerminationDays", label: "Early termination notice days (clause 3)", type: "text", required: false },
+    ],
+  },
+  {
+    label: "Fees & Licensing",
+    fields: [
+      { name: "referralFeePercent", label: "Referral fee percentage of Net Value (clause 6)", type: "text", required: false },
+      { name: "paymentMethods", label: "Acceptable methods of payment (clause 6)", type: "text", required: false },
+      { name: "licensedStatus", label: "Referrer licensing/certification status (clause 1)", type: "select", required: true,
+        options: [
+          { value: "does", label: "Referrer does hold required licensing/certification" },
+          { value: "does_not", label: "Referrer does not hold required licensing/certification" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Governing Law",
+    fields: [
+      { name: "governingLaw", label: "Governing law (clause 15)", type: "text", required: true },
     ],
   },
   {
     label: "Signatures",
     fields: [
-      { name: "buyerSignName", label: "Buyer signatory name", type: "text", required: true },
-      { name: "buyerDesignation", label: "Buyer signatory designation", type: "text", required: true },
-      { name: "buyerSignature", label: "Buyer signature (typed)", type: "text", required: true },
-      { name: "buyerSignDate", label: "Buyer signature date", type: "date", required: true },
-      { name: "referrerSignName", label: "Referrer signatory name", type: "text", required: true },
-      { name: "referrerDesignation", label: "Referrer signatory designation", type: "text", required: true },
-      { name: "referrerSignature", label: "Referrer signature (typed)", type: "text", required: true },
-      { name: "referrerSignDate", label: "Referrer signature date", type: "date", required: true },
+      { name: "buyerSignName", label: "Buyer — Name", type: "text", required: false },
+      { name: "buyerDesignation", label: "Buyer — Designation", type: "text", required: false },
+      { name: "buyerSignDate", label: "Buyer — Date", type: "date", required: false },
+      { name: "referrerSignName", label: "Referrer — Name", type: "text", required: false },
+      { name: "referrerDesignation", label: "Referrer — Designation", type: "text", required: false },
+      { name: "referrerSignDate", label: "Referrer — Date", type: "date", required: false },
     ],
   },
 ];
 
-const generatePDF = (v: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const L = 16;
-  const W = 178;
-  const LH = 5.6;
-  let y = 18;
+const generatePDF = (values: Record<string, string>) => {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const w = 210;
+  const m = 18;
+  const tw = w - m * 2;
+  const lh = 5.6;
+  const limit = 280;
+  let y = 20;
 
-  const ensure = (h = 10) => {
-    if (y + h > 282) {
-      doc.addPage();
-      y = 18;
-    }
+  const u = (v?: string, n = 18) => (v || "").trim() || "_".repeat(n);
+
+  const checkBreak = (needed = lh) => {
+    if (y + needed > limit) { doc.addPage(); y = 20; }
   };
-  const p = (text: string, bold = false, gap = 1.8) => {
-    ensure(12);
+
+  const p = (text: string, bold = false, gap = 2) => {
+    const lines = doc.splitTextToSize(text, tw);
+    checkBreak(lines.length * lh + gap);
     doc.setFont("helvetica", bold ? "bold" : "normal");
-    doc.setFontSize(10.5);
-    const lines = doc.splitTextToSize(text, W);
-    doc.text(lines, L, y);
-    y += lines.length * LH + gap;
-  };
-  const uf = (label: string, value?: string) => {
-    ensure(8);
-    const safeValue = (value || "").trim();
-    doc.setFont("helvetica", "normal");
-    doc.text(`${label}: `, L, y);
-    const x = L + doc.getTextWidth(`${label}: `);
-    if (safeValue) {
-      doc.text(safeValue, x, y);
-      doc.line(x, y + 1, x + Math.max(24, doc.getTextWidth(safeValue)), y + 1);
-    } else {
-      const blank = "________________________";
-      doc.text(blank, x, y);
-    }
-    y += LH + 1.2;
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
+  const heading = (text: string) => {
+    checkBreak(lh + 2);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10.5);
+    doc.text(text, m, y);
+    y += lh + 2;
+  };
+
+  const sigLine = (label: string, val?: string, minChars = 26, gap = 2.5) => {
+    const shown = (val || "").trim();
+    const labelText = `${label}: `;
+    checkBreak(lh + gap);
+    doc.setFont("helvetica", "normal");
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    const lineEnd = shown ? x + Math.max(10, doc.getTextWidth(shown)) : x + doc.getTextWidth("_".repeat(minChars));
+    if (shown) doc.text(shown, x, y);
+    doc.setLineWidth(0.22);
+    doc.line(x, y + 1.1, lineEnd, y + 1.1);
+    y += lh + gap;
+  };
+
+  // ── TITLE ──────────────────────────────────────────────────────────────
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   const title = "REFERRAL FEE AGREEMENT";
-  doc.text(title, 105, y, { align: "center" });
-  const tw = doc.getTextWidth(title);
-  doc.line(105 - tw / 2, y + 1, 105 + tw / 2, y + 1);
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.3, w / 2 + tW / 2, y + 1.3);
   y += 10;
+  doc.setFontSize(10.5);
 
+  // ── PREAMBLE ────────────────────────────────────────────────────────────
   p(
-    `This Referral Fee Agreement ("Agreement") is made and entered into on ${v.effectiveDate || "____________"} (the "Effective Date"), ` +
-      `by and between ${v.buyerName || "____________"}, of ${v.buyerAddress || "____________"} (the "Buyer"), and ` +
-      `${v.referrerName || "____________"}, of ${v.referrerAddress || "____________"} (the "Referrer").`,
+    `This Referral Fee Agreement ("Agreement") is made and entered into on ${u(values.effectiveDate, 12)} (the "Effective Date"), by and between ${u(values.buyerName, 22)}, of ${u(values.buyerAddress, 22)} (hereinafter referred to as the "Buyer"), and ${u(values.referrerName, 22)}, of ${u(values.referrerAddress, 22)} (hereinafter referred to as the "Referrer").`
   );
+  y += 1;
+
+  // ── RECITALS ────────────────────────────────────────────────────────────
   p("RECITALS", true);
+  p("WHEREAS, the Buyer intends to purchase certain goods;");
+  p(`WHEREAS, the Referrer possesses contacts and industry connections within the ${u(values.industry, 14)} industry and is willing to act as an intermediary for the purpose of introducing potential sellers to the Buyer;`);
+  p("NOW, THEREFORE, in consideration of the mutual covenants, representations, and undertakings contained herein, and for other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:");
+  y += 1;
+
+  // ── 1. LEGAL COMPLIANCE ─────────────────────────────────────────────────
+  heading("1. LEGAL COMPLIANCE");
   p(
-    `WHEREAS, the Buyer intends to purchase certain goods; WHEREAS, the Referrer possesses contacts and industry connections within the ` +
-      `${v.industry || "____________"} industry and is willing to act as an intermediary for introducing potential sellers to the Buyer; ` +
-      "NOW, THEREFORE, the Parties agree as follows:",
+    `The Referrer shall comply with all applicable laws, rules, and regulations governing the ${u(values.industry, 14)} industry. Where licensing and/or certification is required under applicable law, the Referrer shall be fully responsible for obtaining and maintaining such licensing and certifications. The Buyer acknowledges that the Referrer ${values.licensedStatus === "does_not" ? "does not" : "does"} hold the required licensing and/or certification, as applicable.`
   );
 
-  p("1. LEGAL COMPLIANCE", true);
+  // ── 2. TERM ─────────────────────────────────────────────────────────────
+  heading("2. TERM");
   p(
-    `The Referrer shall comply with all applicable laws, rules, and regulations governing the ${v.industry || "____________"} industry. ` +
-      `Where licensing/certification is required, the Referrer shall obtain and maintain it. The Buyer acknowledges the Referrer ` +
-      `${v.licensedStatus === "does_not" ? "does not" : "does"} hold the required licensing/certification as applicable.`,
+    `This Agreement shall commence on the Effective Date and shall remain in full force and effect until ${u(values.terminationDate, 14)} (the "Termination Date"), unless earlier terminated in accordance with the provisions of this Agreement. The Termination Date may be extended or modified by mutual written agreement of the Parties.`
   );
-  p("2. TERM", true);
+
+  // ── 3. TERMINATION ──────────────────────────────────────────────────────
+  heading("3. TERMINATION");
   p(
-    `This Agreement commences on the Effective Date and remains in force until ${v.terminationDate || "____________"} (the "Termination Date"), ` +
-      "unless earlier terminated under this Agreement. The Termination Date may be modified by mutual written agreement.",
+    `Either Party may terminate this Agreement prior to the Termination Date, with or without cause, by providing not less than ${u(values.earlyTerminationDays, 6)} days' written notice to the other Party ("Early Termination"). Upon Early Termination, the Referrer shall be entitled to receive a pro-rated payment for Services duly performed up to the effective date of termination. Notice delivered via email shall constitute valid notice for the purposes of this clause.`
   );
-  p("3. TERMINATION", true);
+
+  // ── 4. EXCLUSIVITY ──────────────────────────────────────────────────────
+  heading("4. EXCLUSIVITY");
   p(
-    `Either Party may terminate early, with or without cause, by providing not less than ${v.earlyTerminationDays || "____"} days' written notice. ` +
-      "Upon Early Termination, the Referrer is entitled to pro-rated payment for services performed to the effective date. Notice by email is valid.",
+    "During the term of this Agreement, the Referrer shall have the exclusive right to introduce prospective sellers to the Buyer, provided such sellers were not previously known to or engaged by the Buyer prior to such introduction."
   );
-  p("4. EXCLUSIVITY", true);
-  p("During the term, the Referrer has exclusive right to introduce prospective sellers not previously known to or engaged by Buyer.");
-  p("5. RELATIONSHIP OF THE PARTIES", true);
+
+  // ── 5. RELATIONSHIP OF THE PARTIES ─────────────────────────────────────
+  heading("5. RELATIONSHIP OF THE PARTIES");
   p(
-    "Referrer acts as independent contractor. Nothing creates partnership, joint venture, agency, or employment. " +
-      "Referrer is responsible for taxes and statutory obligations and shall provide workers' compensation and liability insurance evidence on request.",
+    "The Referrer shall act as an independent contractor and nothing herein shall be deemed to create any partnership, joint venture, agency, or employer-employee relationship between the Parties. The Referrer shall be solely responsible for all taxes, contributions, and statutory obligations arising out of its activities under this Agreement. Upon reasonable request, the Referrer shall provide proof of workers' compensation and general liability insurance coverage."
   );
-  p("6. FEES AND PAYMENT", true);
+
+  // ── 6. FEES AND PAYMENT ─────────────────────────────────────────────────
+  heading("6. FEES AND PAYMENT");
+  p("This Agreement contemplates an introduction-only arrangement.");
   p(
-    `This is an introduction-only arrangement. Referrer's fee equals ${v.referralFeePercent || "____"}% of Net Value of goods purchased directly from referrals. ` +
-      "Net Value excludes VAT, postage, packaging, insurance, refunds, and dishonored payments. Referrer invoices Buyer when entitled; " +
-      "payment is due within thirty (30) days of invoice. Accepted payment methods: " +
-      `${v.paymentMethods || "____________"}.`,
+    `The Referrer's fee shall be calculated as ${u(values.referralFeePercent, 6)}% of the net value of goods purchased by the Buyer as a direct result of an introduction made by the Referrer. "Net Value" shall exclude value-added tax (VAT), postage, packaging, insurance, refunds, and any payments not honoured by a financial institution.`
   );
-  p("7. NON-CIRCUMVENTION", true);
-  p("Buyer shall not transact with introduced sellers to avoid paying referral commission. Referrer remains fully entitled to commission in circumvention cases.");
-  p("8. CONFIDENTIALITY", true);
-  p("Referrer shall keep Buyer proprietary/commercial information strictly confidential and use it only for Agreement performance. This survives termination/expiry.");
-  p("9. ENTIRE AGREEMENT", true);
-  p("This Agreement is the entire understanding and supersedes all prior oral/written discussions and agreements on this subject.");
-  p("10. SEVERABILITY", true);
-  p("If any provision is invalid or unenforceable, it is severed and the remaining provisions continue in full force and effect.");
-  p("11. FORCE MAJEURE", true);
-  p("Neither Party is liable for delay/failure caused by events beyond reasonable control (acts of God, pandemics, disasters, war, riots, strikes, government acts).");
-  p("12. ALTERNATIVE DISPUTE RESOLUTION", true);
-  p("Parties shall first attempt amicable negotiation. Failing resolution, disputes are referred to mediation under applicable statutory mediation rules.");
-  p("13. AMENDMENT", true);
-  p("Any amendment or modification must be in writing and signed by both Parties.");
-  p("14. WAIVER", true);
-  p("Failure to enforce any provision is not a waiver of that provision or future enforcement rights.");
-  p("15. GOVERNING LAW", true);
-  p(`This Agreement shall be governed by and construed under the laws of ${v.governingLaw || "____________"}.`);
-  p("16. ATTORNEYS' FEES", true);
-  p("In legal proceedings arising from this Agreement, the prevailing Party is entitled to recover reasonable legal fees and costs.");
-  p("17. SIGNATORIES", true);
+  p(
+    "Upon becoming entitled to the Referrer's fee, the Referrer shall issue an invoice to the Buyer. Payment shall be made within thirty (30) days from the date of the invoice."
+  );
+  p(`Acceptable methods of payment shall include: ${u(values.paymentMethods, 16)}.`);
+
+  // ── 7. NON-CIRCUMVENTION ────────────────────────────────────────────────
+  heading("7. NON-CIRCUMVENTION");
+  p(
+    "During the term of this Agreement, the Buyer shall not directly or indirectly engage in any transaction with any seller introduced by the Referrer with the intent of avoiding payment of the Referrer's commission. In the event of such circumvention, the Referrer shall remain fully entitled to its commission or referral fee in respect of such transaction."
+  );
+
+  // ── 8. CONFIDENTIALITY ──────────────────────────────────────────────────
+  heading("8. CONFIDENTIALITY");
+  p(
+    "The Referrer agrees to keep strictly confidential all proprietary, commercial, and sensitive information of the Buyer and shall not, whether directly or indirectly, disclose or use such Confidential Information for any purpose other than the performance of this Agreement. Confidential Information includes, but is not limited to, business strategies, customer data, pricing structures, and trade secrets. This obligation shall survive termination or expiry of this Agreement."
+  );
+
+  // ── 9. ENTIRE AGREEMENT ─────────────────────────────────────────────────
+  heading("9. ENTIRE AGREEMENT");
+  p(
+    "This Agreement constitutes the entire understanding between the Parties with respect to the subject matter hereof and supersedes all prior or contemporaneous agreements, representations, negotiations, or understandings, whether written or oral."
+  );
+
+  // ── 10. SEVERABILITY ────────────────────────────────────────────────────
+  heading("10. SEVERABILITY");
+  p(
+    "If any provision of this Agreement is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be severed and the remaining provisions shall continue in full force and effect, provided the essential purpose of this Agreement is not defeated."
+  );
+
+  // ── 11. FORCE MAJEURE ───────────────────────────────────────────────────
+  heading("11. FORCE MAJEURE");
+  p(
+    "Neither Party shall be liable for failure or delay in performance of its obligations under this Agreement where such failure arises due to events beyond its reasonable control, including but not limited to acts of God, pandemics, natural disasters, governmental actions, wars, riots, strikes, or other similar events (\"Force Majeure\"). The affected Party shall promptly notify the other Party and shall use reasonable efforts to resume performance as soon as practicable."
+  );
+
+  // ── 12. ALTERNATIVE DISPUTE RESOLUTION ─────────────────────────────────
+  heading("12. ALTERNATIVE DISPUTE RESOLUTION");
+  p(
+    "The Parties shall endeavour to resolve any dispute arising out of or relating to this Agreement through amicable negotiations. Failing such resolution, the dispute shall be referred to mediation in accordance with the applicable statutory mediation rules."
+  );
+
+  // ── 13. AMENDMENT ───────────────────────────────────────────────────────
+  heading("13. AMENDMENT");
+  p(
+    "This Agreement may only be amended or modified by a written instrument executed and signed by both Parties."
+  );
+
+  // ── 14. WAIVER ──────────────────────────────────────────────────────────
+  heading("14. WAIVER");
+  p(
+    "Failure by either Party to enforce any provision of this Agreement shall not constitute a waiver of such provision or of the right to enforce it at a later time."
+  );
+
+  // ── 15. GOVERNING LAW ───────────────────────────────────────────────────
+  heading("15. GOVERNING LAW");
+  p(
+    `This Agreement shall be governed by and construed in accordance with the laws of ${u(values.governingLaw, 16)}.`
+  );
+
+  // ── 16. ATTORNEYS' FEES ─────────────────────────────────────────────────
+  heading("16. ATTORNEYS' FEES");
+  p(
+    "In the event of any legal action or proceeding arising out of this Agreement, the prevailing Party shall be entitled to recover reasonable legal fees and costs in addition to any other relief awarded."
+  );
+
+  // ── 17. SIGNATORIES ─────────────────────────────────────────────────────
+  heading("17. SIGNATORIES");
   p("IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above.");
+  y += 4;
 
-  uf("Authorized Signatory (Buyer) - Name", v.buyerSignName);
-  uf("Designation", v.buyerDesignation);
-  uf("Signature", v.buyerSignature);
-  uf("Date", v.buyerSignDate);
-  y += 1.2;
-  uf("Authorized Signatory (Referrer) - Name", v.referrerSignName);
-  uf("Designation", v.referrerDesignation);
-  uf("Signature", v.referrerSignature);
-  uf("Date", v.referrerSignDate);
+  // Two-column signature block matching draft exactly
+  const col1 = m;
+  const col2 = w / 2 + 4;
+  checkBreak(40);
+  doc.setFont("helvetica", "bold");
+  doc.text("Authorized Signatory (Buyer)", col1, y);
+  doc.text("Authorized Signatory (Referrer)", col2, y);
+  y += 7;
+
+  const twoSigLine = (label: string, lv: string, rv: string) => {
+    checkBreak(lh + 3);
+    const lt = `${label}: `;
+    doc.setFont("helvetica", "normal");
+    doc.text(lt, col1, y);
+    const lx = col1 + doc.getTextWidth(lt);
+    const ls = (lv || "").trim();
+    if (ls) { doc.text(ls, lx, y); doc.setLineWidth(0.22); doc.line(lx, y + 1.1, lx + Math.max(10, doc.getTextWidth(ls)), y + 1.1); }
+    else { doc.setLineWidth(0.22); doc.line(lx, y + 1.1, lx + 38, y + 1.1); }
+    doc.text(lt, col2, y);
+    const rx = col2 + doc.getTextWidth(lt);
+    const rs = (rv || "").trim();
+    if (rs) { doc.text(rs, rx, y); doc.line(rx, y + 1.1, rx + Math.max(10, doc.getTextWidth(rs)), y + 1.1); }
+    else { doc.line(rx, y + 1.1, rx + 38, y + 1.1); }
+    y += lh + 3;
+  };
+
+  twoSigLine("Name", values.buyerSignName, values.referrerSignName);
+  twoSigLine("Designation", values.buyerDesignation, values.referrerDesignation);
+  twoSigLine("Signature", "", "");
+  twoSigLine("Date", values.buyerSignDate, values.referrerSignDate);
 
   doc.save("referral_fee_agreement.pdf");
 };
@@ -176,4 +272,3 @@ export default function ReferralFeeAgreementForm() {
     />
   );
 }
-

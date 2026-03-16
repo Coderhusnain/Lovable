@@ -3,398 +3,295 @@ import { jsPDF } from "jspdf";
 
 const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
-    label: "Jurisdiction",
+    label: "Effective Date & Parties",
     fields: [
-      {
-        name: "country",
-        label: "Country",
-        type: "select",
-        required: true,
-        options: [
-          { value: "United States", label: "United States" },
-          { value: "Canada", label: "Canada" },
-          { value: "United Kingdom", label: "United Kingdom" },
-          { value: "Australia", label: "Australia" },
-          { value: "Pakistan", label: "Pakistan" },
-          { value: "Other", label: "Other" },
-        ],
-      },
-      {
-        name: "province",
-        label: "Province/State/Region",
-        type: "select",
-        required: true,
-        dependsOn: "country",
-        getOptions: (values) => {
-          if (values.country === "United States") {
-            return [
-              { value: "California", label: "California" },
-              { value: "New York", label: "New York" },
-              { value: "Texas", label: "Texas" },
-              { value: "Florida", label: "Florida" },
-              { value: "Other US State", label: "Other US State" },
-            ];
-          }
-          if (values.country === "Canada") {
-            return [
-              { value: "Ontario", label: "Ontario" },
-              { value: "Quebec", label: "Quebec" },
-              { value: "British Columbia", label: "British Columbia" },
-              { value: "Alberta", label: "Alberta" },
-              { value: "Other Canadian Province", label: "Other Canadian Province" },
-            ];
-          }
-          if (values.country === "United Kingdom") {
-            return [
-              { value: "England", label: "England" },
-              { value: "Scotland", label: "Scotland" },
-              { value: "Wales", label: "Wales" },
-              { value: "Northern Ireland", label: "Northern Ireland" },
-            ];
-          }
-          if (values.country === "Australia") {
-            return [
-              { value: "New South Wales", label: "New South Wales" },
-              { value: "Victoria", label: "Victoria" },
-              { value: "Queensland", label: "Queensland" },
-              { value: "Western Australia", label: "Western Australia" },
-              { value: "Other Australian State", label: "Other Australian State" },
-            ];
-          }
-          if (values.country === "Pakistan") {
-            return [
-              { value: "Punjab", label: "Punjab" },
-              { value: "Sindh", label: "Sindh" },
-              { value: "Khyber Pakhtunkhwa", label: "Khyber Pakhtunkhwa" },
-              { value: "Balochistan", label: "Balochistan" },
-              { value: "Islamabad Capital Territory", label: "Islamabad Capital Territory" },
-              { value: "Gilgit-Baltistan", label: "Gilgit-Baltistan" },
-              { value: "Azad Jammu and Kashmir", label: "Azad Jammu and Kashmir" },
-            ];
-          }
-          return [{ value: "Other Region", label: "Other Region" }];
-        },
-      },
-      { name: "city", label: "City", type: "text", required: true },
-      { name: "state", label: "State (optional text)", type: "text", required: false },
+      { name: "effectiveDate", label: "Effective date", type: "date", required: true },
+      { name: "party1Name", label: "Party 1 name", type: "text", required: true },
+      { name: "party1Address", label: "Party 1 address", type: "text", required: true },
+      { name: "party2Name", label: "Party 2 name", type: "text", required: true },
+      { name: "party2Address", label: "Party 2 address", type: "text", required: true },
+      { name: "additionalParty1", label: "Additional party reference 1 (optional — header line)", type: "text", required: false },
+      { name: "additionalParty2", label: "Additional party reference 2 (optional — header line)", type: "text", required: false },
     ],
   },
   {
-    label: "Parties and Effective Date",
+    label: "Recitals & Scope",
     fields: [
-      { name: "effectiveDate", label: "Effective Date", type: "date", required: true },
-      { name: "party1Name", label: "Party 1 Name", type: "text", required: true },
-      { name: "party1Address", label: "Party 1 Address", type: "textarea", required: true },
-      { name: "party2Name", label: "Party 2 Name", type: "text", required: true },
-      { name: "party2Address", label: "Party 2 Address", type: "textarea", required: true },
-      {
-        name: "additionalParty1",
-        label: "Additional Party Reference 1 (optional)",
-        type: "text",
-        required: false,
-        placeholder: "Used in header line: 'and ____ and ____'",
-      },
-      {
-        name: "additionalParty2",
-        label: "Additional Party Reference 2 (optional)",
-        type: "text",
-        required: false,
-      },
+      { name: "recitalParty1", label: "Recital Party 1 name (WHEREAS clause)", type: "text", required: false },
+      { name: "recitalParty2", label: "Recital Party 2 name (WHEREAS clause)", type: "text", required: false },
+      { name: "scopeActivities", label: "Scope of marketing activities (clause 1)", type: "textarea", required: false },
     ],
   },
   {
-    label: "Recitals and Scope",
+    label: "Tracking of Users",
     fields: [
-      { name: "recitalParty1", label: "Recital Party Name 1", type: "text", required: true },
-      { name: "recitalParty2", label: "Recital Party Name 2", type: "text", required: true },
-      {
-        name: "scopeActivities",
-        label: "Scope of Activities text",
-        type: "textarea",
-        required: true,
-        placeholder: "The Parties shall carry out the marketing activities as decided ...",
-      },
-      {
-        name: "considerationStatement",
-        label: "Consideration statement",
-        type: "textarea",
-        required: true,
-        placeholder: "Each Party acknowledges that its obligations ... constitute good and valuable consideration...",
-      },
+      { name: "trackingA1", label: "Tracking (a) — 1st party implementing", type: "text", required: false },
+      { name: "trackingA2", label: "Tracking (a) — enabled party identifying users", type: "text", required: false },
+      { name: "trackingA3", label: "Tracking (a) — source site name", type: "text", required: false },
+      { name: "trackingA4", label: "Tracking (a) — destination site name", type: "text", required: false },
+      { name: "trackingA5", label: "Tracking (a) — services label", type: "text", required: false },
+      { name: "trackingB1", label: "Tracking (b) — 1st party implementing", type: "text", required: false },
+      { name: "trackingB2", label: "Tracking (b) — enabled party identifying users", type: "text", required: false },
+      { name: "trackingB3", label: "Tracking (b) — source site name", type: "text", required: false },
+      { name: "trackingB4", label: "Tracking (b) — destination site name", type: "text", required: false },
+      { name: "trackingB5", label: "Tracking (b) — services label", type: "text", required: false },
     ],
   },
   {
-    label: "Reporting and Tracking",
+    label: "Term & Termination",
     fields: [
-      { name: "trackingPartyA", label: "Tracking subsection (a): first blank", type: "text", required: true },
-      { name: "trackingPartyB", label: "Tracking subsection (a): second blank", type: "text", required: true },
-      { name: "trackingSiteA", label: "Tracking subsection (a): source site name", type: "text", required: true },
-      { name: "trackingSiteB", label: "Tracking subsection (a): destination site name", type: "text", required: true },
-      { name: "trackingServicesA", label: "Tracking subsection (a): services label", type: "text", required: true },
-      { name: "trackingPartyC", label: "Tracking subsection (b): first blank", type: "text", required: true },
-      { name: "trackingPartyD", label: "Tracking subsection (b): second blank", type: "text", required: true },
-      { name: "trackingSiteC", label: "Tracking subsection (b): source site name", type: "text", required: true },
-      { name: "trackingSiteD", label: "Tracking subsection (b): destination site name", type: "text", required: true },
-      { name: "trackingServicesB", label: "Tracking subsection (b): services label", type: "text", required: true },
+      { name: "initialTermMonths", label: "Initial term (months, clause 5)", type: "text", required: false, placeholder: "6" },
+      { name: "renewalTermMonths", label: "Renewal term (months, clause 5)", type: "text", required: false, placeholder: "6" },
+      { name: "causeCureDays", label: "Cure period for cause termination (days, clause 5a)", type: "text", required: false, placeholder: "30" },
+      { name: "convenienceNoticeDays", label: "Convenience termination notice (days, clause 5b)", type: "text", required: false, placeholder: "30" },
     ],
   },
   {
-    label: "Term and Liability",
+    label: "Liability & Governing Law",
     fields: [
-      { name: "initialTermMonths", label: "Initial Term (months)", type: "number", required: true, placeholder: "6" },
-      { name: "renewalTermMonths", label: "Renewal Term (months)", type: "number", required: true, placeholder: "6" },
-      { name: "causeCureDays", label: "Cure period for cause termination (days)", type: "number", required: true, placeholder: "30" },
-      { name: "convenienceNoticeDays", label: "Convenience termination notice (days)", type: "number", required: true, placeholder: "30" },
-      { name: "liabilityCap", label: "Liability cap amount", type: "text", required: true, placeholder: "$-----------" },
-      { name: "governingLawState", label: "Governing Law State", type: "text", required: true },
-      { name: "disputeVenue", label: "Dispute Court Location", type: "text", required: true },
+      { name: "liabilityCap", label: "Liability cap amount (clause 9)", type: "text", required: false },
+      { name: "governingState", label: "Governing law state (clause 11i)", type: "text", required: true },
+      { name: "disputeVenue", label: "Dispute court location (clause 11i)", type: "text", required: false },
+      { name: "recordsRetentionYears", label: "Records retention years (clause 11k)", type: "text", required: false, placeholder: "1" },
     ],
   },
   {
-    label: "Notices, Records and Signatories",
+    label: "Signatures",
     fields: [
-      { name: "noticeAddress1", label: "Notice Address for Party 1", type: "textarea", required: true },
-      { name: "noticeAddress2", label: "Notice Address for Party 2", type: "textarea", required: true },
-      { name: "recordsRetentionYears", label: "Records retention (years)", type: "number", required: true, placeholder: "1" },
-      { name: "recordsNoticeDays", label: "Reasonable notice for record access (days)", type: "number", required: true, placeholder: "10" },
-      { name: "party1By", label: "Party 1 By (signature line)", type: "text", required: true },
-      { name: "party1Signer", label: "Party 1 Signer Name", type: "text", required: true },
-      { name: "party1Title", label: "Party 1 Title", type: "text", required: true },
-      { name: "party1Date", label: "Party 1 Date", type: "date", required: true },
-      { name: "party2By", label: "Party 2 By (signature line)", type: "text", required: true },
-      { name: "party2Signer", label: "Party 2 Signer Name", type: "text", required: true },
-      { name: "party2Title", label: "Party 2 Title", type: "text", required: true },
-      { name: "party2Date", label: "Party 2 Date", type: "date", required: true },
+      { name: "party1By", label: "Party 1 — By (authorized signatory)", type: "text", required: false },
+      { name: "party1SignerName", label: "Party 1 — Name", type: "text", required: false },
+      { name: "party1Title", label: "Party 1 — Title", type: "text", required: false },
+      { name: "party1Date", label: "Party 1 — Date", type: "date", required: false },
+      { name: "party2By", label: "Party 2 — By (authorized signatory)", type: "text", required: false },
+      { name: "party2SignerName", label: "Party 2 — Name", type: "text", required: false },
+      { name: "party2Title", label: "Party 2 — Title", type: "text", required: false },
+      { name: "party2Date", label: "Party 2 — Date", type: "date", required: false },
     ],
   },
 ];
 
-const generatePDF = (v: Record<string, string>) => {
+const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const pageWidth = 210;
-  const margin = 16;
-  const textWidth = pageWidth - margin * 2;
-  const lineHeight = 5.4;
-  const pageBottom = 282;
-  let y = 18;
+  const w = 210, m = 18, tw = w - m * 2, lh = 5.6, limit = 280;
+  let y = 20;
 
-  const u = (value?: string, min = 12) => {
-    const cleaned = (value || "").trim();
-    return cleaned || "_".repeat(min);
-  };
+  const u = (v?: string, n = 18) => (v || "").trim() || "_".repeat(n);
+  const checkBreak = (needed = lh) => { if (y + needed > limit) { doc.addPage(); y = 20; } };
 
-  const ensure = (needed = 10) => {
-    if (y + needed > pageBottom) {
-      doc.addPage();
-      y = 18;
-    }
-  };
-
-  const p = (text: string, bold = false, gap = 1.7) => {
-    const lines = doc.splitTextToSize(text, textWidth);
-    ensure(lines.length * lineHeight + gap);
-    doc.setFont("times", bold ? "bold" : "normal");
+  const p = (text: string, bold = false, gap = 2) => {
+    const lines = doc.splitTextToSize(text, tw);
+    checkBreak(lines.length * lh + gap);
+    doc.setFont("helvetica", bold ? "bold" : "normal");
     doc.setFontSize(10.5);
-    doc.text(lines, margin, y);
-    y += lines.length * lineHeight + gap;
+    doc.text(lines, m, y);
+    y += lines.length * lh + gap;
   };
 
-  const uf = (label: string, value?: string, min = 14) => {
-    ensure(7.5);
+  const heading = (text: string) => {
+    y += 1;
+    checkBreak(lh + 3);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10.5);
+    doc.text(text, m, y);
+    y += lh + 3;
+  };
+
+  const subHeading = (text: string) => {
+    checkBreak(lh + 2);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10.5);
+    doc.text(text, m, y);
+    y += lh + 2;
+  };
+
+  const bullet = (text: string) => {
+    const lines = doc.splitTextToSize("\u2022  " + text, tw - 6);
+    checkBreak(lines.length * lh + 2);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m + 6, y);
+    y += lines.length * lh + 2;
+  };
+
+  const romanItem = (num: string, text: string) => {
+    const full = `${num}. ${text}`;
+    const lines = doc.splitTextToSize(full, tw - 6);
+    checkBreak(lines.length * lh + 2);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text(lines, m + 6, y);
+    y += lines.length * lh + 2;
+  };
+
+  const sigLine = (label: string, val?: string, minChars = 26, gap = 2.5) => {
+    const shown = (val || "").trim();
     const labelText = `${label}: `;
-    doc.setFont("times", "normal");
+    checkBreak(lh + gap);
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(10.5);
-    doc.text(labelText, margin, y);
-    const startX = margin + doc.getTextWidth(labelText);
-    const shown = (value || "").trim();
-    const fill = shown || "_".repeat(min);
-    doc.text(fill, startX, y);
-    doc.line(startX, y + 1.1, startX + doc.getTextWidth(fill), y + 1.1);
-    y += 6.1;
+    doc.text(labelText, m, y);
+    const x = m + doc.getTextWidth(labelText);
+    const lineEnd = shown ? x + Math.max(10, doc.getTextWidth(shown)) : x + doc.getTextWidth("_".repeat(minChars));
+    if (shown) doc.text(shown, x, y);
+    doc.setLineWidth(0.22);
+    doc.line(x, y + 1.1, lineEnd, y + 1.1);
+    y += lh + gap;
   };
 
-  const jurisdiction = `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`;
-
-  doc.setFont("times", "bold");
+  // ── TITLE ──────────────────────────────────────────────────────────────
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   const title = "MARKETING AGREEMENT";
-  doc.text(title, pageWidth / 2, y, { align: "center" });
-  const titleWidth = doc.getTextWidth(title);
-  doc.line(pageWidth / 2 - titleWidth / 2, y + 1.1, pageWidth / 2 + titleWidth / 2, y + 1.1);
+  doc.text(title, w / 2, y, { align: "center" });
+  const tW = doc.getTextWidth(title);
+  doc.setLineWidth(0.35);
+  doc.line(w / 2 - tW / 2, y + 1.3, w / 2 + tW / 2, y + 1.3);
   y += 10;
+  doc.setFontSize(10.5);
 
-  uf("Jurisdiction", jurisdiction);
+  // ── PREAMBLE ────────────────────────────────────────────────────────────
+  const ap1 = (values.additionalParty1 || "").trim();
+  const ap2 = (values.additionalParty2 || "").trim();
+  const extraParties = ap1 || ap2 ? `, and ${ap1 ? ap1 : u("", 14)} and ${ap2 ? ap2 : u("", 14)}` : "";
+  p(
+    `This Marketing Agreement (this "Agreement"), dated as of ${u(values.effectiveDate, 12)} (the "Effective Date"), is entered into by and between ${u(values.party1Name, 20)}, located at ${u(values.party1Address, 20)}, and ${u(values.party2Name, 20)}, located at ${u(values.party2Address, 20)}${extraParties} (each individually, a "Party," and collectively, the "Parties").`
+  );
+  y += 1;
 
-  p(
-    `This Marketing Agreement (this "Agreement"), dated as of ${u(v.effectiveDate)} (the "Effective Date"), is entered into by and between ${u(v.party1Name)}, located at ${u(v.party1Address)}, and ${u(v.party2Name)}, located at ${u(v.party2Address)}, and ${u(v.additionalParty1)} and ${u(v.additionalParty2)} (each individually, a "Party," and collectively, the "Parties").`
-  );
-
-  p("RECITALS", true);
-  p(
-    `WHEREAS, ${u(v.recitalParty1)} and ${u(v.recitalParty2)} desire to establish an exclusive strategic marketing relationship pursuant to which each Party shall promote the other Party's products and services to its respective customers;`
-  );
-  p(
-    'WHEREAS, this Agreement may be amended only by a written instrument executed by both Parties (an "Amendment"), and any Amendment shall be governed by the terms of this Agreement unless expressly stated otherwise.'
-  );
+  // ── RECITALS ────────────────────────────────────────────────────────────
+  heading("RECITALS");
+  p(`WHEREAS, ${u(values.recitalParty1 || values.party1Name, 16)} and ${u(values.recitalParty2 || values.party2Name, 16)} desire to establish an exclusive strategic marketing relationship pursuant to which each Party shall promote the other Party\u2019s products and services to its respective customers;`);
+  p("WHEREAS, this Agreement may be amended only by a written instrument executed by both Parties (an \u201cAmendment\u201d), and any Amendment shall be governed by the terms of this Agreement unless expressly stated otherwise.");
   p("NOW, THEREFORE, in consideration of the mutual covenants set forth herein, the Parties agree as follows:");
+  y += 1;
 
-  p("1. SCOPE OF ACTIVITIES", true);
-  p(`The Parties shall carry out the marketing activities as decided ${u(v.scopeActivities)}. ${u(v.considerationStatement)}`);
-
-  p("2. REPORTING", true);
-  p(
-    "Within ten (10) days following the end of each calendar month during the Term, each Party shall furnish to the other Party (or provide access to) a monthly report containing all data reasonably necessary to determine the value (including but not limited to traffic, completed sales, revenue, and conversions) generated from the activities performed under this Agreement."
-  );
-
-  p("3. TRACKING OF USERS", true);
-  p(
-    `a. ${u(v.trackingPartyA)} shall implement and maintain reasonable tracking mechanisms enabling ${u(v.trackingPartyB)} to accurately identify users linking from the ${u(v.trackingSiteA)} Site to the ${u(v.trackingSiteB)} Site and purchasing ${u(v.trackingServicesA)} Services.`
-  );
-  p(
-    `b. ${u(v.trackingPartyC)} shall implement and maintain reasonable tracking mechanisms enabling ${u(v.trackingPartyD)} to accurately identify users linking from the ${u(v.trackingSiteC)} Site to the ${u(v.trackingSiteD)} Site and purchasing ${u(v.trackingServicesB)} Services.`
+  // ── 1. SCOPE OF ACTIVITIES ────────────────────────────────────────────
+  heading("1. SCOPE OF ACTIVITIES");
+  const scope = (values.scopeActivities || "").trim();
+  p(scope
+    ? `The Parties shall carry out the marketing activities as decided. ${scope}. Each Party acknowledges that its obligations and constitute good and valuable consideration for this Agreement.`
+    : "The Parties shall carry out the marketing activities as decided. Each Party acknowledges that its obligations and constitute good and valuable consideration for this Agreement."
   );
 
-  p("4. LICENSES", true);
-  p(
-    'Each Party grants to the other Party a non-exclusive, non-transferable, royalty-free license to use its trade names, trademarks, logos, and service marks (collectively, the "Marks") solely in connection with the performance of this Agreement.'
-  );
-  p("No Party shall use the other Party's Marks without prior written approval. No modifications to any Marks may be made without express written consent.");
-  p(
-    "Each Party acknowledges that all rights, title, and interest in and to the other Party's Marks and related goodwill remain exclusively with that Party. Neither Party shall contest, nor assist in contesting, the validity of any Marks, nor utilize marks that may cause confusion therewith."
-  );
-  p("All use of the other Party's Marks shall cease immediately upon request and shall automatically terminate upon expiration or termination of this Agreement.");
+  // ── 2. REPORTING ──────────────────────────────────────────────────────
+  heading("2. REPORTING");
+  p("Within ten (10) days following the end of each calendar month during the Term, each Party shall furnish to the other Party (or provide access to) a monthly report containing all data reasonably necessary to determine the value (including but not limited to traffic, completed sales, revenue, and conversions) generated from the activities performed under this Agreement.");
 
-  p("5. TERM AND TERMINATION", true);
-  p(
-    `The term of this Agreement shall commence on the Effective Date and shall continue for ${u(v.initialTermMonths, 1)} (${u(v.initialTermMonths, 1)}) months (the "Initial Term"), unless terminated earlier according to this Agreement.`
-  );
-  p("The Launch Date shall be the date on which each Party's promotional offer goes live on the other Party's website.");
-  p(
-    `Following the Initial Term, this Agreement shall automatically renew for successive ${u(v.renewalTermMonths, 1)}-month periods (each, a "Renewal Term") unless terminated as provided below.`
-  );
-  p("a. Termination for Cause", true);
-  p(
-    `Either Party may terminate this Agreement immediately upon written notice if the other Party materially defaults and fails to cure such default within ${u(v.causeCureDays, 1)} (${u(v.causeCureDays, 1)}) days of receiving written notice thereof.`
-  );
-  p("b. Termination for Convenience", true);
-  p(
-    `Either Party may terminate this Agreement for any reason after the Initial Term upon ${u(v.convenienceNoticeDays, 1)} (${u(v.convenienceNoticeDays, 1)}) days' prior written notice.`
-  );
-  p("c. Effect of Termination", true);
-  p("i. All promotions of the other Party's services shall immediately cease;");
-  p("ii. Use of any Marks and technology of the other Party shall cease;");
-  p("iii. The other Party's services shall no longer be displayed or made available through any website, platform, or channel;");
-  p("iv. Upon written request, all confidential materials shall be returned or destroyed.");
+  // ── 3. TRACKING OF USERS ──────────────────────────────────────────────
+  heading("3. TRACKING OF USERS");
+  p(`a. ${u(values.trackingA1, 10)} shall implement and maintain reasonable tracking mechanisms enabling ${u(values.trackingA2, 10)} to accurately identify users linking from the ${u(values.trackingA3, 10)} Site to the ${u(values.trackingA4, 10)} Site and purchasing ${u(values.trackingA5, 10)} Services.`);
+  p(`b. ${u(values.trackingB1, 10)} shall implement and maintain reasonable tracking mechanisms enabling ${u(values.trackingB2, 10)} to accurately identify users linking from the ${u(values.trackingB3, 10)} Site to the ${u(values.trackingB4, 10)} Site and purchasing ${u(values.trackingB5, 10)} Services.`);
+
+  // ── 4. LICENSES ───────────────────────────────────────────────────────
+  heading("4. LICENSES");
+  p("Each Party grants to the other Party a non-exclusive, non-transferable, royalty-free license to use its trade names, trademarks, logos, and service marks (collectively, the \u201cMarks\u201d) solely in connection with the performance of this Agreement.");
+  p("No Party shall use the other Party\u2019s Marks without prior written approval. No modifications to any Marks may be made without express written consent.");
+  p("Each Party acknowledges that all rights, title, and interest in and to the other Party\u2019s Marks and related goodwill remain exclusively with that Party. Neither Party shall contest, nor assist in contesting, the validity of any Marks, nor utilize marks that may cause confusion therewith.");
+  p("All use of the other Party\u2019s Marks shall cease immediately upon request and shall automatically terminate upon expiration or termination of this Agreement.");
+
+  // ── 5. TERM AND TERMINATION ───────────────────────────────────────────
+  heading("5. TERM AND TERMINATION");
+  p(`The term of this Agreement shall commence on the Effective Date and shall continue for ${u(values.initialTermMonths || "six (6)", 8)} months (the "Initial Term"), unless terminated earlier according to this Agreement.`);
+  p("The Launch Date shall be the date on which each Party\u2019s promotional offer goes live on the other Party\u2019s website.");
+  p(`Following the Initial Term, this Agreement shall automatically renew for successive ${u(values.renewalTermMonths || "six", 6)}-month periods (each, a "Renewal Term") unless terminated as provided below.`);
+  subHeading("a. Termination for Cause");
+  p(`Either Party may terminate this Agreement immediately upon written notice if the other Party materially defaults and fails to cure such default within ${u(values.causeCureDays || "thirty (30)", 8)} days of receiving written notice thereof.`);
+  subHeading("b. Termination for Convenience");
+  p(`Either Party may terminate this Agreement for any reason after the Initial Term upon ${u(values.convenienceNoticeDays || "thirty (30)", 8)} days\u2019 prior written notice.`);
+  subHeading("c. Effect of Termination");
+  p("Upon termination or expiration:");
+  romanItem("i", "All promotions of the other Party\u2019s services shall immediately cease;");
+  romanItem("ii", "Use of any Marks and technology of the other Party shall cease;");
+  romanItem("iii", "The other Party\u2019s services shall no longer be displayed or made available through any website, platform, or channel;");
+  romanItem("iv", "Upon written request, all confidential materials shall be returned or destroyed.");
   p("Termination shall not relieve either Party of obligations arising prior to the termination date.");
 
-  p("6. WARRANTIES; DISCLAIMER", true);
-  p("a. Warranties", true);
+  // ── 6. WARRANTIES; DISCLAIMER ─────────────────────────────────────────
+  heading("6. WARRANTIES; DISCLAIMER");
+  subHeading("a. Warranties");
   p("Each Party represents and warrants that:");
-  p("i. It has full authority to enter into and perform its obligations under this Agreement;");
-  p("ii. Execution and performance will not violate any existing agreement;");
-  p("iii. This Agreement constitutes a legal, valid, and binding obligation;");
-  p("iv. No warranties are made by either Party other than those expressly stated in this Agreement.");
-  p("b. Disclaimer", true);
-  p(
-    "EXCEPT AS EXPRESSLY PROVIDED HEREIN, EACH PARTY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE."
-  );
+  romanItem("i", "It has full authority to enter into and perform its obligations under this Agreement;");
+  romanItem("ii", "Execution and performance will not violate any existing agreement;");
+  romanItem("iii", "This Agreement constitutes a legal, valid, and binding obligation;");
+  romanItem("iv", "No warranties are made by either Party other than those expressly stated in this Agreement.");
+  subHeading("b. Disclaimer");
+  p("EXCEPT AS EXPRESSLY PROVIDED HEREIN, EACH PARTY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR A PARTICULAR PURPOSE.");
 
-  p("7. INDEMNIFICATION", true);
-  p("a. Indemnification by Party 1", true);
-  p(
-    `${u(v.party1Name)} shall indemnify, defend, and hold harmless ${u(v.party2Name)} and its officers, directors, employees, and agents from all claims, costs, liabilities, and losses arising out of allegations that ${u(v.party1Name)}'s technology or Marks infringe upon any third-party intellectual property rights.`
-  );
-  p("b. Indemnification by Party 2", true);
-  p(
-    `${u(v.party2Name)} shall indemnify, defend, and hold harmless ${u(v.party1Name)} under the same terms and conditions stated above.`
-  );
-  p("c. Procedures", true);
-  p(
-    "The indemnified Party shall promptly notify the indemnifying Party of any claim. The indemnifying Party shall control the defense and settlement of the claim. No settlement may be entered that imposes liability or restrictions on the indemnified Party without its written consent. The indemnified Party may participate in the defense at its own cost."
-  );
+  // ── 7. INDEMNIFICATION ────────────────────────────────────────────────
+  heading("7. INDEMNIFICATION");
+  subHeading(`a. Indemnification by ${u(values.party1Name, 12)}`);
+  p(`${u(values.party1Name, 16)} shall indemnify, defend, and hold harmless ${u(values.party2Name, 16)} and its officers, directors, employees, and agents from all claims, costs, liabilities, and losses arising out of allegations that ${u(values.party1Name, 16)}\u2019s technology or Marks infringe upon any third-party intellectual property rights.`);
+  subHeading(`b. Indemnification by ${u(values.party2Name, 12)}`);
+  p(`${u(values.party2Name, 16)} shall indemnify, defend, and hold harmless ${u(values.party1Name, 16)} under the same terms and conditions stated above.`);
+  subHeading("c. Procedures");
+  p("The indemnified Party shall promptly notify the indemnifying Party of any claim. The indemnifying Party shall control the defense and settlement of the claim. No settlement may be entered that imposes liability or restrictions on the indemnified Party without its written consent. The indemnified Party may participate in the defense at its own cost.");
 
-  p("8. CONFIDENTIALITY", true);
-  p("a. Protection of Information", true);
-  p(
-    'During the Term, the Parties may exchange confidential information relating to business operations, products, pricing, employees, technology, and other proprietary matters ("Confidential Information").'
-  );
+  // ── 8. CONFIDENTIALITY ────────────────────────────────────────────────
+  heading("8. CONFIDENTIALITY");
+  subHeading("a. Protection of Information");
+  p("During the Term, the Parties may exchange confidential information relating to business operations, products, pricing, employees, technology, and other proprietary matters (\u201cConfidential Information\u201d).");
   p("Confidential Information shall exclude information that:");
-  p("i. becomes public through no wrongful act;");
-  p("ii. was previously known to the receiving Party;");
-  p("iii. enters the public domain through no fault of the receiving Party.");
-  p(
-    "Confidential Information shall be kept strictly confidential and used solely for performance under this Agreement. Required disclosures (e.g., subpoenas) are permitted only with reasonable prior notice to the other Party."
-  );
-  p("b. Injunctive Relief", true);
-  p(
-    "Improper disclosure or misuse of Confidential Information may cause irreparable harm. The harmed Party is entitled to injunctive relief without the need to prove monetary damages."
-  );
-  p("c. Survival", true);
+  romanItem("i", "becomes public through no wrongful act;");
+  romanItem("ii", "was previously known to the receiving Party;");
+  romanItem("iii", "enters the public domain through no fault of the receiving Party.");
+  p("Confidential Information shall be kept strictly confidential and used solely for performance under this Agreement. Required disclosures (e.g., subpoenas) are permitted only with reasonable prior notice to the other Party.");
+  subHeading("b. Injunctive Relief");
+  p("Improper disclosure or misuse of Confidential Information may cause irreparable harm. The harmed Party is entitled to injunctive relief without the need to prove monetary damages.");
+  subHeading("c. Survival");
   p("Confidentiality obligations shall survive termination of this Agreement.");
 
-  p("9. LIMITATION OF LIABILITY", true);
-  p(
-    "NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFITS OR BUSINESS OPPORTUNITY, EVEN IF ADVISED OF THE POSSIBILITY THEREOF."
-  );
-  p(
-    `Each Party's total cumulative liability arising out of this Agreement shall not exceed ${u(v.liabilityCap)}, except with respect to obligations under Indemnification and Confidentiality.`
-  );
+  // ── 9. LIMITATION OF LIABILITY ────────────────────────────────────────
+  heading("9. LIMITATION OF LIABILITY");
+  p("NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFITS OR BUSINESS OPPORTUNITY, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.");
+  p(`Each Party\u2019s total cumulative liability arising out of this Agreement shall not exceed ${u(values.liabilityCap, 10)}, except with respect to obligations under Indemnification and Confidentiality.`);
 
-  p("10. PUBLICITY", true);
-  p(
-    "No public announcement or press release referring to the other Party shall be made without prior written approval, except statements identifying the other Party as a customer or strategic marketing partner. Such approval shall not be unreasonably withheld or delayed."
-  );
+  // ── 10. PUBLICITY ─────────────────────────────────────────────────────
+  heading("10. PUBLICITY");
+  p("No public announcement or press release referring to the other Party shall be made without prior written approval, except statements identifying the other Party as a customer or strategic marketing partner. Such approval shall not be unreasonably withheld or delayed.");
 
-  p("11. MISCELLANEOUS", true);
-  p("a. Notices", true);
-  p(
-    `All notices shall be in writing and delivered to the addresses listed above via express mail or courier with confirmed receipt. Party 1 notices: ${u(v.noticeAddress1)}. Party 2 notices: ${u(v.noticeAddress2)}. Notices shall be effective upon receipt.`
-  );
-  p("b. Entire Agreement", true);
+  // ── 11. MISCELLANEOUS ─────────────────────────────────────────────────
+  heading("11. MISCELLANEOUS");
+  subHeading("a. Notices");
+  p("All notices shall be in writing and delivered to the addresses listed above via express mail or courier with confirmed receipt. Notices shall be effective upon receipt.");
+  subHeading("b. Entire Agreement");
   p("This Agreement constitutes the complete and exclusive agreement between the Parties and supersedes all prior understandings relating to the subject matter.");
-  p("c. Waiver", true);
+  subHeading("c. Waiver");
   p("No waiver is effective unless in writing. A waiver applies only to the specific instance and does not constitute a continuing waiver.");
-  p("d. Force Majeure", true);
-  p(
-    "Neither Party shall be liable for failure to perform due to circumstances beyond its reasonable control, including natural disasters, pandemics, acts of war, riots, government actions, or labor disputes."
-  );
-  p("e. Headings", true);
+  subHeading("d. Force Majeure");
+  p("Neither Party shall be liable for failure to perform due to circumstances beyond its reasonable control, including natural disasters, pandemics, acts of war, riots, government actions, or labor disputes.");
+  subHeading("e. Headings");
   p("Headings are for convenience only and shall not affect interpretation.");
-  p("f. Amendments and Severability", true);
-  p(
-    "Any modification must be in writing and signed by both Parties. Invalid provisions shall be replaced with enforceable provisions that most closely reflect the Parties' original intent."
-  );
-  p("g. Assignment", true);
-  p(
-    "No Party may assign its rights or obligations without prior written consent, except in connection with a merger or sale of substantially all assets, with notice."
-  );
-  p("h. Independent Contractors", true);
+  subHeading("f. Amendments and Severability");
+  p("Any modification must be in writing and signed by both Parties. Invalid provisions shall be replaced with enforceable provisions that most closely reflect the Parties\u2019 original intent.");
+  subHeading("g. Assignment");
+  p("No Party may assign its rights or obligations without prior written consent, except in connection with a merger or sale of substantially all assets, with notice.");
+  subHeading("h. Independent Contractors");
   p("The Parties are independent contractors and nothing herein creates a partnership, joint venture, agency, or employment relationship.");
-  p("i. Governing Law", true);
-  p(
-    `This Agreement shall be governed by the laws of the State of ${u(v.governingLawState)}. All disputes shall be resolved exclusively in the courts located in ${u(v.disputeVenue)}.`
-  );
-  p("j. Construction", true);
-  p(
-    "Any conflicting or ambiguous provisions shall be interpreted to reflect the Parties' original intentions without affecting the enforceability of the remaining Agreement."
-  );
-  p("k. Records", true);
-  p(
-    `For ${u(v.recordsRetentionYears, 1)} (${u(v.recordsRetentionYears, 1)}) year(s) following the Term, each Party shall maintain accurate records relating to customer transactions and shall make such records available upon reasonable notice of ${u(v.recordsNoticeDays, 1)} (${u(v.recordsNoticeDays, 1)}) day(s).`
-  );
+  subHeading("i. Governing Law");
+  p(`This Agreement shall be governed by the laws of the State of ${u(values.governingState, 14)}. All disputes shall be resolved exclusively in the courts located in ${u(values.disputeVenue || values.governingState, 14)}.`);
+  subHeading("j. Construction");
+  p("Any conflicting or ambiguous provisions shall be interpreted to reflect the Parties\u2019 original intentions without affecting the enforceability of the remaining Agreement.");
+  subHeading("k. Records");
+  p(`For ${u(values.recordsRetentionYears || "one (1)", 8)} year following the Term, each Party shall maintain accurate records relating to customer transactions and shall make such records available upon reasonable notice.`);
 
-  p("12. SIGNATORIES", true);
+  // ── 12. SIGNATORIES ───────────────────────────────────────────────────
+  heading("12. SIGNATORIES");
   p("This Agreement is executed by authorized representatives of the Parties as of the Effective Date.");
-  p("Party 1", true);
-  uf("By", v.party1By, 24);
-  uf("Name", v.party1Signer, 24);
-  uf("Title", v.party1Title, 20);
-  uf("Date", v.party1Date, 14);
-  p("Party 2", true);
-  uf("By", v.party2By, 24);
-  uf("Name", v.party2Signer, 24);
-  uf("Title", v.party2Title, 20);
-  uf("Date", v.party2Date, 14);
+  y += 4;
+
+  p("Party 1", true, 1);
+  sigLine("By", values.party1By, 28);
+  sigLine("Name", values.party1SignerName, 28);
+  sigLine("Title", values.party1Title, 28);
+  sigLine("Date", values.party1Date, 20);
+  y += 4;
+
+  checkBreak(40);
+  p("Party 2", true, 1);
+  sigLine("By", values.party2By, 28);
+  sigLine("Name", values.party2SignerName, 28);
+  sigLine("Title", values.party2Title, 28);
+  sigLine("Date", values.party2Date, 20);
 
   doc.save("marketing_agreement.pdf");
 };
@@ -404,10 +301,9 @@ export default function MarketingAgreementForm() {
     <FormWizard
       steps={steps}
       title="Marketing Agreement"
-      subtitle="Complete all 7 steps to generate your document"
+      subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="marketingagreement"
-      preserveStepLayout
     />
   );
 }

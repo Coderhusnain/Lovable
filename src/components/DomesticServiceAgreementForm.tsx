@@ -1,9 +1,3 @@
-export { default } from "./DomesticServiceAgreementDocumentForm";
-export { default } from "./DomesticServiceAgreementDocumentForm";
-export { default } from "./DomesticServiceAgreementDocumentForm";
-// Legacy content intentionally disabled below.
-// Wrapper file should only re-export from document form.
-/*
 import { FormWizard, FieldDef } from "./FormWizard";
 import { jsPDF } from "jspdf";
 
@@ -11,211 +5,360 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   {
     label: "Agreement Date and Place",
     fields: [
-      { name: "agreementDay", label: "Agreement day", type: "number", required: true, placeholder: "23" },
-      { name: "agreementMonth", label: "Agreement month", type: "text", required: true, placeholder: "June" },
-      { name: "agreementYear", label: "Agreement year", type: "number", required: true, placeholder: "2025" },
-      { name: "agreementPlace", label: "Agreement place", type: "text", required: true, placeholder: "Islamabad" },
-      { name: "country", label: "Country", type: "text", required: true },
-      { name: "state", label: "State", type: "text", required: true },
-      { name: "province", label: "Province", type: "text", required: false },
-      { name: "city", label: "City", type: "text", required: false },
+      { name: "agreementDay",   label: "Agreement day",   type: "number", required: true,  placeholder: "23" },
+      { name: "agreementMonth", label: "Agreement month", type: "text",   required: true,  placeholder: "June" },
+      { name: "agreementYear",  label: "Agreement year",  type: "number", required: true,  placeholder: "2025" },
+      { name: "agreementPlace", label: "Agreement place", type: "text",   required: true,  placeholder: "Islamabad" },
+      { name: "country",        label: "Country",         type: "text",   required: true  },
+      { name: "state",          label: "State",           type: "text",   required: true  },
+      { name: "province",       label: "Province",        type: "text",   required: false },
+      { name: "city",           label: "City",            type: "text",   required: false },
     ],
   },
   {
     label: "Parties",
     fields: [
-      { name: "masterName", label: "Master name", type: "text", required: true },
-      { name: "masterAddress", label: "Master full residential address", type: "textarea", required: true },
-      { name: "servantName", label: "Servant name", type: "text", required: true },
+      { name: "masterName",    label: "Master name",                    type: "text",     required: true  },
+      { name: "masterAddress", label: "Master full residential address", type: "textarea", required: true  },
+      { name: "servantName",   label: "Servant name",                   type: "text",     required: true  },
       {
         name: "servantRelationType",
         label: "Servant relation type",
         type: "select",
         required: true,
         options: [
-          { value: "son", label: "Son of" },
+          { value: "son",      label: "Son of"      },
           { value: "daughter", label: "Daughter of" },
-          { value: "wife", label: "Wife of" },
+          { value: "wife",     label: "Wife of"     },
         ],
       },
-      { name: "servantRelationName", label: "Servant relation name", type: "text", required: true },
-      { name: "servantAddress", label: "Servant full residential address", type: "textarea", required: true },
+      { name: "servantRelationName", label: "Servant relation name",                   type: "text",     required: true },
+      { name: "servantAddress",      label: "Servant full residential address",         type: "textarea", required: true },
     ],
   },
   {
     label: "Employment and Duties",
     fields: [
-      { name: "employmentAddress", label: "Place of employment (full residential address)", type: "textarea", required: true },
-      { name: "extraDuty", label: "Any other related domestic tasks (optional)", type: "textarea", required: false },
+      { name: "employmentAddress", label: "Place of employment (full residential address)", type: "textarea", required: true  },
+      { name: "extraDuty",         label: "Any other related domestic tasks (optional)",    type: "textarea", required: false },
     ],
   },
   {
     label: "Code and Prohibited Conduct",
     fields: [
-      { name: "extraConduct", label: "Additional code of conduct term (optional)", type: "textarea", required: false },
+      { name: "extraConduct",    label: "Additional code of conduct term (optional)",  type: "textarea", required: false },
       { name: "extraProhibited", label: "Additional prohibited conduct term (optional)", type: "textarea", required: false },
     ],
   },
   {
     label: "Remuneration and Termination",
     fields: [
-      { name: "monthlyPackage", label: "Monthly package amount", type: "text", required: true, placeholder: "PKR ______" },
-      { name: "payDay", label: "Salary payment day (e.g. 5)", type: "number", required: true, placeholder: "5" },
-      { name: "termYears", label: "Agreement term in years", type: "number", required: true, placeholder: "2" },
-      { name: "terminationNoticeDays", label: "Termination notice days", type: "number", required: true, placeholder: "30" },
-      { name: "governingLawText", label: "Governing law text", type: "text", required: true, placeholder: "laws of state" },
+      { name: "monthlyPackage",       label: "Monthly package amount",          type: "text",   required: true,  placeholder: "PKR ______" },
+      { name: "payDay",               label: "Salary payment day (e.g. 5)",     type: "number", required: true,  placeholder: "5" },
+      { name: "termYears",            label: "Agreement term in years",         type: "number", required: true,  placeholder: "2" },
+      { name: "terminationNoticeDays",label: "Termination notice days",         type: "number", required: true,  placeholder: "30" },
+      { name: "governingLawText",     label: "Governing law text",              type: "text",   required: true,  placeholder: "laws of state" },
     ],
   },
   {
     label: "Master and Servant Signatures",
     fields: [
-      { name: "masterSignName", label: "MASTER Name", type: "text", required: true },
+      { name: "masterSignName",  label: "MASTER Name",      type: "text", required: true },
       { name: "masterSignature", label: "MASTER Signature", type: "text", required: true },
-      { name: "masterCnic", label: "MASTER CNIC No.", type: "text", required: true },
-      { name: "servantSignName", label: "SERVANT Name", type: "text", required: true },
+      { name: "masterCnic",      label: "MASTER CNIC No.",  type: "text", required: true },
+      { name: "servantSignName",  label: "SERVANT Name",      type: "text", required: true },
       { name: "servantSignature", label: "SERVANT Signature", type: "text", required: true },
-      { name: "servantCnic", label: "SERVANT CNIC No.", type: "text", required: true },
+      { name: "servantCnic",      label: "SERVANT CNIC No.",  type: "text", required: true },
     ],
   },
   {
     label: "Witnesses",
     fields: [
-      { name: "w1Name", label: "Witness 1 Name", type: "text", required: true },
+      { name: "w1Name",      label: "Witness 1 Name",      type: "text", required: true },
       { name: "w1Signature", label: "Witness 1 Signature", type: "text", required: true },
-      { name: "w1Cnic", label: "Witness 1 CNIC No.", type: "text", required: true },
-      { name: "w2Name", label: "Witness 2 Name", type: "text", required: true },
+      { name: "w1Cnic",      label: "Witness 1 CNIC No.",  type: "text", required: true },
+      { name: "w2Name",      label: "Witness 2 Name",      type: "text", required: true },
       { name: "w2Signature", label: "Witness 2 Signature", type: "text", required: true },
-      { name: "w2Cnic", label: "Witness 2 CNIC No.", type: "text", required: true },
+      { name: "w2Cnic",      label: "Witness 2 CNIC No.",  type: "text", required: true },
     ],
   },
 ];
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const u = (val?: string, fallback = "____________________") =>
+  val && val.trim() ? val.trim() : fallback;
+
 const generatePDF = (v: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const left = 16;
-  const width = 178;
-  const lh = 5.3;
+  const doc  = new jsPDF({ unit: "mm", format: "a4" });
+  const pageW  = 210;
+  const margin = 16;
+  const textW  = pageW - margin * 2;
+  const lineH  = 5.4;
+  const pageLimit = 282;
   let y = 18;
-  const u = (val?: string, n = 14) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
-  const ensure = (need = 10) => {
-    if (y + need > 285) {
-      doc.addPage();
-      y = 18;
-    }
+
+  // ── Layout helpers ──────────────────────────────────────────────────
+
+  const checkY = (needed: number) => {
+    if (y + needed > pageLimit) { doc.addPage(); y = 18; }
   };
-  const p = (text: string, bold = false, gap = 1.7) => {
-    const lines = doc.splitTextToSize(text, width);
-    ensure(lines.length * lh + gap);
+
+  // Plain body paragraph — normal or bold, optional left indent
+  const p = (text: string, bold = false, indent = 0, gapAfter = 2.5) => {
     doc.setFont("times", bold ? "bold" : "normal");
     doc.setFontSize(10.4);
-    doc.text(lines, left, y);
-    y += lines.length * lh + gap;
-  };
-  const uf = (label: string, value?: string) => {
-    ensure(8);
-    doc.text(label, left, y);
-    const x = left + doc.getTextWidth(label);
-    const s = u(value);
-    doc.text(s, x, y);
-    doc.line(x, y + 1, x + doc.getTextWidth(s), y + 1);
-    y += 6.2;
+    const lines = doc.splitTextToSize(text, textW - indent);
+    checkY(lines.length * lineH + gapAfter);
+    doc.text(lines, margin + indent, y);
+    y += lines.length * lineH + gapAfter;
   };
 
-  const rel = (v.servantRelationType || "son").toLowerCase();
-  const relText = rel === "daughter" ? "daughter/wife of" : rel === "wife" ? "wife of" : "son/daughter/wife of";
-  const jurisdiction = `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}${v.city ? `, ${v.city}` : ""}`;
+  // Bold section heading with extra spacing  e.g. "Purpose of the Agreement"
+  const heading = (text: string) => {
+    checkY(lineH + 7);
+    y += 3;
+    doc.setFont("times", "bold");
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(text, textW);
+    checkY(lines.length * lineH + 3);
+    doc.text(lines, margin, y);
+    y += lines.length * lineH + 3;
+    doc.setFontSize(10.4);
+  };
 
+  // Bullet item with hanging indent
+  const bullet = (text: string, indent = 6) => {
+    doc.setFont("times", "normal");
+    doc.setFontSize(10.4);
+    const lines = doc.splitTextToSize(text, textW - indent);
+    checkY(lines.length * lineH + 2.2);
+    doc.text("\u2022", margin + 1.5, y);
+    doc.text(lines, margin + indent, y);
+    y += lines.length * lineH + 2.2;
+  };
+
+  // Signature / CNIC field row with measured underline
+  const field = (label: string, value: string, lineLen = 65) => {
+    checkY(lineH + 3);
+    doc.setFont("times", "bold");
+    doc.setFontSize(10.4);
+    const lbl = `${label}: `;
+    doc.text(lbl, margin, y);
+    const lblW = doc.getTextWidth(lbl);
+    doc.setFont("times", "normal");
+    const val = value.trim();
+    if (val) {
+      doc.text(val, margin + lblW, y);
+      doc.line(margin + lblW, y + 1.2,
+        margin + lblW + Math.max(lineLen, doc.getTextWidth(val) + 2), y + 1.2);
+    } else {
+      doc.line(margin + lblW, y + 1.2, margin + lblW + lineLen, y + 1.2);
+    }
+    y += lineH + 2.5;
+  };
+
+  // ── TITLE ────────────────────────────────────────────────────────────
   doc.setFont("times", "bold");
-  doc.setFontSize(13);
+  doc.setFontSize(14);
   const title = "DOMESTIC SERVICE AGREEMENT";
-  doc.text(title, 105, y, { align: "center" });
-  const tw = doc.getTextWidth(title);
-  doc.line(105 - tw / 2, y + 1.1, 105 + tw / 2, y + 1.1);
+  doc.text(title, pageW / 2, y, { align: "center" });
+  const halfTW = doc.getTextWidth(title) / 2;
+  doc.line(pageW / 2 - halfTW, y + 1.4, pageW / 2 + halfTW, y + 1.4);
   y += 10;
+  doc.setFontSize(10.4);
 
-  uf("Jurisdiction: ", jurisdiction);
-  p(
-    `This Agreement is made on this ${u(v.agreementDay, 2)} day of ${u(v.agreementMonth, 5)} ${u(v.agreementYear, 4)}, at ${u(v.agreementPlace, 8)}, by and between:`
-  );
-  p(`Party One, ${u(v.masterName)}, residing at ${u(v.masterAddress)}, hereinafter referred to as the "Master",`);
-  p("AND", true);
-  p(
-    `Party Two, ${u(v.servantName)}, ${relText} ${u(v.servantRelationName)}, residing at ${u(v.servantAddress)}, hereinafter referred to as the "Servant".`
-  );
-  p('Collectively referred to as the "Parties".');
+  // ── JURISDICTION LINE ────────────────────────────────────────────────
+  const jurisdiction = [v.state, v.country, v.province, v.city]
+    .filter(Boolean).join(", ");
+  doc.setFont("times", "bold");
+  doc.text("Jurisdiction: ", margin, y);
+  doc.setFont("times", "normal");
+  doc.text(u(jurisdiction, "[Jurisdiction]"), margin + doc.getTextWidth("Jurisdiction: "), y);
+  y += lineH + 3;
 
-  p("Purpose of the Agreement", true);
+  // ── PREAMBLE ─────────────────────────────────────────────────────────
+  const relType = (v.servantRelationType || "son").toLowerCase();
+  const relLabel = relType === "daughter" ? "daughter of"
+    : relType === "wife" ? "wife of"
+    : "son/daughter/wife of";
+
+  const ordinal = (n: string) => {
+    const d = parseInt(n, 10);
+    if (isNaN(d)) return n;
+    const s = ["th","st","nd","rd"];
+    const v = d % 100;
+    return d + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
+
   p(
-    "The Master agrees to employ the Servant as a domestic worker, responsible for carrying out general household duties and safeguarding the Master's premises. In consideration thereof, the Master shall provide a designated portion of the residence within the premises for the Servant's accommodation, subject to the terms and conditions stipulated in this Agreement."
+    `This Agreement is made on this ${ordinal(v.agreementDay)} day of ${u(v.agreementMonth, "______")} ${u(v.agreementYear, "____")}, at ${u(v.agreementPlace, "______")}, by and between:`
   );
 
-  p("Place of Employment", true);
+  // Party One
+  p(
+    `Party One, ${u(v.masterName, "[Master Name]")}, residing at ${u(v.masterAddress, "[Full Residential Address]")}, hereinafter referred to as the "Master",`,
+    false, 4
+  );
+
+  // AND separator
+  checkY(lineH + 2);
+  doc.setFont("times", "bold");
+  doc.setFontSize(10.4);
+  doc.text("AND", pageW / 2, y, { align: "center" });
+  y += lineH + 2;
+
+  // Party Two
+  p(
+    `Party Two, ${u(v.servantName, "[Servant Name]")}, ${relLabel} ${u(v.servantRelationName, "______")}, residing at ${u(v.servantAddress, "[Full Residential Address]")}, hereinafter referred to as the "Servant".`,
+    false, 4
+  );
+
+  p(`Collectively referred to as the "Parties".`);
+
+  // ── PURPOSE ──────────────────────────────────────────────────────────
+  heading("Purpose of the Agreement");
+
+  p(
+    `The Master agrees to employ the Servant as a domestic worker, responsible for carrying out general household duties and safeguarding the Master's premises. In consideration thereof, the Master shall provide a designated portion of the residence within the premises for the Servant's accommodation, subject to the terms and conditions stipulated in this Agreement.`
+  );
+
+  // ── PLACE OF EMPLOYMENT ──────────────────────────────────────────────
+  heading("Place of Employment");
+
   p("The Servant is employed at the residence of the Master located at:");
-  p(u(v.employmentAddress, 20));
+  p(u(v.employmentAddress, "[Full Residential Address]"), false, 4, 3);
 
-  p("Duties and Responsibilities", true);
+  // ── DUTIES AND RESPONSIBILITIES ──────────────────────────────────────
+  heading("Duties and Responsibilities");
+
   p("The Servant agreed to perform the following duties:");
-  p("- Cleaning and maintenance of the house");
-  p("- Washing clothes and dishes");
-  p("- Cooking or assisting in food preparation");
-  p("- elderly care");
-  p("- Grocery shopping or errands, if instructed;");
-  p(`- Any other related domestic tasks assigned by the Master${(v.extraDuty || "").trim() ? `; ${v.extraDuty}` : ""}`);
+  bullet("Cleaning and maintenance of the house;");
+  bullet("Washing clothes and dishes;");
+  bullet("Cooking or assisting in food preparation;");
+  bullet("Elderly care;");
+  bullet("Grocery shopping or errands, if instructed;");
+  if (v.extraDuty?.trim()) {
+    bullet(`Any other related domestic tasks assigned by the Master: ${v.extraDuty.trim()}`);
+  } else {
+    bullet("Any other related domestic tasks assigned by the Master.");
+  }
 
-  p("Code of Conduct", true);
+  // ── CODE OF CONDUCT ──────────────────────────────────────────────────
+  heading("Code of Conduct");
+
   p("The Servant agreed and undertook as follows:");
-  p("- To maintain discipline, honesty, and confidentiality in all matters pertaining to the household;");
-  p("- Not to invite or allow any guest or outsider to enter the premises without the prior consent of the Master;");
-  p("- To refrain from causing any damage to the property and from engaging in any unlawful or illegal activity;");
-  p("- Not to allow entry into the premises of any individual, including the Servant's son, who is involved in or facing any criminal charges or proceedings;");
-  p("- Not to leave the premises of the house without the prior permission or approval of the Master;");
-  p("- To behave respectfully and courteously towards the Master at all times, and to refrain from any form of misconduct or misbehavior;");
-  p("- Not to use the address of the Master's residence for any purpose, including but not limited to correspondence, legal documentation, or as proof of residence, nor to represent any affiliation or connection with the Master or the premises without express written permission.");
-  if ((v.extraConduct || "").trim()) p(`- Additional term: ${v.extraConduct}`);
+  bullet("To maintain discipline, honesty, and confidentiality in all matters pertaining to the household;");
+  bullet("Not to invite or allow any guest or outsider to enter the premises without the prior consent of the Master;");
+  bullet("To refrain from causing any damage to the property and from engaging in any unlawful or illegal activity;");
+  bullet("Not to allow entry into the premises of any individual, including the Servant's son, who is involved in or facing any criminal charges or proceedings;");
+  bullet("Not to leave the premises of the house without the prior permission or approval of the Master;");
+  bullet("To behave respectfully and courteously towards the Master at all times, and to refrain from any form of misconduct or misbehavior;");
+  bullet("Not to use the address of the Master's residence for any purpose, including but not limited to correspondence, legal documentation, or as proof of residence, nor to represent any affiliation or connection with the Master or the premises without express written permission.");
+  if (v.extraConduct?.trim()) {
+    bullet(v.extraConduct.trim());
+  }
 
-  p("Remuneration", true);
-  p(`The Master is paying the Servant a monthly package of ${u(v.monthlyPackage, 10)} on ${u(v.payDay, 1)}th of each month. It includes salary, a portion of house to stay including free electricity as well as gas utilities.`);
+  // ── REMUNERATION ─────────────────────────────────────────────────────
+  heading("Remuneration");
 
-  p("Prohibited Conduct", true);
+  p(
+    `The Master is paying the Servant a monthly package of ${u(v.monthlyPackage, "[mentioned amount]")} on ${u(v.payDay, "5")}th of each month. It includes salary, a portion of house to stay including free electricity as well as gas utilities.`
+  );
+
+  // ── PROHIBITED CONDUCT ───────────────────────────────────────────────
+  heading("Prohibited Conduct");
+
   p("The following actions are strictly prohibited and may result in immediate termination:");
-  p("- Theft or misuse of the Master's belongings;");
-  p("- Physical or verbal abuse;");
-  p("- Use or possession of intoxicating substances;");
-  p("- Bringing outsiders without permission;");
-  p("- Misrepresentation of identity or use of false documents.");
-  if ((v.extraProhibited || "").trim()) p(`- Additional prohibited term: ${v.extraProhibited}`);
+  bullet("Theft or misuse of the Master's belongings;");
+  bullet("Physical or verbal abuse;");
+  bullet("Use or possession of intoxicating substances;");
+  bullet("Bringing outsiders without permission;");
+  bullet("Misrepresentation of identity or use of false documents.");
+  if (v.extraProhibited?.trim()) {
+    bullet(v.extraProhibited.trim());
+  }
 
-  p("Duration and Termination", true);
-  p(`This agreement shall be valid for a period of two (${u(v.termYears, 1)}) years from the date of signing and may be renewed with mutual consent.`);
-  p(`- Either party may terminate this agreement with ${u(v.terminationNoticeDays, 2)} days notice or salary in lieu thereof.`);
-  p("- The Master reserves the right to terminate the Agreement immediately in case of misconduct, breach of trust, or violation of any term of this Agreement.");
+  // ── DURATION AND TERMINATION ─────────────────────────────────────────
+  heading("Duration and Termination");
 
-  p("Miscellaneous", true);
-  p("- This Agreement constitutes the entire understanding between the Parties.");
-  p("- Any modification must be in writing and signed by both Parties.");
-  p(`- This Agreement shall be governed by the ${u(v.governingLawText, 10)}.`);
+  p(
+    `This agreement shall be valid for a period of ${u(v.termYears, "two (02)")} years from the date of signing and may be renewed with mutual consent.`
+  );
+  bullet(`Either party may terminate this agreement with ${u(v.terminationNoticeDays, "30")} days notice or salary in lieu thereof.`);
+  bullet("The Master reserves the right to terminate the Agreement immediately in case of misconduct, breach of trust, or violation of any term of this Agreement.");
 
-  p("Acknowledgment", true);
-  p("The Servant acknowledges that she has read, understood, and voluntarily agreed to the terms and conditions of this Agreement and signs it in full acceptance thereof.");
-  p("IN WITNESS WHEREOF, the Parties hereto have executed this Agreement on the day, month, and year first written above.");
+  // ── MISCELLANEOUS ────────────────────────────────────────────────────
+  heading("Miscellaneous");
 
-  p("MASTER", true);
-  uf("Name: ", v.masterSignName);
-  uf("Signature: ", v.masterSignature);
-  uf("CNIC No.: ", v.masterCnic);
-  p("SERVANT", true);
-  uf("Name: ", v.servantSignName);
-  uf("Signature: ", v.servantSignature);
-  uf("CNIC No.: ", v.servantCnic);
+  bullet("This Agreement constitutes the entire understanding between the Parties.");
+  bullet("Any modification must be in writing and signed by both Parties.");
+  bullet(`This Agreement shall be governed by the ${u(v.governingLawText, "laws of state")}.`);
 
-  p("1. WITNESSES", true);
-  uf("Name: ", v.w1Name);
-  uf("Signature: ", v.w1Signature);
-  uf("CNIC No.: ", v.w1Cnic);
-  p("2. WITNESSES", true);
-  uf("Name: ", v.w2Name);
-  uf("Signature: ", v.w2Signature);
-  uf("CNIC No.: ", v.w2Cnic);
+  // ── ACKNOWLEDGMENT ───────────────────────────────────────────────────
+  heading("Acknowledgment");
+
+  p(
+    `The Servant acknowledges that she has read, understood, and voluntarily agreed to the terms and conditions of this Agreement and signs it in full acceptance thereof.`
+  );
+  y += 2;
+  p(
+    `IN WITNESS WHEREOF, the Parties hereto have executed this Agreement on the day, month, and year first written above.`,
+    true, 0, 5
+  );
+
+  // ── MASTER SIGNATURE BLOCK ───────────────────────────────────────────
+  checkY(lineH * 5);
+  doc.setFont("times", "bold");
+  doc.setFontSize(11);
+  doc.text("MASTER", margin, y);
+  y += lineH + 2;
+  field("Name",      u(v.masterSignName,  ""));
+  field("Signature", u(v.masterSignature, ""));
+  field("CNIC No.",  u(v.masterCnic,      ""));
+
+  y += 4;
+
+  // ── SERVANT SIGNATURE BLOCK ──────────────────────────────────────────
+  checkY(lineH * 5);
+  doc.setFont("times", "bold");
+  doc.setFontSize(11);
+  doc.text("SERVANT", margin, y);
+  y += lineH + 2;
+  field("Name",      u(v.servantSignName,  ""));
+  field("Signature", u(v.servantSignature, ""));
+  field("CNIC No.",  u(v.servantCnic,      ""));
+
+  y += 4;
+
+  // ── WITNESSES ────────────────────────────────────────────────────────
+  checkY(lineH * 2);
+  doc.setFont("times", "bold");
+  doc.setFontSize(11);
+  doc.text("WITNESSES", margin, y);
+  y += lineH + 3;
+
+  // Witness 1
+  checkY(lineH * 4);
+  doc.setFont("times", "bold");
+  doc.setFontSize(10.4);
+  doc.text("1.", margin, y);
+  y += lineH + 1;
+  field("Name",      u(v.w1Name,      ""));
+  field("Signature", u(v.w1Signature, ""));
+  field("CNIC No.",  u(v.w1Cnic,      ""));
+
+  y += 3;
+
+  // Witness 2
+  checkY(lineH * 4);
+  doc.setFont("times", "bold");
+  doc.setFontSize(10.4);
+  doc.text("2.", margin, y);
+  y += lineH + 1;
+  field("Name",      u(v.w2Name,      ""));
+  field("Signature", u(v.w2Signature, ""));
+  field("CNIC No.",  u(v.w2Cnic,      ""));
 
   doc.save("domestic_service_agreement.pdf");
 };
@@ -232,123 +375,3 @@ export default function DomesticServiceAgreementForm() {
     />
   );
 }
-*/
-/* ` EWimport { FormWizard, FieldDef } from "./FormWizard";
-import { jsPDF } from "jspdf";
-
-const steps: Array<{ label: string; fields: FieldDef[] }> = [
-  { label: "Jurisdiction", fields: [
-    { name: "country", label: "Country", type: "text", required: true },
-    { name: "state", label: "State", type: "text", required: true },
-    { name: "province", label: "Province", type: "text", required: false },
-    { name: "city", label: "City", type: "text", required: true },
-  ]},
-  { label: "Agreement Date and Parties", fields: [
-    { name: "agreementDateText", label: "Agreement Date Text", type: "text", required: true },
-    { name: "masterName", label: "Master Name", type: "text", required: true },
-    { name: "masterAddress", label: "Master Address", type: "textarea", required: true },
-    { name: "servantName", label: "Servant Name", type: "text", required: true },
-    { name: "servantRelationName", label: "Servant relation (son/daughter/wife of)", type: "text", required: false },
-    { name: "servantAddress", label: "Servant Address", type: "textarea", required: true },
-  ]},
-  { label: "Purpose and Place of Employment", fields: [
-    { name: "employmentPlace", label: "Place of Employment", type: "textarea", required: true },
-  ]},
-  { label: "Duties, Conduct and Remuneration", fields: [
-    { name: "monthlyAmount", label: "Monthly Package Amount", type: "text", required: true },
-    { name: "payDay", label: "Pay Day (e.g., 5th)", type: "text", required: true },
-  ]},
-  { label: "Termination and Governing Law", fields: [
-    { name: "agreementYears", label: "Agreement Duration in Years", type: "text", required: true, placeholder: "2" },
-    { name: "terminationNoticeDays", label: "Termination Notice Days", type: "text", required: true, placeholder: "30" },
-  ]},
-  { label: "Signatures and Witnesses", fields: [
-    { name: "masterSignName", label: "Master Signature Name", type: "text", required: true },
-    { name: "masterSignatureText", label: "Master Signature Text", type: "text", required: true },
-    { name: "masterCnic", label: "Master CNIC", type: "text", required: false },
-    { name: "servantSignName", label: "Servant Signature Name", type: "text", required: true },
-    { name: "servantSignatureText", label: "Servant Signature Text", type: "text", required: true },
-    { name: "servantCnic", label: "Servant CNIC", type: "text", required: false },
-    { name: "witness1Name", label: "Witness 1 Name", type: "text", required: false },
-    { name: "witness1Signature", label: "Witness 1 Signature Text", type: "text", required: false },
-    { name: "witness1Cnic", label: "Witness 1 CNIC", type: "text", required: false },
-    { name: "witness2Name", label: "Witness 2 Name", type: "text", required: false },
-    { name: "witness2Signature", label: "Witness 2 Signature Text", type: "text", required: false },
-    { name: "witness2Cnic", label: "Witness 2 CNIC", type: "text", required: false },
-  ]},
-];
-
-const generatePDF = (v: Record<string, string>) => {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const left = 16, width = 178, lh = 5.3; let y = 18;
-  const u = (val?: string, n = 14) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
-  const ensure = (need = 10) => { if (y + need > 285) { doc.addPage(); y = 18; } };
-  const p = (text: string, bold = false, gap = 1.7) => {
-    const lines = doc.splitTextToSize(text, width); ensure(lines.length * lh + gap);
-    doc.setFont("times", bold ? "bold" : "normal"); doc.setFontSize(10.4); doc.text(lines, left, y); y += lines.length * lh + gap;
-  };
-  const uf = (label: string, value?: string) => { ensure(8); doc.text(label, left, y); const x = left + doc.getTextWidth(label); const s = u(value); doc.text(s, x, y); doc.line(x, y + 1, x + doc.getTextWidth(s), y + 1); y += 6.2; };
-
-  doc.setFont("times", "bold"); doc.setFontSize(13);
-  const title = "DOMESTIC SERVICE AGREEMENT";
-  doc.text(title, 105, y, { align: "center" }); const tw = doc.getTextWidth(title); doc.line(105 - tw / 2, y + 1.1, 105 + tw / 2, y + 1.1); y += 10;
-  uf("Jurisdiction: ", `${u(v.state)}, ${u(v.country)}${v.province ? `, ${v.province}` : ""}, ${u(v.city)}`);
-  p(`This Agreement is made on ${u(v.agreementDateText)} at ${u(v.city)}, by and between ${u(v.masterName)} residing at ${u(v.masterAddress)} ("Master"), and ${u(v.servantName)}, son/daughter/wife of ${u(v.servantRelationName, 8)}, residing at ${u(v.servantAddress)} ("Servant").`);
-  p("Purpose of the Agreement", true);
-  p("Master employs Servant as domestic worker for general household duties and safeguarding premises, and provides designated portion of residence for accommodation, subject to this Agreement.");
-  p("Place of Employment", true);
-  p(`Servant is employed at: ${u(v.employmentPlace)}.`);
-  p("Duties and Responsibilities", true);
-  p("The Servant agrees to perform the following duties:");
-  p("- Cleaning and maintenance of the house");
-  p("- Washing clothes and dishes");
-  p("- Cooking or assisting in food preparation");
-  p("- Elderly care");
-  p("- Grocery shopping or errands, if instructed");
-  p("- Any other related domestic tasks assigned by the Master");
-  p("Code of Conduct", true);
-  p("The Servant agrees and undertakes as follows:");
-  p("- To maintain discipline, honesty, and confidentiality in all household matters;");
-  p("- Not to invite or allow any guest or outsider to enter the premises without prior consent of the Master;");
-  p("- To refrain from causing property damage and from engaging in any unlawful or illegal activity;");
-  p("- Not to allow entry into the premises of any individual, including the Servant's son, who is involved in or facing any criminal charges or proceedings;");
-  p("- Not to leave the premises without prior permission or approval of the Master;");
-  p("- To behave respectfully and courteously toward the Master and refrain from misconduct;");
-  p("- Not to use the Master's residence address for correspondence/legal documents/proof of residence, nor represent affiliation without express written permission.");
-  p("Remuneration", true);
-  p(`Master shall pay monthly package of ${u(v.monthlyAmount)} on ${u(v.payDay)} of each month, including salary and residence portion with free electricity and gas utilities.`);
-  p("Prohibited Conduct", true);
-  p("The following actions are strictly prohibited and may result in immediate termination:");
-  p("- Theft or misuse of the Master's belongings");
-  p("- Physical or verbal abuse");
-  p("- Use or possession of intoxicating substances");
-  p("- Bringing outsiders without permission");
-  p("- Misrepresentation of identity or use of false documents");
-  p("Duration and Termination", true);
-  p(`Agreement valid for a period of ${u(v.agreementYears, 2)} years and renewable by mutual consent. Either party may terminate with ${u(v.terminationNoticeDays, 2)} days notice or salary in lieu. Master may terminate immediately for misconduct, breach of trust, or violation.`);
-  p("Miscellaneous", true);
-  p("This Agreement constitutes the entire understanding between the Parties.");
-  p("Any modification must be in writing and signed by both Parties.");
-  p(`This Agreement shall be governed by the laws of ${u(v.state)}.`);
-  p("Acknowledgment", true);
-  p("Servant confirms having read, understood, and voluntarily accepted the terms.");
-  p("IN WITNESS WHEREOF", true);
-  uf("MASTER Name/Signature/CNIC: ", `${u(v.masterSignName)} / ${u(v.masterSignatureText)} / ${u(v.masterCnic, 8)}`);
-  uf("SERVANT Name/Signature/CNIC: ", `${u(v.servantSignName)} / ${u(v.servantSignatureText)} / ${u(v.servantCnic, 8)}`);
-  if ((v.witness1Name || "").trim()) uf("Witness 1 Name/Signature/CNIC: ", `${u(v.witness1Name)} / ${u(v.witness1Signature, 8)} / ${u(v.witness1Cnic, 8)}`);
-  if ((v.witness2Name || "").trim()) uf("Witness 2 Name/Signature/CNIC: ", `${u(v.witness2Name)} / ${u(v.witness2Signature, 8)} / ${u(v.witness2Cnic, 8)}`);
-  doc.save("domestic_service_agreement.pdf");
-};
-
-export default function DomesticServiceAgreementForm() {
-  return (
-    <FormWizard
-      steps={steps}
-      title="Domestic Service Agreement"
-      subtitle="Complete all steps to generate your document"
-      onGenerate={generatePDF}
-      documentType="domesticserviceagreement"
-    />
-  );
-}
-*/
