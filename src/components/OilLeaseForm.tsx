@@ -104,7 +104,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     fields: [
       {
         name: "party1Name",
-        label: "What is the full legal name of the first party?",
+        label: "What is the full legal name of the first party (Lessor)?",
         type: "text",
         required: true,
         placeholder: "Enter full legal name",
@@ -171,7 +171,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     fields: [
       {
         name: "party2Name",
-        label: "What is the full legal name of the second party?",
+        label: "What is the full legal name of the second party (Lessee)?",
         type: "text",
         required: true,
         placeholder: "Enter full legal name",
@@ -234,49 +234,68 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     ],
   },
   {
-    label: "Agreement Details",
+    label: "Premises Details",
     fields: [
       {
-        name: "description",
-        label: "Describe the purpose and scope of this agreement",
+        name: "county",
+        label: "County where the Premises are located",
+        type: "text",
+        required: true,
+        placeholder: "Enter county name",
+      },
+      {
+        name: "premisesAddress",
+        label: "Address of the Premises",
+        type: "text",
+        required: true,
+        placeholder: "Enter premises address",
+      },
+      {
+        name: "legalDescription",
+        label: "Legal Description of the Premises",
         type: "textarea",
         required: true,
-        placeholder: "Provide a detailed description of the agreement terms...",
+        placeholder: "Enter legal description...",
+      },
+      {
+        name: "acres",
+        label: "Approximate Acreage",
+        type: "text",
+        required: true,
+        placeholder: "e.g. 100",
       },
     ],
   },
   {
-    label: "Terms & Conditions",
+    label: "Lease Term & Royalties",
     fields: [
       {
-        name: "duration",
-        label: "What is the duration of this agreement?",
-        type: "select",
+        name: "leaseTerm",
+        label: "Initial lease term (years)",
+        type: "text",
         required: true,
-        options: [
-          { value: "1month", label: "1 Month" },
-          { value: "3months", label: "3 Months" },
-          { value: "6months", label: "6 Months" },
-          { value: "1year", label: "1 Year" },
-          { value: "2years", label: "2 Years" },
-          { value: "5years", label: "5 Years" },
-          { value: "indefinite", label: "Indefinite/Ongoing" },
-          { value: "custom", label: "Custom Duration" },
-        ],
+        placeholder: "e.g. 5",
       },
       {
-        name: "terminationNotice",
-        label: "How much notice is required to terminate?",
-        type: "select",
+        name: "oilRoyaltyPercent",
+        label: "Oil Royalty Percentage (%)",
+        type: "text",
         required: true,
-        options: [
-          { value: "immediate", label: "Immediate" },
-          { value: "7days", label: "7 Days" },
-          { value: "14days", label: "14 Days" },
-          { value: "30days", label: "30 Days" },
-          { value: "60days", label: "60 Days" },
-          { value: "90days", label: "90 Days" },
-        ],
+        placeholder: "e.g. 12.5",
+      },
+      {
+        name: "gasRoyaltyPercent",
+        label: "Gas Royalty Percentage (%)",
+        type: "text",
+        required: true,
+        placeholder: "e.g. 12.5",
+      },
+      {
+        name: "casingheadRoyaltyPercent",
+        label: "Casinghead Gasoline Royalty Percentage (%)",
+        type: "text",
+        required: true,
+        placeholder: "e.g. 12.5",
       },
     ],
   },
@@ -284,26 +303,32 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     label: "Financial Terms",
     fields: [
       {
-        name: "paymentAmount",
-        label: "What is the payment amount (if applicable)?",
+        name: "bonusConsideration",
+        label: "Bonus Consideration Amount ($)",
         type: "text",
         required: false,
         placeholder: "$0.00",
       },
       {
-        name: "paymentSchedule",
-        label: "Payment Schedule",
-        type: "select",
+        name: "annualRental",
+        label: "Annual Rental Amount ($)",
+        type: "text",
         required: false,
-        options: [
-          { value: "onetime", label: "One-time Payment" },
-          { value: "weekly", label: "Weekly" },
-          { value: "biweekly", label: "Bi-weekly" },
-          { value: "monthly", label: "Monthly" },
-          { value: "quarterly", label: "Quarterly" },
-          { value: "annually", label: "Annually" },
-          { value: "milestone", label: "Milestone-based" },
-        ],
+        placeholder: "$0.00",
+      },
+      {
+        name: "royaltyPaymentDay",
+        label: "Day of month royalty payments are due",
+        type: "text",
+        required: true,
+        placeholder: "e.g. 15",
+      },
+      {
+        name: "offsetWellDistance",
+        label: "Offset Well Boundary Distance (feet)",
+        type: "text",
+        required: true,
+        placeholder: "e.g. 660",
       },
     ],
   },
@@ -351,14 +376,14 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
     fields: [
       {
         name: "party1Signature",
-        label: "First Party Signature (Type full legal name)",
+        label: "Lessor Signature (Type full legal name)",
         type: "text",
         required: true,
         placeholder: "Type your full legal name as signature",
       },
       {
         name: "party2Signature",
-        label: "Second Party Signature (Type full legal name)",
+        label: "Lessee Signature (Type full legal name)",
         type: "text",
         required: true,
         placeholder: "Type your full legal name as signature",
@@ -374,130 +399,375 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ] as Array<{ label: string; fields: FieldDef[] }>;
 
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+/** Adds a bold section heading. Returns updated y. */
+const addHeading = (doc: jsPDF, text: string, y: number, pageH: number): number => {
+  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text(text, 20, y);
+  return y + 7;
+};
+
+/** Wraps body text with an optional left indent. Returns updated y. */
+const addBody = (
+  doc: jsPDF,
+  text: string,
+  y: number,
+  pageH: number,
+  indent = 20,
+  maxWidth = 170
+): number => {
+  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const lines = doc.splitTextToSize(text, maxWidth - (indent - 20));
+  lines.forEach((line: string) => {
+    if (y > pageH - 15) { doc.addPage(); y = 20; }
+    doc.text(line, indent, y);
+    y += 5.5;
+  });
+  return y + 2;
+};
+
+/** Renders a bullet point. Returns updated y. */
+const addBullet = (
+  doc: jsPDF,
+  text: string,
+  y: number,
+  pageH: number
+): number => {
+  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("\u2022", 24, y);
+  const lines = doc.splitTextToSize(text, 156);
+  lines.forEach((line: string, i: number) => {
+    if (y > pageH - 15) { doc.addPage(); y = 20; }
+    doc.text(line, 30, y);
+    if (i < lines.length - 1) y += 5.5;
+  });
+  return y + 6;
+};
+
+// ─── PDF generator ──────────────────────────────────────────────────────────
+
 const generatePDF = (values: Record<string, string>) => {
   const doc = new jsPDF();
+  const pageH = doc.internal.pageSize.height;
   let y = 20;
-  
-  doc.setFontSize(18);
+
+  // ── TITLE ──
+  doc.setFontSize(16);
   doc.setFont("helvetica", "bold");
-  doc.text("Oil Lease", 105, y, { align: "center" });
-  y += 15;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Effective Date: " + (values.effectiveDate || "N/A"), 20, y);
-  doc.text("Jurisdiction: " + (values.state || "") + ", " + (values.country?.toUpperCase() || ""), 120, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("PARTIES", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("First Party: " + (values.party1Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party1Street || "") + ", " + (values.party1City || "") + " " + (values.party1Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party1Email || "") + " | " + (values.party1Phone || ""), 20, y);
+  doc.text("OIL LEASE AGREEMENT", 105, y, { align: "center" });
   y += 10;
-  
-  doc.text("Second Party: " + (values.party2Name || "N/A"), 20, y);
-  y += 6;
-  doc.text("Address: " + (values.party2Street || "") + ", " + (values.party2City || "") + " " + (values.party2Zip || ""), 20, y);
-  y += 6;
-  doc.text("Contact: " + (values.party2Email || "") + " | " + (values.party2Phone || ""), 20, y);
-  y += 15;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("AGREEMENT DETAILS", 20, y);
-  y += 8;
-  
+
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const descLines = doc.splitTextToSize(values.description || "N/A", 170);
-  doc.text(descLines, 20, y);
-  y += descLines.length * 5 + 10;
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("TERMS", 20, y);
-  y += 8;
-  
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Duration: " + (values.duration || "N/A"), 20, y);
-  y += 6;
-  doc.text("Termination Notice: " + (values.terminationNotice || "N/A"), 20, y);
-  y += 6;
-  doc.text("Confidentiality: " + (values.confidentiality === "yes" ? "Included" : "Not Included"), 20, y);
-  y += 6;
-  doc.text("Dispute Resolution: " + (values.disputeResolution || "N/A"), 20, y);
-  y += 15;
-  
-  if (values.paymentAmount) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("FINANCIAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Payment: " + values.paymentAmount, 20, y);
-    y += 6;
-    doc.text("Schedule: " + (values.paymentSchedule || "N/A"), 20, y);
-    y += 15;
-  }
-  
-  if (values.additionalTerms) {
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text("ADDITIONAL TERMS", 20, y);
-    y += 8;
-    
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const addLines = doc.splitTextToSize(values.additionalTerms, 170);
-    doc.text(addLines, 20, y);
-    y += addLines.length * 5 + 15;
-  }
-  
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "bold");
-  doc.text("SIGNATURES", 20, y);
+  doc.text(
+    `This Oil and Gas Lease Agreement ("Agreement") is made and entered into as of ${values.effectiveDate || "[Insert Date]"}, by and between:`,
+    20, y, { maxWidth: 170 }
+  );
   y += 12;
-  
-  doc.setFontSize(10);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Lessor:", 20, y);
   doc.setFont("helvetica", "normal");
-  doc.text("_______________________________", 20, y);
-  doc.text("_______________________________", 110, y);
-  y += 6;
-  doc.text(values.party1Name || "First Party", 20, y);
-  doc.text(values.party2Name || "Second Party", 110, y);
-  y += 6;
-  doc.text("Signature: " + (values.party1Signature || ""), 20, y);
-  doc.text("Signature: " + (values.party2Signature || ""), 110, y);
+  doc.text(
+    ` ${values.party1Name || "[Insert Full Name]"}, having an address at ${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""} ("Lessor"),`,
+    20, y, { maxWidth: 170 }
+  );
   y += 10;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  doc.text("Date: " + new Date().toLocaleDateString(), 110, y);
-  
-  if (values.witnessName) {
-    y += 15;
-    doc.text("Witness: _______________________________", 20, y);
-    y += 6;
-    doc.text("Name: " + values.witnessName, 20, y);
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Lessee:", 20, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(
+    ` ${values.party2Name || "[Insert Full Name]"}, having an address at ${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""} ("Lessee").`,
+    20, y, { maxWidth: 170 }
+  );
+  y += 10;
+
+  y = addBody(doc, 'The Lessor and Lessee may be collectively referred to as the "Parties."', y, pageH);
+  y += 3;
+
+  // ── SECTION 1 ──
+  y = addHeading(doc, "1. Grant of Lease", y, pageH);
+  y = addBody(
+    doc,
+    `Lessor, for and in consideration of the sum of $${values.bonusConsideration || "0.00"} and other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, hereby leases and demises exclusively to Lessee the real property located in the County of ${values.county || "[Insert County]"}, State of ${values.state || "[Insert State]"}, with the address of ${values.premisesAddress || "[Insert Address]"}, more particularly described as follows: ${values.legalDescription || "[Insert Legal Description]"}, and comprising approximately ${values.acres || "0"} acres (the "Premises").`,
+    y, pageH
+  );
+  y = addBody(
+    doc,
+    "The Premises are leased solely for the purpose of exploring, drilling, mining, operating for, and extracting, storing, and removing oil, gas, hydrocarbons, and all associated substances.",
+    y, pageH
+  );
+  y = addBody(
+    doc,
+    `This Lease shall remain in force for an initial term of ${values.leaseTerm || "0"} years from the Effective Date, and shall continue thereafter so long as:`,
+    y, pageH
+  );
+  y = addBullet(doc, "(a) oil, gas, or other hydrocarbon substances are being produced in paying quantities from the Premises;", y, pageH);
+  y = addBullet(doc, "(b) drilling or reworking operations are being continuously conducted; or", y, pageH);
+  y = addBullet(doc, "(c) the Parties mutually agree in writing to extend the Lease.", y, pageH);
+  y += 2;
+
+  // ── SECTION 2 ──
+  y = addHeading(doc, "2. Lessee's Rights", y, pageH);
+  y = addBody(doc, "Lessee shall have the exclusive right to:", y, pageH);
+  y = addBullet(doc, "(a) Enter and occupy the Premises for oil and gas operations;", y, pageH);
+  y = addBullet(doc, "(b) Construct, operate, maintain, and replace structures, wells, tanks, pipelines, machinery, roads, power and communication lines, and employee facilities as necessary;", y, pageH);
+  y = addBullet(doc, "(c) Inject gas, water, or other substances into the subsurface;", y, pageH);
+  y = addBullet(doc, "(d) Drill for and use water obtained from the Premises without cost;", y, pageH);
+  y = addBullet(doc, "(e) Construct and operate processing plants or facilities for hydrocarbons extracted from the Premises or adjacent properties.", y, pageH);
+  y += 2;
+
+  // ── SECTION 3 ──
+  y = addHeading(doc, "3. Royalty Provisions", y, pageH);
+
+  y = addHeading(doc, "3.1 Oil Royalty", y, pageH);
+  y = addBody(
+    doc,
+    `Lessee shall pay to Lessor a royalty of ${values.oilRoyaltyPercent || "[Insert Percentage]"}% of the value of all oil produced and removed from the Premises, calculated at the posted market price for oil of similar quality on the date of removal, with adjustments for temperature, water, and sediment.`,
+    y, pageH
+  );
+  y = addBody(doc, "Upon 90 days' prior written notice, Lessor may elect to receive oil royalties in kind, delivered at no cost at the wellhead or designated pipeline.", y, pageH);
+  y = addBody(doc, "No royalty shall be payable on oil lost through evaporation, fire, leakage, or other casualty prior to marketing.", y, pageH);
+  y += 2;
+
+  y = addHeading(doc, "3.2 Gas Royalty", y, pageH);
+  y = addBody(
+    doc,
+    `Lessee shall pay Lessor a royalty of ${values.gasRoyaltyPercent || "[Insert Percentage]"}% of the net proceeds from the sale of gas and all gaseous substances produced and sold from the Premises, after deduction of transportation and processing costs.`,
+    y, pageH
+  );
+  y = addBody(doc, "No royalty shall be payable for gas used in lease operations or for repressurization.", y, pageH);
+  y += 2;
+
+  y = addHeading(doc, "3.3 Casinghead Gasoline", y, pageH);
+  y = addBody(
+    doc,
+    `For casinghead gasoline sold by Lessee, Lessor shall receive a royalty of ${values.casingheadRoyaltyPercent || "[Insert Percentage]"}% of the net proceeds. No royalty shall be due if casinghead gasoline is reinjected into the reservoir.`,
+    y, pageH
+  );
+  y += 2;
+
+  y = addHeading(doc, "3.4 Use for Operations", y, pageH);
+  y = addBody(doc, "Lessee shall not be required to pay royalties for oil, gas, or water produced and used for operations conducted on the Premises.", y, pageH);
+  y += 2;
+
+  // ── SECTION 4 ──
+  y = addHeading(doc, "4. Royalty and Rental Payments", y, pageH);
+  y = addBody(
+    doc,
+    `All royalty payments shall be made on or before the ${values.royaltyPaymentDay || "[Insert Day]"} of each month for production during the preceding month. Payment shall be deemed made when deposited in the U.S. mail with first-class postage, addressed to the Lessor's address provided herein, or such other address as Lessor may designate in writing.`,
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 5 ──
+  y = addHeading(doc, "5. Development Clause and Annual Rentals", y, pageH);
+  y = addBody(
+    doc,
+    `Lessee has paid the full rental for the primary term of this Lease. If Lessee has not commenced drilling operations by the expiration of the primary term, the Lease may continue by payment of an annual rental of $${values.annualRental || "0.00"} until such operations begin or the Lease is terminated.`,
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 6 ──
+  y = addHeading(doc, "6. Offset Well Obligations", y, pageH);
+  y = addBody(
+    doc,
+    `If hydrocarbons are discovered in paying quantities in any well drilled within ${values.offsetWellDistance || "0"} feet of the boundary of the Premises, Lessee shall, within a reasonable period, commence drilling an offset well on the Premises, provided:`,
+    y, pageH
+  );
+  y = addBullet(doc, "(a) Production from the adjacent well continues beyond a 30-day test period; and", y, pageH);
+  y = addBullet(doc, "(b) Lessee has not fulfilled its development obligations.", y, pageH);
+  y += 2;
+
+  // ── SECTION 7 ──
+  y = addHeading(doc, "7. Operational Standards", y, pageH);
+  y = addBody(
+    doc,
+    "All operations shall be conducted by Lessee at its own expense in a good and workmanlike manner, in compliance with all applicable federal, state, and local laws, rules, and regulations. Lessee shall not allow any liens to be placed on the Premises arising from its operations.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 8 ──
+  y = addHeading(doc, "8. Taxes", y, pageH);
+  y = addBody(
+    doc,
+    "Lessee shall pay all taxes on equipment, improvements, and stored oil or gas installed or produced by it. Lessor shall be responsible for property taxes on the surface and for any portion of mineral taxes not specifically assigned to Lessee.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 9 ──
+  y = addHeading(doc, "9. Surface Use by Lessor", y, pageH);
+  y = addBody(
+    doc,
+    "Lessor retains the right to use the surface of the Premises for agricultural and other lawful purposes, provided such use does not interfere with Lessee's rights under this Lease.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 10 ──
+  y = addHeading(doc, "10. Default and Remedies", y, pageH);
+  y = addBody(
+    doc,
+    "If Lessee fails to pay any due rental or royalty, or breaches any material obligation under this Lease, and fails to cure the default within fifteen (15) days after receiving written notice from Lessor, then Lessor may terminate this Lease. However, Lessee shall retain rights to any well in production or under active drilling, including the surrounding one (1) acre and necessary rights-of-way.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 11 ──
+  y = addHeading(doc, "11. Termination and Surrender", y, pageH);
+  y = addBody(
+    doc,
+    "Upon expiration or termination of this Lease, Lessee shall peaceably surrender possession of the Premises and restore the property to a reasonably original condition, accounting for ordinary wear and tear. Lessee shall have the right to remove its equipment and facilities.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 12 ──
+  y = addHeading(doc, "12. Assignment", y, pageH);
+  y = addBody(
+    doc,
+    "Either party may assign its interest under this Lease, provided written notice is given to the other party. No assignment shall increase the burden or obligations of the non-assigning party without its express written consent.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 13 ──
+  y = addHeading(doc, "13. Notices", y, pageH);
+  y = addBody(
+    doc,
+    "All notices under this Lease shall be in writing and shall be deemed properly delivered if personally delivered or sent via certified mail, return receipt requested, to the Parties at the addresses stated above, or any updated address notified in writing.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 14 ──
+  y = addHeading(doc, "14. Binding Effect", y, pageH);
+  y = addBody(
+    doc,
+    "This Lease shall be binding upon and inure to the benefit of the Parties and their respective heirs, personal representatives, successors, and assigns.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 15 ──
+  y = addHeading(doc, "15. Attorneys' Fees", y, pageH);
+  y = addBody(
+    doc,
+    "If any dispute arises from this Lease, the prevailing party shall be entitled to recover its reasonable attorneys' fees and court costs as awarded by a court of competent jurisdiction.",
+    y, pageH
+  );
+  y += 2;
+
+  // ── SECTION 16 ──
+  y = addHeading(doc, "16. Entire Agreement", y, pageH);
+  y = addBody(
+    doc,
+    "This Lease represents the entire agreement between the Parties regarding the subject matter herein and supersedes all prior agreements or representations, whether oral or written. No amendment or modification shall be valid unless made in writing and signed by both Parties.",
+    y, pageH
+  );
+
+  if (values.confidentiality === "yes") {
+    y += 2;
+    y = addHeading(doc, "17. Confidentiality", y, pageH);
+    y = addBody(
+      doc,
+      "Each Party agrees to hold in strict confidence all proprietary or non-public information disclosed by the other Party in connection with this Lease and shall not disclose such information to any third party without prior written consent.",
+      y, pageH
+    );
   }
-  
-  doc.save("oil_lease.pdf");
+
+  if (values.additionalTerms) {
+    y += 2;
+    y = addHeading(doc, "Additional Terms", y, pageH);
+    y = addBody(doc, values.additionalTerms, y, pageH);
+  }
+
+  // ── SIGNATURES ──
+  if (y > pageH - 60) { doc.addPage(); y = 20; }
+  y += 5;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text("IN WITNESS WHEREOF", 20, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(", the Parties have executed this Lease Agreement as of the date first above written.", 68, y);
+  y += 12;
+
+  // Lessor block
+  doc.setFont("helvetica", "bold");
+  doc.text("LESSOR:", 20, y);
+  y += 8;
+  doc.setFont("helvetica", "normal");
+  doc.text("Signature: _______________________________", 20, y);
+  y += 7;
+  doc.text(`Name: ${values.party1Name || ""}`, 20, y);
+  y += 7;
+  doc.text(`Signature (typed): ${values.party1Signature || ""}`, 20, y);
+  y += 7;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  y += 12;
+
+  // Lessee block
+  doc.setFont("helvetica", "bold");
+  doc.text("LESSEE:", 20, y);
+  y += 8;
+  doc.setFont("helvetica", "normal");
+  doc.text("Signature: _______________________________", 20, y);
+  y += 7;
+  doc.text(`Name: ${values.party2Name || ""}`, 20, y);
+  y += 7;
+  doc.text(`Signature (typed): ${values.party2Signature || ""}`, 20, y);
+  y += 7;
+  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
+  y += 12;
+
+  if (values.witnessName) {
+    doc.text("Witness: _______________________________", 20, y);
+    y += 7;
+    doc.text(`Name: ${values.witnessName}`, 20, y);
+    y += 12;
+  }
+
+  // ── MAKE IT LEGAL NOTE ──
+  if (y > pageH - 40) { doc.addPage(); y = 20; }
+  doc.setFont("helvetica", "bold");
+  doc.text("Make It Legal", 20, y);
+  y += 7;
+  doc.setFont("helvetica", "normal");
+  y = addBody(doc, "This Agreement should be signed in front of a notary public. Once signed, this document should be delivered to the appropriate court for filing.", y, pageH);
+  y += 3;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Copies", 20, y);
+  y += 7;
+  doc.setFont("helvetica", "normal");
+  y = addBody(doc, "The original Agreement should be filed with the Clerk of Court or delivered to the requesting business. Each Party should retain a copy in a safe place.", y, pageH);
+  y += 3;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Additional Assistance", 20, y);
+  y += 7;
+  doc.setFont("helvetica", "normal");
+  addBody(doc, "If you are unsure or have questions regarding this Agreement, or need additional assistance with special situations or circumstances, consult a qualified attorney in your area.", y, pageH);
+
+  doc.save("oil_lease_agreement.pdf");
 };
 
 export default function OilLease() {
   return (
     <FormWizard
       steps={steps}
-      title="Oil Lease"
+      title="Oil Lease Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="oillease"
