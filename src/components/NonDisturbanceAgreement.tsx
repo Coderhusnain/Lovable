@@ -96,111 +96,294 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
   },
 ];
 
+// ─── PDF helpers ─────────────────────────────────────────────────────────────
+
+const PAGE_H   = 297;
+const MARGIN_B = 18;
+const LEFT     = 16;
+const WIDTH    = 178;
+const LH       = 5.5;
+
+const u = (val?: string, n = 16) =>
+  (val || "").trim() ? (val || "").trim() : "_".repeat(n);
+
 const generatePDF = (v: Record<string, string>) => {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const left = 16;
-  const width = 178;
-  const lh = 5.3;
   let y = 18;
 
-  const u = (val?: string, n = 16) => ((val || "").trim() ? (val || "").trim() : "_".repeat(n));
-  const ensure = (need = 10) => {
-    if (y + need > 285) {
+  /* ── overflow guard ── */
+  const ensure = (need = LH) => {
+    if (y + need > PAGE_H - MARGIN_B) {
       doc.addPage();
       y = 18;
     }
   };
-  const p = (text: string, bold = false, gap = 1.7) => {
-    const lines = doc.splitTextToSize(text, width);
-    ensure(lines.length * lh + gap);
-    doc.setFont("times", bold ? "bold" : "normal");
-    doc.setFontSize(10.4);
-    doc.text(lines, left, y);
-    y += lines.length * lh + gap;
-  };
-  const uf = (label: string, value?: string) => {
-    ensure(8);
-    doc.setFont("times", "normal");
-    doc.text(label, left, y);
-    const x = left + doc.getTextWidth(label);
-    const show = u(value, 12);
-    doc.text(show, x, y);
-    doc.line(x, y + 1, x + doc.getTextWidth(show), y + 1);
-    y += 6.2;
+
+  /* ── bold section heading ── */
+  const heading = (text: string) => {
+    ensure(10);
+    doc.setFont("times", "bold");
+    doc.setFontSize(10.8);
+    doc.text(text, LEFT, y);
+    y += LH + 1.5;
   };
 
+  /* ── regular paragraph ── */
+  const para = (text: string, gap = 3) => {
+    const lines = doc.splitTextToSize(text, WIDTH);
+    ensure(lines.length * LH + gap);
+    doc.setFont("times", "normal");
+    doc.setFontSize(10.4);
+    doc.text(lines, LEFT, y);
+    y += lines.length * LH + gap;
+  };
+
+  /* ── bullet item ── */
+  const bullet = (text: string) => {
+    const indent = 8;
+    const textW  = WIDTH - indent;
+    const lines  = doc.splitTextToSize(text, textW);
+    ensure(lines.length * LH + 1.5);
+    doc.setFont("times", "normal");
+    doc.setFontSize(10.4);
+    doc.text("\u2022", LEFT + 2, y);
+    doc.text(lines[0], LEFT + indent, y);
+    y += LH;
+    for (let i = 1; i < lines.length; i++) {
+      ensure(LH);
+      doc.text(lines[i], LEFT + indent, y);
+      y += LH;
+    }
+    y += 1.5;
+  };
+
+  /* ── alpha sub-item: (a) text ── */
+  const alphaItem = (label: string, text: string) => {
+    const indent = 8;
+    const textW  = WIDTH - indent;
+    const lines  = doc.splitTextToSize(text, textW);
+    ensure(lines.length * LH + 1.5);
+    doc.setFont("times", "normal");
+    doc.setFontSize(10.4);
+    doc.text(`(${label})`, LEFT + 2, y);
+    doc.text(lines[0], LEFT + indent, y);
+    y += LH;
+    for (let i = 1; i < lines.length; i++) {
+      ensure(LH);
+      doc.text(lines[i], LEFT + indent, y);
+      y += LH;
+    }
+    y += 1.5;
+  };
+
+  /* ── signature row ── */
+  const sigRow = (label: string, value?: string) => {
+    ensure(8);
+    doc.setFont("times", "normal");
+    doc.setFontSize(10.4);
+    const show = u(value, 24);
+    doc.text(`${label} ${show}`, LEFT, y);
+    const lineX = LEFT + doc.getTextWidth(`${label} `);
+    doc.line(lineX, y + 1, lineX + doc.getTextWidth(show), y + 1);
+    y += 7;
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  // TITLE
+  // ══════════════════════════════════════════════════════════════
   doc.setFont("times", "bold");
   doc.setFontSize(13);
   const title = "NON-DISTURBANCE AGREEMENT";
-  doc.text(title, 105, y, { align: "center" });
+  const titleX = 105;
+  doc.text(title, titleX, y, { align: "center" });
   const tW = doc.getTextWidth(title);
-  doc.line(105 - tW / 2, y + 1.1, 105 + tW / 2, y + 1.1);
+  doc.line(titleX - tW / 2, y + 1.2, titleX + tW / 2, y + 1.2);
   y += 10;
 
-  uf("Jurisdiction: ", `${u(v.city)}, ${u(v.province)}, ${u(v.country)}`);
+  // Jurisdiction line
+  doc.setFont("times", "normal");
+  doc.setFontSize(10.4);
+  para(`Jurisdiction: ${u(v.city)}, ${u(v.province)}, ${u(v.country)}`);
 
-  p(`This Agreement ("Agreement") is made and entered into on the ${u(v.agreementDay, 3)} day of ${u(v.agreementMonth)}, 20${u(v.agreementYearSuffix, 2)}, by and between ${u(v.mortgageeName)}, of ${u(v.mortgageeAddress)} (hereinafter referred to as the "Mortgagee"), and ${u(v.tenantName)}, of ${u(v.tenantAddress)} (hereinafter referred to as the "Tenant").`);
+  // ── Opening paragraph ──
+  para(
+    `This Agreement ("Agreement") is made and entered into on the ${u(v.agreementDay, 3)} day of ` +
+    `${u(v.agreementMonth)}, 20${u(v.agreementYearSuffix, 2)}, by and between`
+  );
+  doc.setFont("times", "bold");
+  doc.setFontSize(10.4);
+  para(`${u(v.mortgageeName)}, of ${u(v.mortgageeAddress)} (hereinafter referred to as the "Mortgagee"),`);
+  doc.setFont("times", "normal");
+  para("And");
+  doc.setFont("times", "bold");
+  para(`${u(v.tenantName)}, of ${u(v.tenantAddress)} (hereinafter referred to as the "Tenant").`);
+  doc.setFont("times", "normal");
+  y += 2;
 
-  p("RECITALS", true);
-  p(`WHEREAS, Tenant entered into a lease agreement (the "Lease") dated ${u(v.leaseDate, 12)}, with ${u(v.landlordName)} (the "Landlord"), of ${u(v.landlordAddress)}, for the lease of a portion of the real property legally described as ${u(v.legalDescription)}, commonly known as ${u(v.propertyAddress)} (the "Real Property");`);
-  p("WHEREAS, Mortgagee has made a loan to Landlord secured, in part, by a mortgage (the \"Mortgage\") encumbering the Real Property;");
-  p("WHEREAS, Tenant has agreed to subordinate its leasehold interest to the Mortgage in exchange for the Mortgagee's agreement not to disturb Tenant's possession of the Real Property under the Lease so long as Tenant is not in default under the terms of the Lease.");
+  // ══════════════════════════════════════════════════════════════
+  // RECITALS
+  // ══════════════════════════════════════════════════════════════
+  heading("RECITALS");
 
-  p("AGREEMENT", true);
-  p("NOW, THEREFORE, in consideration of the mutual covenants herein and intending to be legally bound, the parties agree as follows:");
+  para(
+    `WHEREAS, Tenant entered into a lease agreement (the "Lease") dated ${u(v.leaseDate, 12)}, ` +
+    `with ${u(v.landlordName)} (the "Landlord"), of ${u(v.landlordAddress)}, for the lease of a ` +
+    `portion of the real property legally described as ${u(v.legalDescription)}, commonly known as ` +
+    `${u(v.propertyAddress)} (the "Real Property");`
+  );
 
-  p("1. Subordination", true);
-  p("Tenant agrees that the Lease, and all rights of the Tenant under it, shall be and remain subordinate in all respects to the lien, terms, and conditions of the Mortgage, including any renewals, extensions, modifications, replacements, or consolidations thereof, and to any future mortgage or mortgages placed on the Real Property by or through the Mortgagee.");
-  if ((v.subordinationExtra || "").trim()) p(v.subordinationExtra);
+  para(
+    `WHEREAS, Mortgagee has made a loan to Landlord secured, in part, by a mortgage (the "Mortgage") ` +
+    `encumbering the Real Property;`
+  );
 
-  p("2. Non-Disturbance", true);
-  p("Provided Tenant is not in default under the Lease beyond applicable notice and cure periods, the Mortgagee agrees that:");
-  p("- The Lease shall not be terminated,");
-  p("- Tenant's possession, use, or enjoyment of the Premises shall not be disturbed, and");
-  p("- The leasehold estate shall not otherwise be affected");
-  p("in the event of foreclosure or any action or proceeding under or related to the Mortgage, or in the event the Mortgagee takes possession of the Real Property.");
-  p("Notwithstanding the foregoing, any person or entity acquiring the interest of the Landlord as a result of such foreclosure or proceeding, including their successors and assigns (collectively, the \"Purchaser\"), shall not be:");
-  p("(a) liable for any act or omission of any prior landlord;");
-  p("(b) subject to any defenses or offsets Tenant may have against any prior landlord;");
-  p("(c) bound by any rent prepayment exceeding one month; or");
-  p("(d) bound by any amendment or modification of the Lease made without the Mortgagee's prior written consent.");
-  if ((v.nonDisturbanceExtra || "").trim()) p(v.nonDisturbanceExtra);
+  para(
+    `WHEREAS, Tenant has agreed to subordinate its leasehold interest to the Mortgage in exchange for ` +
+    `the Mortgagee's agreement not to disturb Tenant's possession of the Real Property under the Lease ` +
+    `so long as Tenant is not in default under the terms of the Lease.`
+  );
+  y += 2;
 
-  p("3. Attornment", true);
-  p("In the event of a transfer of the Landlord's interest by foreclosure, deed in lieu of foreclosure, or otherwise, Tenant agrees to attorn to and recognize the Purchaser (including the Mortgagee, if applicable) as its landlord under the Lease. Such attornment shall be effective automatically and without the execution of any further instrument. Following such attornment, the Lease shall remain in full force and effect between the Purchaser and Tenant, with the same terms, covenants, and conditions as though the Purchaser were the original landlord.");
-  if ((v.attornmentExtra || "").trim()) p(v.attornmentExtra);
+  // ══════════════════════════════════════════════════════════════
+  // AGREEMENT
+  // ══════════════════════════════════════════════════════════════
+  heading("AGREEMENT");
 
-  p("4. Successors and Assigns", true);
-  p("This Agreement shall be binding upon and inure to the benefit of the parties hereto, and their respective successors, legal representatives, and assigns.");
+  para(
+    `NOW, THEREFORE, in consideration of the mutual covenants herein and intending to be legally bound, ` +
+    `the parties agree as follows:`
+  );
+  y += 2;
 
-  p("5. Execution", true);
-  p("This Agreement may be executed in counterparts, each of which shall constitute an original, but all of which together shall constitute one and the same instrument. Facsimile or electronic signatures shall be deemed to have the same force and effect as originals.");
+  // ── 1. Subordination ──
+  heading("1. Subordination");
+  para(
+    `Tenant agrees that the Lease, and all rights of the Tenant under it, shall be and remain subordinate ` +
+    `in all respects to the lien, terms, and conditions of the Mortgage, including any renewals, extensions, ` +
+    `modifications, replacements, or consolidations thereof, and to any future mortgage or mortgages placed ` +
+    `on the Real Property by or through the Mortgagee.`
+  );
+  if ((v.subordinationExtra || "").trim()) para(v.subordinationExtra);
+  y += 2;
 
-  p("IN WITNESS WHEREOF, the undersigned have executed this Lease Subordination and Non-Disturbance Agreement as of the date first written above.", true);
+  // ── 2. Non-Disturbance ──
+  heading("2. Non-Disturbance");
+  para(
+    `Provided Tenant is not in default under the Lease beyond applicable notice and cure periods, ` +
+    `the Mortgagee agrees that:`
+  );
+  bullet("The Lease shall not be terminated,");
+  bullet("Tenant's possession, use, or enjoyment of the Premises shall not be disturbed, and");
+  bullet("The leasehold estate shall not otherwise be affected");
+  para(
+    `in the event of foreclosure or any action or proceeding under or related to the Mortgage, or in the ` +
+    `event the Mortgagee takes possession of the Real Property.`
+  );
+  para(
+    `Notwithstanding the foregoing, any person or entity acquiring the interest of the Landlord as a result ` +
+    `of such foreclosure or proceeding, including their successors and assigns (collectively, the "Purchaser"), ` +
+    `shall not be:`
+  );
+  alphaItem("a", "liable for any act or omission of any prior landlord;");
+  alphaItem("b", "subject to any defenses or offsets Tenant may have against any prior landlord;");
+  alphaItem("c", "bound by any rent prepayment exceeding one month; or");
+  alphaItem("d", "bound by any amendment or modification of the Lease made without the Mortgagee's prior written consent.");
+  if ((v.nonDisturbanceExtra || "").trim()) para(v.nonDisturbanceExtra);
+  y += 2;
 
-  p("MORTGAGEE", true);
-  uf("By: ", v.mortgageeBy);
-  uf("Name: ", v.mortgageeSignName);
-  uf("Title: ", v.mortgageeSignTitle);
-  uf("Date: ", v.mortgageeSignDate);
+  // ── 3. Attornment ──
+  heading("3. Attornment");
+  para(
+    `In the event of a transfer of the Landlord's interest by foreclosure, deed in lieu of foreclosure, ` +
+    `or otherwise, Tenant agrees to attorn to and recognize the Purchaser (including the Mortgagee, if ` +
+    `applicable) as its landlord under the Lease. Such attornment shall be effective automatically and ` +
+    `without the execution of any further instrument. Following such attornment, the Lease shall remain ` +
+    `in full force and effect between the Purchaser and Tenant, with the same terms, covenants, and ` +
+    `conditions as though the Purchaser were the original landlord.`
+  );
+  if ((v.attornmentExtra || "").trim()) para(v.attornmentExtra);
+  y += 2;
 
-  p("TENANT", true);
-  uf("By: ", v.tenantBy);
-  uf("Name: ", v.tenantSignName);
-  uf("Title: ", v.tenantSignTitle);
-  uf("Date: ", v.tenantSignDate);
+  // ── 4. Successors and Assigns ──
+  heading("4. Successors and Assigns");
+  para(
+    `This Agreement shall be binding upon and inure to the benefit of the parties hereto, and their ` +
+    `respective successors, legal representatives, and assigns.`
+  );
+  y += 2;
 
-  p("Make It Legal", true);
-  p(`This Agreement should be signed in front of a notary public by ${u(v.notarySigner, 16)}.`);
-  p(`Once signed in front of a notary, this document should be delivered to ${u(v.courtOrFilingOffice, 18)} for filing.`);
+  // ── 5. Execution ──
+  heading("5. Execution");
+  para(
+    `This Agreement may be executed in counterparts, each of which shall constitute an original, but ` +
+    `all of which together shall constitute one and the same instrument. Facsimile or electronic ` +
+    `signatures shall be deemed to have the same force and effect as originals.`
+  );
+  y += 4;
 
-  p("Copies", true);
-  p(`The original Agreement should be filed with the Clerk of Court or delivered to ${u(v.requestingBusiness, 18)}.`);
-  p("The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place. If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, as well as share it for future reference.");
+  // ── Witness clause ──
+  para(
+    `IN WITNESS WHEREOF, the undersigned have executed this Lease Subordination and Non-Disturbance ` +
+    `Agreement as of the date first written above.`
+  );
+  y += 4;
 
-  p("Additional Assistance", true);
-  p("If you are unsure or have questions regarding this Agreement or need additional assistance with special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer in your area to assist you in this matter.");
-  if ((v.additionalAssistanceNotes || "").trim()) p(v.additionalAssistanceNotes);
+  // ══════════════════════════════════════════════════════════════
+  // SIGNATURES
+  // ══════════════════════════════════════════════════════════════
+  heading("MORTGAGEE");
+  sigRow("By:",    v.mortgageeBy);
+  sigRow("Name:",  v.mortgageeSignName);
+  sigRow("Title:", v.mortgageeSignTitle);
+  sigRow("Date:",  v.mortgageeSignDate);
+  y += 3;
+
+  heading("TENANT");
+  sigRow("By:",    v.tenantBy);
+  sigRow("Name:",  v.tenantSignName);
+  sigRow("Title:", v.tenantSignTitle);
+  sigRow("Date:",  v.tenantSignDate);
+  y += 4;
+
+  // ══════════════════════════════════════════════════════════════
+  // MAKE IT LEGAL
+  // ══════════════════════════════════════════════════════════════
+  heading("Make It Legal");
+  para(
+    `This Agreement should be signed in front of a notary public by ${u(v.notarySigner, 18)}.`
+  );
+  para(
+    `Once signed in front of a notary, this document should be delivered to ` +
+    `${u(v.courtOrFilingOffice, 18)} for filing.`
+  );
+  y += 2;
+
+  // ══════════════════════════════════════════════════════════════
+  // COPIES
+  // ══════════════════════════════════════════════════════════════
+  heading("Copies");
+  para(
+    `The original Agreement should be filed with the Clerk of Court or delivered to ` +
+    `${u(v.requestingBusiness, 18) || "the requesting business"}.`
+  );
+  para(
+    `The Affiant should maintain a copy of the Agreement. Your copy should be kept in a safe place. ` +
+    `If you signed a paper copy of your document, you can use Rocket Lawyer to store and share it. ` +
+    `Safe and secure in your Rocket Lawyer File Manager, you can access it any time from any computer, ` +
+    `as well as share it for future reference.`
+  );
+  y += 2;
+
+  // ══════════════════════════════════════════════════════════════
+  // ADDITIONAL ASSISTANCE
+  // ══════════════════════════════════════════════════════════════
+  heading("Additional Assistance");
+  para(
+    `If you are unsure or have questions regarding this Agreement or need additional assistance with ` +
+    `special situations or circumstances, use Legal Gram. Find A Lawyer search engine to find a lawyer ` +
+    `in your area to assist you in this matter.`
+  );
+  if ((v.additionalAssistanceNotes || "").trim()) para(v.additionalAssistanceNotes);
 
   doc.save("non_disturbance_agreement.pdf");
 };
