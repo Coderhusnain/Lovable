@@ -479,7 +479,6 @@ const generatePDF = (values: Record<string, string>) => {
     }
   };
 
-  /** Bold section heading */
   const addHeading = (text: string) => {
     checkPage(12);
     doc.setFont("helvetica", "bold");
@@ -489,7 +488,6 @@ const generatePDF = (values: Record<string, string>) => {
     y += lines.length * 5.5 + 3;
   };
 
-  /** Bold sub-heading (e.g. 5.1 Service Fee) */
   const addSubHeading = (text: string) => {
     checkPage(8);
     doc.setFont("helvetica", "bold");
@@ -498,7 +496,6 @@ const generatePDF = (values: Record<string, string>) => {
     y += 6;
   };
 
-  /** Normal body paragraph */
   const addBody = (text: string, gap = 5) => {
     checkPage(8);
     doc.setFont("helvetica", "normal");
@@ -509,7 +506,6 @@ const generatePDF = (values: Record<string, string>) => {
     y += lines.length * 5 + gap;
   };
 
-  /** Bullet item */
   const addBullet = (text: string) => {
     checkPage(8);
     doc.setFont("helvetica", "normal");
@@ -826,13 +822,14 @@ const generatePDF = (values: Record<string, string>) => {
 
   addHeading("20. DISPUTE RESOLUTION");
   addBody(
-    `The Parties agree to ${values.disputeResolution === "negotiation"
-      ? "attempt good-faith negotiation prior to pursuing mediation, arbitration, or litigation"
-      : values.disputeResolution === "mediation"
+    `The Parties agree to ${
+      values.disputeResolution === "negotiation"
+        ? "attempt good-faith negotiation prior to pursuing mediation, arbitration, or litigation"
+        : values.disputeResolution === "mediation"
         ? "resolve any dispute through mediation before pursuing arbitration or litigation"
         : values.disputeResolution === "arbitration"
-          ? "resolve any dispute through binding arbitration"
-          : "resolve disputes through court litigation"
+        ? "resolve any dispute through binding arbitration"
+        : "resolve disputes through court litigation"
     }.`
   );
   gap(5);
@@ -867,7 +864,12 @@ const generatePDF = (values: Record<string, string>) => {
 
   // ── Signatures ──────────────────────────────────────────────────────────────
 
-  addHeading(`${values.confidentiality === "yes" ? (values.additionalTerms ? "24" : "23") : (values.additionalTerms ? "23" : "22")}. SIGNATURES`);
+  const sigNum =
+    values.confidentiality === "yes"
+      ? values.additionalTerms ? "24" : "23"
+      : values.additionalTerms ? "23" : "22";
+
+  addHeading(`${sigNum}. SIGNATURES`);
   addBody(
     "IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date first written above."
   );
@@ -916,17 +918,15 @@ const generatePDF = (values: Record<string, string>) => {
 
   doc.save("dj_services_agreement.pdf");
 };
-export default function DJServicesAgreement() {
+
+export default function DJServicesAgreementForm() {
   return (
     <FormWizard
-    
       steps={steps}
       title="DJ Services Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="djservicesagreement"
-
-
     />
   );
 }
