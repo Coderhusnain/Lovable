@@ -916,15 +916,17 @@ const generatePDF = (values: Record<string, string>) => {
 
   doc.save("dj_services_agreement.pdf");
 };
-
 export default function DJServicesAgreement() {
   return (
     <FormWizard
+    
       steps={steps}
       title="DJ Services Agreement"
       subtitle="Complete each step to generate your document"
       onGenerate={generatePDF}
       documentType="djservicesagreement"
+
+
     />
   );
 }
