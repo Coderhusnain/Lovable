@@ -401,16 +401,25 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
+/** Ensures there is enough space, adding a new page if needed. Returns updated y. */
+const checkPage = (doc: jsPDF, y: number, pageH: number, needed = 20): number => {
+  if (y > pageH - needed) {
+    doc.addPage();
+    return 20;
+  }
+  return y;
+};
+
 /** Adds a bold section heading. Returns updated y. */
 const addHeading = (doc: jsPDF, text: string, y: number, pageH: number): number => {
-  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  y = checkPage(doc, y, pageH, 25);
   doc.setFontSize(11);
   doc.setFont("helvetica", "bold");
   doc.text(text, 20, y);
   return y + 7;
 };
 
-/** Wraps body text with an optional left indent. Returns updated y. */
+/** Wraps body text. Returns updated y. */
 const addBody = (
   doc: jsPDF,
   text: string,
@@ -419,12 +428,12 @@ const addBody = (
   indent = 20,
   maxWidth = 170
 ): number => {
-  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  y = checkPage(doc, y, pageH, 20);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   const lines = doc.splitTextToSize(text, maxWidth - (indent - 20));
   lines.forEach((line: string) => {
-    if (y > pageH - 15) { doc.addPage(); y = 20; }
+    y = checkPage(doc, y, pageH, 15);
     doc.text(line, indent, y);
     y += 5.5;
   });
@@ -438,17 +447,63 @@ const addBullet = (
   y: number,
   pageH: number
 ): number => {
-  if (y > pageH - 20) { doc.addPage(); y = 20; }
+  y = checkPage(doc, y, pageH, 20);
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("\u2022", 24, y);
   const lines = doc.splitTextToSize(text, 156);
   lines.forEach((line: string, i: number) => {
-    if (y > pageH - 15) { doc.addPage(); y = 20; }
+    y = checkPage(doc, y, pageH, 15);
+    if (i === 0) doc.text("\u2022", 24, y);
     doc.text(line, 30, y);
+    y += 5.5;
+  });
+  return y + 1;
+};
+
+/**
+ * Renders a line that starts with a bold label and continues with normal text,
+ * all on the SAME baseline — no overwrite. Returns updated y.
+ *
+ * e.g. addLabeledLine(doc, "Lessor:", " John Doe, 123 Main...", y, pageH)
+ */
+const addLabeledLine = (
+  doc: jsPDF,
+  label: string,
+  rest: string,
+  y: number,
+  pageH: number
+): number => {
+  y = checkPage(doc, y, pageH, 20);
+  doc.setFontSize(10);
+
+  // Measure bold label width so the normal text starts right after it
+  doc.setFont("helvetica", "bold");
+  const labelWidth = doc.getTextWidth(label);
+
+  doc.text(label, 20, y);
+
+  doc.setFont("helvetica", "normal");
+  // Wrap the rest within remaining page width
+  const maxW = 170 - labelWidth;
+  const lines = doc.splitTextToSize(rest, maxW);
+  lines.forEach((line: string, i: number) => {
+    y = checkPage(doc, y, pageH, 15);
+    // First line starts right after the label; subsequent lines indent to same x
+    doc.text(line, 20 + labelWidth, y);
     if (i < lines.length - 1) y += 5.5;
   });
   return y + 6;
+};
+
+/** Adds a signature block row. Returns updated y. */
+const addSigRow = (doc: jsPDF, label: string, value: string, y: number, pageH: number): number => {
+  y = checkPage(doc, y, pageH, 10);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text(label, 20, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(value, 20 + doc.getTextWidth(label) + 1, y);
+  return y + 7;
 };
 
 // ─── PDF generator ──────────────────────────────────────────────────────────
@@ -464,31 +519,29 @@ const generatePDF = (values: Record<string, string>) => {
   doc.text("OIL LEASE AGREEMENT", 105, y, { align: "center" });
   y += 10;
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text(
+  // Intro paragraph — plain body text (no inline bold/normal mixing)
+  y = addBody(
+    doc,
     `This Oil and Gas Lease Agreement ("Agreement") is made and entered into as of ${values.effectiveDate || "[Insert Date]"}, by and between:`,
-    20, y, { maxWidth: 170 }
+    y, pageH
   );
-  y += 12;
+  y += 2;
 
-  doc.setFont("helvetica", "bold");
-  doc.text("Lessor:", 20, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(
-    ` ${values.party1Name || "[Insert Full Name]"}, having an address at ${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""} ("Lessor"),`,
-    20, y, { maxWidth: 170 }
+  // Lessor line — bold label + normal continuation, no overwrite
+  y = addLabeledLine(
+    doc,
+    "Lessor: ",
+    `${values.party1Name || "[Insert Full Name]"}, having an address at ${values.party1Street || ""}, ${values.party1City || ""} ${values.party1Zip || ""} ("Lessor"),`,
+    y, pageH
   );
-  y += 10;
 
-  doc.setFont("helvetica", "bold");
-  doc.text("Lessee:", 20, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(
-    ` ${values.party2Name || "[Insert Full Name]"}, having an address at ${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""} ("Lessee").`,
-    20, y, { maxWidth: 170 }
+  // Lessee line
+  y = addLabeledLine(
+    doc,
+    "Lessee: ",
+    `${values.party2Name || "[Insert Full Name]"}, having an address at ${values.party2Street || ""}, ${values.party2City || ""} ${values.party2Zip || ""} ("Lessee").`,
+    y, pageH
   );
-  y += 10;
 
   y = addBody(doc, 'The Lessor and Lessee may be collectively referred to as the "Parties."', y, pageH);
   y += 3;
@@ -694,71 +747,91 @@ const generatePDF = (values: Record<string, string>) => {
   }
 
   // ── SIGNATURES ──
-  if (y > pageH - 60) { doc.addPage(); y = 20; }
+  // Ensure enough room for the full signature block; if not, start a new page
+  y = checkPage(doc, y, pageH, 80);
   y += 5;
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "bold");
-  doc.text("IN WITNESS WHEREOF", 20, y);
-  doc.setFont("helvetica", "normal");
-  doc.text(", the Parties have executed this Lease Agreement as of the date first above written.", 68, y);
-  y += 12;
 
-  // Lessor block
+  // "IN WITNESS WHEREOF" — bold label + normal continuation, no overwrite
+  y = addLabeledLine(
+    doc,
+    "IN WITNESS WHEREOF",
+    ", the Parties have executed this Lease Agreement as of the date first above written.",
+    y, pageH
+  );
+  y += 4;
+
+  // ── Lessor block ──
+  y = checkPage(doc, y, pageH, 50);
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("LESSOR:", 20, y);
   y += 8;
+
   doc.setFont("helvetica", "normal");
   doc.text("Signature: _______________________________", 20, y);
   y += 7;
-  doc.text(`Name: ${values.party1Name || ""}`, 20, y);
-  y += 7;
-  doc.text(`Signature (typed): ${values.party1Signature || ""}`, 20, y);
-  y += 7;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  y += 12;
+  y = addSigRow(doc, "Name: ", values.party1Name || "", y, pageH);
+  y = addSigRow(doc, "Signature (typed): ", values.party1Signature || "", y, pageH);
+  y = addSigRow(doc, "Date: ", new Date().toLocaleDateString(), y, pageH);
+  y += 5;
 
-  // Lessee block
+  // ── Lessee block ──
+  y = checkPage(doc, y, pageH, 50);
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("LESSEE:", 20, y);
   y += 8;
+
   doc.setFont("helvetica", "normal");
   doc.text("Signature: _______________________________", 20, y);
   y += 7;
-  doc.text(`Name: ${values.party2Name || ""}`, 20, y);
-  y += 7;
-  doc.text(`Signature (typed): ${values.party2Signature || ""}`, 20, y);
-  y += 7;
-  doc.text("Date: " + new Date().toLocaleDateString(), 20, y);
-  y += 12;
+  y = addSigRow(doc, "Name: ", values.party2Name || "", y, pageH);
+  y = addSigRow(doc, "Signature (typed): ", values.party2Signature || "", y, pageH);
+  y = addSigRow(doc, "Date: ", new Date().toLocaleDateString(), y, pageH);
+  y += 5;
 
   if (values.witnessName) {
+    y = checkPage(doc, y, pageH, 20);
+    doc.setFont("helvetica", "normal");
     doc.text("Witness: _______________________________", 20, y);
     y += 7;
-    doc.text(`Name: ${values.witnessName}`, 20, y);
-    y += 12;
+    y = addSigRow(doc, "Name: ", values.witnessName, y, pageH);
+    y += 5;
   }
 
   // ── MAKE IT LEGAL NOTE ──
-  if (y > pageH - 40) { doc.addPage(); y = 20; }
+  y = checkPage(doc, y, pageH, 50);
+  y += 3;
+
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
   doc.text("Make It Legal", 20, y);
   y += 7;
-  doc.setFont("helvetica", "normal");
-  y = addBody(doc, "This Agreement should be signed in front of a notary public. Once signed, this document should be delivered to the appropriate court for filing.", y, pageH);
+  y = addBody(
+    doc,
+    "This Agreement should be signed in front of a notary public. Once signed, this document should be delivered to the appropriate court for filing.",
+    y, pageH
+  );
   y += 3;
 
   doc.setFont("helvetica", "bold");
   doc.text("Copies", 20, y);
   y += 7;
-  doc.setFont("helvetica", "normal");
-  y = addBody(doc, "The original Agreement should be filed with the Clerk of Court or delivered to the requesting business. Each Party should retain a copy in a safe place.", y, pageH);
+  y = addBody(
+    doc,
+    "The original Agreement should be filed with the Clerk of Court or delivered to the requesting business. Each Party should retain a copy in a safe place.",
+    y, pageH
+  );
   y += 3;
 
   doc.setFont("helvetica", "bold");
   doc.text("Additional Assistance", 20, y);
   y += 7;
-  doc.setFont("helvetica", "normal");
-  addBody(doc, "If you are unsure or have questions regarding this Agreement, or need additional assistance with special situations or circumstances, consult a qualified attorney in your area.", y, pageH);
+  addBody(
+    doc,
+    "If you are unsure or have questions regarding this Agreement, or need additional assistance with special situations or circumstances, consult a qualified attorney in your area.",
+    y, pageH
+  );
 
   doc.save("oil_lease_agreement.pdf");
 };
