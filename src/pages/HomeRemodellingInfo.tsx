@@ -61,9 +61,9 @@ const HomeRemodellingInfo = () => {
               <Hammer className="h-8 w-8 text-blue-600" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Home Remodelling Agreement Information</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Home Remodeling Contract Information</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Home Remodelling Agreement • Remodelling Contract • Home Renovation Contract
+            Home Remodeling Contract • Remodeling Agreement • Home Renovation Contract
           </p>
         </div>
 
@@ -76,13 +76,20 @@ const HomeRemodellingInfo = () => {
           </CardHeader>
           <CardContent className="space-y-3 text-gray-700">
             <p>
-              A Remodelling Contract is a legal agreement that sets out the terms under which remodelling services are provided.
+              A Remodeling Contract is a legal agreement that sets out the terms under which remodeling services are provided.
             </p>
             <p>
-              This draft Remodelling Contract from Legalgram includes details of contractor and client, scope of remodelling work (renovation, upgrades, repairs), project timeline and deadlines, cost and payment schedule, and liability, confidentiality, and dispute resolution clauses.
+              This draft Remodeling Contract from Legalgram includes:
             </p>
-            <p>
-              The best format Remodelling Contract from Legalgram ensures clarity, professionalism, and legal protection for both parties.
+            <ul className="list-disc pl-6 space-y-1">
+              <li>Details of contractor and client</li>
+              <li>Scope of remodeling work (renovation, upgrades, repairs)</li>
+              <li>Project timeline and deadlines</li>
+              <li>Cost and payment schedule</li>
+              <li>Liability, confidentiality, and dispute resolution clauses</li>
+            </ul>
+            <p className="mt-3">
+              The best format Remodeling Contract from Legalgram ensures clarity, professionalism, and legal protection for both parties.
             </p>
           </CardContent>
         </Card>
@@ -91,12 +98,12 @@ const HomeRemodellingInfo = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-green-600" />
-              Why You Need a Remodelling Contract
+              Why You Need a Remodeling Contract
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-gray-700">
-              Creating a draft Remodelling Contract is essential for avoiding disputes and ensuring project success. With Legalgram, you can:
+              Creating a draft Remodeling Contract is essential for avoiding disputes and ensuring project success. With Legalgram, you can:
             </p>
             <ul className="space-y-2">
               {whyYouNeed.map((item) => (
@@ -107,7 +114,7 @@ const HomeRemodellingInfo = () => {
               ))}
             </ul>
             <p className="text-gray-700">
-              Get your free download Remodelling Contract from Legalgram today and secure your project.
+              📥 Get your free download Remodeling Contract from Legalgram today and secure your project.
             </p>
           </CardContent>
         </Card>
@@ -185,12 +192,12 @@ const HomeRemodellingInfo = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
-              How Does a Remodelling Contract Work?
+              How Does a Remodeling Contract Work?
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-gray-700">
             <p>
-              A draft Remodelling Contract from Legalgram works by clearly documenting all agreed terms before the project begins.
+              A draft Remodeling Contract from Legalgram works by clearly documenting all agreed terms before the project begins.
             </p>
             <p>It ensures:</p>
             <ul className="space-y-2">
@@ -199,7 +206,7 @@ const HomeRemodellingInfo = () => {
               <li className="flex items-start gap-3"><CheckCircle className="h-4 w-4 text-green-600 mt-1 flex-shrink-0" /><span>Legal protection in case of disputes</span></li>
             </ul>
             <p>
-              Download Remodelling Contract from Legalgram to manage your remodelling project professionally and efficiently.
+              👉 Download Remodeling Contract from Legalgram to manage your remodeling project professionally and efficiently.
             </p>
           </CardContent>
         </Card>

@@ -11,7 +11,7 @@ const steps: Array<{ label: string; fields: FieldDef[] }> = [
       { name: "phone", label: "Phone number", type: "tel", required: true },
       { name: "email", label: "Email address", type: "email", required: true },
       { name: "dob", label: "Date of birth", type: "date", required: true },
-      { name: "race", label: "Race", type: "text", required: false },
+      { name: "race", label: "Race", typwe: "text", required: false },
       { name: "sex", label: "Sex", type: "text", required: false },
       { name: "height", label: "Height", type: "text", required: false },
       { name: "weight", label: "Weight (lbs)", type: "text", required: false },

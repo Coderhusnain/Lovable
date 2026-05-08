@@ -4,12 +4,33 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, BookOpen, Shield, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
-import { documentContent } from "@/data/documentContent";
+import { getDocumentContent } from "@/data/documentContent";
 
 const WarrantyAgreementInfo: React.FC = () => {
   const navigate = useNavigate();
-  const doc = documentContent["Warranty Agreement"] || documentContent["default"];
+  const doc = getDocumentContent("Warranty Repair Request Letter");
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+
+  const commonProducts = [
+    "Refrigerators",
+    "Washing machines",
+    "Air conditioners",
+    "Televisions",
+    "Mobile phones",
+    "Laptops",
+    "Cars and motorcycles",
+    "Furniture",
+    "Home appliances",
+    "Electronics",
+  ];
+
+  const whyDownload = [
+    "Free download Warranty Repair Request Letter",
+    "Editable Word and PDF templates",
+    "Professional legal format",
+    "Easy customization",
+    "Instant download access",
+  ];
 
   return (
     <Layout>
@@ -23,7 +44,7 @@ const WarrantyAgreementInfo: React.FC = () => {
               </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
-            <p className="text-lg text-gray-700 mb-6 leading-relaxed">{doc.whatIs}</p>
+              <p className="text-lg text-gray-700 mb-6 leading-relaxed">{doc.whatIs}</p>
 
             {/* Other Names / Aliases */}
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -37,12 +58,30 @@ const WarrantyAgreementInfo: React.FC = () => {
             )}
           </div>
 
+          <div className="mb-12 p-6 bg-white border-2 border-amber-200 rounded-lg shadow-sm">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Why Use a Warranty Repair Request Letter?</h2>
+            <p className="text-gray-700 mb-4">
+              A professionally written Warranty Repair Request Letter helps:
+            </p>
+            <ul className="space-y-3">
+              {doc.keyProtections?.map((item) => (
+                <li key={item} className="flex gap-3 items-start">
+                  <CheckCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-700">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-gray-700 mt-4">
+              Get the draft Warranty Repair Request Letter from Legalgram for fast and professional warranty claims.
+            </p>
+          </div>
+
           {/* When to Use Section */}
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <AlertCircle className="w-6 h-6 text-amber-600" />
-                When to Use a Warranty Agreement
+                When to Use This Letter
               </h2>
               <ul className="space-y-3">
                 {doc.whenToUse.map((use, idx) => (
@@ -54,6 +93,58 @@ const WarrantyAgreementInfo: React.FC = () => {
               </ul>
             </div>
           )}
+
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <BookOpen className="w-6 h-6 text-amber-600" />
+              Common Products Covered
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {commonProducts.map((product) => (
+                <Card key={product} className="border-amber-100 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-700">{product}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Why Download from Legalgram?</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {whyDownload.map((item) => (
+                <Card key={item} className="border-amber-100 bg-amber-50 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex gap-3 items-start">
+                      <CheckCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-gray-700">{item}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <p className="text-gray-700 mt-4">
+              For the best format this agreement from Legalgram, use our trusted ready-made legal templates.
+            </p>
+          </div>
+
+          <div className="mb-12 p-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Download Warranty Repair Request Letter</h2>
+            <p className="text-gray-700 leading-relaxed">
+              Create and download Warranty Repair Request Letter instantly from Legalgram for appliances, electronics, vehicles, furniture, and all warranty-covered products.
+            </p>
+          </div>
+
+          <div className="mb-12 p-6 bg-white border-2 border-amber-100 rounded-lg">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Sample Warranty Repair Request Letter</h2>
+            <p className="text-gray-700 leading-relaxed">
+              Your Warranty Repair Request Letter can be customized for product defects, delayed repairs, replacement claims, service center notices, or seller complaints.
+            </p>
+            <p className="text-gray-700 mt-4 leading-relaxed">
+              Download Warranty Repair Request Letter on Legalgram today and protect your warranty rights professionally.
+            </p>
+          </div>
 
           {/* FAQ Section */}
           {doc.faqs && doc.faqs.length > 0 && (
@@ -128,7 +219,7 @@ const WarrantyAgreementInfo: React.FC = () => {
           {/* Important Note */}
           <div className="mb-12 p-6 bg-amber-50 border-2 border-amber-200 rounded-lg">
             <p className="text-sm text-gray-700">
-              <strong>Important Note:</strong> A Warranty Agreement has been customized over 44,400 times, demonstrating its reliability and practical value. When properly completed and executed by authorized representatives, it is legally binding and enforceable. Consider consulting with a Legal Pro to ensure compliance with applicable consumer protection and warranty laws in your jurisdiction.
+              <strong>Important Note:</strong> A Warranty Repair Request Letter creates a formal record of your complaint and request for service. Keep copies of all correspondence and receipts, and consult a qualified attorney or consumer protection professional if the dispute is not resolved.
             </p>
           </div>
 
