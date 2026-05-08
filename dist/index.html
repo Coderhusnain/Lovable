@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="Rocket Lawyer - Legal solutions made affordable and accessible" />
+    <meta name="theme-color" content="#0F3460" />
+    
+    <!-- Preconnect to important domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    
+    <title>Legalgram</title>
+    
+    <!-- Add meta tags for SEO -->
+    <meta property="og:title" content="Legalgram">
+    <meta property="og:description" content="Get affordable legal help instantly with Rocket Lawyer's professional solutions">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rocketlawyer.com">
+    
+    <!-- Add Preload for critical resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <script type="module" crossorigin src="/assets/index-Bbi7lF8c.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C9Vkt2eb.css">
+  </head>
+
+  <body>
+    <div id="root" class="w-full"></div>
+    <script>
+      (() => {
+        const genericFallback = "This is a legal document that formalizes an agreement or declaration between parties. Legal documents provide clarity, establish rights and obligations, and serve as evidence in case of disputes. They are designed to protect all parties involved by clearly documenting terms and expectations.";
+        const paintingWhatIs = "A Painting Contract Agreement is a legally binding document that outlines the terms and conditions of painting services between a contractor and a client. The draft Painting Agreement from Legalgram includes scope of painting work (interior/exterior), project timeline and deadlines, payment terms and schedule, responsibilities of both parties, and legal clauses for liability and dispute resolution. Using the best format Painting Contract from Legalgram ensures transparency and professionalism in every project.";
+        const performanceBondWhatIs = "A Performance Bond is a financial guarantee issued by a surety company that ensures a contractor fulfills their obligations. If the contractor fails, the bond compensates the project owner. This draft Performance Bond from Legalgram includes details of the contractor, project owner, and surety, scope of the project and obligations, bond amount and coverage terms, and conditions for claims and compensation. The best format Performance Bond from Legalgram ensures financial security and legal protection for all parties involved.";
+        const replacements = [
+          ["A legal document to modify existing lease agreements between landlords and tenants", "A Lease Amendment Agreement is a legal agreement that allows landlords and tenants to modify certain terms of an existing lease while keeping the rest of the agreement unchanged."],
+          ["What is a Lease Amendment?", "What Is a Lease Amendment Agreement?"],
+          ["A Lease Amendment is a legal document that modifies or changes specific terms of an existing lease agreement without replacing the entire contract. This allows landlords and tenants to update lease terms such as rent amount, lease duration, utility responsibilities, or other provisions while keeping the original lease structure intact.", "A Lease Amendment Agreement is a legal agreement that allows landlords and tenants to modify certain terms of an existing lease while keeping the rest of the agreement unchanged. This draft Lease Amendment Agreement from Legalgram includes details of landlord and tenant, reference to the original lease agreement, effective date of amendment, specific terms being changed or added, and confirmation that all other lease terms remain valid. The best format Lease Amendment Agreement from Legalgram ensures clarity, accuracy, and legal protection for both parties."],
+          ["Lease Amendment", "Lease Amendment Agreement"]
+        ];
+        
+        const applyReplacements = () => {
+          const isPaintingPage = (document.body?.innerText || "").includes("What is a Painting Services Contract?");
+          const isPerformanceBondPage = (document.body?.innerText || "").includes("What is a Construction Performance Bond?");
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          let node;
+          while ((node = walker.nextNode())) {
+            const value = node.nodeValue || "";
+            if (isPaintingPage && value.includes(genericFallback)) {
+              node.nodeValue = value.replaceAll(genericFallback, paintingWhatIs);
+              continue;
+            }
+            if (isPerformanceBondPage && value.includes(genericFallback)) {
+              node.nodeValue = value.replaceAll(genericFallback, performanceBondWhatIs);
+              continue;
+            }
+            for (const [from, to] of replacements) {
+              if (value.includes(from)) {
+                node.nodeValue = value.replaceAll(from, to);
+                break;
+              }
+            }
+          }
+        };
+        
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", applyReplacements, { once: true });
+        } else {
+          applyReplacements();
+        }
+        
+        new MutationObserver(applyReplacements).observe(document.documentElement, { childList: true, subtree: true });
+      })();
+    </script>
+  </body>
+</html>
