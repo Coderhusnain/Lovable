@@ -1,5 +1,5 @@
-// Re-export from mirrored source to make module findable
-import * as docModule from "../../Lovable/src/data/documentContent";
+// Re-export from the local implementation so Vercel does not depend on the nested mirror.
+import * as docModule from "./documentContent.impl";
 
 export type DocumentFAQ = docModule.DocumentFAQ;
 export type DocumentContent = docModule.DocumentContent;
