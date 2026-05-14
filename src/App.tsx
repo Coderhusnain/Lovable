@@ -106,8 +106,14 @@ import LeaseSubordinationAgreementInfo from "./pages/LeaseSubordinationAgreement
 import MasterUseLicenseInfo from "./pages/MasterUseLicenseInfo";
 import FlooringServicesAgreementInfo from "./pages/FlooringServicesAgreementInfo";
 import CoSignerAgreementInfo from "./pages/CoSignerAgreementInfo";
+import CopyrightAssignmentInfo from "./pages/CopyrightAssignmentInfo";
 import CopyrightLicenseInfo from "./pages/CopyrightLicenseInfo";
 import CooperationAgreementInfo from "./pages/CooperationAgreementInfo";
+import CorporateResolutionInfo from "./pages/CorporateResolutionInfo";
+import CoursePartnershipAgreementInfo from "./pages/CoursePartnershipAgreementInfo";
+import EmployeeConfidentialityAgreementInfo from "./pages/EmployeeConfidentialityAgreementInfo";
+import EmployeeHandbookInfo from "./pages/EmployeeHandbookInfo";
+import EmployeeRetirementAgreementInfo from "./pages/EmployeeRetirementAgreementInfo";
 
 import FranchiseAgreementInfo from "./pages/FranchiseAgreementInfo";
 import AdministrativeServicesAgreementInfo from "./pages/AdministrativeServicesAgreementInfo";
@@ -414,10 +420,22 @@ const App = () => {
                 <Route path="/flooring-services-agreement-form" element={<Documents />} />
                 <Route path="/co-signer-agreement-info" element={<CoSignerAgreementInfo />} />
                 <Route path="/co-signer-agreement-form" element={<Documents />} />
+                <Route path="/copyright-assignment-info" element={<CopyrightAssignmentInfo />} />
+                <Route path="/copyright-assignment-form" element={<Documents />} />
                 <Route path="/copyright-license-info" element={<CopyrightLicenseInfo />} />
                 <Route path="/copyright-license-form" element={<Documents />} />
                 <Route path="/cooperation-agreement-info" element={<CooperationAgreementInfo />} />
                 <Route path="/cooperation-agreement-form" element={<Documents />} />
+                <Route path="/corporate-resolution-info" element={<CorporateResolutionInfo />} />
+                <Route path="/corporate-resolution-form" element={<Documents />} />
+                <Route path="/course-partnership-agreement-info" element={<CoursePartnershipAgreementInfo />} />
+                <Route path="/course-partnership-agreement-form" element={<Documents />} />
+                <Route path="/employee-confidentiality-agreement-info" element={<EmployeeConfidentialityAgreementInfo />} />
+                <Route path="/employee-confidentiality-agreement-form" element={<Documents />} />
+                <Route path="/employee-handbook-info" element={<EmployeeHandbookInfo />} />
+                <Route path="/employee-handbook-form" element={<Documents />} />
+                <Route path="/employee-retirement-agreement-info" element={<EmployeeRetirementAgreementInfo />} />
+                <Route path="/employee-retirement-agreement-form" element={<Documents />} />
 
                 {/* --- FUTURE ROUTES (Uncomment after creating files) --- */}
                 <Route path="/franchise-agreement-info" element={<FranchiseAgreementInfo />} />

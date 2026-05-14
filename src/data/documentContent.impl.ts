@@ -4099,6 +4099,155 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "10-15 minutes"
   },
 
+  // === COPYRIGHT ASSIGNMENT ===
+  "Copyright Assignment": {
+    title: "Copyright Assignment",
+    otherNames: ["Assignment of Copyright", "Copyright Assignment Agreement", "Copyright Transfer Agreement", "Intellectual Property Assignment"],
+    whatIs: "A Copyright Assignment is a legal agreement that transfers ownership of copyright from the current owner to another person or business. A properly written Copyright Assignment creates a clear legal record of ownership transfer and helps avoid future disputes over intellectual property rights. This agreement clearly specifies which copyrights are being transferred, the payment consideration, and the scope of rights assigned to the new owner.",
+    whenToUse: [
+      "Books and written content ownership transfer",
+      "Software source code transfer",
+      "Website content ownership transfer",
+      "Music rights and composition transfer",
+      "Photography copyright sale",
+      "Film and video rights assignment",
+      "Graphic design ownership transfer",
+      "Digital content transactions"
+    ],
+    faqs: [
+      { q: "What is a Copyright Assignment?", a: "A Copyright Assignment is a legal agreement that transfers complete ownership of copyright from the original creator to another person or business. Unlike a license which grants usage rights while retaining ownership, an assignment completely transfers all copyright ownership rights to the new owner." },
+      { q: "Why do I need a Copyright Assignment?", a: "A Copyright Assignment provides proof of ownership transfer, protects both buyer and seller rights, prevents future copyright disputes, clarifies commercial usage rights, supports licensing and resale rights, and is useful for legal registration records. It ensures professional transactions with clear legal protection." },
+      { q: "What should be included in a Copyright Assignment?", a: "A comprehensive Copyright Assignment should include assignor and assignee details, description of copyrighted work, date of transfer, consideration or payment terms, scope of rights assigned, territory of rights, moral rights clauses if applicable, warranties of ownership, and signatures with witness details." },
+      { q: "Is a Copyright Assignment legally binding?", a: "Yes. Once properly signed and executed by both parties, a Copyright Assignment is legally binding and creates a permanent transfer of copyright ownership. It is enforceable in court and serves as proof of ownership for legal and registration purposes." },
+      { q: "What is the difference between a copyright assignment and a copyright license?", a: "A copyright assignment transfers complete ownership of the copyright to another party. A copyright license grants limited usage rights while the original owner retains ownership. Choose assignment when you want to transfer full ownership; choose license when you want to share usage rights only." }
+    ],
+    keyProtections: [
+      "Provides proof of ownership transfer",
+      "Protects buyer and seller rights equally",
+      "Prevents future copyright disputes",
+      "Clarifies commercial usage rights",
+      "Supports licensing and resale rights",
+      "Useful for legal registration records",
+      "Ensures professional transactions",
+      "Complete ownership transfer documentation",
+      "Covers all essential rights",
+      "Registration-ready format"
+    ],
+    whatYouNeed: [
+      "Names and contact details of assignor (copyright owner)",
+      "Names and contact details of assignee (new owner)",
+      "Complete description of the copyrighted work",
+      "Title, creation date, and identifying information",
+      "Date of transfer and effective date",
+      "Payment amount or consideration exchanged",
+      "Scope of rights being assigned",
+      "Geographic territory of rights",
+      "Moral rights waiver (if applicable)",
+      "Warranties of ownership confirmation"
+    ],
+    estimatedTime: "10-15 minutes"
+  },
+
+  // === COOPERATION AGREEMENT ===
+  "Cooperation Agreement": {
+    title: "Cooperation Agreement",
+    otherNames: ["Agreement of Cooperation", "Business Cooperation Agreement", "Partnership Cooperation Agreement", "Preliminary Business Agreement"],
+    whatIs: "A Cooperation Agreement is a legal or preliminary business document between two or more parties that outlines the key terms of working together before a detailed final agreement is signed. A properly written Cooperation Agreement helps both parties understand expectations, reduce misunderstandings, and move toward a final formal contract with confidence. This agreement establishes preliminary understanding and builds trust between parties before committing to more complex formal agreements.",
+    whenToUse: [
+      "Preliminary business partnerships",
+      "Joint venture discussions",
+      "Supplier cooperation deals",
+      "Startup collaborations",
+      "Employment negotiations",
+      "Commercial project planning",
+      "Strategic alliances",
+      "Early-stage business transactions"
+    ],
+    faqs: [
+      { q: "What is a Cooperation Agreement?", a: "A Cooperation Agreement is a legal or preliminary business document between two or more parties that outlines the key terms of working together before a detailed final agreement is signed. It establishes preliminary understanding and helps both parties understand expectations and reduce misunderstandings." },
+      { q: "Why do I need a Cooperation Agreement?", a: "A written Cooperation Agreement clarifies intentions early, defines responsibilities clearly, prevents misunderstandings, builds trust between parties, protects confidential information, supports future detailed contracts, and creates a professional legal record. It is especially useful for preliminary business discussions and negotiations." },
+      { q: "When should I use a Cooperation Agreement?", a: "Use a Cooperation Agreement for preliminary business partnerships, joint venture discussions, supplier cooperation deals, startup collaborations, employment negotiations, commercial project planning, strategic alliances, and early-stage business transactions." },
+      { q: "What should be included in a Cooperation Agreement?", a: "A comprehensive Cooperation Agreement should include names of all parties, purpose of cooperation, goals and objectives, roles and responsibilities, initial term of agreement, confidentiality obligations, intellectual property ownership terms, dispute resolution process, termination rights, and force majeure clauses." },
+      { q: "Is a Cooperation Agreement legally binding?", a: "A properly drafted Cooperation Agreement is legally binding once signed by all parties. It creates legal obligations for all parties to the agreement and serves as documentation of preliminary terms before more detailed contracts are executed." }
+    ],
+    keyProtections: [
+      "Clarifies intentions early in negotiations",
+      "Defines responsibilities clearly for all parties",
+      "Prevents misunderstandings between parties",
+      "Builds trust through formal documentation",
+      "Protects confidential information exchanged",
+      "Supports future detailed contracts",
+      "Creates professional legal record",
+      "Establishes preliminary understanding",
+      "Covers intellectual property considerations",
+      "Includes dispute resolution procedures"
+    ],
+    whatYouNeed: [
+      "Names and contact information of all parties",
+      "Purpose of cooperation between parties",
+      "Goals and objectives of the cooperation",
+      "Roles and responsibilities of each party",
+      "Initial term and duration of agreement",
+      "Confidentiality and non-disclosure terms",
+      "Intellectual property ownership provisions",
+      "Dispute resolution procedures",
+      "Termination and exit conditions",
+      "Force majeure and unforeseen events clauses"
+    ],
+    estimatedTime: "10-15 minutes"
+  },
+
+  // === CORPORATE RESOLUTION ===
+  "Corporate Resolution": {
+    title: "Corporate Resolution",
+    otherNames: ["Board Resolution", "Directors' Resolution", "Shareholders' Resolution", "Written Consent", "Board Action"],
+    whatIs: "A Corporate Resolution is an official written record of a decision approved by a corporation's board of directors or shareholders. A properly written Corporate Resolution helps businesses stay compliant, organized, and legally protected by keeping official records of major decisions. This document serves as legal proof that proper authorization and corporate governance procedures were followed for important business actions.",
+    whenToUse: [
+      "Board meeting decisions",
+      "Shareholder approvals",
+      "Appointment of directors or officers",
+      "Opening business bank accounts",
+      "Issuing company shares",
+      "Purchasing assets or patents",
+      "Authorizing contracts",
+      "Approving loans or investments",
+      "Leasing property or equipment",
+      "Amending bylaws or policies"
+    ],
+    faqs: [
+      { q: "What is a Corporate Resolution?", a: "A Corporate Resolution is an official written record of a decision approved by a corporation's board of directors or shareholders. It documents major corporate actions and serves as proof that proper authorization was obtained through formal board or shareholder vote." },
+      { q: "Why do I need a Corporate Resolution?", a: "A Corporate Resolution creates official proof of decisions, supports legal and regulatory compliance, protects directors and shareholders, improves internal record keeping, is often required by banks and financial institutions, helps avoid management disputes, and strengthens corporate governance." },
+      { q: "When should I use a Corporate Resolution?", a: "Use a Corporate Resolution for board meeting decisions, shareholder approvals, appointment of directors or officers, opening business bank accounts, issuing company shares, purchasing assets or patents, authorizing contracts, and approving loans or investments." },
+      { q: "What should be included in a Corporate Resolution?", a: "A comprehensive Corporate Resolution should include company name and information, date of meeting or written consent, names of directors/shareholders involved, description of approved action, voting results or unanimous consent, effective date of decision, signatures of authorized persons, and corporate seal if required." },
+      { q: "What is the difference between a board resolution and a shareholders' resolution?", a: "A board resolution is approved by the board of directors and typically handles operational and management decisions. A shareholders' resolution is approved by shareholders and typically handles fundamental corporate matters like amendments to bylaws or major transactions." }
+    ],
+    keyProtections: [
+      "Creates official proof of corporate decisions",
+      "Supports legal and regulatory compliance",
+      "Protects directors and shareholders",
+      "Improves internal record keeping",
+      "Required by banks and financial institutions",
+      "Helps avoid management disputes",
+      "Strengthens corporate governance",
+      "Documents voting results clearly",
+      "Provides authorization trail",
+      "Serves as legal evidence"
+    ],
+    whatYouNeed: [
+      "Company name and incorporation details",
+      "Date of board meeting or written consent",
+      "Names of all directors or shareholders",
+      "Description of the decision or action",
+      "Voting results (for/against/abstain)",
+      "Effective date of the resolution",
+      "Authorized signatures and dates",
+      "Corporate seal (if required)",
+      "Any attachments or exhibits",
+      "Secretary or authorized officer info"
+    ],
+    estimatedTime: "10-15 minutes"
+  },
+
   // === GENERAL CONTRACT FOR PRODUCTS ===
   "General Contract for Products": {
     title: "General Contract for Products",
@@ -6049,6 +6198,358 @@ export const documentContent: Record<string, DocumentContent> = {
     legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific guidance or local rental law compliance."
   },
 
+  "Employee Retirement Agreement": {
+    title: "Employee Retirement Agreement",
+    otherNames: [
+      "Employee Retirement Plan",
+      "Retirement Agreement",
+      "Retirement Settlement Agreement",
+      "Employee Exit Agreement",
+      "HR Retirement Settlement",
+      "Severance and Retirement Agreement",
+      "Retirement Benefits Agreement",
+      "Final Settlement Agreement"
+    ],
+    whatIs: "An Employee Retirement Agreement (also called Employee Retirement Plan or Retirement Agreement) is a written contract between employer and employee that confirms the terms of retirement. It helps employers and employees avoid misunderstandings by setting out retirement arrangements in a legally organized document. The agreement confirms the official retirement date, final settlement terms, benefits, and any ongoing obligations. It typically includes employee and employer information, official retirement date, final salary payment, gratuity or severance benefits, pension or retirement benefits, medical insurance continuation, return of company property obligations, confidentiality obligations, and release of future claims.",
+    whenToUse: [
+      "Employee voluntary retirement process",
+      "Planned company retirement programs",
+      "HR retirement processing and documentation",
+      "Final settlement arrangements",
+      "Retirement benefits documentation",
+      "Medical benefit continuation terms",
+      "Severance package agreements",
+      "Release of claims documentation",
+      "Pension plan distributions",
+      "Retirement benefit calculations and verification"
+    ],
+    faqs: [
+      { q: "What is an Employee Retirement Agreement?", a: "An Employee Retirement Agreement is a written contract between an employer and retiring employee that confirms all terms of retirement. It documents the official retirement date, final payments, pension and benefits, medical coverage continuation, return of property, and any post-retirement obligations. It provides clarity and legal protection for both parties." },
+      { q: "Why do I need a Retirement Agreement?", a: "A Retirement Agreement creates a clear record of all retirement arrangements, preventing future disputes about final payments, benefits, obligations, or claims. It protects both the company and the employee by documenting what was promised and expected. Without a written agreement, misunderstandings can lead to legal disputes." },
+      { q: "What should be included in the agreement?", a: "The agreement should include: employee and employer information, official retirement date, final salary and payments, severance or gratuity amount, pension or retirement benefits details, medical insurance continuation terms, return of company property, confidentiality and non-compete clauses, release of claims, tax information, and signatures." },
+      { q: "How is gratuity or severance calculated?", a: "Gratuity or severance is typically calculated based on: company policy, length of service, final salary amount, and applicable labor laws. The calculation may follow statutory requirements or company policy, whichever is more favorable to the employee. The specific amount should be clearly stated in the agreement." },
+      { q: "What about medical insurance continuation?", a: "Many retirement agreements provide for continuation of medical insurance for a period post-retirement, often under COBRA or similar provisions. The agreement should specify: coverage period length, premium payment responsibility, covered benefits, and conditions for continuation." },
+      { q: "What is a release of claims?", a: "A release of claims is a provision where the employee agrees not to pursue any legal claims against the company related to employment or retirement. In exchange, the company provides agreed-upon retirement benefits. This protects both parties from future litigation but must be fair and legal." },
+      { q: "Can an agreement be modified after signing?", a: "Yes, both parties can agree to modify a retirement agreement after execution. However, modifications should be made in writing with signatures from both parties. Any amendments should be clearly documented to avoid confusion about which terms apply." },
+      { q: "Is the agreement enforceable?", a: "Yes, when properly executed by both parties, a Retirement Agreement is legally enforceable. However, enforceability depends on compliance with employment laws, reasonableness of terms, proper consideration, and lack of fraud or duress. Courts may refuse to enforce unreasonable or illegal provisions." }
+    ],
+    keyProtections: [
+      "Creates clarity for both employer and employee",
+      "Reduces future disputes about retirement terms",
+      "Documents final settlement terms clearly",
+      "Defines retirement benefits explicitly",
+      "Protects business interests post-retirement",
+      "Ensures smooth employee exit process",
+      "Provides legal record of retirement terms",
+      "Supports HR compliance procedures",
+      "Clarifies pension and benefits continuation",
+      "Establishes release of liability"
+    ],
+    whatYouNeed: [
+      "Employee full name and employee ID",
+      "Employee designation and department",
+      "Employer company name and address",
+      "Authorized employer representative",
+      "Official retirement date",
+      "Final salary and payment amounts",
+      "Accrued leave payout calculation",
+      "Severance or gratuity amount",
+      "Pension and retirement benefits details",
+      "Medical insurance continuation terms",
+      "Return of company property list",
+      "Confidentiality and non-compete terms",
+      "Release of claims language",
+      "Tax withholding and reporting information"
+    ],
+    estimatedTime: "15-20 minutes",
+    legalDisclaimer: "This Employee Retirement Agreement information is general guidance and not legal advice. Retirement agreements must comply with pension regulations, employment laws, tax laws, and labor regulations that vary significantly by jurisdiction. Severance requirements, benefits calculations, and release of claims provisions have specific legal requirements. We strongly recommend consulting with an employment attorney and financial advisor to ensure the agreement is legally compliant and protects all interests."
+  },
+
+  "Employee Handbook": {
+    title: "Employee Handbook",
+    otherNames: [
+      "Employee Manual",
+      "HR Manual",
+      "Staff Handbook",
+      "Human Resource Handbook",
+      "Company Handbook",
+      "Workplace Handbook",
+      "Employee Policy Manual",
+      "Employee Guide"
+    ],
+    whatIs: "An Employee Handbook is a business policy document that explains company rules, benefits, expectations, and workplace procedures. The handbook helps employers communicate company values, policies, discipline rules, leave benefits, workplace conduct standards, and employee responsibilities in one organized document. It serves as a reference guide for employees and ensures consistent policy application across all departments. An Employee Handbook typically includes company mission and values, working hours and attendance policies, leave and vacation policies, dress code, code of conduct, confidentiality rules, payroll practices, anti-harassment policy, equal opportunity statement, safety guidelines, discipline procedures, benefits information, and employee acknowledgment pages.",
+    whenToUse: [
+      "New employee onboarding and orientation",
+      "HR policy documentation and communication",
+      "Company rules and regulations documentation",
+      "Staff conduct policies and expectations",
+      "Leave and attendance rules establishment",
+      "Benefits explanation to employees",
+      "Workplace safety policies communication",
+      "Annual policy updates and distribution",
+      "Compliance with employment laws",
+      "Setting clear workplace expectations"
+    ],
+    faqs: [
+      { q: "What is an Employee Handbook?", a: "An Employee Handbook is a comprehensive policy document created by employers to communicate company rules, policies, benefits, expectations, and procedures. It serves as a reference guide for employees and a tool for HR to ensure consistent policy application across all departments and positions." },
+      { q: "Why is an Employee Handbook important?", a: "An Employee Handbook is important because it sets clear expectations reducing misunderstandings, ensures consistent policy application, helps with employee onboarding, provides legal protection for the employer, documents HR procedures and compliance efforts, provides reference for employee questions, and builds professional workplace culture." },
+      { q: "What should be included in the handbook?", a: "A comprehensive Employee Handbook should include: company mission and values, working hours and attendance policies, leave and vacation policies, dress code, code of conduct, confidentiality rules, payroll details, anti-harassment policy, equal opportunity statement, safety guidelines, discipline and termination procedures, benefits information, remote work policies, and acknowledgment page." },
+      { q: "Who should sign the handbook?", a: "All employees should sign an acknowledgment page confirming they received the handbook, read it, understood its contents, and agree to comply with the policies. This signature provides legal documentation that the employee was informed of company policies." },
+      { q: "How often should I update the handbook?", a: "You should review and update the Employee Handbook annually or whenever significant policy changes occur. Changes in employment laws, company policies, benefits, or workplace procedures should be reflected in updated versions. Distribute updated handbooks to all employees and maintain documentation of acknowledgment signatures." },
+      { q: "Does the handbook create an employment contract?", a: "In most jurisdictions, an employee handbook alone does not create a binding employment contract if employees remain at-will. However, handbooks can modify at-will status if they clearly state policies cannot be changed unilaterally. Include disclaimers that the handbook is not a contract (where applicable by law)." },
+      { q: "Should the handbook include remote work policies?", a: "Yes, especially important today. Include policies for remote work eligibility, approval process, equipment provided, communication expectations, work-from-home security, expense reimbursement, and confidentiality obligations. Clearly define remote work schedules and availability requirements." },
+      { q: "What legal protections does a handbook provide?", a: "A well-drafted handbook provides legal protection by documenting company policies and procedures, demonstrating compliance efforts with employment laws, providing evidence of consistent policy application, reducing employee misunderstandings, establishing grounds for discipline or termination, and protecting confidential information." }
+    ],
+    keyProtections: [
+      "Sets clear workplace expectations and standards",
+      "Reduces misunderstandings between employer and employees",
+      "Supports HR compliance with employment laws",
+      "Helps new employee orientation process",
+      "Protects employer legally with documented policies",
+      "Standardizes company policies across organization",
+      "Improves discipline and accountability",
+      "Builds and communicates professional company culture",
+      "Documents HR procedures and compliance efforts",
+      "Provides reference for employee questions and HR decisions"
+    ],
+    whatYouNeed: [
+      "Company name, address, and contact information",
+      "Company mission statement and core values",
+      "Work schedule and hours information",
+      "Leave and vacation policy details",
+      "Dress code guidelines and expectations",
+      "Code of conduct and professional behavior standards",
+      "Confidentiality and NDA information",
+      "Payroll and compensation details",
+      "Anti-harassment and discrimination policy",
+      "Equal opportunity employment statement",
+      "Safety guidelines and emergency procedures",
+      "Discipline and termination procedures",
+      "Benefits and insurance information",
+      "Employee acknowledgment form"
+    ],
+    estimatedTime: "2-3 hours",
+    legalDisclaimer: "This Employee Handbook information is general guidance and not legal advice. Employment laws vary significantly by jurisdiction, and handbooks must comply with federal, state, and local labor laws. Some handbook provisions may be unenforceable depending on your location. We strongly recommend consulting with an employment attorney to ensure your handbook is legally compliant and protective of your business interests."
+  },
+
+  "Employee Confidentiality Agreement": {
+    title: "Employee Confidentiality Agreement",
+    otherNames: [
+      "Employee NDA",
+      "Non-Disclosure Agreement",
+      "Employee Confidentiality Agreement",
+      "Confidentiality Agreement",
+      "Trade Secret Protection Agreement",
+      "Employee Secrecy Agreement",
+      "Proprietary Information Agreement",
+      "Employee Information Protection Agreement"
+    ],
+    whatIs: "An Employee Non-Disclosure Agreement is a legal contract between an employer and employee in which the employee agrees not to disclose confidential or proprietary business information. A properly written Employee Non-Disclosure Agreement helps businesses protect trade secrets, customer data, financial records, inventions, and confidential processes from misuse or disclosure. This agreement creates a legal binding obligation for employees to keep confidential business information private and provides the employer legal recourse if breaches occur.",
+    whenToUse: [
+      "New employee onboarding and hiring",
+      "Existing employee confidentiality updates",
+      "Startup staff hiring and protection",
+      "Sales team NDAs and responsibilities",
+      "Technical employee confidentiality",
+      "Remote worker agreements and protections",
+      "Company acquisition and staff onboarding",
+      "Protection of client data and trade secrets",
+      "Contractor and consultant agreements",
+      "Leadership and executive hiring"
+    ],
+    faqs: [
+      { q: "What is an Employee Non-Disclosure Agreement?", a: "An Employee Non-Disclosure Agreement (NDA) is a legal contract between an employer and employee. The employee agrees not to disclose or misuse confidential business information including trade secrets, client lists, financial data, and proprietary processes. This agreement protects the employer's competitive advantage and sensitive information." },
+      { q: "Why should I use an Employee NDA?", a: "An Employee NDA protects your business's most valuable assets. Without it, employees can legally disclose trade secrets or client information to competitors. The NDA creates a legal obligation and gives you recourse through courts if breaches occur. It's essential for startups, tech companies, and any business with confidential information." },
+      { q: "What information should be protected?", a: "Protected information typically includes: trade secrets and proprietary processes, customer and client lists, financial records and pricing, marketing plans and strategies, product designs and specifications, technical information and source code, and business plans. The agreement should clearly define what's confidential." },
+      { q: "Can I require all employees to sign?", a: "Yes, you can require all employees to sign an Employee NDA as a condition of employment. However, it's especially important for positions with access to sensitive information: executives, technical staff, sales personnel, and managers. Some positions may not need the full NDA but should still have confidentiality obligations." },
+      { q: "How long does confidentiality last?", a: "Duration varies by agreement, typically 2-5 years after employment ends. However, true trade secrets are often protected indefinitely if they maintain their secret status. The agreement should specify different durations for different types of information." },
+      { q: "What if an employee violates the NDA?", a: "If an employee breaches the NDA, you can take legal action for damages, seek an injunction to stop disclosure, pursue recovery of profits gained from breach, and recover attorney fees. Most agreements also allow immediate termination for breach. Courts can enforce the agreement and award significant damages." },
+      { q: "What are exceptions to confidentiality?", a: "Common exceptions include: information that becomes public through no fault of the employee, information the employee independently developed, information required to be disclosed by law, information previously known before employment, and information disclosed with written consent. The agreement should specify all exceptions." },
+      { q: "Is an Employee NDA enforceable?", a: "Yes, when properly drafted and signed, an Employee NDA is legally enforceable. Courts will enforce reasonable confidentiality agreements that protect legitimate business interests. However, agreements that are too broad or indefinite may not be enforceable. Ensure your agreement is reasonable and clearly defines what's confidential." }
+    ],
+    keyProtections: [
+      "Protects trade secrets and proprietary information",
+      "Secures client and customer lists",
+      "Prevents misuse of sensitive company data",
+      "Creates legal proof of confidentiality duties",
+      "Provides basis for legal action after breaches",
+      "Deters employee disclosure of confidential information",
+      "Establishes clear expectations for employees",
+      "Provides legal remedies in case of breach",
+      "Protects competitive advantage",
+      "Enables post-employment protection of information"
+    ],
+    whatYouNeed: [
+      "Employer company name and address",
+      "Employee name and position",
+      "Clear definition of what is confidential",
+      "List of specific confidential information categories",
+      "Duration of confidentiality obligations",
+      "Exceptions to confidentiality",
+      "Return of materials procedures",
+      "Remedies for breach",
+      "Governing law and jurisdiction",
+      "Employee acknowledgment and signature",
+      "Date agreement signed",
+      "Witness signatures if required"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This Employee Confidentiality Agreement information is general guidance and not legal advice. Employment law varies significantly by jurisdiction, and confidentiality agreements must comply with local labor laws and employment regulations. Some provisions may be unenforceable depending on your location. We strongly recommend consulting with an employment attorney to ensure your agreement is enforceable and complies with all applicable laws in your state or country."
+  },
+
+  "Course Partnership Agreement": {
+    title: "Course Partnership Agreement",
+    otherNames: [
+      "Co-Instructor Agreement",
+      "Online Course Collaboration Agreement",
+      "Course Collaboration Contract",
+      "Udemy Course Partnership",
+      "Course Creation Agreement",
+      "E-Learning Partnership Agreement",
+      "Joint Course Development Agreement",
+      "Course Revenue Sharing Agreement"
+    ],
+    whatIs: "A Course Partnership Agreement is a legal contract between two or more parties working together on an online or offline course. It defines ownership, duties, payments, and operational terms. A properly written Course Partnership Agreement helps course creators avoid misunderstandings, secure earnings, and build profitable collaborations. This agreement typically includes names of all partners, course title and description, ownership of course content, revenue sharing percentages, instructor responsibilities, marketing duties, student support obligations, intellectual property rights, termination clauses, and payment schedule.",
+    whenToUse: [
+      "Udemy course partnerships and collaborations",
+      "Co-instructor agreements for joint teaching",
+      "Course localization and translation projects",
+      "Translation of online courses to other languages",
+      "Revenue sharing arrangements with trainers",
+      "Coaching program partnerships",
+      "E-learning and educational business collaborations",
+      "Joint course creation and development deals",
+      "Corporate training program partnerships",
+      "Academic collaborations on online courses"
+    ],
+    faqs: [
+      { q: "What is a Course Partnership Agreement?", a: "A Course Partnership Agreement is a legal contract between two or more parties collaborating on an online or offline course. It defines ownership of content, payment terms, responsibilities, intellectual property rights, and procedures for resolving disputes. This agreement provides legal protection for all partners involved in the course collaboration." },
+      { q: "Why do I need a Course Partnership Agreement?", a: "Without a written agreement, course partnerships can lead to misunderstandings about revenue sharing, content ownership, and responsibilities. A clear agreement protects your earnings, defines everyone's roles, prevents disputes, and provides a legal framework for resolving issues. This is critical when working with multiple partners or on significant course projects." },
+      { q: "What should be included in the agreement?", a: "A comprehensive Course Partnership Agreement should include: partner names and roles, course details and description, content ownership terms, revenue sharing percentages, instructor responsibilities, marketing duties, student support obligations, intellectual property rights, payment schedule, termination clauses, dispute resolution procedures, and confidentiality terms." },
+      { q: "How is revenue typically shared in course partnerships?", a: "Revenue sharing depends on each partner's contribution. Common arrangements include: equal splits (50/50), splits based on contribution level (40/30/30), platform revenue minus expenses split, or tiered arrangements where percentages change based on course performance. Your agreement should specify exactly how revenue will be divided and when payments occur." },
+      { q: "Who owns the course content?", a: "Content ownership is negotiable and should be clearly stated in the agreement. Options include: one partner owns all content, partners co-own the content, ownership transfers to a third party, or each partner owns their specific contributions. The agreement should also address what happens to the content if the partnership ends." },
+      { q: "What if a co-instructor wants to leave the partnership?", a: "Your agreement should include clear termination procedures specifying: notice requirements (30/60/90 days), what happens to their contributions, how revenue is handled after departure, non-compete clauses if applicable, and procedures for replacing the instructor. Clear termination terms prevent disputes and complications." },
+      { q: "Can I use this for course translations and localizations?", a: "Yes, Course Partnership Agreements work well for translation and localization projects. The agreement should clearly define: who owns the translated content, royalty percentages for translators, quality standards, approval processes, and how the translated course will be marketed. Translation rights and compensation should be explicitly stated." },
+      { q: "Is a Course Partnership Agreement legally binding?", a: "Yes, when signed by all parties, a Course Partnership Agreement is legally binding and enforceable in court. Signatures from all partners (and notarization when required by your jurisdiction) make the agreement enforceable. This provides legal recourse if any partner violates the terms or breaches the agreement." },
+      { q: "Can I customize the agreement for different platforms?", a: "Yes, you can customize the Course Partnership Agreement for different platforms like Udemy, Teachable, Thinkific, Kajabi, and others. You can also adjust terms to match your specific partnership structure, partner arrangements, and platform requirements. The template is editable to fit your unique situation." },
+      { q: "What happens to revenue after the partnership ends?", a: "This should be clearly specified in your termination clause. Common arrangements include: partner stops receiving payments after departure date, partner receives final payment for existing enrollments, ongoing royalty for a specified period, or payments continue indefinitely for courses they created. Your agreement should define this explicitly." }
+    ],
+    keyProtections: [
+      "Protects course ownership and intellectual property rights",
+      "Clarifies revenue sharing and payment terms",
+      "Defines each partner's roles and responsibilities",
+      "Prevents disputes over course content ownership",
+      "Secures fair compensation for all contributors",
+      "Protects translated and localized content",
+      "Establishes clear decision-making authority",
+      "Provides dispute resolution procedures",
+      "Creates legally enforceable partnership terms",
+      "Protects student data and confidentiality"
+    ],
+    whatYouNeed: [
+      "Full names and contact information of all course partners",
+      "Specific course title and description",
+      "Details of partner roles and responsibilities",
+      "Revenue sharing percentages or payment amounts",
+      "Platform information (Udemy, Teachable, etc.)",
+      "Course timeline and launch date",
+      "Instructor and support requirements",
+      "Marketing and promotion plan",
+      "Content ownership terms",
+      "Intellectual property assignments",
+      "Payment schedule and terms",
+      "Termination conditions and notice periods",
+      "Dispute resolution preferences",
+      "Governing law and jurisdiction"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This Course Partnership Agreement information is general guidance and not legal advice. Course partnerships involve complex legal and business considerations that vary by jurisdiction, platform, and specific arrangement. For significant course collaborations, we strongly recommend consulting with a qualified attorney to ensure compliance with all applicable laws and to protect your interests and intellectual property."
+  },
+
+  "Corporation Formation": {
+    title: "Corporation Formation",
+    otherNames: [
+      "Incorporating a Business",
+      "Business Incorporation",
+      "Articles of Incorporation",
+      "Corporate Formation",
+      "Company Registration",
+      "Business Registration",
+      "Incorporation Process",
+      "Corporate Setup"
+    ],
+    whatIs: "Corporation Formation is the legal process of creating a new business entity that exists separately from its owners. When you incorporate your business, you create a distinct legal 'person' that can own property, enter into contracts, sue or be sued, and pay taxes independently of its owners (shareholders). This process provides limited liability protection, meaning your personal assets are generally protected from business debts and lawsuits. A corporation is a legal structure where the business is organized under state law, and owners are called shareholders or stockholders who have limited liability for corporate debts.",
+    whenToUse: [
+      "You want to start a new business with limited liability protection",
+      "You plan to raise capital or attract investors",
+      "You need to establish business credibility",
+      "You want to offer employee benefits",
+      "You plan to expand nationally or internationally",
+      "You have significant business assets to protect",
+      "You want tax planning flexibility",
+      "You plan to have multiple owners"
+    ],
+    faqs: [
+      {
+        q: "What is a Corporation?",
+        a: "A corporation is a distinct legal business entity that exists separately from its owners. It can own property, enter into contracts, sue or be sued, and pay taxes independently. This separation creates limited liability protection for shareholders."
+      },
+      {
+        q: "What are the main benefits of incorporating?",
+        a: "Key benefits include limited liability protection for personal assets, ability to raise capital by issuing stock, enhanced business credibility, tax planning flexibility, employee benefit options, and perpetual existence independent of owners."
+      },
+      {
+        q: "What's the difference between a C-Corp and S-Corp?",
+        a: "C-Corporations pay corporate income tax and can retain earnings. S-Corporations provide pass-through taxation where profits are taxed at individual rates. S-Corps have specific requirements including a cap on shareholders and stock class restrictions."
+      },
+      {
+        q: "What is limited liability protection?",
+        a: "Limited liability protection means personal assets (home, savings, car) are generally protected from business debts and lawsuits. The corporation acts as a legal shield between you and business liabilities. However, personal guarantees and fraud may pierce this protection."
+      },
+      {
+        q: "What documents are needed to form a corporation?",
+        a: "Key documents include Articles of Incorporation, bylaws, shareholder agreement (if multiple owners), EIN application, business licenses, and any required state-specific filings. Requirements vary by state and business type."
+      },
+      {
+        q: "How long does incorporation take?",
+        a: "Basic incorporation typically takes 1-3 weeks depending on your state. Expedited filing may be available for an additional fee. Once formed, you should register for business licenses and tax identification numbers."
+      },
+      {
+        q: "What are annual compliance requirements?",
+        a: "Corporations must hold annual shareholder meetings, maintain corporate records, keep minutes, file annual reports, and meet franchise tax deadlines. Failure to maintain compliance can result in loss of liability protection."
+      },
+      {
+        q: "Can I convert my existing business to a corporation?",
+        a: "Yes, you can convert a sole proprietorship, partnership, or LLC to a corporation. However, this involves tax considerations and requires filing appropriate documents with your state. Consult a tax professional before converting."
+      }
+    ],
+    keyProtections: [
+      "Limited liability protection for personal assets",
+      "Separate legal entity status",
+      "Ability to raise capital through stock issuance",
+      "Tax flexibility (C-Corp or S-Corp election)",
+      "Professional business credibility",
+      "Continuous existence independent of owners",
+      "Employee benefit plan eligibility",
+      "Business asset protection from personal liability"
+    ],
+    whatYouNeed: [
+      "Business name that complies with state requirements",
+      "Principal place of business address",
+      "Names and addresses of incorporators/initial directors",
+      "Shareholder information and stock details",
+      "Business purpose description",
+      "State of incorporation decision",
+      "Articles of Incorporation or Certificate of Incorporation",
+      "Corporate bylaws",
+      "Initial director and officer information",
+      "EIN application information",
+      "Business licenses and permits needed"
+    ],
+    estimatedTime: "2-4 weeks (including state processing)",
+    legalDisclaimer: "This Corporation Formation information is general guidance and not legal advice. Incorporation involves complex legal, tax, and regulatory considerations that vary significantly by state, business type, and individual circumstances. We strongly recommend consulting with a qualified business attorney and certified public accountant to ensure you choose the right structure and comply with all applicable laws."
+  },
+
   "default": {
     title: "Legal Document",
     whatIs: "This is a legal document that formalizes an agreement or declaration between parties. Legal documents provide clarity, establish rights and obligations, and serve as evidence in case of disputes. They are designed to protect all parties involved by clearly documenting terms and expectations.",
@@ -7441,6 +7942,121 @@ export function getDocumentContent(title: string): DocumentContent {
     normalizedTitle.includes("debt acknowledgment")
   ) {
     return documentContent["IOU"];
+  }
+  if (
+    normalizedTitle.includes("copyright assignment") ||
+    normalizedTitle.includes("assignment of copyright") ||
+    normalizedTitle.includes("copyright transfer") ||
+    normalizedTitle.includes("intellectual property assignment") ||
+    (normalizedTitle.includes("copyright") && normalizedTitle.includes("assignment")) ||
+    (normalizedTitle.includes("copyright") && normalizedTitle.includes("transfer"))
+  ) {
+    return documentContent["Copyright Assignment"];
+  }
+  if (
+    normalizedTitle.includes("cooperation agreement") ||
+    normalizedTitle.includes("agreement of cooperation") ||
+    normalizedTitle.includes("business cooperation") ||
+    normalizedTitle.includes("partnership cooperation") ||
+    normalizedTitle.includes("preliminary business agreement") ||
+    (normalizedTitle.includes("cooperation") && normalizedTitle.includes("agreement"))
+  ) {
+    return documentContent["Cooperation Agreement"];
+  }
+  if (
+    normalizedTitle.includes("employee retirement") ||
+    normalizedTitle.includes("retirement agreement") ||
+    normalizedTitle.includes("retirement settlement") ||
+    normalizedTitle.includes("employee retirement plan") ||
+    normalizedTitle.includes("retirement benefits") ||
+    normalizedTitle.includes("employee exit agreement") ||
+    normalizedTitle.includes("hr retirement") ||
+    normalizedTitle.includes("severance and retirement") ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("retirement")) ||
+    (normalizedTitle.includes("retirement") && normalizedTitle.includes("settlement"))
+  ) {
+    return documentContent["Employee Retirement Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("employee handbook") ||
+    normalizedTitle.includes("employee manual") ||
+    normalizedTitle.includes("hr manual") ||
+    normalizedTitle.includes("staff handbook") ||
+    normalizedTitle.includes("human resource handbook") ||
+    normalizedTitle.includes("company handbook") ||
+    normalizedTitle.includes("workplace handbook") ||
+    normalizedTitle.includes("employee policy manual") ||
+    normalizedTitle.includes("employee guide") ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("handbook")) ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("manual")) ||
+    (normalizedTitle.includes("hr") && normalizedTitle.includes("manual"))
+  ) {
+    return documentContent["Employee Handbook"];
+  }
+
+  if (
+    normalizedTitle.includes("employee confidentiality") ||
+    normalizedTitle.includes("employee nda") ||
+    normalizedTitle.includes("employee non-disclosure") ||
+    normalizedTitle.includes("non-disclosure agreement") ||
+    normalizedTitle.includes("trade secret") ||
+    normalizedTitle.includes("confidentiality agreement") ||
+    normalizedTitle.includes("employee secrecy") ||
+    normalizedTitle.includes("proprietary information") ||
+    normalizedTitle.includes("information protection") ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("confidentiality")) ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("nda")) ||
+    (normalizedTitle.includes("employee") && normalizedTitle.includes("non-disclosure"))
+  ) {
+    return documentContent["Employee Confidentiality Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("course partnership") ||
+    normalizedTitle.includes("co-instructor") ||
+    normalizedTitle.includes("course collaboration") ||
+    normalizedTitle.includes("course creation") ||
+    normalizedTitle.includes("online course") ||
+    normalizedTitle.includes("udemy course") ||
+    normalizedTitle.includes("course localization") ||
+    normalizedTitle.includes("course translation") ||
+    normalizedTitle.includes("e-learning partnership") ||
+    normalizedTitle.includes("joint course") ||
+    (normalizedTitle.includes("course") && normalizedTitle.includes("partnership")) ||
+    (normalizedTitle.includes("course") && normalizedTitle.includes("collaboration"))
+  ) {
+    return documentContent["Course Partnership Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("corporation") ||
+    normalizedTitle.includes("incorporating") ||
+    normalizedTitle.includes("business incorporation") ||
+    normalizedTitle.includes("articles of incorporation") ||
+    normalizedTitle.includes("corporate formation") ||
+    normalizedTitle.includes("incorporation process") ||
+    normalizedTitle.includes("company registration") ||
+    normalizedTitle.includes("business registration") ||
+    (normalizedTitle.includes("form") && normalizedTitle.includes("corporation")) ||
+    (normalizedTitle.includes("start") && normalizedTitle.includes("corporation"))
+  ) {
+    return documentContent["Corporation Formation"];
+  }
+
+  if (
+    normalizedTitle.includes("corporate resolution") ||
+    normalizedTitle.includes("board resolution") ||
+    normalizedTitle.includes("directors resolution") ||
+    normalizedTitle.includes("shareholders resolution") ||
+    normalizedTitle.includes("written consent") ||
+    normalizedTitle.includes("board action") ||
+    normalizedTitle.includes("corporate action") ||
+    (normalizedTitle.includes("board") && normalizedTitle.includes("resolution")) ||
+    (normalizedTitle.includes("shareholder") && normalizedTitle.includes("resolution")) ||
+    (normalizedTitle.includes("board") && normalizedTitle.includes("meeting"))
+  ) {
+    return documentContent["Corporate Resolution"];
   }
   
   // Try case-insensitive exact match
