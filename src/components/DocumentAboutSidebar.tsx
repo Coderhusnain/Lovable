@@ -1,3 +1,4 @@
+
 import { FileText, AlertCircle, CheckCircle, BookOpen, HelpCircle, Scale, Clock, Target, Sparkles, Gavel, Info, ChevronRight, AlertTriangle, Lightbulb } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -56,16 +57,189 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
   },
   "llc-operating-agreement": {
     title: "LLC Operating Agreement",
-    shortDescription: "Defines ownership structure and operating procedures for an LLC.",
-    fullDescription: "An LLC Operating Agreement outlines the ownership and member duties of your LLC.",
-    whenToUse: ["Forming a new LLC", "Adding or removing members"],
-    keyTerms: [
-      { term: "Member", definition: "An owner of the LLC." },
-      { term: "Capital Contribution", definition: "Money or assets invested." }
+    shortDescription: "Sets the internal rules, ownership, and management structure for an LLC.",
+    fullDescription: "An LLC Operating Agreement helps establish how your company operates and protects members by putting all key terms in writing. It defines member roles, management structure (member-managed or manager-managed), profit and loss allocation, voting rights, and procedures for member withdrawal or buyouts.",
+    whenToUse: [
+      "New LLC formation",
+      "Single-member LLC setup",
+      "Multi-member business ownership",
+      "Defining management structure",
+      "Profit and loss allocation",
+      "Voting rights among members",
+      "Member withdrawal and buyouts",
+      "Protecting limited liability status",
+      "Opening bank accounts or seeking funding"
     ],
-    tips: ["Define each member capital contribution clearly"],
-    warnings: ["Some states require an operating agreement"],
-    estimatedTime: "30-45 minutes"
+    keyTerms: [
+      { term: "Member", definition: "An owner of the LLC with ownership rights and responsibilities." },
+      { term: "Management Structure", definition: "How the LLC is managed: member-managed or manager-managed." },
+      { term: "Capital Contribution", definition: "Money, property, or services provided by members to the LLC." },
+      { term: "Profit and Loss Allocation", definition: "How earnings and losses are shared among members." }
+    ],
+    tips: [
+      "List each member's capital contribution and ownership percentage clearly",
+      "Define voting thresholds for key decisions",
+      "Include buyout terms for member withdrawal"
+    ],
+    warnings: [
+      "Some states require an operating agreement for multi-member LLCs",
+      "Banks and investors often require a signed agreement"
+    ],
+    estimatedTime: "20-30 minutes"
+  },
+  "llc-business-formation": {
+    title: "LLC Business Formation",
+    shortDescription: "Sets up ownership, management, and governance for a new LLC.",
+    fullDescription: "An LLC Operating Agreement helps establish how your company operates and protects members by putting all key terms in writing. It defines ownership structure, management responsibilities, profit allocation, and member voting rights.",
+    whenToUse: [
+      "New LLC formation",
+      "Single-member LLC setup",
+      "Multi-member business ownership",
+      "Defining management structure",
+      "Profit and loss allocation",
+      "Voting rights among members",
+      "Member withdrawal and buyouts",
+      "Protecting limited liability status",
+      "Opening bank accounts or seeking funding"
+    ],
+    keyTerms: [
+      { term: "Member", definition: "An owner of the LLC with ownership rights and responsibilities." },
+      { term: "Capital Contribution", definition: "Money, property, or services contributed to the LLC." },
+      { term: "Management Structure", definition: "Member-managed or manager-managed governance." },
+      { term: "Profit Allocation", definition: "How profits and losses are shared among members." }
+    ],
+    tips: [
+      "List each member's capital contribution and ownership percentage clearly",
+      "Define voting thresholds for key decisions",
+      "Include buyout terms for member withdrawal"
+    ],
+    warnings: [
+      "Some states require an operating agreement for multi-member LLCs",
+      "Banks and investors often require a signed agreement"
+    ],
+    estimatedTime: "20-30 minutes"
+  },
+  "AccountingContractForm": {
+    title: "Accounting Contract Agreement",
+    shortDescription: "Defines accounting services, fees, and responsibilities between client and accountant.",
+    fullDescription: "An Accounting Contract Agreement is a legal document between a client and an accountant or accounting firm. It explains the scope of accounting work, service duration, payment terms and fees, confidentiality obligations, deadlines and deliverables, termination terms, and responsibilities of both parties.",
+    whenToUse: [
+      "Hiring a chartered accountant",
+      "Bookkeeping services",
+      "Tax filing and tax return preparation",
+      "Payroll management",
+      "Financial statements and reports",
+      "Ongoing accounting consultancy",
+      "Small business accounting services"
+    ],
+    keyTerms: [
+      { term: "Scope of Work", definition: "The accounting tasks and services the accountant will perform." },
+      { term: "Payment Terms", definition: "Fees, billing schedule, and payment method for services." },
+      { term: "Confidentiality", definition: "Protection of sensitive financial records and client data." },
+      { term: "Deliverables", definition: "Reports, filings, and statements provided by the accountant." }
+    ],
+    tips: [
+      "List deliverables and deadlines clearly",
+      "Define how fees are calculated and billed",
+      "Include confidentiality and data protection terms"
+    ],
+    warnings: [
+      "Unclear scope can lead to billing disputes",
+      "Late or missing deliverables can create compliance risk"
+    ],
+    estimatedTime: "15-25 minutes"
+  },
+  "ArbitrationAgreementForm": {
+    title: "Arbitration Agreement",
+    shortDescription: "Resolves disputes through binding arbitration instead of court.",
+    fullDescription: "An Arbitration Agreement is a legal contract between parties agreeing that disputes will be settled through arbitration rather than court litigation. It defines arbitration rules, arbitrator selection, location, and cost-sharing.",
+    whenToUse: [
+      "Business partnership disputes",
+      "Commercial contract disputes",
+      "Employment disputes",
+      "Service agreement conflicts",
+      "Vendor and supplier disagreements",
+      "Property and payment disputes",
+      "Future dispute resolution planning"
+    ],
+    keyTerms: [
+      { term: "Scope of Disputes", definition: "Which disagreements are covered by arbitration." },
+      { term: "Arbitrator", definition: "Neutral third party who decides the dispute." },
+      { term: "Arbitration Rules", definition: "Procedures and rules governing the arbitration." },
+      { term: "Binding Decision", definition: "Final and enforceable outcome of the arbitration." }
+    ],
+    tips: [
+      "Specify the arbitration forum or rules",
+      "Define how the arbitrator is selected",
+      "Clarify cost-sharing arrangements"
+    ],
+    warnings: [
+      "Arbitration decisions are typically final and hard to appeal",
+      "Confirm enforceability in your jurisdiction"
+    ],
+    estimatedTime: "10-20 minutes"
+  },
+  "BrokerAgreementForm": {
+    title: "Broker Agreement",
+    shortDescription: "Defines brokerage services, fees, and introductions for business deals.",
+    fullDescription: "A Broker Agreement is a legal contract between a broker and a client that sets the terms under which the broker will help arrange a business transaction or introduction in exchange for compensation.",
+    whenToUse: [
+      "Business sales and acquisitions",
+      "Buyer and seller introductions",
+      "Property brokerage deals",
+      "Product sourcing arrangements",
+      "Investor introductions",
+      "Client referral agreements",
+      "Recruitment and hiring introductions",
+      "Commercial brokerage services"
+    ],
+    keyTerms: [
+      { term: "Commission", definition: "Fee paid to the broker for a successful introduction or deal." },
+      { term: "Exclusivity", definition: "Whether the broker has exclusive rights to represent the client." },
+      { term: "Non-Circumvention", definition: "Prevents parties from bypassing the broker to avoid fees." },
+      { term: "Scope of Services", definition: "The brokerage activities the broker will perform." }
+    ],
+    tips: [
+      "Define commission structure and payment triggers",
+      "Clarify exclusivity and term length",
+      "Include confidentiality and non-circumvention terms"
+    ],
+    warnings: [
+      "Broker licensing rules vary by jurisdiction",
+      "Vague fee terms can lead to disputes"
+    ],
+    estimatedTime: "10-20 minutes"
+  },
+  "bidproposal-agreement": {
+    title: "Bid Proposal Agreement",
+    shortDescription: "Presents pricing, scope, and timeline to win projects with confidence.",
+    fullDescription: "A Bid Proposal is a business document used by contractors, freelancers, vendors, or companies to offer services for a project. It includes project details, cost estimates, labor charges, material pricing, schedules, and terms for completing the work.",
+    whenToUse: [
+      "Construction project bids",
+      "Freelance service proposals",
+      "Website design quotations",
+      "Interior design project bids",
+      "Supplier quotations",
+      "Repair and maintenance bids",
+      "Commercial service contracts",
+      "Tender submissions"
+    ],
+    keyTerms: [
+      { term: "Scope of Work", definition: "The specific tasks and deliverables included in the bid." },
+      { term: "Cost Estimate", definition: "Pricing for labor, materials, and total project cost." },
+      { term: "Timeline", definition: "Projected start and completion dates for the work." },
+      { term: "Payment Schedule", definition: "How and when payments are due." }
+    ],
+    tips: [
+      "Itemize labor and material costs clearly",
+      "Define assumptions and exclusions",
+      "Include a clear completion timeline"
+    ],
+    warnings: [
+      "Ambiguous scope can cause disputes",
+      "Ensure pricing aligns with your contract terms"
+    ],
+    estimatedTime: "10-20 minutes"
   },
   "living-will": {
     title: "Living Will (Advance Directive)",
@@ -177,16 +351,65 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
   },
   "bill-of-sale": {
     title: "Bill of Sale",
-    shortDescription: "A document transferring ownership of personal property from seller to buyer.",
-    fullDescription: "A Bill of Sale provides legal proof of the transfer of ownership of goods from one party to another.",
-    whenToUse: ["Selling a vehicle", "Transferring equipment", "Private sales of personal property"],
-    keyTerms: [
-      { term: "As-Is", definition: "Buyer accepts the item in its current condition without warranties." },
-      { term: "Warranty of Title", definition: "Seller guarantees they have the right to sell the item." }
+    shortDescription: "Proof of purchase and ownership transfer for personal property.",
+    fullDescription: "A Bill of Sale is a legal document used to transfer ownership of personal property from a seller to a buyer. It confirms that payment has been made and ownership has passed to the purchaser.",
+    whenToUse: [
+      "Furniture sale",
+      "Equipment transfer",
+      "Electronics sale",
+      "Business assets sale",
+      "Household goods sale",
+      "Machinery sale",
+      "Animal or livestock sale",
+      "General personal property transfer"
     ],
-    tips: ["Include serial numbers for valuable items", "Document the condition of the item", "Keep a copy for your records"],
-    warnings: ["Some items require additional documentation (e.g., vehicle titles)", "May need notarization"],
-    estimatedTime: "10-15 minutes"
+    keyTerms: [
+      { term: "Item Description", definition: "Details that identify the property being sold." },
+      { term: "As-Is", definition: "Buyer accepts the item in its current condition without warranties." },
+      { term: "Purchase Price", definition: "The agreed sale amount paid by the buyer." },
+      { term: "Transfer Date", definition: "The date ownership changes hands." }
+    ],
+    tips: [
+      "List item condition and any defects",
+      "Include serial numbers or identifiers",
+      "Have both parties sign and keep copies"
+    ],
+    warnings: [
+      "Some transactions require additional title or registration documents",
+      "Confirm any local notarization requirements"
+    ],
+    estimatedTime: "5-10 minutes"
+  },
+  "BillOfSaleForm": {
+    title: "Bill of Sale",
+    shortDescription: "Proof of purchase and ownership transfer for personal property.",
+    fullDescription: "A Bill of Sale is a legal document used to transfer ownership of personal property from a seller to a buyer. It confirms that payment has been made and ownership has passed to the purchaser.",
+    whenToUse: [
+      "Furniture sale",
+      "Equipment transfer",
+      "Electronics sale",
+      "Business assets sale",
+      "Household goods sale",
+      "Machinery sale",
+      "Animal or livestock sale",
+      "General personal property transfer"
+    ],
+    keyTerms: [
+      { term: "Item Description", definition: "Details that identify the property being sold." },
+      { term: "As-Is", definition: "Buyer accepts the item in its current condition without warranties." },
+      { term: "Purchase Price", definition: "The agreed sale amount paid by the buyer." },
+      { term: "Transfer Date", definition: "The date ownership changes hands." }
+    ],
+    tips: [
+      "List item condition and any defects",
+      "Include serial numbers or identifiers",
+      "Have both parties sign and keep copies"
+    ],
+    warnings: [
+      "Some transactions require additional title or registration documents",
+      "Confirm any local notarization requirements"
+    ],
+    estimatedTime: "5-10 minutes"
   },
   "promissory-note": {
     title: "Promissory Note",

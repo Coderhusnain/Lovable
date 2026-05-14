@@ -183,6 +183,94 @@ const generatePDF = (v: Record<string, string>) => {
     `The Parties hereby agree to be bound by the terms and conditions set forth herein for the purpose of defining their respective rights, obligations, and responsibilities.`
   );
 
+  // ── 0. DOCUMENT OVERVIEW ───────────────────────────────────
+  sectionHeading("0.  MEMORANDUM OF AGREEMENT INFORMATION");
+
+  p(
+    `A Memorandum of Agreement helps businesses, individuals, and organizations document agreed terms in writing before a full contract is prepared.`
+  );
+  p(`Use this Memorandum of Agreement for:`);
+  bullet("Business partnerships;");
+  bullet("Project collaborations;");
+  bullet("Client service arrangements;");
+  bullet("Property purchase understandings;");
+  bullet("Funding or investment discussions;");
+  bullet("Intellectual property protection terms;");
+  bullet("Vendor cooperation agreements;");
+  bullet("Joint ventures and strategic alliances;");
+  bullet("Pre-contract commercial arrangements.");
+
+  p(`What is a Memorandum of Agreement?`);
+  p(
+    `A Memorandum of Agreement, also called an MOA, Memo of Agreement, or MOA Contract, is a legal document that records agreed terms between parties, often before entering into a more formal contract.`
+  );
+  p(`This agreement commonly includes:`);
+  bullet("Full names and addresses of the parties;");
+  bullet("Purpose of the agreement;");
+  bullet("Scope of cooperation or project;");
+  bullet("Duties and responsibilities of each party;");
+  bullet("Goals and deliverables;");
+  bullet("Payment or financial terms;");
+  bullet("Timeline and milestones;");
+  bullet("Confidentiality obligations;");
+  bullet("Intellectual property ownership terms;");
+  bullet("Communication procedures;");
+  bullet("Dispute resolution method;");
+  bullet("Duration of agreement;");
+  bullet("Amendment procedures;");
+  bullet("Termination clause;");
+  bullet("Governing law;");
+  bullet("Signature section.");
+
+  p(`Why You Need a Memorandum of Agreement`);
+  bullet("Clarifies mutual expectations;");
+  bullet("Reduces misunderstandings;");
+  bullet("Records agreed responsibilities;");
+  bullet("Helps before drafting a final contract;");
+  bullet("Supports negotiations and planning;");
+  bullet("Protects confidential information;");
+  bullet("Defines deadlines and milestones;");
+  bullet("Creates written evidence of intentions;");
+  bullet("Strengthens professional relationships.");
+
+  p(`Best Format Memorandum of Agreement from Legalgram`);
+  p(
+    `Our draft Memorandum of Agreement is professionally written, easy to customize, and ready for immediate use.`
+  );
+  p(`Available Formats:`);
+  bullet("Memorandum of Agreement Word format;");
+  bullet("Memorandum of Agreement PDF download;");
+  bullet("MOA template;");
+  bullet("Memo of Agreement draft;");
+  bullet("Editable cooperation agreement.");
+
+  p(`Who Should Use This Agreement?`);
+  bullet("Business owners;");
+  bullet("Startups;");
+  bullet("Contractors;");
+  bullet("Consultants;");
+  bullet("Investors;");
+  bullet("Property buyers and sellers;");
+  bullet("Organizations and NGOs;");
+  bullet("Freelancers and clients;");
+  bullet("Companies planning partnerships.");
+
+  p(`Free Download Memorandum of Agreement`);
+  p(
+    `Need a professional document to record agreed terms? Download a Memorandum of Agreement now from Legalgram and secure your business understanding properly.`
+  );
+  p(`Why Choose Legalgram?`);
+  bullet("Professionally drafted legal templates;");
+  bullet("Instant downloads;");
+  bullet("Editable documents;");
+  bullet("Affordable legal forms;");
+  bullet("Trusted business agreements;");
+  bullet("Easy customization for users.");
+
+  p(
+    `Get your Memorandum of Agreement on Legalgram today and put your business terms in writing with confidence.`
+  );
+
   // ── 1. TERM OF AGREEMENT ────────────────────────────────────
   sectionHeading("1.  TERM OF AGREEMENT");
 
@@ -455,7 +543,7 @@ const generatePDF = (v: Record<string, string>) => {
   doc.save("memorandum_of_agreement.pdf");
 };
 
-export default function MemorandumOfAgreement() {
+export default function MemorandumOfAgreementForm() {
   return (
     <FormWizard
       steps={steps}

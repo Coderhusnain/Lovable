@@ -54,8 +54,11 @@ const AccountingContractInfo = () => {
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Accounting Contract Information</h1>
-            <p className="text-lg text-gray-600">Accounting Contract • Accounting Agreement • Accountancy Agreement</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Accounting Contract Agreement</h1>
+            <p className="text-lg text-gray-600">
+              An Accounting Contract Agreement helps avoid misunderstandings and creates a legally binding relationship
+              between the client and accountant.
+            </p>
           </div>
         </div>
 
@@ -64,26 +67,30 @@ const AccountingContractInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Shield className="w-5 h-5 mr-2 text-sky-600" />
-                What Is an Accounting Contract?
+                What Is an Accounting Contract Agreement?
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-700">
-                An <strong>Accounting Contract</strong> (also called an Accounting Services Agreement) is a legally binding
-                document that governs the professional relationship between an accountant and a client. It defines the
-                scope of services, fee structure, timelines, confidentiality obligations, compliance requirements, and
-                termination terms to ensure transparency and legal certainty for both parties.
+                Whether you are a business owner, company, startup, freelancer, or individual, using a written
+                Accounting Agreement helps avoid misunderstandings and creates a legally binding relationship between
+                the client and accountant.
               </p>
-
               <p className="text-gray-700">
-                This draft agreement sets expectations at the outset of the engagement and reduces the risk of disputes.
-                Whether the services include bookkeeping, tax filing, payroll management, financial reporting, or advisory
-                support, a properly drafted contract ensures services are delivered according to agreed terms.
+                An Accounting Contract Agreement is a legal document between a client and an accountant or accounting
+                firm. It explains:
               </p>
-
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                <li>Scope of accounting work</li>
+                <li>Service duration</li>
+                <li>Payment terms and fees</li>
+                <li>Confidentiality obligations</li>
+                <li>Deadlines and deliverables</li>
+                <li>Termination terms</li>
+                <li>Responsibilities of both parties</li>
+              </ul>
               <p className="text-gray-700">
-                A clear, well-formatted accounting contract protects both accountants and clients and serves as a written
-                record in case of disagreements about services or payments.
+                Download the best Accounting Contract Agreement format from Legalgram and use it with confidence.
               </p>
             </CardContent>
           </Card>
@@ -92,35 +99,19 @@ const AccountingContractInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Users className="w-5 h-5 mr-2 text-green-600" />
-                When Should You Use an Accounting Contract?
+                Use This Accounting Contract on Legalgram For:
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 text-gray-700">
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p>
-                    <strong>Onboarding Clients:</strong> When an accountant or firm starts working with a new client to
-                    define services and responsibilities.
-                  </p>
-                </div>
-
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p>
-                    <strong>Personal Accounting:</strong> When an individual hires an accountant for personal tax or
-                    accounting matters and wants a written agreement.
-                  </p>
-                </div>
-
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p>
-                    <strong>Business Engagements:</strong> When a business engages an accountant to manage financial
-                    responsibilities and needs clarity and compliance.
-                  </p>
-                </div>
-              </div>
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                <li>Hiring a chartered accountant</li>
+                <li>Bookkeeping services</li>
+                <li>Tax filing and tax return preparation</li>
+                <li>Payroll management</li>
+                <li>Financial statements and reports</li>
+                <li>Ongoing accounting consultancy</li>
+                <li>Small business accounting services</li>
+              </ul>
             </CardContent>
           </Card>
 
@@ -128,30 +119,18 @@ const AccountingContractInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
-                Sample Accounting Agreement
+                Why You Need an Accounting Agreement
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <InfoBadge icon={FileText} title="Dynamic & Customizable">
-                  This sample agreement updates its terms based on the information you provide, ensuring accuracy and
-                  relevance for each engagement.
-                </InfoBadge>
-
-                <InfoBadge icon={Users} title="Proven Template">
-                  Customized over <strong>978,500</strong> times, this template is a trusted starting point for
-                  individuals, businesses, and accounting firms.
-                </InfoBadge>
-
-                <InfoBadge icon={Shield} title="Professional Review">
-                  For extra assurance, consult a legal professional to review the agreement before finalizing.
-                </InfoBadge>
-
-                <InfoBadge icon={CheckCircle} title="eSign & Secure">
-                  The document can be signed online for free through Legalgram for a fast, secure, and convenient
-                  signing process.
-                </InfoBadge>
-              </div>
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                <li>Prevents payment disputes</li>
+                <li>Clearly defines accounting duties</li>
+                <li>Protects confidential financial records</li>
+                <li>Sets deadlines and expectations</li>
+                <li>Creates professional accountability</li>
+                <li>Reduces legal risk</li>
+              </ul>
             </CardContent>
           </Card>
 
@@ -159,78 +138,74 @@ const AccountingContractInfo = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Download className="w-5 h-5 mr-2 text-amber-600" />
-                Download Accounting Contract
+                Best Format Accounting Contract Agreement from Legalgram
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div className="text-gray-700">
-                  <p className="mb-1">Download a professionally drafted, legally sound accounting agreement you can
-                  customize for individuals, startups, and established businesses.</p>
-                  <p className="text-sm text-gray-500">Follows best practices for clarity, compliance, and professional accountability.</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                 
-
-                  <Button onClick={() => navigate('/documents')}>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Sign Online
-                  </Button>
-                </div>
+            <CardContent className="space-y-4">
+              <p className="text-gray-700">
+                Our Accounting Contract Agreement draft is professionally prepared and suitable for businesses, firms,
+                startups, and individuals. Simply download, edit names and details, and use immediately.
+              </p>
+              <div>
+                <p className="text-gray-700 mb-2">You can download:</p>
+                <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                  <li>Accounting Contract Agreement Word format</li>
+                  <li>Accounting Agreement PDF format</li>
+                  <li>Editable draft Accounting Agreement</li>
+                  <li>Professional Accounting Services Contract</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Best Practices</CardTitle>
+              <CardTitle>Who Should Use This Agreement?</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 text-gray-700">
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p><strong>Be Specific:</strong> Clearly state services, deliverables, timelines, and fees.</p>
-                </div>
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                <li>Accountants</li>
+                <li>Bookkeepers</li>
+                <li>Tax consultants</li>
+                <li>CA firms</li>
+                <li>Companies hiring accountants</li>
+                <li>Individuals needing accounting help</li>
+              </ul>
+            </CardContent>
+          </Card>
 
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p><strong>Confidentiality & Compliance:</strong> Include data protection and regulatory clauses where needed.</p>
-                </div>
-
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p><strong>Payment Terms:</strong> Define fee schedules, late fees, and invoicing procedures.</p>
-                </div>
-
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p><strong>Termination:</strong> Describe termination rights and any notice periods.</p>
-                </div>
-
-                <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <p><strong>Keep Records:</strong> Maintain copies of the signed agreement and supporting documents.</p>
-                </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Free Download Accounting Contract Agreement</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-gray-700">
+                Need a ready legal template? Download Accounting Contract Agreement now from Legalgram and save time
+                and legal costs.
+              </p>
+              <div className="flex items-center gap-3">
+                <Button onClick={() => navigate("/documents")}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Download Now
+                </Button>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Disclaimer</CardTitle>
+              <CardTitle>Why Choose Legalgram?</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <p className="text-gray-600 text-sm">
-                  This information is for educational purposes only and does not constitute legal or tax advice. For
-                  complex matters or large engagements, consult a qualified attorney or tax professional to ensure your
-                  agreement complies with applicable laws and protects your interests.
-                </p>
-              </div>
+              <ul className="list-disc pl-5 text-gray-700 space-y-1">
+                <li>Professionally drafted agreements</li>
+                <li>Easy editable formats</li>
+                <li>Instant downloads</li>
+                <li>Affordable legal templates</li>
+                <li>Reliable business contracts</li>
+              </ul>
             </CardContent>
           </Card>
-
         </div>
       </div>
     </div>

@@ -75,6 +75,21 @@ const LLCOperatingAgreementPDF = ({ data }) => (
       <Text style={styles.sectionHeading}>DOCUMENT DETAILS</Text>
       <Text style={styles.paragraph}>{data.documentDetails}</Text>
 
+      <Text style={styles.sectionHeading}>WHAT IS AN LLC OPERATING AGREEMENT?</Text>
+      <Text style={styles.paragraph}>{data.whatIsLLCDefinition}</Text>
+
+      <Text style={styles.sectionHeading}>COMMONLY INCLUDES</Text>
+      <Text style={styles.paragraph}>{data.commonlyIncludes}</Text>
+
+      <Text style={styles.sectionHeading}>WHY YOU NEED THIS AGREEMENT</Text>
+      <Text style={styles.paragraph}>{data.whyNeeded}</Text>
+
+      <Text style={styles.sectionHeading}>AVAILABLE FORMATS</Text>
+      <Text style={styles.paragraph}>{data.availableFormats}</Text>
+
+      <Text style={styles.sectionHeading}>WHO SHOULD USE THIS AGREEMENT?</Text>
+      <Text style={styles.paragraph}>{data.whoShouldUse}</Text>
+
       <Text style={styles.sectionHeading}>TERMS</Text>
       <Text style={styles.paragraph}>Duration: {data.duration}</Text>
       <Text style={styles.paragraph}>Termination Notice: {data.terminationNotice}</Text>
@@ -116,10 +131,25 @@ const LLCOperatingAgreementGenerator = () => {
     secondPartyContact: "jane@email.com",
 
     documentDetails:
-      "This Operating Agreement defines the ownership structure, management rules, and operational procedures of the Limited Liability Company.",
+      "This Operating Agreement defines the ownership structure, management rules, and operational procedures of the Limited Liability Company. An LLC Operating Agreement helps establish how your company operates and protects members by putting all key terms in writing.",
 
-    duration: "2 years",
-    terminationNotice: "14 days",
+    whatIsLLCDefinition:
+      "An LLC Operating Agreement (also called Operating Agreement or LLC Company Agreement) is a legal document that sets the internal rules for a Limited Liability Company. This agreement commonly includes: LLC name and principal business address, Business purpose, Effective date of agreement, Names of members, Capital contributions by each member, Ownership percentages, Profit and loss sharing terms, Management structure (member-managed or manager-managed), Voting procedures, Powers and duties of managers or members, Admission of new members, Transfer of ownership interests, Member resignation, death, or removal clauses, Buyout provisions, Tax treatment election, Record keeping requirements, Dissolution and winding-up procedures, Governing law, and Signature section.",
+
+    commonlyIncludes:
+      "• LLC name and principal business address\n• Business purpose\n• Effective date of agreement\n• Names of members\n• Capital contributions by each member\n• Ownership percentages\n• Profit and loss sharing terms\n• Management structure (member-managed or manager-managed)\n• Voting procedures\n• Powers and duties of managers or members\n• Admission of new members\n• Transfer of ownership interests\n• Member resignation, death, or removal clauses\n• Buyout provisions\n• Tax treatment election\n• Record keeping requirements\n• Dissolution and winding-up procedures\n• Governing law\n• Signature section",
+
+    whyNeeded:
+      "A written LLC Operating Agreement provides important benefits: (1) Defines how the business will run, (2) Prevents member disputes, (3) Protects ownership interests, (4) Clarifies profit distribution, (5) Establishes voting rights, (6) Supports limited liability protection, (7) Helps secure investors or lenders, (8) Overrides default state rules in many cases, (9) Creates a strong legal foundation for growth.",
+
+    availableFormats:
+      "Available in multiple formats: LLC Operating Agreement Word format, LLC Operating Agreement PDF download, Single Member LLC Agreement template, Multi Member LLC Agreement draft, Editable business ownership agreement.",
+
+    whoShouldUse:
+      "This LLC Operating Agreement is ideal for: Entrepreneurs, Startups, Family businesses, Real estate investors, Small business owners, Business partners, Consultants forming LLCs, E-commerce businesses.",
+
+    duration: "As defined by members",
+    terminationNotice: "As specified in agreement",
     confidentiality: "Included",
     disputeResolution: "Arbitration",
 

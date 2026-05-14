@@ -2906,33 +2906,40 @@ export const documentContent: Record<string, DocumentContent> = {
   // === SALES & TRANSACTIONS ===
   "Bill of Sale": {
     title: "Bill of Sale",
-    whatIs: "A legal document that records the transfer of ownership of personal property from a seller to a buyer. It serves as proof of the transaction and protects both parties by documenting the sale details, including the item description, purchase price, and any warranties or conditions.",
+    whatIs: "A Bill of Sale is a legal document used to transfer ownership of personal property from a seller to a buyer. It confirms that payment has been made and ownership has passed to the purchaser.",
     whenToUse: [
-      "Selling a vehicle, boat, or motorcycle.",
-      "Selling equipment or machinery.",
-      "Transferring ownership of valuable personal property.",
-      "Documenting a gift of property for tax purposes.",
-      "Any private party sale of significant items."
+      "Furniture sale",
+      "Equipment transfer",
+      "Electronics sale",
+      "Business assets sale",
+      "Household goods sale",
+      "Machinery sale",
+      "Animal or livestock sale",
+      "General personal property transfer"
     ],
     faqs: [
-      { q: "Is a Bill of Sale the same as a title?", a: "No. A title is official government documentation of ownership. A Bill of Sale documents the transaction itself. You need both for vehicles." },
-      { q: "Do I need to notarize it?", a: "Depends on the item and state. Vehicle sales often require notarization. For other property, it's recommended but not always required." },
-      { q: "What about 'as-is' sales?", a: "You can sell items 'as-is' without warranty, but this should be clearly stated in the Bill of Sale." }
+      { q: "What is a Bill of Sale?", a: "It is a document that records a sale and transfer of ownership, confirming payment and item details." },
+      { q: "What should a Bill of Sale include?", a: "Buyer and seller details, description of item sold, purchase price, date of sale, condition, as-is terms, any warranties, and signatures." },
+      { q: "Why use a Bill of Sale?", a: "It provides proof of ownership transfer and payment, protects both parties, and reduces future disputes." }
     ],
     keyProtections: [
-      "Item description and condition",
-      "Purchase price",
-      "Seller and buyer information",
-      "Transfer date",
-      "Warranty terms (or 'as-is' statement)",
-      "Signatures of both parties"
+      "Proof of ownership transfer",
+      "Proof of payment received",
+      "Protects buyer and seller",
+      "Reduces future disputes",
+      "Records item condition at sale time",
+      "Useful for tax and accounting records",
+      "Legally valuable transaction evidence"
     ],
     whatYouNeed: [
-      "Complete item description",
-      "Sale price",
-      "Seller and buyer names and addresses",
+      "Buyer and seller details",
+      "Description of item sold",
+      "Purchase price",
       "Date of sale",
-      "Any serial numbers or VINs"
+      "Condition of item",
+      "As-is sale terms",
+      "Warranty terms (if any)",
+      "Signatures of both parties"
     ],
     estimatedTime: "5-10 minutes"
   },
@@ -3631,6 +3638,377 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "8-12 minutes"
   },
 
+  // === LLC OPERATING AGREEMENT ===
+  "LLC Operating Agreement": {
+    title: "LLC Operating Agreement",
+    otherNames: [
+      "Operating Agreement",
+      "LLC Operating Agreement Form",
+      "Limited Liability Company Operating Agreement",
+      "Operating Agreement Draft"
+    ],
+    whatIs: "An LLC Operating Agreement helps establish how your company operates and protects members by putting all key terms in writing. An LLC Operating Agreement (also called Operating Agreement or LLC Company Agreement) is a legal document that sets the internal rules for a Limited Liability Company. This agreement commonly includes: LLC name and principal business address, Business purpose, Effective date of agreement, Names of members, Capital contributions by each member, Ownership percentages, Profit and loss sharing terms, Management structure (member-managed or manager-managed), Voting procedures, Powers and duties of managers or members, Admission of new members, Transfer of ownership interests, Member resignation, death, or removal clauses, Buyout provisions, Tax treatment election, Record keeping requirements, Dissolution and winding-up procedures, Governing law, and Signature section.",
+    whenToUse: [
+      "New LLC formation",
+      "Single-member LLC setup",
+      "Multi-member business ownership",
+      "Defining management structure",
+      "Profit and loss allocation",
+      "Voting rights among members",
+      "Member withdrawal and buyouts",
+      "Protecting limited liability status",
+      "Opening bank accounts or seeking funding"
+    ],
+    faqs: [
+      {
+        q: "What is an LLC Operating Agreement?",
+        a: "An LLC Operating Agreement is a legal document that governs how your Limited Liability Company is managed, how decisions are made, how profits are distributed among members, and what happens if a member leaves or dies."
+      },
+      {
+        q: "Is an LLC Operating Agreement mandatory?",
+        a: "While many states do not legally require an operating agreement, it is highly recommended. Without one, state default rules apply, which may not reflect your wishes for management and profit distribution. Some states like California, Delaware, Maine, Missouri, and New York do require multi-member LLCs to have an Operating Agreement."
+      },
+      {
+        q: "What are the benefits of an LLC Operating Agreement?",
+        a: "A written LLC Operating Agreement provides important benefits: Defines how the business will run, Prevents member disputes, Protects ownership interests, Clarifies profit distribution, Establishes voting rights, Supports limited liability protection, Helps secure investors or lenders, Overrides default state rules in many cases, and Creates a strong legal foundation for growth."
+      },
+      {
+        q: "What is the difference between member-managed and manager-managed?",
+        a: "In a member-managed LLC, all members participate in day-to-day management decisions. In a manager-managed LLC, designated managers handle operations while members may be passive investors with limited management duties."
+      },
+      {
+        q: "Can an LLC Operating Agreement be amended?",
+        a: "Yes. Most operating agreements can be amended with approval from the required percentage of members, as specified in the original agreement. Any amendments should be documented in writing."
+      },
+      {
+        q: "Does an LLC Operating Agreement need notarization?",
+        a: "Notarization is generally not required for an operating agreement to be valid and enforceable, but it is recommended for stronger documentation and proof of execution."
+      }
+    ],
+    keyProtections: [
+      "Clearly defined member roles and responsibilities",
+      "Specified management structure and decision-making procedures",
+      "Protection of limited liability status for all members",
+      "Profit and loss allocation among members",
+      "Voting rights and member meeting procedures",
+      "Capital contribution requirements and schedules",
+      "Procedures for adding or removing members",
+      "Restrictions on member transfer of ownership interests",
+      "Dissolution and liquidation procedures",
+      "Amendment and modification processes"
+    ],
+    whatYouNeed: [
+      "Names and addresses of all LLC members",
+      "Ownership percentages or membership interests",
+      "Capital contribution amounts from each member",
+      "Management structure preference (member-managed or manager-managed)",
+      "Manager names and titles (if manager-managed)",
+      "Profit and loss distribution percentages",
+      "Voting rights and procedures",
+      "Member meeting frequency and procedures",
+      "Restrictions on member transfers",
+      "Buyout or buy-sell provisions",
+      "Dissolution procedures",
+      "Any special provisions or agreements between members"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "LLC operating requirements and enforceability vary significantly by state. This template provides general guidance for LLC governance. For multi-member LLCs, significant capital contributions, or complex ownership structures, consult a qualified attorney in your state to ensure the operating agreement complies with state LLC laws and protects all members' interests."
+  },
+
+  // === LLC BUSINESS FORMATION ===
+  "LLC Business Formation": {
+    title: "LLC Business Formation",
+    otherNames: [
+      "LLC Formation",
+      "Limited Liability Company Formation",
+      "LLC Setup",
+      "LLC Formation Agreement"
+    ],
+    whatIs: "An LLC Operating Agreement helps establish how your company operates and protects members by putting all key terms in writing. An LLC Operating Agreement (also called Operating Agreement or LLC Company Agreement) is a legal document that sets the internal rules for a Limited Liability Company. This agreement commonly includes: LLC name and principal business address, Business purpose, Effective date of agreement, Names of members, Capital contributions by each member, Ownership percentages, Profit and loss sharing terms, Management structure (member-managed or manager-managed), Voting procedures, Powers and duties of managers or members, Admission of new members, Transfer of ownership interests, Member resignation, death, or removal clauses, Buyout provisions, Tax treatment election, Record keeping requirements, Dissolution and winding-up procedures, Governing law, and Signature section.",
+    whenToUse: [
+      "New LLC formation",
+      "Single-member LLC setup",
+      "Multi-member business ownership",
+      "Defining management structure",
+      "Profit and loss allocation",
+      "Voting rights among members",
+      "Member withdrawal and buyouts",
+      "Protecting limited liability status",
+      "Opening bank accounts or seeking funding"
+    ],
+    faqs: [
+      {
+        q: "What is an LLC Operating Agreement?",
+        a: "An LLC Operating Agreement is a legal document that governs how your Limited Liability Company is managed, how decisions are made, how profits are distributed among members, and what happens if a member leaves or dies."
+      },
+      {
+        q: "Is an LLC Operating Agreement mandatory?",
+        a: "While many states do not legally require an operating agreement, it is highly recommended. Without one, state default rules apply, which may not reflect your wishes for management and profit distribution. Some states like California, Delaware, Maine, Missouri, and New York do require multi-member LLCs to have an Operating Agreement."
+      },
+      {
+        q: "What are the benefits of an LLC Operating Agreement?",
+        a: "A written LLC Operating Agreement provides important benefits: Defines how the business will run, Prevents member disputes, Protects ownership interests, Clarifies profit distribution, Establishes voting rights, Supports limited liability protection, Helps secure investors or lenders, Overrides default state rules in many cases, and Creates a strong legal foundation for growth."
+      }
+    ],
+    keyProtections: [
+      "Defines how the business will run",
+      "Prevents member disputes",
+      "Protects ownership interests",
+      "Clarifies profit distribution",
+      "Establishes voting rights",
+      "Supports limited liability protection",
+      "Helps secure investors or lenders",
+      "Overrides default state rules in many cases",
+      "Creates a strong legal foundation for growth"
+    ],
+    whatYouNeed: [
+      "LLC name and principal business address",
+      "Business purpose",
+      "Effective date of agreement",
+      "Names of members",
+      "Capital contributions by each member",
+      "Ownership percentages",
+      "Profit and loss sharing terms",
+      "Management structure (member-managed or manager-managed)",
+      "Voting procedures",
+      "Powers and duties of managers or members",
+      "Admission of new members",
+      "Transfer of ownership interests",
+      "Member resignation, death, or removal clauses",
+      "Buyout provisions",
+      "Tax treatment election",
+      "Record keeping requirements",
+      "Dissolution and winding-up procedures",
+      "Governing law",
+      "Signature section"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "LLC formation requirements vary by state. This information is general and does not replace legal advice. For complex ownership structures or state-specific compliance, consult a qualified attorney."
+  },
+
+  // === ACCOUNTING CONTRACT AGREEMENT ===
+  "Accounting Contract": {
+    title: "Accounting Contract Agreement",
+    otherNames: [
+      "Accounting Agreement",
+      "Accounting Contract Agreement",
+      "Accounting Services Agreement",
+      "Professional Accounting Services Contract"
+    ],
+    whatIs: "An Accounting Contract Agreement is a legal document between a client and an accountant or accounting firm. It sets the internal terms of the engagement, including the scope of accounting work, service duration, payment terms and fees, confidentiality obligations, deadlines and deliverables, termination terms, and responsibilities of both parties.",
+    whenToUse: [
+      "Hiring a chartered accountant",
+      "Bookkeeping services",
+      "Tax filing and tax return preparation",
+      "Payroll management",
+      "Financial statements and reports",
+      "Ongoing accounting consultancy",
+      "Small business accounting services"
+    ],
+    faqs: [
+      {
+        q: "What is an Accounting Contract Agreement?",
+        a: "It is a written agreement between a client and an accountant or accounting firm that defines the services, timelines, fees, confidentiality obligations, and responsibilities for both parties."
+      },
+      {
+        q: "Why should I use an Accounting Agreement?",
+        a: "A written agreement prevents payment disputes, clarifies duties and deliverables, protects confidential financial records, and creates professional accountability."
+      },
+      {
+        q: "What should be included in an Accounting Agreement?",
+        a: "It should cover scope of work, service duration, payment terms, confidentiality obligations, deadlines and deliverables, termination terms, and responsibilities of both parties."
+      }
+    ],
+    keyProtections: [
+      "Prevents payment disputes",
+      "Clearly defines accounting duties",
+      "Protects confidential financial records",
+      "Sets deadlines and expectations",
+      "Creates professional accountability",
+      "Reduces legal risk"
+    ],
+    whatYouNeed: [
+      "Scope of accounting work",
+      "Service duration",
+      "Payment terms and fees",
+      "Confidentiality obligations",
+      "Deadlines and deliverables",
+      "Termination terms",
+      "Responsibilities of both parties"
+    ],
+    estimatedTime: "15-25 minutes",
+    legalDisclaimer: "This information is for educational purposes only and does not constitute legal or tax advice. For complex engagements, consult a qualified attorney or tax professional."
+  },
+
+  // === ARBITRATION AGREEMENT ===
+  "Arbitration Agreement": {
+    title: "Arbitration Agreement",
+    otherNames: [
+      "Arbitration Clause Agreement",
+      "Dispute Resolution Agreement",
+      "Binding Arbitration Agreement",
+      "Arbitration Contract"
+    ],
+    whatIs: "An Arbitration Agreement is a legal contract between two or more parties agreeing that any disputes between them will be settled through arbitration rather than through court litigation. It establishes the rules and procedures for resolving disputes privately through a neutral arbitrator.",
+    whenToUse: [
+      "Business partnership disputes",
+      "Commercial contract disputes",
+      "Employment disputes",
+      "Service agreement conflicts",
+      "Vendor and supplier disagreements",
+      "Property and payment disputes",
+      "Future dispute resolution planning"
+    ],
+    faqs: [
+      {
+        q: "What is an Arbitration Agreement?",
+        a: "It is a written agreement where parties decide that disputes will be resolved through arbitration instead of court litigation."
+      },
+      {
+        q: "Why use arbitration instead of court?",
+        a: "Arbitration is typically faster, more private, and less costly than litigation, with decisions that are binding and enforceable."
+      },
+      {
+        q: "What does an Arbitration Agreement include?",
+        a: "It usually includes party names, scope of disputes covered, arbitration rules, selection of arbitrator, location, binding decision terms, and cost-sharing arrangements."
+      }
+    ],
+    keyProtections: [
+      "Avoids expensive court cases",
+      "Saves time and legal costs",
+      "Keeps disputes private and confidential",
+      "Faster resolution process",
+      "Reduces business disruption",
+      "Creates clear legal procedure",
+      "Binding and enforceable outcome"
+    ],
+    whatYouNeed: [
+      "Names of the parties",
+      "Scope of disputes covered",
+      "Arbitration rules and procedure",
+      "Selection of arbitrator",
+      "Location of arbitration",
+      "Binding decision terms",
+      "Cost-sharing arrangements"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This information is for educational purposes only and does not constitute legal advice. Arbitration laws vary by jurisdiction, so consult a qualified attorney for complex disputes or compliance requirements."
+  },
+
+  // === BROKER AGREEMENT ===
+  "Broker Agreement": {
+    title: "Broker Agreement",
+    otherNames: [
+      "Brokerage Agreement",
+      "Broker Fee Agreement",
+      "Business Broker Contract",
+      "Introduction Agreement"
+    ],
+    whatIs: "A Broker Agreement is a legal contract between a broker and a client that sets the terms under which the broker will help arrange a business transaction or introduction in exchange for compensation.",
+    whenToUse: [
+      "Business sales and acquisitions",
+      "Buyer and seller introductions",
+      "Property brokerage deals",
+      "Product sourcing arrangements",
+      "Investor introductions",
+      "Client referral agreements",
+      "Recruitment and hiring introductions",
+      "Commercial brokerage services"
+    ],
+    faqs: [
+      {
+        q: "What is a Broker Agreement?",
+        a: "It is a contract that defines the broker's role in arranging a transaction or introduction and sets compensation terms."
+      },
+      {
+        q: "What should a Broker Agreement include?",
+        a: "Broker and client details, scope of brokerage services, commission or fee structure, payment terms, exclusivity, non-circumvention terms, duration, and confidentiality obligations."
+      },
+      {
+        q: "Why use a Broker Agreement?",
+        a: "It prevents commission disputes, clarifies responsibilities, protects introductions, and reduces legal risk."
+      }
+    ],
+    keyProtections: [
+      "Prevents commission disputes",
+      "Defines broker responsibilities",
+      "Clarifies payment conditions",
+      "Protects introductions and contacts",
+      "Creates professional accountability",
+      "Reduces legal risk",
+      "Helps close deals smoothly"
+    ],
+    whatYouNeed: [
+      "Broker and client details",
+      "Scope of brokerage services",
+      "Commission or fee structure",
+      "Payment terms",
+      "Exclusivity clauses",
+      "Non-circumvention terms",
+      "Duration of agreement",
+      "Success-based payment terms",
+      "Confidentiality obligations"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This information is for educational purposes only and does not constitute legal advice. Brokerage rules and licensing requirements vary by jurisdiction."
+  },
+
+  // === BID PROPOSAL AGREEMENT ===
+  "Bid Proposal Agreement": {
+    title: "Bid Proposal Agreement",
+    otherNames: [
+      "Bid Proposal",
+      "Project Bid Proposal",
+      "Contractor Quote",
+      "Project Proposal"
+    ],
+    whatIs: "A Bid Proposal is a business document used by contractors, freelancers, vendors, or companies to offer services for a project. It includes project details, cost estimates, labor charges, material pricing, schedules, and terms for completing the work.",
+    whenToUse: [
+      "Construction project bids",
+      "Freelance service proposals",
+      "Website design quotations",
+      "Interior design project bids",
+      "Supplier quotations",
+      "Repair and maintenance bids",
+      "Commercial service contracts",
+      "Tender submissions"
+    ],
+    faqs: [
+      {
+        q: "What is a Bid Proposal?",
+        a: "A Bid Proposal is a document that presents a project offer with scope, pricing, timelines, and terms to help clients compare bids and select a provider."
+      },
+      {
+        q: "What should a Bid Proposal include?",
+        a: "It should include project name and description, scope of work, cost estimate, labor and material charges, completion timeline, terms and conditions, payment schedule, and contractor contact details."
+      },
+      {
+        q: "Why use a Bid Proposal?",
+        a: "It creates a professional image, clarifies pricing and scope, reduces misunderstandings, and helps clients compare competing bids."
+      }
+    ],
+    keyProtections: [
+      "Creates a professional image",
+      "Helps win projects and contracts",
+      "Clearly states pricing and scope",
+      "Reduces misunderstandings",
+      "Helps compare competing bids",
+      "Builds client trust",
+      "Speeds up project approval"
+    ],
+    whatYouNeed: [
+      "Project name and description",
+      "Scope of work",
+      "Cost estimate",
+      "Labor and material charges",
+      "Completion timeline",
+      "Terms and conditions",
+      "Payment schedule",
+      "Contractor contact details"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This information is for educational purposes only and does not constitute legal advice. Project requirements and bidding rules may vary by jurisdiction and industry."
+  },
   // === CORPORATE BYLAWS ===
   "Corporate Bylaws": {
     title: "Corporate Bylaws",
@@ -6029,6 +6407,72 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "15-20 minutes"
   },
 
+  "Co-Marketing Agreement": {
+    title: "Co-Marketing Agreement",
+    otherNames: [
+      "Joint Marketing Agreement",
+      "Cooperative Marketing Agreement",
+      "Co-Promotion Agreement",
+      "Joint Advertising Agreement",
+      "Partnership Marketing Agreement",
+      "Collaborative Marketing Contract",
+      "Shared Marketing Agreement"
+    ],
+    whatIs: "A Co-Marketing Agreement is a legal contract between two businesses that agree to promote each other's products or services through joint marketing activities. This comprehensive agreement helps businesses collaborate successfully while avoiding misunderstandings and disputes.\n\nA properly written Co-Marketing Agreement typically includes:\n• Names of both businesses\n• Marketing campaign scope and objectives\n• Roles and responsibilities of each party\n• Revenue or commission sharing arrangements\n• Advertising cost sharing and budget allocation\n• Territory and market rights\n• Use of trademarks and branding guidelines\n• Confidentiality and non-disclosure terms\n• Dispute resolution clauses\n• Performance metrics and success indicators\n\nOur draft Co-Marketing Agreement from Legalgram is designed for startups, brands, retailers, agencies, and growing businesses to ensure profitable marketing partnerships with clear legal protection.",
+    whenToUse: [
+      "Joint marketing campaigns between complementary businesses",
+      "Shared advertising promotions and co-branded initiatives",
+      "Cross-brand partnerships and strategic alliances",
+      "Joint sales events and promotional activities",
+      "Retail store product promotions and display agreements",
+      "Online collaborative campaigns and digital partnerships",
+      "Lead generation partnerships and shared customer acquisition",
+      "Affiliate and referral promotion programs",
+      "Co-sponsorship of events or initiatives",
+      "Brands and manufacturers collaborating on marketing"
+    ],
+    faqs: [
+      { q: "What is a Co-Marketing Agreement?", a: "A Co-Marketing Agreement is a legal contract between two businesses that agree to promote each other's products or services through joint marketing activities. It defines the scope of the partnership, responsibilities, cost sharing, revenue sharing, and ensures both parties have aligned expectations and legal protection." },
+      { q: "Why is a Co-Marketing Agreement important?", a: "A proper Co-Marketing Agreement defines partnership responsibilities, protects both parties legally, reduces marketing costs through shared expenses, clarifies revenue sharing arrangements, avoids misunderstandings and disputes, protects brand reputation, and helps grow sales efficiently. Without a written agreement, disputes over costs, responsibilities, and benefits can arise." },
+      { q: "What should a Co-Marketing Agreement include?", a: "A comprehensive Co-Marketing Agreement should include names of both businesses, marketing campaign scope and objectives, roles and responsibilities of each party, revenue or commission sharing arrangements, advertising cost sharing, territory and market rights, use of trademarks and branding guidelines, confidentiality terms, performance metrics, and dispute resolution procedures." },
+      { q: "Is a Co-Marketing Agreement legally binding?", a: "Yes. Once signed by both parties, the Co-Marketing Agreement is legally binding and enforceable in court. Both parties are obligated to fulfill their agreed responsibilities and can take legal action if the other party breaches the agreement." },
+      { q: "How is cost sharing typically handled?", a: "Cost sharing can be split equally 50/50, proportionally based on expected benefits, or according to a custom arrangement specific to each party's contribution. The agreement should specify exactly which costs are shared (advertising, production, distribution) and how expenses are calculated and reimbursed." },
+      { q: "Can I customize the Co-Marketing Agreement?", a: "Yes. You can easily download and customize our Co-Marketing Agreement template from Legalgram to fit your specific business partnership, campaign objectives, cost structures, and revenue sharing arrangements." }
+    ],
+    keyProtections: [
+      "Defines partnership responsibilities clearly",
+      "Protects both parties legally",
+      "Reduces marketing costs through cost sharing",
+      "Clarifies revenue or commission sharing",
+      "Avoids misunderstandings and disputes",
+      "Protects brand reputation and intellectual property",
+      "Helps grow sales efficiently through collaboration",
+      "Specifies territory and market rights",
+      "Establishes clear performance metrics",
+      "Provides dispute resolution procedures",
+      "Sets termination conditions",
+      "Includes confidentiality protections"
+    ],
+    whatYouNeed: [
+      "Name and contact details of first business",
+      "Name and contact details of second business",
+      "Clear description of each business's products/services",
+      "Marketing campaign scope and target audience",
+      "Specific roles and responsibilities for each party",
+      "Campaign timeline and key milestones",
+      "Budget and cost sharing percentage or formula",
+      "Revenue sharing or commission structure",
+      "Territory and market rights definitions",
+      "Trademark and branding usage guidelines",
+      "Performance metrics and success indicators",
+      "Confidentiality and IP protection terms",
+      "Term length and renewal conditions",
+      "Termination and exit procedures"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This Co-Marketing Agreement is a general template and does not constitute legal advice. Marketing partnerships involve complex legal and commercial considerations that vary by jurisdiction and industry. For significant partnerships or complex arrangements, consult with a qualified attorney to ensure compliance with all applicable laws and regulations."
+  },
+
   "Warranty Agreement": {
     title: "Warranty Agreement",
     otherNames: ["Product Warranty Agreement", "Manufacturer's Warranty", "Warranty Certificate", "Product Guarantee"],
@@ -6420,6 +6864,205 @@ export const documentContent: Record<string, DocumentContent> = {
     ],
     estimatedTime: "10-15 minutes",
     legalDisclaimer: "A Police Report Worksheet is a preparation tool and not a substitute for an official police report. Final reporting procedures depend on local police authorities."
+  },
+
+  "Business Sale Agreement": {
+    title: "Business Sale Agreement",
+    otherNames: [
+      "Sale of Business Contract",
+      "Business Purchase Agreement",
+      "Business Transfer Agreement",
+      "Business Acquisition Agreement",
+      "Sale of Business Agreement",
+      "Business Sale Contract",
+      "Asset Purchase Agreement"
+    ],
+    whatIs: "A Business Sale Agreement is a legally binding contract between a buyer and seller that sets out the terms for transferring ownership of a business. This comprehensive agreement protects both buyer and seller by creating clarity and reducing the risk of future disputes.\n\nA well-drafted Business Sale Agreement typically includes:\n• Buyer and seller details\n• Purchase price and payment terms\n• Assets included in the sale\n• Liabilities and obligations transfer\n• Closing date and conditions\n• Non-compete and non-solicitation terms\n• Confidentiality and IP provisions\n• Transfer of ownership procedures\n• Warranties and representations\n• Dispute resolution and governing law\n\nOur draft Business Sale Agreement from Legalgram is designed for entrepreneurs, investors, companies, and business owners to ensure smooth and legally protected business transactions.",
+    whenToUse: [
+      "Sale of small businesses",
+      "Purchase of existing companies",
+      "Retail shop sale agreements",
+      "Restaurant business sale",
+      "Online business transfer",
+      "Partnership exit transactions",
+      "Asset purchase deals",
+      "Commercial business acquisitions",
+      "Buyer acquiring a business",
+      "Business owners selling a company",
+      "Investors and entrepreneurs conducting business transactions"
+    ],
+    faqs: [
+      { q: "What is a Business Sale Agreement?", a: "A Business Sale Agreement is a legally binding contract between a buyer and seller that sets out all terms for transferring ownership of a business, including purchase price, assets, liabilities, payment schedule, and closing conditions." },
+      { q: "Why is a Business Sale Agreement important?", a: "A proper Business Sale Agreement protects both buyer and seller rights, clearly states sale terms, defines payment obligations, reduces misunderstandings, covers assets and liabilities, helps smooth ownership transfer, and creates legal proof of sale." },
+      { q: "What should a Business Sale Agreement include?", a: "A comprehensive Business Sale Agreement should include buyer and seller details, purchase price and payment schedule, assets included in sale, liabilities and obligations, closing date, non-compete terms, confidentiality clauses, transfer of ownership conditions, warranties and representations, and dispute resolution procedures." },
+      { q: "Is a Business Sale Agreement legally binding?", a: "Yes. Once signed by both parties, the Business Sale Agreement is legally binding and enforceable in court." },
+      { q: "Can I customize the Business Sale Agreement?", a: "Yes. You can easily download and customize our Business Sale Agreement template from Legalgram to fit your specific business transaction needs." },
+      { q: "Who should use a Business Sale Agreement?", a: "Business owners selling a company, buyers acquiring a business, investors, entrepreneurs, partnerships restructuring ownership, and commercial brokers and advisors should all use this agreement." }
+    ],
+    keyProtections: [
+      "Protects buyer and seller rights",
+      "Clearly states all sale terms",
+      "Defines payment obligations and schedule",
+      "Reduces misunderstandings and disputes",
+      "Covers all assets and liabilities",
+      "Helps smooth ownership transfer",
+      "Creates legal proof of business sale",
+      "Specifies non-compete terms",
+      "Includes confidentiality provisions",
+      "Defines transfer of ownership conditions",
+      "Establishes warranties and representations",
+      "Provides dispute resolution procedures"
+    ],
+    whatYouNeed: [
+      "Buyer and seller legal names and contact details",
+      "Complete business description and location",
+      "Current business valuation",
+      "Agreed purchase price",
+      "Payment terms and schedule",
+      "Complete list of assets included in sale",
+      "Complete list of liabilities being transferred",
+      "Closing date and conditions",
+      "Non-compete and non-solicitation terms",
+      "Confidentiality and intellectual property provisions",
+      "Employee and benefit transfer details",
+      "Equipment, inventory, and property details",
+      "Warranties, representations, and indemnification",
+      "Dispute resolution and governing law"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This Business Sale Agreement is a general template and does not constitute legal advice. Business sales involve complex legal and tax considerations that vary by jurisdiction. For significant transactions, consult with a qualified attorney and accountant to ensure compliance with all applicable laws and regulations."
+  },
+
+  "Collaboration Agreement": {
+    title: "Collaboration Agreement",
+    otherNames: [
+      "Artist Collaboration Agreement",
+      "Music Collaboration Agreement",
+      "Creative Partnership Agreement",
+      "Joint Project Agreement",
+      "Creator Partnership Agreement",
+      "Collaborative Work Agreement",
+      "Content Creation Agreement"
+    ],
+    whatIs: "A Collaboration Agreement is a legal contract between two or more parties working together on a shared project. It outlines how the collaboration will operate and how profits, rights, and duties will be managed. This comprehensive agreement helps collaborators avoid misunderstandings, preserve friendships, and complete projects smoothly.\n\nA properly written Collaboration Agreement typically includes:\n• Names of all collaborators\n• Project description and objectives\n• Roles and responsibilities of each party\n• Ownership of work product\n• Copyright and intellectual property rights\n• Profit and revenue sharing arrangements\n• Payment terms and conditions\n• Deadlines and deliverables\n• Decision-making process\n• Dispute resolution clauses\n• Termination conditions\n\nOur draft Collaboration Agreement from Legalgram is professionally designed for artists, musicians, creators, influencers, startups, and entrepreneurs to ensure secure partnerships with clear legal protection.",
+    whenToUse: [
+      "Music collaborations between artists",
+      "Artist partnerships and joint ventures",
+      "YouTube content creation partnerships",
+      "Photography projects with collaborators",
+      "Film production teamwork",
+      "Joint design projects",
+      "Brand and creator partnerships",
+      "Business creative ventures",
+      "Creative industry collaborations",
+      "Joint research or development projects"
+    ],
+    faqs: [
+      { q: "What is a Collaboration Agreement?", a: "A Collaboration Agreement is a legal contract between two or more parties working together on a shared project. It outlines how the collaboration will operate, defines each party's roles and responsibilities, and specifies how profits, rights, and intellectual property will be managed." },
+      { q: "Why is a Collaboration Agreement important?", a: "A proper Collaboration Agreement protects creative ownership rights, clarifies responsibilities, prevents profit-sharing disputes, defines the decision-making process, protects friendships and partnerships, reduces misunderstandings, and creates legal proof of agreed terms." },
+      { q: "What should a Collaboration Agreement include?", a: "A comprehensive Collaboration Agreement should include names of all collaborators, project description and objectives, roles and responsibilities, ownership of work product, copyright and intellectual property rights, profit and revenue sharing, payment terms, deadlines, deliverables, decision-making process, and dispute resolution procedures." },
+      { q: "Is a Collaboration Agreement legally binding?", a: "Yes. Once signed by all parties, the Collaboration Agreement is legally binding and enforceable in court. It protects all collaborators by ensuring everyone understands and agrees to the same terms." },
+      { q: "How is ownership of the work product determined?", a: "Ownership can be fully owned by one party, jointly owned by all collaborators, or owned by the collaboration entity itself. The agreement clearly specifies the ownership structure and what rights each collaborator retains." },
+      { q: "Can I customize the Collaboration Agreement?", a: "Yes. You can easily download and customize our Collaboration Agreement template from Legalgram to fit your specific collaboration type, project scope, and revenue sharing arrangements." }
+    ],
+    keyProtections: [
+      "Protects creative ownership and intellectual property rights",
+      "Clarifies each collaborator's responsibilities",
+      "Prevents profit-sharing disputes and conflicts",
+      "Defines decision-making authority and voting rights",
+      "Protects friendships by establishing clear expectations",
+      "Reduces misunderstandings about project scope and goals",
+      "Creates legal proof of agreed collaboration terms",
+      "Specifies payment terms and compensation structure",
+      "Establishes deadlines and deliverables",
+      "Provides dispute resolution procedures",
+      "Defines confidentiality and non-compete terms",
+      "Clarifies termination and exit conditions"
+    ],
+    whatYouNeed: [
+      "Full names and contact details of all collaborators",
+      "Project description and objectives",
+      "Detailed description of each collaborator's roles and responsibilities",
+      "Ownership structure and intellectual property rights",
+      "Copyright and creative ownership terms",
+      "Profit and revenue sharing percentages",
+      "Payment terms, schedule, and conditions",
+      "Project timeline and deadlines",
+      "Specific deliverables and milestones",
+      "Decision-making process and voting rights",
+      "Confidentiality and non-disclosure terms",
+      "Dispute resolution procedures",
+      "Termination and exit conditions",
+      "Governing law and jurisdiction"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This Collaboration Agreement is a general template and does not constitute legal advice. Creative and business collaborations involve complex legal, tax, and intellectual property considerations that vary by jurisdiction and project type. For significant collaborations, consult with a qualified attorney to ensure compliance with all applicable laws and to protect your interests."
+  },
+
+  "Consignment Agreement": {
+    title: "Consignment Agreement",
+    otherNames: [
+      "Consignment Contract",
+      "Consignment Sales Agreement",
+      "Reseller Agreement",
+      "Consignment Inventory Agreement",
+      "Product Consignment Agreement",
+      "Sales on Consignment Contract",
+      "Goods Consignment Agreement"
+    ],
+    whatIs: "A Consignment Agreement is a legal contract where the owner of goods (consignor) allows another party (consignee) to sell the goods on their behalf. This comprehensive agreement protects ownership of goods, defines payment terms, and ensures smooth resale transactions while avoiding disputes.\n\nA properly written Consignment Agreement typically includes:\n• Names and contact information of consignor and consignee\n• Detailed description of goods or merchandise\n• Ownership confirmation and title retention\n• Sale price terms and pricing authority\n• Commission percentage or profit split\n• Payment schedule and terms\n• Insurance and liability terms\n• Inventory tracking and reporting requirements\n• Return of unsold goods conditions\n• Duration of consignment and termination terms\n• Dispute resolution and governing law\n\nOur draft Consignment Agreement from Legalgram is professionally designed for retailers, boutiques, resellers, artists, collectors, and business owners to secure consignment sales with clear legal protection.",
+    whenToUse: [
+      "Retail shop consignment sales",
+      "Clothing resale stores and boutiques",
+      "Furniture consignment arrangements",
+      "Art and antique sales consignment",
+      "Jewelry resale arrangements",
+      "Online marketplace consignments",
+      "Product reseller partnerships",
+      "Boutique inventory sales agreements",
+      "Consignment for arts and crafts",
+      "Vintage and collectibles resale"
+    ],
+    faqs: [
+      { q: "What is a Consignment Agreement?", a: "A Consignment Agreement is a legal contract where the owner of goods (consignor) allows another party (consignee) to sell the goods on their behalf. The consignee only pays the consignor after the goods are sold, making it a risk-free arrangement for the reseller." },
+      { q: "Why is a Consignment Agreement important?", a: "A proper Consignment Agreement protects the owner's goods, defines commission and payment terms, prevents pricing disputes, clarifies seller responsibilities, protects both parties legally, tracks inventory professionally, and reduces misunderstandings about sales and payments." },
+      { q: "What should a Consignment Agreement include?", a: "A comprehensive Consignment Agreement should include names of consignor and consignee, description of goods, ownership confirmation, sale price terms, commission percentage, payment schedule, insurance and risk terms, inventory tracking requirements, return conditions for unsold goods, duration, and termination terms." },
+      { q: "Is a Consignment Agreement legally binding?", a: "Yes. Once signed by both parties, the Consignment Agreement is legally binding and enforceable in court. It protects both the consignor's ownership rights and the consignee's sales interests." },
+      { q: "How is commission typically handled?", a: "Commission can be a fixed percentage of the sale price, a split of profits, or a combination arrangement. The agreement should clearly specify the exact commission rate, which party pays what fees, and how payments are calculated and remitted." },
+      { q: "Can I customize the Consignment Agreement?", a: "Yes. You can easily download and customize our Consignment Agreement template from Legalgram to fit your specific consignment arrangement, product type, commission structure, and payment terms." }
+    ],
+    keyProtections: [
+      "Protects consignor's ownership of goods",
+      "Defines commission and payment terms clearly",
+      "Prevents pricing disputes and disagreements",
+      "Clarifies seller responsibilities and duties",
+      "Protects both parties legally",
+      "Establishes professional inventory tracking",
+      "Reduces misunderstandings about resale terms",
+      "Specifies insurance and liability responsibility",
+      "Defines conditions for return of unsold goods",
+      "Establishes payment schedule and remittance terms",
+      "Clarifies authority to set and change prices",
+      "Provides dispute resolution procedures"
+    ],
+    whatYouNeed: [
+      "Consignor's full name and contact details",
+      "Consignee's full name and contact details",
+      "Detailed description of goods or merchandise",
+      "Quantity and condition of items",
+      "Agreed sale price or pricing guidelines",
+      "Commission percentage or profit split",
+      "Payment schedule and payment method",
+      "Insurance and liability responsibility",
+      "Inventory tracking and reporting requirements",
+      "Condition of returned unsold goods",
+      "Duration of consignment agreement",
+      "Termination and exit conditions",
+      "Governing law and dispute resolution method",
+      "Signature and date of both parties"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This Consignment Agreement is a general template and does not constitute legal advice. Consignment arrangements involve complex legal, tax, and liability considerations that vary by jurisdiction and product type. For significant consignment relationships or valuable goods, consult with a qualified attorney to ensure compliance with all applicable laws and to protect your interests."
   }
 };
 
@@ -6456,6 +7099,72 @@ export function getDocumentContent(title: string): DocumentContent {
     normalizedTitle.includes("subordinate loan")
   ) {
     return documentContent["Subordinated Loan Agreement"];
+  }
+  if (
+    normalizedTitle.includes("business sale") ||
+    normalizedTitle.includes("sale of business") ||
+    normalizedTitle.includes("business purchase") ||
+    normalizedTitle.includes("purchase of business") ||
+    normalizedTitle.includes("business acquisition") ||
+    normalizedTitle.includes("acquire business") ||
+    normalizedTitle.includes("sell business") ||
+    normalizedTitle.includes("business sale agreement") ||
+    normalizedTitle.includes("business transfer") ||
+    normalizedTitle.includes("asset purchase") ||
+    normalizedTitle.includes("asset sale") ||
+    (normalizedTitle.includes("business") && normalizedTitle.includes("sale")) ||
+    (normalizedTitle.includes("business") && normalizedTitle.includes("purchase"))
+  ) {
+    return documentContent["Business Sale Agreement"];
+  }
+  if (
+    normalizedTitle.includes("co-marketing") ||
+    normalizedTitle.includes("comarketing") ||
+    normalizedTitle.includes("co marketing") ||
+    normalizedTitle.includes("joint marketing") ||
+    normalizedTitle.includes("cooperative marketing") ||
+    normalizedTitle.includes("co-promotion") ||
+    normalizedTitle.includes("copromation") ||
+    normalizedTitle.includes("co promotion") ||
+    normalizedTitle.includes("joint advertising") ||
+    normalizedTitle.includes("partnership marketing") ||
+    normalizedTitle.includes("collaborative marketing") ||
+    normalizedTitle.includes("shared marketing") ||
+    (normalizedTitle.includes("marketing") && normalizedTitle.includes("partnership")) ||
+    (normalizedTitle.includes("marketing") && normalizedTitle.includes("collaboration"))
+  ) {
+    return documentContent["Co-Marketing Agreement"];
+  }
+  if (
+    normalizedTitle.includes("collaboration") ||
+    normalizedTitle.includes("artist collaboration") ||
+    normalizedTitle.includes("music collaboration") ||
+    normalizedTitle.includes("creative partnership") ||
+    normalizedTitle.includes("joint project") ||
+    normalizedTitle.includes("creator partnership") ||
+    normalizedTitle.includes("collaborative work") ||
+    normalizedTitle.includes("content creation") ||
+    (normalizedTitle.includes("artist") && normalizedTitle.includes("partnership")) ||
+    (normalizedTitle.includes("creative") && normalizedTitle.includes("partnership")) ||
+    (normalizedTitle.includes("music") && normalizedTitle.includes("partnership")) ||
+    (normalizedTitle.includes("content") && normalizedTitle.includes("partnership"))
+  ) {
+    return documentContent["Collaboration Agreement"];
+  }
+  if (
+    normalizedTitle.includes("consignment") ||
+    normalizedTitle.includes("consignment agreement") ||
+    normalizedTitle.includes("consignment contract") ||
+    normalizedTitle.includes("consignment sales") ||
+    normalizedTitle.includes("reseller agreement") ||
+    normalizedTitle.includes("consignment inventory") ||
+    normalizedTitle.includes("product consignment") ||
+    normalizedTitle.includes("goods consignment") ||
+    normalizedTitle.includes("resale agreement") ||
+    (normalizedTitle.includes("goods") && normalizedTitle.includes("resale")) ||
+    (normalizedTitle.includes("sales") && normalizedTitle.includes("consignment"))
+  ) {
+    return documentContent["Consignment Agreement"];
   }
   if (
     normalizedTitle.includes("bank reference") ||

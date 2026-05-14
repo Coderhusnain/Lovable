@@ -118,6 +118,9 @@ import SocialMediaContractInfo from "./pages/SocialMediaContractInfo";
 import MergerAgreementInfo from "./pages/MergerAgreementInfo";
 import AssetPurchaseAgreementInfo from "./pages/AssetPurchaseAgreementInfo";
 import MarketingAgreementInfo from "./pages/MarketingAgreementInfo";
+import CoMarketingAgreementInfo from "./pages/CoMarketingAgreementInfo";
+import CollaborationAgreementInfo from "./pages/CollaborationAgreementInfo";
+import ConsignmentAgreementInfo from "./pages/ConsignmentAgreementInfo";
 import ContractExtensionInfo from "./pages/ContractExtensionInfo";
 import ProductDistributionAgreementInfo from "./pages/ProductDistributionAgreementInfo";
 import ReferralFeeAgreementInfo from "./pages/ReferralFeeAgreementInfo";
@@ -389,6 +392,9 @@ const App = () => {
                 <Route path="/non-disturbance-agreement" element={<Documents />} />
                 <Route path="/accounting-contract-info" element={<AccountingContractInfo />} />
                 <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
+                <Route path="/co-marketing-agreement-info" element={<CoMarketingAgreementInfo />} />
+                <Route path="/collaboration-agreement-info" element={<CollaborationAgreementInfo />} />
+                <Route path="/consignment-agreement-info" element={<ConsignmentAgreementInfo />} />
                 <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
                 <Route path="/fee-agreement-info" element={<FeeAgreementContractInfo />} />
 
