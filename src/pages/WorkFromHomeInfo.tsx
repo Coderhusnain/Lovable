@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Monitor, Shield, Tool, ArrowRight } from "lucide-react";
+import { Monitor, Shield, Wrench, ArrowRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 
 const WorkFromHomeInfo = () => {
@@ -47,7 +47,7 @@ const WorkFromHomeInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Tool className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
+              <Wrench className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Equipment</CardTitle>
             </CardHeader>
             <CardContent>

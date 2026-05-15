@@ -736,45 +736,7 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
     ],
     estimatedTime: "20-30 minutes"
   },
-  "personal-training-agreement": {
-    title: "Personal Training Agreement",
-    shortDescription: "An agreement outlining the terms of fitness training services between a trainer and client.",
-    fullDescription: "A Personal Training Agreement outlines the terms under which a personal trainer provides fitness services to a client. It clearly defines scope of training services, session duration and frequency, payment structure and deadlines, cancellation and refund policies, and liability and risk acknowledgment to avoid misunderstandings.",
-    whenToUse: [
-      "You are a personal trainer onboarding a new client",
-      "You want legal protection for your training services",
-      "You are hiring a personal trainer for personal fitness",
-      "You want clear terms regarding payments and sessions"
-    ],
-    keyTerms: [
-      { term: "Training Services", definition: "The specific fitness training to be provided (personal training, group classes, online coaching, etc.)." },
-      { term: "Session Frequency", definition: "How often training sessions will occur (weekly, bi-weekly, etc.)" },
-      { term: "Liability Waiver", definition: "Client acknowledgment of physical risks involved in training activities." },
-      { term: "Cancellation Policy", definition: "Rules for canceling or rescheduling training sessions." }
-    ],
-    tips: [
-      "Clearly define the type and frequency of training sessions",
-      "Specify all fees, payment methods, and due dates",
-      "Include a clear cancellation and rescheduling policy",
-      "Document client fitness goals and current health status",
-      "Include liability waivers for physical training activities",
-      "Specify the duration of the training agreement",
-      "Define terms for renewal or termination of the agreement"
-    ],
-    warnings: [
-      "Training agreements should include liability waivers for injury protection",
-      "Cancellation policies vary by trainer and should be clearly stated",
-      "Understand refund policies before signing",
-      "Different training types (in-person, online, group) may require different terms",
-      "Health waivers may have limits depending on jurisdiction",
-      "Payment schedules should be specific to avoid disputes"
-    ],
-    relatedDocuments: [
-      { title: "Service Agreement", id: "service-agreement" },
-      { title: "Membership Agreement", id: "membership-agreement" }
-    ],
-    estimatedTime: "15-20 minutes"
-  },
+ 
   "real-estate-agent-agreement": {
     title: "Real Estate Agent Agreement",
     shortDescription: "An agreement between a property owner and a real estate agent for services.",
@@ -813,84 +775,6 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
       { title: "Listing Agreement", id: "listing-agreement" }
     ],
     estimatedTime: "20-30 minutes"
-  },
-  "retainer-agreement": {
-    title: "Retainer Agreement",
-    shortDescription: "A work-for-hire contract where a client pays in advance for services over time.",
-    fullDescription: "A Retainer Agreement is a work-for-hire contract where a client pays a service provider in advance for services that will be delivered over time. The agreement ensures clarity regarding payment terms, scope of work, duration of services, and rights and obligations of both parties.",
-    whenToUse: [
-      "You are hiring a contractor or consultant on an ongoing basis",
-      "You want guaranteed availability of a service provider",
-      "You need predictable costs and professional accountability",
-      "You want all terms clearly recorded in writing"
-    ],
-    keyTerms: [
-      { term: "Retainer Amount", definition: "The fixed payment made in advance by the client to the service provider." },
-      { term: "Scope of Services", definition: "The specific services the provider will deliver under the retainer." },
-      { term: "Billing Frequency", definition: "How often the retainer is paid (monthly, quarterly, etc.)." },
-      { term: "Independent Contractor Status", definition: "Clarifies the provider is not an employee of the client." }
-    ],
-    tips: [
-      "Clearly define the scope of services included in the retainer",
-      "Specify the retainer amount and payment schedule",
-      "Include hours of availability or response time expectations",
-      "Detail what services are excluded from the retainer",
-      "Establish communication protocols and check-in schedules",
-      "Define how additional work outside scope is billed",
-      "Include confidentiality and non-compete clauses if applicable"
-    ],
-    warnings: [
-      "Retainers are typically non-refundable unless otherwise specified",
-      "Service providers should define what happens if retainer is unused",
-      "Term and termination conditions should be clearly stated",
-      "Payment method and late payment penalties should be specified",
-      "Consider including dispute resolution procedures",
-      "Different service types may require different retainer structures"
-    ],
-    relatedDocuments: [
-      { title: "Service Agreement", id: "service-agreement" },
-      { title: "Consulting Agreement", id: "consulting-agreement" }
-    ],
-    estimatedTime: "20-25 minutes"
-  },
-  "tutoring-agreement": {
-    title: "Tutoring Agreement",
-    shortDescription: "A contract between a tutor and student outlining tutoring services, schedule, and payment terms.",
-    fullDescription: "A Tutoring Agreement is a legal contract between a tutor and student (or parent/guardian) that outlines the terms of tutoring services. This agreement clearly defines the scope of tutoring, payment terms, schedule, cancellation policies, and expectations for both parties to ensure a productive learning relationship.",
-    whenToUse: [
-      "You are offering tutoring services to students",
-      "You are hiring a tutor for academic instruction",
-      "You want to establish clear expectations and rates",
-      "You need protection against cancellation disputes",
-      "You want to formalize the tutoring arrangement in writing"
-    ],
-    keyTerms: [
-      { term: "Tutor", definition: "The qualified individual providing academic instruction." },
-      { term: "Student", definition: "The individual receiving tutoring services." },
-      { term: "Session", definition: "A scheduled tutoring meeting of agreed-upon duration." },
-      { term: "Cancellation Policy", definition: "The terms and notice required to cancel scheduled sessions." }
-    ],
-    tips: [
-      "Clearly specify the subject matter and level",
-      "Set realistic academic goals and milestones",
-      "Define session format (in-person, online, hybrid)",
-      "Include progress reporting and assessment frequency",
-      "Specify materials and resources provided by each party",
-      "Include emergency contact information"
-    ],
-    warnings: [
-      "Clarify liability and parental responsibility",
-      "Include confidentiality and privacy provisions",
-      "Define what happens if goals are not met",
-      "Address missed sessions and makeup policies",
-      "Specify intellectual property rights for materials",
-      "Include payment terms and late fees"
-    ],
-    relatedDocuments: [
-      { title: "Service Agreement", id: "service-agreement" },
-      { title: "Independent Contractor Agreement", id: "independent-contractor-agreement" }
-    ],
-    estimatedTime: "15-20 minutes"
   },
   "valet-service-agreement": {
     title: "Valet Service Agreement",
@@ -1023,46 +907,6 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
       { title: "Service Agreement", id: "service-agreement" }
     ],
     estimatedTime: "15-20 minutes"
-  },
-  "roommate-agreement": {
-    title: "Roommate Agreement",
-    shortDescription: "A document that defines the rights, duties, and responsibilities of people sharing a residential property.",
-    fullDescription: "A Roommate Agreement is a legally structured document designed to clearly define the rights, duties, and responsibilities of individuals sharing a residential property. This agreement helps maintain harmony by setting clear expectations regarding rent, utilities, household duties, personal property, pets, and general conduct.",
-    whenToUse: [
-      "You are moving in with a roommate for the first time",
-      "A new roommate is joining an existing household",
-      "Your university or housing authority requires a written agreement",
-      "You are sharing rented accommodation under a lease",
-      "You want a clear, enforceable written understanding"
-    ],
-    keyTerms: [
-      { term: "Joint Liability", definition: "All roommates may be jointly responsible for rent and damages to the landlord." },
-      { term: "Security Deposit", definition: "Money held to cover damages or unpaid rent, usually refunded at lease end." },
-      { term: "Quiet Enjoyment", definition: "Each roommate's right to enjoy the property without excessive disturbance." },
-      { term: "Shared Expenses", definition: "Utilities, internet, and other costs split among roommates." }
-    ],
-    tips: [
-      "Address all roommates at the start of occupancy",
-      "Include detailed rent and utility payment division",
-      "Set clear cleaning schedules and standards",
-      "Define guest policies and quiet hours",
-      "Specify pet policies and restrictions",
-      "Include new roommate approval process",
-      "Document everything in writing and have all sign"
-    ],
-    warnings: [
-      "Joint liability may hold all roommates responsible for breaches",
-      "Define what happens if a roommate violates the agreement",
-      "Clarify security deposit allocation before moving in",
-      "Address parking and common area usage",
-      "Include procedures for handling disputes",
-      "Distinguish this from the main lease agreement"
-    ],
-    relatedDocuments: [
-      { title: "Roommate Release Agreement", id: "roommate-release-agreement" },
-      { title: "Co-Tenancy Agreement", id: "co-tenancy-agreement" }
-    ],
-    estimatedTime: "20-30 minutes"
   },
   "roommate-release-agreement": {
     title: "Roommate Release Agreement",
@@ -1200,32 +1044,7 @@ export const documentInfoDatabase: Record<string, DocumentInfo> = {
     warnings: ["Must comply with Stark Law and Anti-Kickback regulations", "Verify licensure requirements"],
     estimatedTime: "30-45 minutes"
   },
-  "real-estate-agent-agreement": {
-    title: "Real Estate Agent Agreement",
-    shortDescription: "An exclusive listing agreement with a real estate agent.",
-    fullDescription: "A Real Estate Agent Agreement establishes the relationship between a property owner and agent for selling, leasing, or managing property, defining commission rates and exclusivity periods.",
-    whenToUse: ["Listing property for sale", "Hiring an agent to find buyers", "Exclusive representation arrangements"],
-    keyTerms: [
-      { term: "Commission", definition: "Percentage of sale price paid to the agent." },
-      { term: "Exclusivity Period", definition: "Duration during which only this agent can represent the property." }
-    ],
-    tips: ["Negotiate commission rates", "Understand exclusivity terms", "Define marketing responsibilities"],
-    warnings: ["Exclusivity may limit your options", "Understand termination terms"],
-    estimatedTime: "20-25 minutes"
-  },
-  "limited-scope-representation-agreement": {
-    title: "Limited Scope Representation Agreement",
-    shortDescription: "An agreement for specific unbundled legal services.",
-    fullDescription: "A Limited Scope Representation Agreement allows attorneys and clients to define exactly which legal services will be provided, reducing costs while maintaining professional boundaries.",
-    whenToUse: ["Need help with specific legal tasks only", "Document review assistance", "Limited court appearances"],
-    keyTerms: [
-      { term: "Unbundled Services", definition: "Specific legal tasks the attorney will perform." },
-      { term: "Excluded Services", definition: "Legal matters the client will handle independently." }
-    ],
-    tips: ["Be clear about what's included and excluded", "Get everything in writing", "Understand your responsibilities"],
-    warnings: ["Attorney only handles specified tasks", "You're responsible for excluded matters"],
-    estimatedTime: "20-30 minutes"
-  },
+ 
   "unbundled-legal-services-agreement": {
     title: "Unbundled Legal Services Agreement",
     shortDescription: "A contract between an attorney and client outlining limited legal representation and specific services provided.",
