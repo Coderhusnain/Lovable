@@ -116,8 +116,12 @@ import EmployeeConfidentialityAgreementInfo from "./pages/EmployeeConfidentialit
 import EmployeeHandbookInfo from "./pages/EmployeeHandbookInfo";
 import EmployeeRetirementAgreementInfo from "./pages/EmployeeRetirementAgreementInfo";
 import PartnershipInfo from "./pages/PartnershipInfo";
+import StrategicAllianceInfo from "./pages/StrategicAllianceInfo";
 import PhysicianServicesInfo from "./pages/PhysicianServicesInfo";
 import RetailerInfo from "./pages/RetailerInfo";
+import SettlementAndReleaseInfo from "./pages/SettlementAndReleaseInfo";
+import SeveranceInfo from "./pages/SeveranceInfo";
+import TruckingContractInfo from "./pages/TruckingContractInfo";
 
 import FranchiseAgreementInfo from "./pages/FranchiseAgreementInfo";
 import AdministrativeServicesAgreementInfo from "./pages/AdministrativeServicesAgreementInfo";
@@ -180,6 +184,9 @@ import GeneralAffidavitInfo from "./pages/GeneralAffidavitInfo";
 import AttorneyEngagementLetterInfo from "./pages/AttorneyEngagementLetterInfo";
 import ComposerAgreementInfo from "./pages/ComposerAgreementInfo";
 import ConcessionAgreementInfo from "./pages/ConcessionAgreementInfo";
+import VendorAgreementInfo from "./pages/VendorAgreementInfo";
+import WarrantyDeedInfo from "./pages/WarrantyDeedInfo";
+import WorkFromHomeInfo from "./pages/WorkFromHomeInfo";
 import ConsultingAgreementInfo from "./pages/ConsultingAgreementInfo";
 import DJContractInfo from "./pages/DJContractInfo";
 import MusicalPerformanceInfo from "./pages/MusicalPerformanceInfo";
@@ -288,10 +295,24 @@ const App = () => {
                 <Route path="/nonprofit-bylaws-form" element={<Documents />} />
                 <Route path="/partnership-agreement-info" element={<PartnershipInfo />} />
                 <Route path="/partnership-agreement-form" element={<Documents />} />
+                <Route path="/strategic-alliance-agreement-info" element={<StrategicAllianceInfo />} />
+                <Route path="/strategic-alliance-agreement-form" element={<Documents />} />
                 <Route path="/physician-services-info" element={<PhysicianServicesInfo />} />
                 <Route path="/physician-services-form" element={<Documents />} />
                 <Route path="/retailer-agreement-info" element={<RetailerInfo />} />
                 <Route path="/retailer-agreement-form" element={<Documents />} />
+                <Route path="/settlement-and-release-agreement-info" element={<SettlementAndReleaseInfo />} />
+                <Route path="/settlement-and-release-agreement-form" element={<Documents />} />
+                <Route path="/severance-agreement-info" element={<SeveranceInfo />} />
+                <Route path="/severance-agreement-form" element={<Documents />} />
+                <Route path="/trucking-contract-info" element={<TruckingContractInfo />} />
+                <Route path="/trucking-agreement-form" element={<Documents />} />
+                <Route path="/vendor-agreement-info" element={<VendorAgreementInfo />} />
+                <Route path="/vendor-agreement-form" element={<Documents />} />
+                <Route path="/warranty-deed-info" element={<WarrantyDeedInfo />} />
+                <Route path="/warranty-deed-form" element={<Documents />} />
+                <Route path="/work-from-home-info" element={<WorkFromHomeInfo />} />
+                <Route path="/work-from-home-form" element={<Documents />} />
                 <Route path="/buy-sell-agreement-info" element={<BuySellAgreementInfo />} />
                 <Route path="/buy-sell-agreement-form" element={<Documents />} />
                 <Route path="/business-agreement-info" element={<BuySellAgreementInfo />} />

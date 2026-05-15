@@ -2712,6 +2712,53 @@ export const documentContent: Record<string, DocumentContent> = {
     legalDisclaimer: "This content is informational and does not constitute legal advice. Joint venture arrangements can be complex and jurisdiction-specific; consult a qualified attorney for customized drafting and tax advice."
   },
 
+  "Strategic Alliance Agreement": {
+    title: "Strategic Alliance Agreement",
+    otherNames: [
+      "Strategic Alliance",
+      "Strategic Partnership Agreement",
+      "Commercial Alliance Agreement",
+      "Business Collaboration Agreement",
+      "Alliance Agreement"
+    ],
+    whatIs: "A Strategic Alliance Agreement is a legal contract between two or more independent businesses that agree to cooperate on a defined project or business objective without creating a new legal entity. It sets the purpose of the alliance, resource sharing, responsibilities, confidentiality, revenue arrangements, governance, and exit terms so each company can collaborate while remaining separate and independent.",
+    whenToUse: [
+      "You are entering a business collaboration project",
+      "You are sharing distribution channels or technology",
+      "You need a marketing or product launch alliance",
+      "You are cooperating on research and development",
+      "You want to share funding, resources, or expertise",
+      "You need a formal agreement without forming a new company"
+    ],
+    faqs: [
+      { q: "What is the difference between a strategic alliance and a joint venture?", a: "A strategic alliance typically lets companies collaborate on a specific objective while staying separate businesses. A joint venture may involve a more integrated business arrangement and, in some cases, a new entity or deeper shared ownership structure." },
+      { q: "What should be included in a Strategic Alliance Agreement?", a: "It commonly includes the parties' names and addresses, alliance purpose, scope, contributions, funding responsibilities, intellectual property ownership, confidentiality, revenue or profit-sharing, branding rights, management and decision-making procedures, duration, termination, non-compete terms, dispute resolution, governing law, and signature blocks." },
+      { q: "Why use a written alliance agreement?", a: "A written Strategic Alliance Agreement helps define roles, protect each business independently, reduce misunderstandings, clarify ownership of ideas and products, and reduce disputes over profit or cost sharing." }
+    ],
+    keyProtections: [
+      "Clarifies each party's role and responsibilities",
+      "Protects ownership of intellectual property and confidential information",
+      "Defines funding, revenue, and cost-sharing terms",
+      "Sets governance and decision-making procedures",
+      "Limits liability and creates exit terms",
+      "Reduces partnership disputes while preserving independence"
+    ],
+    whatYouNeed: [
+      "Names and addresses of all alliance partners",
+      "Purpose and scope of the alliance",
+      "Contributions by each party",
+      "Resource sharing and funding responsibilities",
+      "Intellectual property ownership terms",
+      "Confidentiality and non-compete expectations",
+      "Revenue or profit-sharing terms",
+      "Management and decision-making procedures",
+      "Duration, termination, and exit terms",
+      "Governing law and signatures"
+    ],
+    estimatedTime: "15-25 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Strategic alliances can involve complex commercial and intellectual property issues; consult a qualified attorney for tailored drafting."
+  },
+
   "Liquidation Agreement": {
     title: "Liquidation Agreement",
     otherNames: ["Partnership Dissolution Agreement", "Business Liquidation Agreement", "Dissolution Agreement"],
@@ -3892,6 +3939,46 @@ export const documentContent: Record<string, DocumentContent> = {
       "Key person information"
     ],
     estimatedTime: "12-18 minutes"
+  },
+
+  // === SETTLEMENT & RELEASE AGREEMENT ===
+  "Settlement and Release Agreement": {
+    title: "Settlement and Release Agreement",
+    otherNames: ["Settlement Agreement", "Release of Claims", "Settlement and Release", "Legal Settlement Agreement"],
+    whatIs:
+      "A Settlement and Release Agreement is a legal contract used when parties agree to resolve an existing dispute or lawsuit. One or both parties may provide payment, promises, or other consideration in exchange for ending claims and releasing future legal liability related to the dispute.",
+    whenToUse: [
+      "You are resolving a lawsuit or formal dispute",
+      "Parties agree to accept payment or other consideration to end claims",
+      "You want to record confidentiality, non-disparagement, or dismissal terms",
+      "You need enforceable written terms for settlement obligations",
+      "You want to prevent future related claims"
+    ],
+    faqs: [
+      { q: "What does a Settlement and Release Agreement include?", a: "Typical terms include parties' names and addresses, description of the dispute, settlement amount and payment schedule, mutual releases of claims, no admission of liability clause, confidentiality and non-disparagement terms, dismissal of court cases, tax responsibilities, governing law, and signatures." },
+      { q: "Is a settlement agreement legally binding?", a: "Yes. Once signed by the parties and performed as required, a Settlement and Release Agreement is binding and can be enforced in court." },
+      { q: "Can settlement agreements be confidential?", a: "Yes. Parties often include confidentiality and non-disclosure clauses to keep settlement terms private; such clauses should be explicit and compliant with any court orders." }
+    ],
+    keyProtections: [
+      "Mutual release of claims",
+      "Clear payment and performance obligations",
+      "Confidentiality and non-disparagement protections",
+      "No admission of liability clause",
+      "Enforceable dismissal and court release terms",
+      "Tax allocation and responsibility clauses",
+      "Governing law and dispute resolution for breaches"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of all parties",
+      "Clear description of the dispute or claim",
+      "Settlement amount and payment schedule",
+      "Deadlines for any required performance",
+      "Confidentiality and non-disparagement terms (if desired)",
+      "Court case number and dismissal language (if applicable)",
+      "Signatures of authorized representatives"
+    ],
+    estimatedTime: "15-30 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Consult a qualified attorney for complex settlements or jurisdiction-specific guidance."
   },
 
   "Membership Cancellation Letter": {
@@ -5294,43 +5381,48 @@ export const documentContent: Record<string, DocumentContent> = {
 
   // === REAL ESTATE & PROPERTY AGREEMENTS ===
   "Warranty Deed Agreement": {
-    title: "Warranty Deed Agreement",
-    otherNames: ["General Warranty Deed", "Full Warranty Deed", "Grant Deed"],
-    whatIs: "A legal document used to transfer property ownership from a seller (grantor) to a buyer (grantee) with full legal guarantees. With a properly drafted Warranty Deed Agreement, the seller assures that the property is free from debts or liens, they have full legal authority to sell, and the buyer is protected from past ownership claims. This professional format includes all essential clauses for full legal compliance and can be easily customized for your specific property transfer.",
+    title: "Warranty Deed",
+    otherNames: ["Warranty Deed Agreement", "General Warranty Deed", "Full Warranty Deed", "Grant Deed"],
+    whatIs: "A Warranty Deed is one of the most trusted legal documents used to transfer ownership of real estate or land from a seller to a buyer. It gives the buyer strong legal protection by guaranteeing that the seller has clear title to the property and the right to transfer ownership. Whether you are selling land, transferring a house, gifting property, or moving real estate into a trust, a properly drafted Warranty Deed helps protect both parties.",
     whenToUse: [
-      "You are buying or selling property.",
-      "You want legal protection against title issues.",
-      "You are transferring property to a trust.",
-      "You are finalizing a real estate transaction.",
-      "You want a secure draft property transfer agreement."
+      "Residential property sales",
+      "Commercial real estate transfers",
+      "Land ownership transfers",
+      "House sale transactions",
+      "Property gifting between family members",
+      "Transfer to trust ownership",
+      "Business property transfers",
+      "Estate planning property transfers",
+      "Investment property sales",
+      "Ownership title correction"
     ],
     faqs: [
-      { q: "Is the Warranty Deed legally binding?", a: "Yes, once signed and notarized, your Warranty Deed Agreement is fully enforceable. The deed must be properly recorded with the local authority to establish legal transfer of ownership." },
-      { q: "Do states have different formats?", a: "Yes, states have different requirements for warranty deeds. However, the core elements remain consistent. Ensure your deed complies with your state's specific statutory requirements and recording procedures." },
-      { q: "What is the difference between a General Warranty Deed and a Special Warranty Deed?", a: "A General Warranty Deed provides maximum protection to the buyer, with the seller guaranteeing the entire ownership history. A Special Warranty Deed covers only the seller's ownership period, limiting liability for past title issues." },
-      { q: "How do I create and file a Warranty Deed Agreement?", a: "Create your ownership transfer by clearly identifying both parties (grantor and grantee), describing the property with legal descriptions, stating the consideration amount, obtaining notarization, and filing with the county recorder or relevant local authority." },
-      { q: "What happens if there are title issues after the deed is recorded?", a: "With a General Warranty Deed, the grantor remains liable for title defects arising from any point in the ownership chain. Title insurance can provide additional protection against undiscovered claims." }
+      { q: "What is a Warranty Deed?", a: "A Warranty Deed is a legal property transfer document in which the seller (grantor) transfers ownership to the buyer (grantee) and guarantees that the title is free from undisclosed liens, claims, or ownership disputes." },
+      { q: "What does a Warranty Deed include?", a: "This deed generally includes the full name of seller (grantor), full name of buyer (grantee), property address, legal property description, parcel or tax identification number, sale price or consideration amount, title warranty clauses, grantor promises of clear ownership, existing easements or exceptions, mineral rights reservation (if any), life estate rights (if any), state and county recording details, signature of seller, notary acknowledgment, and a recording section." },
+      { q: "Why do I need a Warranty Deed?", a: "A written Warranty Deed legally transfers property ownership, protects buyers from title defects, confirms the seller's authority to sell, reduces future ownership disputes, supports mortgage and financing transactions, and provides clear recorded ownership records." },
+      { q: "Do states have different formats?", a: "Yes. States and counties may have different recording or statutory requirements. Ensure your deed conforms to local requirements and record the deed with the county recorder." },
+      { q: "How do I file a Warranty Deed?", a: "Identify both parties, provide the legal property description, state the consideration, sign in front of a notary, and file/record the deed with the appropriate county office. Consider a title search or title insurance for added protection." }
     ],
     keyProtections: [
-      "Clear transfer of full property ownership",
-      "Seller's legal guarantee of no liens or encumbrances",
-      "Protection against past and hidden ownership claims",
-      "Seller's warranty of legal authority to sell",
-      "Buyer protection through notarization and recording",
-      "Legally compliant state-specific format"
+      "Guarantee of clear title from the seller",
+      "Protection against undisclosed liens or claims",
+      "Legal certainty of transfer upon recording",
+      "Notarization and recording for public notice",
+      "Seller warranty of authority to convey"
     ],
     whatYouNeed: [
+      "Full legal names and addresses of grantor and grantee",
       "Property address and legal description",
-      "Names and addresses of buyer (grantee) and seller (grantor)",
-      "Sale consideration amount",
-      "State and county details",
       "Parcel or tax identification number",
-      "Notary availability for signature verification",
-      "Recording information for local authority",
-      "Title verification and search results",
-      "Identification documents for both parties"
+      "Sale price or consideration amount",
+      "State and county recorder details",
+      "Notary availability for signatures",
+      "Title search or title insurance details (recommended)",
+      "Identification for both parties"
     ],
-    estimatedTime: "15-25 minutes"
+    estimatedTime: "10-30 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For complex real estate transfers, consult a qualified attorney or local title professional.",
+    suggestions: ["Warranty Deed", "General Warranty Deed", "Grant Deed", "Real Estate Transfer Deed"]
   },
 
   // === CHARACTER & REFERENCE DOCUMENTS ===
@@ -5869,43 +5961,95 @@ export const documentContent: Record<string, DocumentContent> = {
 
   "Vendor Agreement": {
     title: "Vendor Agreement",
-    whatIs: "A Vendor Agreement is a written contract between an event organizer and a vendor that outlines the terms under which the vendor may operate at an event or venue. It helps define expectations related to fees, space usage, timing, and responsibilities.",
+    otherNames: ["Vendor Contract", "Stall Rental Agreement", "Concession Agreement", "Vendor Services Agreement", "Market Vendor Contract"],
+    whatIs: "A Vendor Agreement is an important legal document used between an event organizer, venue owner, or business and a vendor who will sell products or provide services at an event or location. It clearly defines booth space, fees, dates, responsibilities, insurance, and operating rules. Whether you are hosting a fair, exhibition, market, wedding, festival, or corporate event, a properly drafted Vendor Agreement helps avoid confusion and disputes.",
     whenToUse: [
-      "You are hosting an event and allowing vendors to sell products or services",
-      "You are a vendor participating in an exhibition, fair, or festival",
-      "You want to avoid disputes over fees, space, or responsibilities",
-      "You want a legally enforceable contract",
-      "You need clear terms for multiple vendors at an event"
+      "Trade shows",
+      "Food stalls and concessions",
+      "Festivals and fairs",
+      "Wedding vendor services",
+      "Corporate events",
+      "Farmers markets",
+      "Pop-up markets",
+      "Shopping exhibitions",
+      "Community events",
+      "Retail kiosk rentals"
     ],
     faqs: [
-      { q: "What is a Vendor Agreement?", a: "A Vendor Agreement is a written contract between an event organizer and a vendor that outlines the terms under which the vendor may operate at an event or venue. It helps define expectations related to fees, space usage, timing, and responsibilities." },
-      { q: "Why is a Vendor Agreement important?", a: "A well-drafted Vendor Agreement ensures clear roles and responsibilities, defined payment terms, no confusion regarding event duration, and legal protection for both parties." },
-      { q: "What should a Vendor Agreement include?", a: "A professional Vendor Agreement should include names and contact details, vendor fees and payment schedule, event dates and operating hours, space allocation and usage rules, insurance and indemnity clauses, force majeure provisions, and dispute resolution methods." },
-      { q: "What is a force majeure clause?", a: "A force majeure clause protects both parties by allowing cancellation or rescheduling if unforeseen circumstances occur, such as natural disasters, extreme weather, or government action beyond either party's control." },
-      { q: "What insurance should vendors carry?", a: "Most vendors should carry general liability insurance. The Vendor Agreement should clearly specify minimum insurance requirements based on the event type." },
-      { q: "Can a Vendor Agreement be modified after signing?", a: "Yes, but only if both parties agree to modifications in writing. Any amendments should be documented and signed by both parties to remain legally enforceable." }
+      { q: "What is a Vendor Agreement?", a: "A Vendor Agreement is a legal contract between an organizer or venue and a vendor. It allows the vendor to sell goods or provide services at a specific event or location under agreed terms." },
+      { q: "What does a Vendor Agreement commonly include?", a: "This agreement commonly includes names and addresses of both parties, event name and location, vendor booth or stall space details, rental or participation fees, payment schedule, event dates and operating hours, setup and breakdown times, products or services permitted for sale, vendor conduct rules, utilities and equipment responsibilities, insurance requirements, indemnity clauses, health and safety compliance, cancellation terms, refund policy, dispute resolution clause, governing law, and a signature section." },
+      { q: "Why do I need a Vendor Agreement?", a: "A written Vendor Agreement helps define expectations clearly, protect organizers and vendors, avoid fee disputes, manage stall space professionally, clarify event timing and rules, reduce liability risks, ensure safety compliance, protect event reputation, prevent misunderstandings, and create enforceable legal terms." },
+      { q: "What insurance should vendors carry?", a: "Most vendors should carry general liability insurance. The Vendor Agreement should specify minimum insurance requirements appropriate to the event type." },
+      { q: "Can a Vendor Agreement be modified after signing?", a: "Yes — but only with written agreement by both parties. Amendments should be documented and signed to be legally enforceable." }
     ],
     keyProtections: [
-      "Clearly defines roles and responsibilities",
-      "Establishes defined payment terms",
-      "Eliminates confusion regarding event duration",
-      "Provides legal protection for both parties",
-      "Prevents disputes over payments and services",
-      "Protects vendor and organizer interests"
+      "Clear definition of booth space and permitted activities",
+      "Payment and refund terms",
+      "Insurance and liability allocation",
+      "Event dates, setup and breakdown rules",
+      "Health and safety compliance",
+      "Indemnity and dispute resolution clauses",
+      "Cancellation and force majeure protections",
+      "Restrictions on prohibited goods or services"
     ],
     whatYouNeed: [
-      "Event organizer name and contact information",
-      "Vendor name, business name, and contact information",
-      "Event name, date, time, and location",
-      "Booth/space size and location within the event",
-      "Vendor fees and payment schedule",
-      "Types of products/services the vendor will offer",
-      "Insurance requirements and coverage amounts",
-      "Setup and breakdown times",
-      "Operating hours during the event",
-      "Cancellation and refund policies"
+      "Names and addresses of both parties",
+      "Event name, dates, and location",
+      "Booth/space size and exact location",
+      "Fee schedule and payment instructions",
+      "Description of permitted products/services",
+      "Insurance certificates and coverage amounts",
+      "Setup and breakdown schedule",
+      "Utility and equipment responsibilities",
+      "Contact information for event operations",
+      "Cancellation and refund terms"
     ],
-    estimatedTime: "15-20 minutes"
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Consult a qualified attorney for jurisdiction-specific or complex event arrangements.",
+    suggestions: ["Vendor Agreement", "Concession Agreement", "Stall Rental Agreement", "Market Vendor Contract"]
+  },
+
+  "Work from Home Agreement": {
+    title: "Work from Home Agreement",
+    otherNames: ["Remote Work Agreement", "Telecommuting Agreement", "Remote Work Policy", "WFH Agreement"],
+    whatIs: "A Work from Home Agreement is an important legal and policy document used by employers to define expectations, responsibilities, and working conditions for employees who perform their duties remotely. It helps manage productivity, attendance, confidentiality, equipment use, and communication standards.",
+    whenToUse: [
+      "Permanent remote jobs",
+      "Hybrid work arrangements",
+      "Temporary telecommuting",
+      "Home-based employment",
+      "IT and tech remote teams",
+      "Freelance internal staff policies",
+      "Corporate remote workforce",
+      "Flexible work schedules",
+      "Emergency remote work plans",
+      "Office-to-home transition setups"
+    ],
+    faqs: [
+      { q: "What is a Work from Home Agreement?", a: "A Work from Home Agreement is a formal contract or policy between an employer and employee that outlines the terms under which the employee may work remotely from home or another approved location." },
+      { q: "What should a Work from Home Agreement include?", a: "Common elements include employee name and position, employer details, remote work start date, work schedule, attendance rules, reporting structure, performance expectations, equipment responsibilities, data privacy and cybersecurity terms, expense reimbursement, and termination or return-to-office rights." },
+      { q: "Why do I need a Work from Home Agreement?", a: "A written Work from Home Agreement defines responsibilities, improves productivity expectations, protects confidential data, clarifies working hours, manages attendance, and creates enforceable workplace terms for hybrid or remote arrangements." }
+    ],
+    keyProtections: [
+      "Clear employee responsibilities and schedule",
+      "Data privacy and confidentiality protections",
+      "Equipment and expense reimbursement rules",
+      "Performance and reporting expectations",
+      "Termination and return-to-office provisions"
+    ],
+    whatYouNeed: [
+      "Employee name, position, and contact details",
+      "Start date and duration of remote arrangement",
+      "Work schedule and expected availability",
+      "List of company equipment provided",
+      "Expense reimbursement policy",
+      "Data protection and cybersecurity requirements",
+      "Reporting and performance measures",
+      "Contact for IT and HR support"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult HR or a qualified attorney for jurisdiction-specific workplace policies.",
+    suggestions: ["Work from Home Agreement", "Remote Work Agreement", "Telecommuting Agreement", "WFH Policy"]
   },
 
   "Videography Services Agreement": {
@@ -6801,6 +6945,45 @@ export const documentContent: Record<string, DocumentContent> = {
     ],
     estimatedTime: "15-20 minutes",
     legalDisclaimer: "This Employee Retirement Agreement information is general guidance and not legal advice. Retirement agreements must comply with pension regulations, employment laws, tax laws, and labor regulations that vary significantly by jurisdiction. Severance requirements, benefits calculations, and release of claims provisions have specific legal requirements. We strongly recommend consulting with an employment attorney and financial advisor to ensure the agreement is legally compliant and protects all interests."
+  },
+
+  // === SEVERANCE AGREEMENT ===
+  "Severance Agreement": {
+    title: "Severance Agreement",
+    otherNames: ["Severance Package", "Severance Pay Agreement", "Employee Severance Agreement", "Separation Agreement"],
+    whatIs:
+      "A Severance Agreement is a legal contract between an employer and a departing employee that outlines the terms of separation. It may include severance compensation, continuation of benefits, confidentiality terms, return of company assets, and a release of legal claims.",
+    whenToUse: [
+      "Employee termination settlements",
+      "Layoff severance packages",
+      "Mutual separation agreements",
+      "Executive exit packages",
+      "Workforce reductions or restructuring"
+    ],
+    faqs: [
+      { q: "What does a Severance Agreement include?", a: "A typical Severance Agreement includes the parties' names and addresses, effective date, severance pay amount and payment terms (lump sum or installments), continuation of benefits (if any), release of claims, confidentiality, non-disparagement, return of company property, tax withholding provisions, governing law, and signatures." },
+      { q: "Is a severance agreement legally binding?", a: "Yes. Once signed by both parties and supported by consideration, a Severance Agreement is enforceable. Ensure the terms are fair and comply with employment and labor laws in your jurisdiction." },
+      { q: "Can severance agreements include non-compete clauses?", a: "They can, where lawful and reasonable; however, enforceability depends on local law and whether the restrictions are necessary to protect legitimate business interests." }
+    ],
+    keyProtections: [
+      "Clearly documented severance compensation",
+      "Release of claims to prevent future litigation",
+      "Confidentiality and non-disparagement protections",
+      "Return of company property and final obligations",
+      "Tax withholding and payment clarity",
+      "Continuation of benefits (if provided)"
+    ],
+    whatYouNeed: [
+      "Employer and employee legal names and addresses",
+      "Effective separation date and last working day",
+      "Severance amount and payment schedule",
+      "Details of benefits continuation (if any)",
+      "List of company property to be returned",
+      "Confidentiality and release language",
+      "Signatures of authorized representatives"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified employment attorney for jurisdiction-specific or complex severance arrangements."
   },
 
   "Employee Handbook": {
@@ -8361,9 +8544,60 @@ export const documentContent: Record<string, DocumentContent> = {
       "Benefits, leave, and termination terms"
     ],
     estimatedTime: "15-20 minutes"
-  }
+  },
 
-  ,"Memorandum Of Agreement": {
+
+  "Trucking Contract": {
+    title: "Trucking Contract",
+    otherNames: [
+      "Trucking Agreement",
+      "Hauling Contract",
+      "Freight Transport Agreement",
+      "Cargo Transportation Contract",
+      "Truck Driver Contract",
+      "Logistics Service Agreement"
+    ],
+    whatIs: "A Trucking Contract is a legal agreement between a trucking company or independent carrier and a client for the transportation of cargo. It defines shipment terms, payment details, liability, delivery schedules, insurance obligations, and responsibilities of both parties so goods can be moved safely and on time.",
+    whenToUse: [
+      "You need freight transportation services",
+      "You are hiring an independent truck driver or carrier",
+      "You need long-distance or local cargo hauling",
+      "You want to define delivery deadlines and fuel surcharge terms",
+      "You need insurance and cargo damage liability terms",
+      "You operate logistics, fleet, shipping, or manufacturing transport services"
+    ],
+    faqs: [
+      { q: "What should a Trucking Contract include?", a: "It commonly includes party names and addresses, cargo description, pickup and delivery locations, delivery deadlines, freight charges, payment terms, fuel surcharge terms, vehicle and driver obligations, loading and unloading responsibilities, insurance requirements, cargo damage liability, delay and cancellation terms, independent contractor status, compliance with transport laws, confidentiality, termination rights, dispute resolution, governing law, and signatures." },
+      { q: "Why do I need a Trucking Contract?", a: "A written Trucking Contract helps define transportation responsibilities, clarify delivery timelines, confirm insurance coverage, avoid payment disputes, reduce misunderstandings, and create legally enforceable terms for cargo transport." },
+      { q: "Can this work for carriers and logistics companies?", a: "Yes. The template is suitable for trucking companies, freight carriers, independent drivers, logistics service providers, manufacturers, distributors, warehouses, shipping companies, and cargo owners." }
+    ],
+    keyProtections: [
+      "Defines transportation responsibilities",
+      "Protects truckers and cargo owners",
+      "Avoids payment disputes",
+      "Clarifies delivery timelines",
+      "Manages cargo liability issues",
+      "Confirms insurance coverage",
+      "Reduces misunderstandings",
+      "Creates legally enforceable terms"
+    ],
+    whatYouNeed: [
+      "Names and addresses of both parties",
+      "Description of cargo",
+      "Pickup and delivery locations",
+      "Delivery deadlines",
+      "Freight charges and payment terms",
+      "Fuel surcharge terms",
+      "Vehicle and driver obligations",
+      "Loading and unloading responsibilities",
+      "Insurance requirements",
+      "Cargo liability and delay terms",
+      "Governing law and signatures"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific or commercial transport matters."
+  },
+  "Memorandum Of Agreement": {
     title: "Memorandum Of Agreement",
     otherNames: ["Memorandum of Agreement", "MOA", "Memo of Agreement", "MOA Contract", "Memo Agreement"],
     whatIs: "A Memorandum of Agreement (MOA) is a written document that records agreed terms between parties before or alongside a more formal contract. It is commonly used to confirm cooperation, responsibilities, project terms, and other key understandings so everyone has a shared record of what was agreed.",
@@ -8431,6 +8665,122 @@ export const documentContent: Record<string, DocumentContent> = {
     ],
     estimatedTime: "10-20 minutes"
   }
+  ,
+  "Software License Agreement": {
+    title: "Software License Agreement",
+    otherNames: [
+      "Software License",
+      "Software License Contract",
+      "End User License Agreement",
+      "EULA",
+      "App License Agreement",
+      "SaaS License Agreement",
+      "Application License",
+      "Software Licensing Agreement"
+    ],
+    whatIs: "A Software License Agreement is a legal contract between the software owner (licensor) and the user or company (licensee). It grants limited rights to use the software under stated conditions while preserving ownership rights of the creator. This agreement can cover desktop applications, mobile apps, SaaS subscriptions, enterprise deployments, and distribution terms for commercial or free software.",
+    whenToUse: [
+      "You are licensing desktop or mobile software",
+      "You provide a SaaS product or subscription service",
+      "You distribute commercial or free software to customers",
+      "You want to limit copying, reverse-engineering, or redistribution",
+      "You need to define support, updates, and maintenance terms",
+      "You are granting internal-use or enterprise deployment rights",
+      "You need subscription renewal and payment terms"
+    ],
+    faqs: [
+      {
+        q: "What is the difference between a license and a sale?",
+        a: "A Software License grants limited rights to use the software while the licensor retains ownership of the software and source code. A sale transfers ownership of a copy (rare for commercial software). Licenses allow licensors to control use, distribution, and modifications."
+      },
+      {
+        q: "Should I include source code terms?",
+        a: "Yes — if you intend to license or transfer source code, specify whether the license includes source code access, escrow arrangements, or explicit source-code ownership and modification rights."
+      },
+      {
+        q: "Do I need an EULA for mobile or desktop apps?",
+        a: "An End User License Agreement (EULA) is commonly used for desktop and mobile apps to set permitted uses, installation limits, and restrictions on copying or redistribution. It's a recommended protection for commercial apps."
+      },
+      {
+        q: "Can I restrict reverse engineering and modification?",
+        a: "Yes. Typical Software License Agreements include clauses prohibiting reverse engineering, decompilation, modification, and unauthorized redistribution, subject to local law exceptions."
+      },
+      {
+        q: "What should subscription-based (SaaS) licenses include?",
+        a: "Include subscription period, billing and renewal terms, termination for non-payment, service level or uptime expectations (if any), data handling and export, support and maintenance, and backup/restore responsibilities."
+      }
+    ],
+    keyProtections: [
+      "Preserve licensor ownership of software and source code",
+      "Define permitted uses, device or user limits, and territory",
+      "Prohibit unauthorized copying, redistribution and reverse-engineering",
+      "Set update, support, and maintenance obligations",
+      "Specify payment, subscription renewal, and termination rules",
+      "Limit warranties and cap liabilities",
+      "Include confidentiality and data privacy provisions",
+      "Address assignment, sublicensing, and resale restrictions"
+    ],
+    whatYouNeed: [
+      "Software product name and version",
+      "Licensor and licensee legal names and addresses",
+      "License type (single-user, multi-user, enterprise, subscription)",
+      "Installation or device limits",
+      "Payment terms, fees, and renewal schedule",
+      "Support and maintenance terms",
+      "Warranties, disclaimers, and liability caps",
+      "Data privacy and export obligations",
+      "Termination conditions and post-termination rights",
+      "Governing law and dispute resolution"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific or complex licensing arrangements."
+  }
+  ,
+  "Staffing Agency Contract": {
+    title: "Staffing Agency Contract",
+    otherNames: [
+      "Staffing Agreement",
+      "Recruitment Agency Contract",
+      "Employee Placement Agreement",
+      "Temporary Staffing Agreement",
+      "Recruitment Agreement",
+      "Staffing Services Agreement"
+    ],
+    whatIs: "A Staffing Agency Contract is a legal agreement between a staffing agency and a client company under which the agency agrees to provide qualified personnel for temporary, permanent, or contract roles. The contract sets recruitment services, placement fees, replacement guarantees, confidentiality, and compliance obligations to protect both the agency and the client.",
+    whenToUse: [
+      "You need temporary or contract workers",
+      "You require permanent employee placement services",
+      "You engage an agency for executive or technical recruitment",
+      "You need seasonal workforce support",
+      "You want defined replacement and guarantee terms",
+      "You need compliance with labor and employment laws"
+    ],
+    faqs: [
+      { q: "What does a Staffing Agency Contract include?", a: "Typical provisions include party details, scope of recruitment services, types and number of staff, fees and payment schedule, placement and replacement guarantees, confidentiality, non-solicitation, independent contractor status, compliance with labor laws, insurance and indemnity, termination rights, and dispute resolution." },
+      { q: "How are agency fees calculated?", a: "Fees are commonly a percentage of the hired employee’s first-year salary for permanent placements, or an hourly/markup rate for temporary staffing. The contract should clearly state fee structure, payment timing, and any refund or replacement terms." },
+      { q: "Can the contract restrict direct hiring?", a: "Yes. Non-solicitation or no-poach clauses can prevent clients from directly hiring agency placements for a defined period, and replacement guarantees can provide remedies if a hire leaves early." },
+      { q: "What compliance obligations exist?", a: "The contract should require the agency to comply with applicable labor, tax, and immigration laws, and to verify candidate qualifications and background checks as agreed." }
+    ],
+    keyProtectations: [
+      "Clear fee and payment terms",
+      "Replacement and refund policies",
+      "Confidentiality of client information",
+      "Non-solicitation protections",
+      "Compliance with labor and employment laws",
+      "Defined termination and notice rights"
+    ],
+    whatYouNeed: [
+      "Client and agency legal names and contact details",
+      "Description of roles, qualifications, and number of staff",
+      "Fee structure and payment schedule",
+      "Replacement guarantee terms and timeframes",
+      "Confidentiality and data handling requirements",
+      "Non-solicitation or direct hire restrictions",
+      "Governing law and dispute resolution provisions"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific or complex recruitment arrangements."
+  }
 };
 
 // ============================================================================
@@ -8445,6 +8795,71 @@ export function getDocumentContent(title: string): DocumentContent {
 
   const normalizeTitle = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const normalizedTitle = normalizeTitle(title);
+
+  // Staffing / Recruitment mappings
+  if (
+    normalizedTitle.includes("staffing agency") ||
+    normalizedTitle.includes("staffing agreement") ||
+    normalizedTitle.includes("staffing contract") ||
+    normalizedTitle.includes("recruitment agency") ||
+    normalizedTitle.includes("recruitment agreement") ||
+    normalizedTitle.includes("employee placement") ||
+    normalizedTitle.includes("placement agreement") ||
+    normalizedTitle.includes("temporary staffing") ||
+    normalizedTitle.includes("temporary staff") ||
+    (normalizedTitle.includes("staffing") && normalizedTitle.includes("agency"))
+  ) {
+    return documentContent["Staffing Agency Contract"];
+  }
+
+  // Software / EULA mappings
+  if (
+    normalizedTitle.includes("software license") ||
+    normalizedTitle.includes("software license agreement") ||
+    normalizedTitle.includes("software license contract") ||
+    normalizedTitle.includes("software licensing") ||
+    normalizedTitle.includes("end user license") ||
+    normalizedTitle.includes("end-user license") ||
+    normalizedTitle.includes("eula") ||
+    normalizedTitle.includes("app license") ||
+    normalizedTitle.includes("saas license") ||
+    (normalizedTitle.includes("license") && normalizedTitle.includes("software"))
+  ) {
+    return documentContent["Software License Agreement"];
+  }
+
+  // Work from Home / Remote mappings
+  if (
+    normalizedTitle.includes("work from home") ||
+    normalizedTitle.includes("work-from-home") ||
+    normalizedTitle.includes("remote work") ||
+    normalizedTitle.includes("telecommute") ||
+    normalizedTitle.includes("telecommuting") ||
+    normalizedTitle.includes("remote policy") ||
+    normalizedTitle.includes("wfh") ||
+    normalizedTitle.includes("work from home agreement")
+  ) {
+    if (documentContent["Work from Home Agreement"]) {
+      return documentContent["Work from Home Agreement"];
+    }
+  }
+
+  // Vendor / Event vendor mappings
+  if (
+    normalizedTitle.includes("vendor") ||
+    normalizedTitle.includes("vendor agreement") ||
+    normalizedTitle.includes("vendor contract") ||
+    normalizedTitle.includes("stall") ||
+    normalizedTitle.includes("booth") ||
+    normalizedTitle.includes("concession") ||
+    normalizedTitle.includes("stall rental") ||
+    normalizedTitle.includes("vendor services") ||
+    normalizedTitle.includes("market vendor") ||
+    normalizedTitle.includes("pop up") ||
+    normalizedTitle.includes("vendor services")
+  ) {
+    return documentContent["Vendor Agreement"];
+  }
 
   if (
     normalizedTitle.includes("master servant") ||
@@ -8547,6 +8962,19 @@ export function getDocumentContent(title: string): DocumentContent {
   ) {
     return documentContent["Collaboration Agreement"];
   }
+  // Warranty Deed / Deed mappings
+  if (
+    normalizedTitle.includes("warranty deed") ||
+    normalizedTitle.includes("general warranty deed") ||
+    normalizedTitle.includes("full warranty deed") ||
+    normalizedTitle.includes("grant deed") ||
+    (normalizedTitle.includes("warranty") && normalizedTitle.includes("deed")) ||
+    normalizedTitle.includes("property deed")
+  ) {
+    if (documentContent["Warranty Deed Agreement"]) {
+      return documentContent["Warranty Deed Agreement"];
+    }
+  }
   if (
     normalizedTitle.includes("consignment") ||
     normalizedTitle.includes("consignment agreement") ||
@@ -8583,6 +9011,18 @@ export function getDocumentContent(title: string): DocumentContent {
     normalizedTitle.includes("relocation contract")
   ) {
     return documentContent["Moving Contract"];
+  }
+  if (
+    normalizedTitle.includes("trucking") ||
+    normalizedTitle.includes("hauling contract") ||
+    normalizedTitle.includes("freight transport") ||
+    normalizedTitle.includes("cargo transportation") ||
+    normalizedTitle.includes("truck driver") ||
+    normalizedTitle.includes("logistics service") ||
+    normalizedTitle.includes("cargo hauling") ||
+    normalizedTitle.includes("freight carrier")
+  ) {
+    return documentContent["Trucking Contract"];
   }
   if (
     normalizedTitle.includes("musical") ||
@@ -8899,6 +9339,15 @@ export function getDocumentContent(title: string): DocumentContent {
     return documentContent["Cooperation Agreement"];
   }
   if (
+    normalizedTitle.includes("strategic alliance") ||
+    normalizedTitle.includes("strategic partnership") ||
+    normalizedTitle.includes("commercial alliance") ||
+    normalizedTitle.includes("business collaboration agreement") ||
+    normalizedTitle.includes("alliance agreement")
+  ) {
+    return documentContent["Strategic Alliance Agreement"];
+  }
+  if (
     normalizedTitle.includes("employee retirement") ||
     normalizedTitle.includes("retirement agreement") ||
     normalizedTitle.includes("retirement settlement") ||
@@ -8911,6 +9360,16 @@ export function getDocumentContent(title: string): DocumentContent {
     (normalizedTitle.includes("retirement") && normalizedTitle.includes("settlement"))
   ) {
     return documentContent["Employee Retirement Agreement"];
+  }
+
+  // Map severance searches to the Severance Agreement content
+  if (
+    normalizedTitle.includes("severance") ||
+    (normalizedTitle.includes("separation") && normalizedTitle.includes("agreement")) ||
+    normalizedTitle.includes("severance package") ||
+    (normalizedTitle.includes("release") && normalizedTitle.includes("claims") && normalizedTitle.includes("employee"))
+  ) {
+    return documentContent["Severance Agreement"];
   }
 
   if (
@@ -9017,6 +9476,14 @@ export function getDocumentContent(title: string): DocumentContent {
     (normalizedTitle.includes("agreement") || normalizedTitle.includes("contract") || normalizedTitle.includes("supply") || normalizedTitle.includes("wholesale") || normalizedTitle.includes("resale"))
   ) {
     return documentContent["Retailer Agreement"];
+  }
+
+  // Map settlement / release searches to the Settlement and Release Agreement content
+  if (
+    (normalizedTitle.includes("settlement") || normalizedTitle.includes("settle") || normalizedTitle.includes("release") || normalizedTitle.includes("release of claims")) &&
+    (normalizedTitle.includes("agreement") || normalizedTitle.includes("settlement agreement") || normalizedTitle.includes("release agreement") || normalizedTitle.includes("release of claims"))
+  ) {
+    return documentContent["Settlement and Release Agreement"];
   }
 
   if (

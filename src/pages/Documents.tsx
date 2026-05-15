@@ -452,7 +452,7 @@ export const businessSecurityDocs = [
   { id: "MediationAgreementForm", title: "Mediation Agreement", description: "Create a comprehensive mediation agreement", icon: MessageSquare, category: "Dispute Resolution", component: MediationAgreementForm },
   { id: "MutualReleaseForm", title: "Mutual Release Agreement", description: "Create a comprehensive mutual release agreement", icon: FileCheck, category: "Dispute Resolution", component: MutualReleaseForm },
   { id: "MutualRescissionForm", title: "Mutual Rescission Agreement", description: "Create a comprehensive mutual rescission agreement", icon: FileX, category: "Dispute Resolution", component: MutualRescissionForm },
-  { id: "SettlementAndReleaseAgreementForm", title: "Settlement and Release Agreement", description: "Create a comprehensive settlement and release agreement", icon: FileCheck, category: "Dispute Resolution", component: SettlementAndReleaseAgreementForm },
+  { id: "settlement-and-release-agreement", title: "Settlement and Release Agreement", description: "Create a comprehensive settlement and release agreement", icon: FileCheck, category: "Dispute Resolution", component: SettlementAndReleaseAgreementForm },
 
   // === COLLABORATIONS ===
   { id: "CollaborationAgreementForm", title: "Collaboration Agreement", description: "Create a comprehensive collaboration agreement", icon: Handshake, category: "Collaborations", component: CollaborationAgreementForm },
