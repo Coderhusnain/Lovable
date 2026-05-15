@@ -2,21 +2,21 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, FileSignature, BookOpen } from "lucide-react";
+import { CheckCircle, BookOpen, Camera } from "lucide-react";
 import { getDocumentContent } from "@/data/documentContent";
 
-const MutualReleaseInfo: React.FC = () => {
+const EventPhotographyInfo: React.FC = () => {
   const navigate = useNavigate();
-  const doc = getDocumentContent("Mutual Release Agreement");
+  const doc = getDocumentContent("Event Photography Contract");
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 py-12">
         <div className="max-w-6xl mx-auto px-4">
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
               <div className="p-3 bg-purple-100 rounded-lg">
-                <FileSignature className="w-8 h-8 text-purple-600" />
+                <Camera className="w-8 h-8 text-purple-600" />
               </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
@@ -94,11 +94,11 @@ const MutualReleaseInfo: React.FC = () => {
 
           <div className="text-center space-y-4">
             <Button
-              onClick={() => navigate("/mutual-release-form")}
+              onClick={() => navigate("/documents/event-photography-contract")}
               size="lg"
               className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3"
             >
-              Create Mutual Release Agreement
+              Create Event Photography Contract
             </Button>
             <p className="text-sm text-gray-500">Estimated time: {doc.estimatedTime}</p>
           </div>
@@ -108,4 +108,4 @@ const MutualReleaseInfo: React.FC = () => {
   );
 };
 
-export default MutualReleaseInfo;
+export default EventPhotographyInfo;

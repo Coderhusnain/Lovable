@@ -274,6 +274,7 @@ export const familyProtectionDocs = [
 
   // === HEALTHCARE & END OF LIFE ===
   { id: "living-will", title: "Living Will", description: "Create a Living Will to specify your health care directives", icon: Heart, category: "Healthcare", component: LivingWillForm },
+  { id: "physician-services", title: "Physician Services Agreement", description: "Create a comprehensive physician services agreement", icon: Stethoscope, category: "Healthcare", component: PhysicianServicesAgreementForm },
   { id: "healthcare-poa", title: "Healthcare Power of Attorney", description: "Authorize someone to make medical decisions on your behalf", icon: Heart, category: "Healthcare", component: HealthcarePOAForm },
   { id: "lastwill", title: "Last Will and Testament", description: "Create a professional last will and testament agreement", icon: FileText, category: "Estate Planning", component: lastwill },
 
@@ -335,6 +336,7 @@ export const businessSecurityDocs = [
   { id: "llc-operating-agreement", title: "LLC Operating Agreement", description: "Create a comprehensive LLC Operating Agreement", icon: Building2, category: "Business Formation", component: LLCOperatingAgreementForm },
   { id: "llc-business-formation", title: "LLC Business Formation", description: "Form a new Limited Liability Company", icon: Building2, category: "Business Formation", component: LLCBusinessFormation },
   { id: "corporate-bylaws", title: "Corporate Bylaws", description: "Create comprehensive corporate bylaws", icon: Scale, category: "Business Formation", component: CorporateBylawsForm },
+  { id: "nonprofit-bylaws", title: "Nonprofit Bylaws", description: "Create governance bylaws for nonprofit organizations", icon: Heart, category: "Business Formation", component: CorporateBylawsForm },
   { id: "corporation-formation", title: "Corporation Formation", description: "Form a new corporation entity", icon: Building, category: "Business Formation", component: CorporationFormation },
   { id: "nonprofit-formation", title: "Nonprofit Formation", description: "Form a nonprofit organization", icon: Heart, category: "Business Formation", component: NonprofitFormation },
   { id: "PartnershipAgreementForm", title: "Partnership Agreement", description: "Create a comprehensive partnership agreement", icon: Handshake, category: "Business Formation", component: PartnershipAgreementForm },
@@ -438,7 +440,7 @@ export const businessSecurityDocs = [
   // === DISTRIBUTION & SUPPLY ===
   { id: "ProductDistributionAgreementForm", title: "Product Distribution Agreement", description: "Create a comprehensive product distribution agreement", icon: Package, category: "Distribution", component: ProductDistributionAgreementForm },
   { id: "SupplierAgreementForm", title: "Supplier Agreement", description: "Create a comprehensive supplier agreement", icon: Truck, category: "Distribution", component: SupplierAgreementForm },
-  { id: "RetailerAgreementForm", title: "Retailer Agreement", description: "Create a comprehensive retailer agreement", icon: ShoppingCart, category: "Distribution", component: RetailerAgreementForm },
+  { id: "retailer-agreement", title: "Retailer Agreement", description: "Create a comprehensive retailer agreement", icon: ShoppingCart, category: "Distribution", component: RetailerAgreementForm },
   { id: "Fulfillment-agreement", title: "Fulfillment Agreement", description: "Create a comprehensive fulfillment agreement", icon: Boxes, category: "Distribution", component: FulfillmentAgreementForm },
   { id: "VendorAgreementForm", title: "Vendor Agreement", description: "Create a vendor services agreement", icon: FileText, category: "Distribution", component: VendorAgreementForm },
 

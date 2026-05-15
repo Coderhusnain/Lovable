@@ -238,6 +238,135 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "5-10 minutes"
   },
 
+  "Offer of Employment": {
+    title: "Offer of Employment Letter",
+    otherNames: ["Offer Letter", "Employment Offer Letter", "Job Offer Letter", "Offer Of Employment", "Offer of Employment Letter"],
+    whatIs: "An Employment Offer Letter (also called Offer Letter, Job Offer Letter, or Offer of Employment) is a formal written letter issued by an employer to a selected candidate confirming employment terms. This letter provides the candidate with a clear understanding of the job offer and the core terms of employment before joining.",
+    whenToUse: [
+      "Offering jobs to selected candidates",
+      "During the new employee hiring process",
+      "As part of HR onboarding documentation",
+      "To confirm salary and benefits",
+      "When confirming position, duties, and reporting manager",
+      "For startup team recruitment or full-time/part-time hiring",
+      "To issue a formal joining offer"
+    ],
+    faqs: [
+      { q: "What does an Employment Offer Letter include?", a: "An Offer Letter commonly includes the candidate's full name, company name and address, job title, department details, salary package, working hours, anticipated joining date, benefits and allowances, probation period, reporting manager, job responsibilities, acceptance deadline, and an employer signature block." },
+      { q: "Why should I provide a written Offer Letter?", a: "A written Employment Offer Letter creates clear job expectations, confirms salary and benefits, reduces hiring misunderstandings, supports HR documentation, helps candidates decide, and provides written proof of the offer terms." },
+      { q: "Are Offer Letters legally binding?", a: "An Offer Letter can be legally binding depending on wording and jurisdiction. Many Offer Letters are written to be preliminary and subject to other agreements (for example an employment contract). For specific legal advice, consult a qualified attorney." }
+    ],
+    keyProtections: [
+      "Creates clear job expectations",
+      "Confirms salary and benefits",
+      "Reduces hiring misunderstandings",
+      "Supports HR and onboarding documentation",
+      "Provides written proof of the offer terms",
+      "Helps candidate decision-making"
+    ],
+    whatYouNeed: [
+      "Candidate full legal name and contact details",
+      "Company name and address",
+      "Proposed job title and department",
+      "Salary, commissions, or compensation details",
+      "Working hours and expected start date",
+      "Details of benefits, leave, and probation period",
+      "Reporting manager and primary responsibilities",
+      "Acceptance deadline and signature block"
+    ],
+    estimatedTime: "5-10 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Consult a qualified attorney for jurisdiction-specific or complex employment matters."
+  },
+
+  "Event Photography Contract": {
+    title: "Event Photography Contract",
+    otherNames: ["Photography Contract for Event", "Event Photographer Contract", "Event Photography Agreement", "Photographer Contract"],
+    whatIs: "An Event Photography Contract (also called Photography Contract for Event, Event Photographer Contract, or Event Photography Agreement) is a legal agreement between a photographer and a client outlining the terms of event photography services. It clarifies responsibilities, payment terms, delivery timelines, and usage rights before the event.",
+    whenToUse: [
+      "Wedding photography bookings",
+      "Birthday party photography",
+      "Corporate event photography",
+      "Conference and seminar coverage",
+      "Family functions and celebrations",
+      "School or college events",
+      "Product launch events",
+      "Freelance photography services"
+    ],
+    faqs: [
+      { q: "What does an Event Photography Contract include?", a: "This contract commonly includes the photographer or company details, client name and address, event date and location, type of event, coverage start and end time, services included, editing and delivery timeline, payment and deposit terms, cancellation and refund policy, copyright and usage rights, liability limitations, and signatures of both parties." },
+      { q: "Why do I need a photography contract for an event?", a: "A written Event Photography Contract confirms services, prevents payment disputes, sets schedule expectations, defines delivery timelines, clarifies copyright ownership, and protects both photographer and client in case of disagreements." },
+      { q: "Can I modify the template?", a: "Yes. The Event Photography Contract template from Legalgram is professionally drafted and editable so you can adjust coverage, deliverables, payment terms, and usage rights to fit each booking." }
+    ],
+    keyProtections: [
+      "Confirms services and deliverables",
+      "Prevents payment disputes",
+      "Sets event schedule expectations",
+      "Defines photo delivery timelines",
+      "Clarifies copyright and usage rights",
+      "Covers cancellation and refund terms"
+    ],
+    whatYouNeed: [
+      "Photographer or company legal name and contact details",
+      "Client full name and contact information",
+      "Event date, start and end times, and location",
+      "Type of event and any special requirements",
+      "Agreed services (hours, number of photographers, deliverables)",
+      "Editing and delivery timelines",
+      "Payment amount, deposit required, and balance due date",
+      "Cancellation policy and refund terms",
+      "Copyright ownership and license terms",
+      "Liability and insurance details",
+      "Signatures of both parties"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Consult a qualified attorney for jurisdiction-specific or complex event arrangements."
+  },
+
+  "Fulfillment Services Agreement": {
+    title: "Fulfillment Services Agreement",
+    otherNames: ["Fulfillment Agreement", "Fulfilment Services Agreement", "Order Fulfillment Agreement", "3PL Agreement"],
+    whatIs: "A Fulfillment Services Agreement is a legal contract between a business and a fulfillment provider that outlines services related to receiving, storing, packing, processing, and shipping products. It defines responsibilities for inventory management, shipping, returns handling, fees, liability, and service levels.",
+    whenToUse: [
+      "eCommerce order fulfillment services",
+      "Warehousing and inventory management",
+      "Packing and shipping agreements",
+      "Third-party logistics (3PL) services",
+      "Manufacturer distribution support",
+      "Product storage and dispatch",
+      "Subscription box fulfillment",
+      "Business outsourcing operations"
+    ],
+    faqs: [
+      { q: "What does a Fulfillment Services Agreement include?", a: "This agreement commonly includes business and service provider details, scope of fulfillment services, storage and warehousing terms, inventory management duties, packaging standards, shipping and dispatch timelines, service fees, returns handling, liability allocation, confidentiality, term and termination, and dispute resolution." },
+      { q: "Why do I need a Fulfillment Services Agreement?", a: "A written Fulfillment Services Agreement clearly defines responsibilities, prevents service misunderstandings, sets pricing and payment terms, protects inventory interests, clarifies shipping timelines, and reduces disputes between the business and the fulfillment provider." },
+      { q: "Can the template be customized for my business?", a: "Yes. The Fulfillment Services Agreement template on Legalgram is professionally drafted and editable so you can tailor storage terms, SLAs, insurance requirements, pricing models, and returns procedures to your operations." }
+    ],
+    keyProtections: [
+      "Clearly defines responsibilities for receiving, storing, and shipping goods",
+      "Sets service levels and delivery expectations",
+      "Establishes fees, payment schedule, and invoicing",
+      "Allocates liability for lost or damaged goods",
+      "Specifies returns handling and disposition",
+      "Includes confidentiality and data handling terms",
+      "Defines term, renewal, and termination rights"
+    ],
+    whatYouNeed: [
+      "Business and service provider contact details",
+      "Description of products and SKU handling requirements",
+      "Storage and warehousing requirements",
+      "Packing, labeling, and packaging standards",
+      "Shipping methods, carriers, and timelines",
+      "Pricing model (per-order, per-item, storage fees)",
+      "Returns handling procedures",
+      "Insurance and liability coverage",
+      "Service level agreements and remedies",
+      "Term, renewal, and termination clauses",
+      "Signatures of authorized representatives"
+    ],
+    estimatedTime: "15-20 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. For complex logistics arrangements consult a qualified attorney."
+  },
+
   "Architectural Services Agreement": {
     title: "Architectural Services Agreement",
     otherNames: ["Architect Services Agreement", "Architectural Design Contract", "Design Services Agreement"],
@@ -2451,40 +2580,221 @@ export const documentContent: Record<string, DocumentContent> = {
       "Guaranty Agreement Form",
       "Personal Guarantee Agreement",
       "Loan Guaranty Agreement",
-      "Guarantor Agreement Draft"
+      "Guarantor Agreement",
+      "Personal Guarantee"
     ],
-    whatIs: "A Guaranty Agreement is a legal agreement in which a guarantor promises to repay a loan, lease payment, credit balance, or other debt if the main borrower fails to pay. This Guaranty Agreement helps lenders feel secure by providing an additional responsible party who agrees to cover the debt if needed. A Guaranty Agreement can be used for personal loans, business loans, rent payments, lease obligations, credit accounts, and overdue balances.",
+    whatIs: "A Guaranty Agreement (also called Guaranty Agreement Form or Personal Guarantee Agreement) is a legal contract where one person or entity agrees to pay or perform another party’s obligation if they fail to do so. This agreement creates a clear written understanding of repayment responsibilities and reduces future disputes.",
     whenToUse: [
-      "You want to help someone secure a loan",
-      "A borrower has weak credit history",
-      "A landlord requests a rent guarantor",
-      "A lender requires extra security",
-      "Someone is renegotiating overdue debt",
-      "You want written guarantor terms"
+      "Personal loan guarantees",
+      "Business loan guarantees",
+      "Rental lease guarantees",
+      "Credit account guarantees",
+      "Supplier payment guarantees",
+      "Family loan support agreements",
+      "Debt restructuring guarantees",
+      "To secure financial obligations"
     ],
     faqs: [
-      { q: "What is a Guaranty Agreement?", a: "A Guaranty Agreement is a legal document where a guarantor agrees to pay a debt if the primary borrower does not pay." },
-      { q: "What information is needed?", a: "You generally need lender, borrower, and guarantor details, the debt amount, repayment terms, liability scope, default conditions, and signatures." },
-      { q: "Is a Guaranty Agreement legally enforceable?", a: "Yes. When properly drafted and signed, a Guaranty Agreement is generally legally binding and enforceable under applicable law." }
+      { q: "What is a Guaranty Agreement?", a: "A Guaranty Agreement is a legal contract where a guarantor agrees to pay or perform another party's obligation if that party defaults. It documents the guarantor's consent and the scope of liability." },
+      { q: "What information does the agreement commonly include?", a: "Common elements include the guarantor's full name and address, borrower/debtor details, lender/creditor details, the guaranteed debt or obligation amount, type of guarantee (absolute or conditional), payment terms, duration of the guarantee, default conditions, notice requirements, lender rights against the guarantor, governing law, and signatures of the parties." },
+      { q: "Why should I use a Guaranty Agreement?", a: "A written Guaranty Agreement clearly defines guarantor liability, supports loan approvals and credit extensions, protects lender interests, prevents misunderstandings, and creates legal proof of the guarantee." },
+      { q: "Is a Guaranty Agreement enforceable?", a: "Yes — when properly drafted and signed it is generally enforceable. Specific enforceability rules and formalities vary by jurisdiction, so consult a qualified attorney for jurisdiction-specific questions." }
     ],
     keyProtections: [
-      "Support loan approval chances",
-      "Protect lender interests",
-      "Clarify guarantor responsibilities",
-      "Record debt terms legally",
-      "Reduce future disputes"
+      "Clearly defines guarantor liability",
+      "Supports loan approvals and credit extensions",
+      "Protects lender interests",
+      "Prevents misunderstandings about repayment",
+      "Creates legal proof of guarantee",
+      "Helps manage transaction risk"
     ],
     whatYouNeed: [
-      "Lender details",
-      "Borrower details",
-      "Guarantor details",
-      "Debt amount",
-      "Guarantee terms",
-      "Default obligations",
-      "Signature and date"
+      "Guarantor full name and address",
+      "Borrower / debtor details",
+      "Lender / creditor details",
+      "Guaranteed debt or obligation amount",
+      "Type of guarantee (absolute or conditional)",
+      "Payment terms and schedule",
+      "Duration of the guarantee",
+      "Default conditions and notice requirements",
+      "Governing law",
+      "Signatures of all parties"
     ],
-    estimatedTime: "10-15 minutes",
-    legalDisclaimer: "A Guaranty Agreement can create significant legal and financial obligations. State law requirements vary, and guarantor liability may be broad or limited depending on the agreement. For rental, personal, or business guarantees, consult a qualified attorney if you need advice about liability scope or enforcement."
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This Guaranty Agreement content is informational and does not constitute legal advice. Guarantor liability can be significant and laws vary by jurisdiction; consult a qualified attorney for specific legal guidance."
+  },
+
+  "Joint Bid Agreement": {
+    title: "Joint Bid Agreement",
+    otherNames: ["Teaming Agreement", "Joint Venture Bid Agreement", "Joint Contractor Agreement", "Joint Tender Agreement"],
+    whatIs: "A Joint Bid Agreement (also known as a Teaming Agreement) is a legal contract between two or more businesses agreeing to jointly submit a bid for a specific project. It sets out roles, responsibilities, cost and profit sharing, and project management arrangements to support a coordinated tender submission.",
+    whenToUse: [
+      "Construction joint bids",
+      "Government tenders",
+      "Infrastructure projects",
+      "Engineering contracts",
+      "Real estate development bids",
+      "Joint contractor proposals",
+      "Private sector project tenders",
+      "Multi-company project submissions"
+    ],
+    faqs: [
+      { q: "What is a Joint Bid Agreement?", a: "A Joint Bid Agreement documents how two or more parties will collaborate to prepare and submit a single bid for a project. It clarifies the lead contractor, scope of work, cost and profit sharing, and responsibilities during bid preparation and project delivery." },
+      { q: "Why use a Joint Bid Agreement?", a: "Using a Joint Bid Agreement reduces misunderstandings, clarifies responsibilities, protects each party's interests, and improves the professionalism and competitiveness of the tender submission." },
+      { q: "Can the agreement specify profit sharing?", a: "Yes. A Joint Bid Agreement typically records cost sharing and profit distribution arrangements and any payment or invoicing mechanics agreed by the parties." }
+    ],
+    keyProtections: [
+      "Clearly defines responsibilities for bid preparation and delivery",
+      "Records lead contractor and management structure",
+      "Specifies cost and profit sharing arrangements",
+      "Allocates liability between parties",
+      "Protects confidential bid information",
+      "Provides dispute resolution mechanisms"
+    ],
+    whatYouNeed: [
+      "Names and contact details of all participating parties",
+      "Project or tender identification and scope",
+      "Designation of the lead contractor or bid manager",
+      "Scope of work for each party",
+      "Cost sharing and profit allocation terms",
+      "Payment, invoicing and timeline provisions",
+      "Confidentiality and IP handling",
+      "Liability allocation and indemnities",
+      "Dispute resolution and governing law",
+      "Signatures of authorized representatives"
+    ],
+    estimatedTime: "15-20 minutes",
+    legalDisclaimer: "This Joint Bid Agreement content is informational and does not constitute legal advice. Tender requirements and legal rules vary by jurisdiction and procurement type — consult a qualified attorney for complex bids or public tenders."
+  },
+
+  "Joint Venture Agreement": {
+    title: "Joint Venture Agreement",
+    otherNames: ["Co-Venture Agreement", "Joint Venture Contract", "Business Cooperation Agreement", "Strategic Alliance Agreement"],
+    whatIs: "A Joint Venture Agreement is a legal contract between two or more parties who agree to work together for a specific business purpose. It defines contributions, ownership, management, profit sharing, and exit strategies to protect each party's interests and reduce business risk.",
+    whenToUse: [
+      "Business expansion partnerships",
+      "Construction joint ventures",
+      "Investment collaborations",
+      "Product launch partnerships",
+      "International market entry",
+      "Strategic alliances",
+      "Real estate development ventures",
+      "Shared service businesses",
+      "Temporary project partnerships"
+    ],
+    faqs: [
+      { q: "What is a Joint Venture Agreement?", a: "A Joint Venture Agreement (also known as a Co-Venture Agreement or Strategic Alliance Agreement) is a legal contract where parties agree to collaborate on a business project and record contributions, ownership, governance, and exit terms." },
+      { q: "What should be included?", a: "Common elements include party names, purpose, capital contributions, ownership percentages, profit and loss sharing, roles and responsibilities, management structure, decision-making procedures, confidentiality, IP ownership, liability allocation, banking and accounting, duration, exit provisions, dispute resolution, and governing law." },
+      { q: "Why use this agreement?", a: "A written Joint Venture Agreement clarifies each party's contributions, protects confidential information, reduces disputes, shares costs and risks fairly, and supports professional collaboration." }
+    ],
+    keyProtections: [
+      "Defines each party's contribution and ownership",
+      "Protects confidential business information",
+      "Clarifies profit and loss sharing",
+      "Allocates liabilities and responsibilities",
+      "Specifies decision-making and management",
+      "Provides exit and dispute resolution mechanisms"
+    ],
+    whatYouNeed: [
+      "Names of all parties",
+      "Purpose and scope of the joint venture",
+      "Capital contributions and ownership percentages",
+      "Profit and loss sharing terms",
+      "Roles, responsibilities, and management structure",
+      "Decision-making procedures",
+      "Confidentiality and IP ownership terms",
+      "Liability allocation and insurance",
+      "Banking, accounting, and tax arrangements",
+      "Duration, exit strategy, and dispute resolution",
+      "Governing law and signatures"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Joint venture arrangements can be complex and jurisdiction-specific; consult a qualified attorney for customized drafting and tax advice."
+  },
+
+  "Liquidation Agreement": {
+    title: "Liquidation Agreement",
+    otherNames: ["Partnership Dissolution Agreement", "Business Liquidation Agreement", "Dissolution Agreement"],
+    whatIs: "A Liquidation Agreement (also called a Partnership Dissolution Agreement) is a legal contract between two or more partners to end a business partnership and manage the winding-up process. It sets out how debts will be paid, assets valued and distributed, and final settlements made among partners.",
+    whenToUse: [
+      "Partnership dissolution",
+      "Closing a business partnership",
+      "Dividing business assets",
+      "Paying partnership debts",
+      "Partner exit settlements",
+      "Ending joint ownership ventures",
+      "Final business winding-up process",
+      "Distribution of remaining profits"
+    ],
+    faqs: [
+      { q: "What is a Liquidation Agreement?", a: "A Liquidation Agreement is a contract used to wind up a business partnership, record responsibility for debts, allocate assets, and set final settlement terms among partners." },
+      { q: "When should partners use this agreement?", a: "Use a Liquidation Agreement when partners decide to close a business, sell assets, divide proceeds, settle liabilities, or otherwise end the partnership relationship." },
+      { q: "Does the agreement cover tax and bank matters?", a: "Yes — a Liquidation Agreement commonly addresses bank account closure, tax responsibilities, final accounting, and the process for distributing remaining funds." }
+    ],
+    keyProtections: [
+      "Prevents disputes among partners",
+      "Clearly divides assets and liabilities",
+      "Defines partner obligations during winding up",
+      "Records final settlements in writing",
+      "Protects partners from future claims"
+    ],
+    whatYouNeed: [
+      "Names of all partners",
+      "Business name and registration details",
+      "Effective date of liquidation",
+      "Reason for dissolution",
+      "Debt repayment process",
+      "Asset valuation and distribution plan",
+      "Profit and loss settlement details",
+      "Bank account closure and tax arrangements",
+      "Release of claims and signature section"
+    ],
+    estimatedTime: "15-25 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Liquidation and dissolution rules vary by jurisdiction; consult a qualified attorney for tailored advice and tax implications."
+  },
+
+  "Limousine Service Contract": {
+    title: "Limousine Service Contract",
+    otherNames: ["Limousine Service Agreement", "Limo Service Contract", "Chauffeur Service Agreement", "Limo Booking Contract"],
+    whatIs: "A Limousine Service Contract is a legal agreement between a limousine service provider and a client that outlines the terms for transportation services. It confirms booking details, payment terms, service schedules, and liability between the parties.",
+    whenToUse: [
+      "Wedding transportation bookings",
+      "Airport limousine transfers",
+      "Corporate executive travel",
+      "Prom night limo rentals",
+      "Birthday and party events",
+      "Hourly chauffeur services",
+      "VIP guest transport",
+      "Hotel and tourism transportation",
+      "Private luxury travel arrangements"
+    ],
+    faqs: [
+      { q: "What should a Limousine Service Contract include?", a: "A Limousine Service Contract commonly includes full names and addresses of both parties, event or travel date, pickup and drop-off locations, vehicle details, service start and end times, number of passengers, chauffeur responsibilities, payment, deposit, overtime charges, cancellation policy, and liability and insurance terms." },
+      { q: "Why use a Limousine Service Contract?", a: "A written contract prevents misunderstandings by confirming booking details, payment obligations, cancellation rules, overtime charges, damage responsibility, and limits on liability, helping both clients and providers manage expectations." },
+      { q: "Can I charge overtime or waiting fees?", a: "Yes. Contracts commonly specify hourly overtime rates, waiting time fees, fuel, tolls, parking charges, and gratuities to avoid disputes on the event day." }
+    ],
+    keyProtections: [
+      "Clearly confirms booking details and schedule",
+      "Defines payment, deposit, and refund terms",
+      "Specifies overtime, fuel, tolls, and gratuity rules",
+      "Allocates responsibility for damage or loss",
+      "Sets cancellation and delay policies",
+      "Limits liability and records insurance coverage"
+    ],
+    whatYouNeed: [
+      "Provider and client legal names and addresses",
+      "Event or travel date and schedule",
+      "Pickup and drop-off locations",
+      "Vehicle type and registration details",
+      "Number of passengers and special requirements",
+      "Rates, deposit amount, and payment schedule",
+      "Overtime and waiting time rates",
+      "Cancellation and refund policy",
+      "Insurance and liability details",
+      "Signatures of both parties"
+    ],
+    estimatedTime: "5-10 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. For complex commercial transport arrangements or jurisdiction-specific rules consult a qualified attorney."
   },
 
   // === LICENSE AGREEMENTS ===
@@ -2944,6 +3254,45 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "5-10 minutes"
   },
 
+  "Mutual Release Agreement": {
+    title: "Mutual Release Agreement",
+    otherNames: ["Mutual Release", "Mutual Release and Settlement Agreement", "Release of Claims Agreement"],
+    whatIs: "A Mutual Release Agreement is a legally binding contract in which both parties agree to release each other from any known or unknown claims, demands, damages, obligations, or liabilities arising from a dispute, contract, or relationship. It documents settlement terms and prevents future litigation between the parties.",
+    whenToUse: [
+      "Business dispute settlements",
+      "Contract termination agreements",
+      "Partnership breakup settlements",
+      "Vendor or supplier disputes",
+      "Client service disputes",
+      "Employment separation settlements",
+      "Payment disagreements",
+      "Property claim settlements",
+      "Personal settlement matters",
+      "Mutual waiver of future claims"
+    ],
+    faqs: [
+      { q: "What does a Mutual Release do?", a: "It releases both parties from claims related to the specified dispute or relationship, typically in exchange for an agreed settlement payment or other consideration. It prevents either side from bringing the same claims again." },
+      { q: "Is a Mutual Release legally binding?", a: "Yes — when signed by both parties and drafted with clear terms it is generally enforceable. Parties should ensure the scope of released claims is clearly defined and consider legal advice for complex matters." }
+    ],
+    keyProtections: [
+      "Prevents future lawsuits over released claims",
+      "Provides finality and legal closure",
+      "Documents settlement payments and obligations",
+      "Includes confidentiality and non-disparagement options",
+      "Clarifies return of property and termination terms"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of both parties",
+      "Background and summary of the dispute or relationship",
+      "Clear mutual release language describing released claims",
+      "Settlement payment terms (if any)",
+      "Confidentiality and non-disparagement clauses (optional)",
+      "Return of property and document provisions",
+      "Governing law and signature block"
+    ],
+    estimatedTime: "10-20 minutes"
+  },
+
   // === IT SERVICE AGREEMENTS ===
   "IT Service Agreement": {
     title: "IT Service Agreement",
@@ -3314,6 +3663,50 @@ export const documentContent: Record<string, DocumentContent> = {
       "Dispute resolution method (negotiation, arbitration, litigation)"
     ],
     estimatedTime: "12-20 minutes"
+  },
+
+  // === RETAILER AGREEMENT ===
+  "Retailer Agreement": {
+    title: "Retailer Agreement",
+    otherNames: ["Retail Agreement", "Retailer Contract", "Retail Supply Agreement", "Wholesale to Retail Agreement", "Reseller Agreement"],
+    whatIs:
+      "A Retailer Agreement is a legal contract between a supplier, wholesaler, manufacturer, or distributor and a retailer. It outlines the terms for selling products to the retailer for resale, including pricing, order procedures, payment schedules, delivery obligations, and branding conditions. A clear Retailer Agreement helps both parties avoid disputes and maintain a reliable supply relationship.",
+    whenToUse: [
+      "You are supplying products to retail stores",
+      "You are entering a resale or wholesale-to-retail arrangement",
+      "You need to document pricing, returns, and order procedures",
+      "You require territorial or exclusivity terms",
+      "You want to protect branding and labeling requirements"
+    ],
+    faqs: [
+      { q: "What should a Retailer Agreement include?", a: "A comprehensive Retailer Agreement typically includes parties' names and addresses, product descriptions, pricing and discounts, minimum order quantities, purchase order procedures, payment terms, delivery and shipping responsibilities, risk of loss and title transfer, returns and defective goods procedures, marketing and branding terms, territory and exclusivity clauses, confidentiality, term and termination, dispute resolution, and governing law." },
+      { q: "Who should use a Retailer Agreement?", a: "Manufacturers, wholesalers, distributors, retailers, e-commerce sellers, and brand owners entering supply or resale arrangements should use a Retailer Agreement to formalize expectations and protect commercial interests." },
+      { q: "Can I allow returns or credits?", a: "Yes. The agreement should clearly specify return policies, inspection and acceptance procedures, timing for credits, and any restocking fees or warranty remedies." }
+    ],
+    keyProtections: [
+      "Clear pricing and payment terms",
+      "Defined delivery and risk of loss provisions",
+      "Returns, defective goods, and inspection procedures",
+      "Territory and exclusivity protections where needed",
+      "Branding and marketing controls",
+      "Minimum order and replenishment terms",
+      "Confidential pricing and commercial terms",
+      "Termination and renewal provisions",
+      "Dispute resolution and governing law"
+    ],
+    whatYouNeed: [
+      "Names and addresses of parties",
+      "List of products and SKUs covered",
+      "Pricing, discounts, and payment schedule",
+      "Minimum order quantities and reorder process",
+      "Delivery terms, shipping responsibilities, and Incoterms if international",
+      "Return and inspection procedures",
+      "Branding, packaging and labeling instructions",
+      "Term, renewal, and termination clauses",
+      "Signatures of authorized representatives"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific or complex supply arrangements."
   },
 
   // === BARTER AGREEMENT ===
@@ -4052,6 +4445,151 @@ export const documentContent: Record<string, DocumentContent> = {
       "Any special governance provisions"
     ],
     estimatedTime: "20-30 minutes"
+  },
+
+  // === NONPROFIT BYLAWS ===
+  "Nonprofit Bylaws": {
+    title: "Nonprofit Bylaws",
+    otherNames: ["Non-Profit Bylaws", "Nonprofit Corporation Bylaws", "Nonprofit Organization Bylaws", "NGO Bylaws", "Charity Bylaws"],
+    whatIs: "Nonprofit Bylaws are internal legal rules that explain how a nonprofit organization will be managed and governed. They define the powers of directors, officers, and members; voting procedures; meeting rules; financial controls; and amendment and dissolution procedures. Bylaws provide the operational framework that ensures consistent governance and compliance with applicable nonprofit law.",
+    whenToUse: [
+      "You are forming a nonprofit organization and need governance rules",
+      "You need bylaws for charitable, religious, educational, or community organizations",
+      "You want to establish board, officer, and member procedures",
+      "You are applying for grants or tax-exempt status and need documented governance",
+      "You want to clarify meeting, voting, and financial oversight rules"
+    ],
+    faqs: [
+      { q: "What are Nonprofit Bylaws?", a: "Nonprofit Bylaws are written internal rules that set out how a nonprofit is run — including board composition, officer duties, meeting procedures, voting and quorum rules, membership classes, conflict of interest policies, and amendment procedures." },
+      { q: "Do bylaws need to be filed with the state?", a: "Generally, bylaws are internal documents and not filed with the state, but requirements vary by jurisdiction. Articles of Incorporation are filed with the state while bylaws remain an internal governance document." },
+      { q: "Can I use the same bylaws for different nonprofit types?", a: "Bylaws should be tailored to the organization’s purpose and structure. Charities, religious institutions, membership organizations, and foundations may need specific provisions to satisfy donors, grantors, or regulators." },
+      { q: "Who adopts the bylaws?", a: "Bylaws are typically adopted by the board of directors at the organization’s initial organizational meeting. Some important provisions may require member approval depending on the charter and state law." }
+    ],
+    keyProtections: [
+      "Clear leadership responsibilities",
+      "Defined board and officer roles",
+      "Voting and quorum safeguards",
+      "Financial oversight and reporting procedures",
+      "Conflict of interest and ethics provisions",
+      "Amendment and dissolution processes",
+      "Indemnification and insurance provisions"
+    ],
+    whatYouNeed: [
+      "Organization name and purpose",
+      "Registered office and principal address",
+      "Board of Directors structure and number of directors",
+      "Officer roles and duties (President, Secretary, Treasurer)",
+      "Meeting schedules, notice requirements, and quorum rules",
+      "Membership classes and rights (if applicable)",
+      "Conflict of interest policy and financial controls",
+      "Amendment and dissolution procedures"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific guidance and to ensure compliance with nonprofit and tax laws."
+  },
+
+  // === NONPROFIT FORMATION ===
+  "Nonprofit Formation": {
+    title: "Nonprofit Formation",
+    otherNames: ["Nonprofit Formation Agreement", "Form a Nonprofit", "Nonprofit Registration", "Start a Nonprofit"],
+    whatIs: "Nonprofit Formation covers the steps and documents needed to legally start a nonprofit organization, including choosing a name, filing Articles of Incorporation, drafting bylaws, appointing an initial board, and applying for tax-exempt status. This process creates the legal entity that will operate under nonprofit governance rules.",
+    whenToUse: [
+      "You are starting a charitable, educational, religious, or community organization",
+      "You need to file Articles of Incorporation with the state",
+      "You want to establish an initial board and governance documents",
+      "You are preparing to apply for tax-exempt status or grants",
+      "You need a formation checklist and template documents"
+    ],
+    faqs: [
+      { q: "What documents are needed to form a nonprofit?", a: "Common documents include Articles of Incorporation, Bylaws, initial board resolutions, EIN application, and state-specific filings. You may also prepare conflict of interest and financial policies." },
+      { q: "Do I need to file Bylaws with the state?", a: "Bylaws are typically internal and not filed with the state; however Articles of Incorporation are filed. Check your jurisdiction for specific requirements." },
+      { q: "How do I get tax-exempt status?", a: "After forming the nonprofit entity, you usually apply to the relevant tax authority (e.g., IRS Form 1023/1023-EZ in the U.S.) for recognition of tax-exempt status; prepare governing documents and financial information to support the application." }
+    ],
+    keyProtections: [
+      "Proper legal entity creation",
+      "Clear governance and founding records",
+      "Initial board appointment and authority",
+      "Foundation for tax-exempt applications"
+    ],
+    whatYouNeed: [
+      "Proposed organization name and purpose",
+      "Registered office address",
+      "Initial board member names",
+      "Draft Bylaws and Articles of Incorporation",
+      "Federal Employer Identification Number (EIN)"
+    ],
+    estimatedTime: "30-60 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult an attorney to ensure compliance with state and tax rules when forming a nonprofit."
+  },
+
+  // === PARTNERSHIP AGREEMENT ===
+  "Partnership Agreement": {
+    title: "Partnership Agreement",
+    otherNames: ["Partnership Contract", "Business Partnership Agreement", "Partnership Agreement Template", "Partnership Deed"],
+    whatIs: "A Partnership Agreement is a legal contract between two or more individuals or entities who agree to run a business together. It defines each partner's role, ownership percentage, capital contributions, profit and loss sharing, management rights, voting rules, and exit/buyout provisions.",
+    whenToUse: [
+      "Starting a new business with one or more partners",
+      "Formalizing roles and contributions in a family business",
+      "Creating clear profit-sharing arrangements for co-founders",
+      "Planning for admission or exit of partners",
+      "Defining dispute resolution and dissolution procedures"
+    ],
+    faqs: [
+      { q: "What does a Partnership Agreement include?", a: "Typical contents include partner names, business purpose, capital contributions, ownership percentages, profit/loss sharing, management duties, voting thresholds, banking arrangements, tax allocations, dispute resolution, buy-sell provisions, non-compete clauses, and dissolution terms." },
+      { q: "Do partners need a written agreement?", a: "While some partnerships operate without a written agreement, having one significantly reduces disputes and provides clarity on financial and management matters. Many lenders and banks require a written partnership agreement for accounts and financing." },
+      { q: "Can a Partnership Agreement be amended?", a: "Yes. The agreement should include amendment procedures, often requiring unanimous or majority consent of the partners depending on the clause." }
+    ],
+    keyProtections: [
+      "Clear ownership and profit-sharing rules",
+      "Defined management authority and decision-making",
+      "Procedures for partner admission, withdrawal, and buyouts",
+      "Banking and financial controls",
+      "Dispute resolution and dissolution mechanisms"
+    ],
+    whatYouNeed: [
+      "Full legal names of partners",
+      "Initial capital contribution details",
+      "Desired ownership percentages",
+      "Business purpose and principal address",
+      "Any special voting or management arrangements"
+    ],
+    estimatedTime: "20-30 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney to tailor partnership provisions to your jurisdiction and business needs."
+  },
+
+  // === PHYSICIAN SERVICES AGREEMENT ===
+  "Physician Services Agreement": {
+    title: "Physician Services Agreement",
+    otherNames: ["Physician Services Contract", "Physician Contract", "Doctor Services Agreement", "Medical Staffing Agreement"],
+    whatIs: "A Physician Services Agreement is a legal contract between a physician and a healthcare provider that outlines the medical services to be provided and the terms of engagement. It explains responsibilities, payment terms, compliance requirements, scheduling, confidentiality, and dispute resolution.",
+    whenToUse: [
+      "Hospitals hiring physicians",
+      "Clinics engaging medical professionals",
+      "Private practices adding doctors",
+      "Telemedicine physician contracts",
+      "Locum tenens or temporary physician engagements"
+    ],
+    faqs: [
+      { q: "What should a Physician Services Agreement include?", a: "Typical clauses include scope of services, work location and schedule, compensation and billing, credentialing and licensing requirements, malpractice insurance obligations, confidentiality (HIPAA) provisions, termination and renewal terms, and dispute resolution." },
+      { q: "Do physicians need malpractice insurance under the contract?", a: "Yes. The agreement should specify which party maintains malpractice coverage and the required limits. Independent contractors commonly carry their own coverage, while employers may require additional institutional coverage." },
+      { q: "How are telemedicine services handled?", a: "Telemedicine services should be specifically described, including jurisdictions covered, credentialing, licensing, technology standards, and patient privacy safeguards." }
+    ],
+    keyProtections: [
+      "Clear definition of physician duties and scope",
+      "Specified compensation and billing procedures",
+      "Credentialing and licensing compliance",
+      "Malpractice and insurance responsibilities",
+      "HIPAA and patient confidentiality protections"
+    ],
+    whatYouNeed: [
+      "Names and addresses of both parties",
+      "Effective date and term of engagement",
+      "Detailed scope of medical services",
+      "Compensation and billing arrangements",
+      "Insurance and credentialing documentation"
+    ],
+    estimatedTime: "30-45 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult healthcare counsel to ensure regulatory compliance and appropriate malpractice coverage."
   },
 
   // === COPYRIGHT LICENSE ===
@@ -6578,6 +7116,113 @@ export const documentContent: Record<string, DocumentContent> = {
     ],
     estimatedTime: "10-15 minutes"
   },
+    "Offer of Employment": {
+      title: "Offer of Employment",
+      otherNames: ["Offer Letter", "Employment Offer Letter"],
+      whatIs: "An Offer of Employment (offer letter) is a written communication from an employer to a candidate outlining the position, main terms of employment, start date, compensation, benefits, and important contingencies. It summarizes the key points that will later be incorporated into an employment agreement or serve as the binding offer for at-will hires.",
+      whenToUse: [
+        "You want to formally offer a candidate a job",
+        "You need to record salary, start date, and reporting structure",
+        "You want to document conditional terms such as background checks or licensing"
+      ],
+      faqs: [
+        { q: "Is an offer letter legally binding?", a: "It can be binding for the terms it contains, but many employers use offer letters as summaries; consult counsel for executive roles or where complex terms exist." },
+        { q: "Should I include benefits in the offer letter?", a: "Yes — summarize key benefits (healthcare, PTO, bonus eligibility) and note that full plan documents govern benefits." }
+      ],
+      keyProtections: [
+        "Clear start date and compensation",
+        "Defined conditional requirements (background checks)",
+        "Avoids misunderstandings about role or reporting"
+      ],
+      whatYouNeed: [
+        "Candidate full name and contact details",
+        "Position title and brief duties",
+        "Offered salary or wage and pay frequency",
+        "Proposed start date",
+        "Any contingencies (background checks, licensing)"
+      ],
+      estimatedTime: "5-10 minutes"
+    },
+
+    "Event Photography Contract": {
+      title: "Event Photography Contract",
+      otherNames: ["Photographer Agreement", "Photography Services Agreement"],
+      whatIs: "An Event Photography Contract sets out the terms between a client and a photographer for coverage of an event. It defines services, deliverables (number of edited images, timeline), usage rights, payment and deposit, cancellation terms, and liability limitations.",
+      whenToUse: ["Hiring a photographer for a wedding, party, or corporate event", "Engaging a photographer for product or promotional shoots"],
+      faqs: [
+        { q: "Who owns the photos?", a: "Ownership and licensing should be clearly set out — many photographers grant the client a license to use images while retaining copyright unless assignment is agreed." },
+        { q: "What if the photographer cancels?", a: "The contract should address replacements, refunds, and liability limits for cancellations or missed coverage." }
+      ],
+      keyProtections: ["Defined scope of coverage","Clear deliverables and timelines","Payment schedule and deposit terms","Usage and copyright terms"],
+      whatYouNeed: ["Event date, time and location","Scope of coverage (hours, photographers)","Deliverable expectations","Payment and deposit amount"],
+      estimatedTime: "10-15 minutes"
+    },
+
+    "Fulfillment Services Agreement": {
+      title: "Fulfillment Services Agreement",
+      otherNames: ["Fulfillment Agreement", "Order Fulfillment Contract"],
+      whatIs: "A Fulfillment Services Agreement governs the relationship between a merchant and a fulfillment provider who stores, picks, packs, and ships products. It covers inventory handling, order processing, pricing, returns, service levels, insurance, and termination.",
+      whenToUse: ["Outsourcing order fulfillment to a third party","Using a 3PL provider for e-commerce operations"],
+      faqs: [
+        { q: "Who is responsible for lost or damaged goods?", a: "The agreement should specify insurance, liability limits, and who bears risk during storage and shipping." },
+        { q: "How are returns handled?", a: "Define return acceptance procedures, restocking fees, and timelines for processing refunds or replacements." }
+      ],
+      keyProtections: ["Inventory accountability","Clear service-level expectations","Pricing and fee transparency","Return and claims procedures"],
+      whatYouNeed: ["Party names and contact details","Inventory descriptions and SKUs","Expected monthly order volume","Shipping and return policies"],
+      estimatedTime: "20-30 minutes"
+    },
+
+    "Joint Bid Agreement": {
+      title: "Joint Bid Agreement",
+      otherNames: ["Joint Bidding Agreement"],
+      whatIs: "A Joint Bid Agreement records the terms under which two or more contractors or bidders collaborate to prepare and submit a single bid for a project. It covers responsibilities, cost allocation, bid bonds, confidentiality of pricing, and post-award obligations such as forming a joint venture if awarded.",
+      whenToUse: ["Submitting a combined bid for a construction project or procurement","Where bidders wish to share resources and risks for a single proposal"],
+      faqs: [
+        { q: "Does a joint bid create a joint venture?", a: "Not automatically — the agreement can require the parties to form a joint venture if the bid is successful, and should specify formation terms." }
+      ],
+      keyProtections: ["Clear responsibility allocation","Handling of bid bonds and performance obligations","Confidentiality of pricing and strategy"],
+      whatYouNeed: ["Names and contacts of participating bidders","Scope of responsibilities","Cost sharing and fee allocation details"],
+      estimatedTime: "15-25 minutes"
+    },
+
+    "Joint Venture Agreement": {
+      title: "Joint Venture Agreement",
+      otherNames: ["JV Agreement"],
+      whatIs: "A Joint Venture Agreement sets out the formation, governance, contributions, profit and loss sharing, management, and exit terms for a temporary or ongoing joint venture between two or more parties for a specific project or business purpose.",
+      whenToUse: ["Forming a partnership for a specific project","Pooling resources with another business for shared operations"],
+      faqs: [
+        { q: "How are profits shared?", a: "The agreement should specify contributions, capital accounts, and the method for splitting profits and losses." }
+      ],
+      keyProtections: ["Governance and voting rules","Capital contribution and accounting","Exit and dispute resolution procedures"],
+      whatYouNeed: ["Names and structure of parties","Capital contributions and roles","Management responsibilities"],
+      estimatedTime: "20-30 minutes"
+    },
+
+    "Limousine Service Contract": {
+      title: "Limousine Service Contract",
+      otherNames: ["Chauffeur Service Agreement", "Transportation Service Contract"],
+      whatIs: "A Limousine Service Contract defines the terms between a transportation provider and a client for chauffeur-driven services. It includes pickup and drop-off details, fees, gratuity, cancellation policies, passenger limits, and liability limitations.",
+      whenToUse: ["Hiring a limo or chauffeur for events, airport transfers, or special occasions"],
+      faqs: [
+        { q: "What if a flight is delayed?", a: "Include an agreed grace period and procedures for re-booking or additional charges for extended waits." }
+      ],
+      keyProtections: ["Defined service times and locations","Cancellation and refund terms","Passenger limits and conduct rules"],
+      whatYouNeed: ["Pickup and drop-off addresses","Event schedule and times","Payment and deposit details"],
+      estimatedTime: "5-10 minutes"
+    },
+
+    "Liquidation Agreement": {
+      title: "Liquidation Agreement",
+      otherNames: ["Partnership Dissolution Agreement", "Dissolution Agreement"],
+      whatIs: "A Liquidation Agreement (also called a dissolution agreement) records the terms for winding up a business or partnership, allocating assets, paying creditors, and distributing remaining proceeds among partners or owners.",
+      whenToUse: ["Closing a business or dissolving a partnership","Agreeing on asset valuation and debt settlement during winding up"],
+      faqs: [
+        { q: "Does liquidation address taxes?", a: "The agreement should note tax responsibilities and recommend consultation with an accountant or attorney for tax implications." }
+      ],
+      keyProtections: ["Debt repayment and creditor handling","Asset valuation and distribution","Final accounting and records retention"],
+      whatYouNeed: ["List of assets and liabilities","Partner ownership percentages","Bank and tax account details"],
+      estimatedTime: "30-60 minutes",
+    },
 
   // === LEGAL SERVICES AGREEMENTS ===
   "Attorney Engagement Letter": {
@@ -7564,6 +8209,227 @@ export const documentContent: Record<string, DocumentContent> = {
     ],
     estimatedTime: "20-30 minutes",
     legalDisclaimer: "This Consignment Agreement is a general template and does not constitute legal advice. Consignment arrangements involve complex legal, tax, and liability considerations that vary by jurisdiction and product type. For significant consignment relationships or valuable goods, consult with a qualified attorney to ensure compliance with all applicable laws and to protect your interests."
+  },
+
+  "Merchandising Agreement": {
+    title: "Merchandising Agreement",
+    otherNames: ["Merchandise License Agreement", "Merchandising Contract", "Merchandise Agreement", "Merchandise License"],
+    whatIs: "A Merchandising Agreement (also called a Merchandising Contract or Merchandise License Agreement) is a legal contract between the owner of intellectual property and another party authorized to manufacture, market, or sell products using that property. It sets licensing, quality control, royalties, territory, and enforcement terms to protect brand assets.",
+    whenToUse: [
+      "Logo licensing deals",
+      "Character or mascot merchandise rights",
+      "Team or sports memorabilia products",
+      "Clothing brand licensing",
+      "Celebrity merchandise agreements",
+      "Software product merchandising",
+      "Patented product manufacturing rights",
+      "Retail distribution of licensed goods",
+      "Exclusive or non-exclusive product rights"
+    ],
+    faqs: [
+      { q: "What does a Merchandising Agreement cover?", a: "It commonly includes licensed property description, license scope (exclusive or non-exclusive), territory, product categories, manufacturing and quality standards, royalty rates, reporting and audit rights, minimum sales obligations, marketing approvals, IP ownership, duration, renewal, termination, and dispute resolution." },
+      { q: "Who should use a Merchandising Agreement?", a: "Brand owners, licensors, manufacturers, retailers, distributors, celebrities, and developers who want to license products or protect product quality and trademark usage." }
+    ],
+    keyProtections: [
+      "Protects ownership of brand assets",
+      "Controls approved product categories and quality",
+      "Defines royalty and payment terms",
+      "Specifies territory and exclusivity",
+      "Provides audit and reporting rights",
+      "Includes termination and infringement protections"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of parties",
+      "Description of licensed product or property",
+      "Trademark, logo, mascot, or design rights",
+      "Exclusive or non-exclusive license terms",
+      "Geographic sales territory",
+      "Quality control and manufacturing standards",
+      "Royalty rates or per-unit fees",
+      "Payment schedule and reporting obligations",
+      "Duration and renewal options",
+      "Governing law and signature block"
+    ],
+    estimatedTime: "20-30 minutes"
+  },
+
+  "Moving Contract": {
+    title: "Moving Contract",
+    otherNames: ["Moving Agreement", "Mover Contract", "Moving Services Agreement", "Relocation Contract"],
+    whatIs: "A Moving Contract is a legal agreement between a moving company or mover and a client that outlines the terms of transporting household or business belongings from one location to another. It sets responsibilities for packing, transport, insurance, payment, and liabilities.",
+    whenToUse: [
+      "House shifting services",
+      "Apartment relocation",
+      "Office moving services",
+      "Furniture transport agreements",
+      "Commercial relocation projects",
+      "Local moving jobs",
+      "Long-distance moving arrangements",
+      "Packing and unpacking services",
+      "Storage pickup and delivery moves"
+    ],
+    faqs: [
+      { q: "What should a Moving Contract include?", a: "It should include pickup and destination addresses, moving date, inventory of items, packing services, responsibilities for loading/unloading, vehicle and labor details, charges, deposits, insurance coverage, and cancellation terms." },
+      { q: "Who needs a Moving Contract?", a: "Moving companies, independent movers, relocation service providers, businesses relocating offices, and clients hiring movers should use a Moving Contract to protect both parties and clarify expectations." }
+    ],
+    keyProtections: [
+      "Defines scope of work and responsibilities",
+      "Specifies liability and damage handling",
+      "Clarifies payment and deposit terms",
+      "Sets timeline, delays, and rescheduling rules",
+      "Provides insurance and claims process"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of both parties",
+      "Pickup address and destination address",
+      "Moving date and schedule",
+      "Description of items being moved",
+      "Packing and unpacking requirements",
+      "Charges, deposit, and payment terms",
+      "Insurance coverage details",
+      "Cancellation and delay policies",
+      "Governing law and signature section"
+    ],
+    estimatedTime: "10-20 minutes"
+  },
+  "Musical Performance Contract": {
+    title: "Musical Performance Contract",
+    otherNames: ["Musical Performance Agreement", "Performance Contract", "Artist Performance Contract", "Band Performance Agreement"],
+    whatIs: "A Musical Performance Contract is a legal agreement between a musician, band, performer, or entertainment provider and a client, venue, or organizer for live music services at an event. It outlines performance scope, payment, equipment, and other event logistics.",
+    whenToUse: [
+      "Wedding singer agreements",
+      "Live band bookings",
+      "DJ event contracts",
+      "Concert performance deals",
+      "Private party entertainment",
+      "Corporate event music services",
+      "Restaurant or lounge live shows",
+      "Festival artist bookings",
+      "Repeated weekly gigs",
+      "Solo musician contracts"
+    ],
+    faqs: [
+      { q: "What should a Musical Performance Contract include?", a: "It should include event date, time, venue, performance duration, number of sets, payment terms, deposits, equipment responsibilities, travel/lodging, merchandising rights, recording permissions, cancellation policy, and signatures." },
+      { q: "Who uses a Musical Performance Contract?", a: "Singers, bands, DJs, event planners, venues, festival promoters, and anyone hiring live performers should use this contract to protect both parties and set clear expectations." }
+    ],
+    keyProtections: [
+      "Clarifies payment and deposit terms",
+      "Defines performance time and obligations",
+      "Specifies equipment and setup responsibilities",
+      "Protects recording and merchandising rights",
+      "Includes cancellation and force majeure clauses"
+    ],
+    whatYouNeed: [
+      "Full names and contact details of both parties",
+      "Event date, time, and venue location",
+      "Type of performance services and duration",
+      "Number of sets and setup/soundcheck schedule",
+      "Payment amount, deposit and balance terms",
+      "Equipment, travel, and lodging details",
+      "Merchandise sales and recording permissions",
+      "Cancellation, refund, and force majeure terms",
+      "Governing law and signature section"
+    ],
+    estimatedTime: "10-20 minutes"
+  },
+  "Master Servant Agreement": {
+    title: "Master Servant Agreement",
+    otherNames: ["Master Service Agreement", "Domestic Worker Agreement", "Household Worker Agreement", "Employer Employee Agreement"],
+    whatIs: "A Master Servant Agreement is a legal contract between an employer (master) and a worker (servant or employee) that defines the scope of service, duties, compensation, supervision, conduct standards, and termination terms. It helps both sides understand their legal relationship and reduces future disputes by documenting expectations clearly.",
+    whenToUse: [
+      "Hiring domestic employees or household staff",
+      "Employing drivers, chauffeurs, caretakers, or personal assistants",
+      "Setting service terms for farm, estate, or office support workers",
+      "Documenting traditional employer-worker relationships"
+    ],
+    faqs: [
+      { q: "What does this agreement typically include?", a: "It usually covers the parties' details, job role, workplace, working hours, wages or salary, benefits, leave, conduct rules, confidentiality, lawful instructions, termination notice, return of property, and governing law." },
+      { q: "Why use this agreement instead of informal hiring?", a: "A written agreement reduces misunderstandings, clarifies lawful authority and duties, and creates a professional record of the employment relationship." }
+    ],
+    keyProtections: [
+      "Clearly defines duties and reporting structure",
+      "Confirms wages, benefits, and leave terms",
+      "Sets conduct and confidentiality expectations",
+      "Provides termination and notice rules",
+      "Creates written proof of the relationship"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of both parties",
+      "Job title and role description",
+      "Work location and start date",
+      "Working hours and compensation details",
+      "Benefits, leave, and termination terms"
+    ],
+    estimatedTime: "15-20 minutes"
+  }
+
+  ,"Memorandum Of Agreement": {
+    title: "Memorandum Of Agreement",
+    otherNames: ["Memorandum of Agreement", "MOA", "Memo of Agreement", "MOA Contract", "Memo Agreement"],
+    whatIs: "A Memorandum of Agreement (MOA) is a written document that records agreed terms between parties before or alongside a more formal contract. It is commonly used to confirm cooperation, responsibilities, project terms, and other key understandings so everyone has a shared record of what was agreed.",
+    whenToUse: [
+      "Documenting business partnerships or strategic alliances",
+      "Setting project collaboration or vendor cooperation terms",
+      "Recording property, funding, or investment understandings",
+      "Clarifying pre-contract commercial arrangements"
+    ],
+    faqs: [
+      { q: "How is an MOA different from a final contract?", a: "An MOA usually records the parties' agreed terms and intentions, while a final contract is often more detailed and may include additional legal terms and formalities." },
+      { q: "What does an MOA typically include?", a: "It commonly includes party details, purpose, scope, duties, deliverables, payment terms, timelines, confidentiality, IP ownership, dispute resolution, duration, amendments, termination, governing law, and signatures." }
+    ],
+    keyProtections: [
+      "Clarifies mutual expectations",
+      "Reduces misunderstandings",
+      "Creates written evidence of agreed terms",
+      "Defines responsibilities, milestones, and deadlines",
+      "Supports negotiations before a final contract"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of all parties",
+      "Purpose and scope of the agreement",
+      "Financial or payment terms",
+      "Timeline, milestones, and deliverables",
+      "Confidentiality, IP, and termination terms"
+    ],
+    estimatedTime: "15-25 minutes"
+  },
+
+  "Memorandum Of Understanding": {
+    title: "Memorandum Of Understanding",
+    otherNames: ["MOU", "MOU Agreement", "Memo of Understanding", "Memorandum of Understanding Form"],
+    whatIs: "A Memorandum of Understanding (also called MOU, MOU Agreement, Memo of Understanding, or Memorandum of Understanding Form) is a written document that sets out the intention of two or more parties to work together. It usually outlines the main terms of cooperation without creating a fully binding contract.",
+    whenToUse: [
+      "Business partnerships",
+      "Joint projects",
+      "Startup collaborations",
+      "Supplier cooperation terms",
+      "Service partnerships",
+      "Strategic alliances",
+      "Educational or nonprofit partnerships",
+      "International cooperation arrangements",
+      "Pre-contract commercial negotiations"
+    ],
+    faqs: [
+      { q: "What is the difference between an MOU and a formal contract?", a: "An MOU usually records intentions and agreed points without creating a fully binding, detailed contract. It creates clarity while preserving flexibility before a final contract is negotiated." },
+      { q: "What should an MOU include?", a: "Names and addresses of parties, purpose, roles and responsibilities, contributions, timelines, confidentiality, dispute resolution, amendment and termination provisions, and a signature section." }
+    ],
+    keyProtections: [
+      "Clarifies expectations early",
+      "Prevents misunderstandings",
+      "Records agreed goals in writing",
+      "Defines responsibilities clearly",
+      "Creates a roadmap for cooperation"
+    ],
+    whatYouNeed: [
+      "Full names and addresses of all parties",
+      "Purpose and scope of the collaboration",
+      "Shared goals and objectives",
+      "Roles and responsibilities of each party",
+      "Contributions of money, labor, or resources",
+      "Project timeline or duration",
+      "Any confidentiality or governing law preferences"
+    ],
+    estimatedTime: "10-20 minutes"
   }
 };
 
@@ -7579,6 +8445,35 @@ export function getDocumentContent(title: string): DocumentContent {
 
   const normalizeTitle = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const normalizedTitle = normalizeTitle(title);
+
+  if (
+    normalizedTitle.includes("master servant") ||
+    normalizedTitle.includes("master service agreement") ||
+    normalizedTitle.includes("domestic worker") ||
+    normalizedTitle.includes("household worker") ||
+    normalizedTitle.includes("employer employee agreement") ||
+    normalizedTitle.includes("traditional employer worker")
+  ) {
+    return documentContent["Master Servant Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("memorandum of agreement") ||
+    normalizedTitle.includes("memo of agreement") ||
+    normalizedTitle.includes("moa contract") ||
+    normalizedTitle.includes("moa")
+  ) {
+    return documentContent["Memorandum Of Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("memorandum of understanding") ||
+    normalizedTitle.includes("memo of understanding") ||
+    normalizedTitle.includes("mou") ||
+    normalizedTitle.includes("memorandum of understanding form")
+  ) {
+    return documentContent["Memorandum Of Understanding"];
+  }
 
   if (normalizedTitle.includes("lease amendment")) {
     return documentContent["Lease Amendment Agreement"];
@@ -7666,6 +8561,37 @@ export function getDocumentContent(title: string): DocumentContent {
     (normalizedTitle.includes("sales") && normalizedTitle.includes("consignment"))
   ) {
     return documentContent["Consignment Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("merchandising") ||
+    normalizedTitle.includes("merchandise license") ||
+    normalizedTitle.includes("merchandise license agreement") ||
+    normalizedTitle.includes("merchandising agreement") ||
+    normalizedTitle.includes("merchandising contract") ||
+    (normalizedTitle.includes("merchandise") && normalizedTitle.includes("license"))
+  ) {
+    return documentContent["Merchandising Agreement"];
+  }
+
+  if (
+    normalizedTitle.includes("moving contract") ||
+    normalizedTitle.includes("moving agreement") ||
+    normalizedTitle.includes("mover") ||
+    normalizedTitle.includes("moving services") ||
+    normalizedTitle.includes("relocation") ||
+    normalizedTitle.includes("relocation contract")
+  ) {
+    return documentContent["Moving Contract"];
+  }
+  if (
+    normalizedTitle.includes("musical") ||
+    normalizedTitle.includes("performance contract") ||
+    normalizedTitle.includes("performance agreement") ||
+    normalizedTitle.includes("musical performance") ||
+    (normalizedTitle.includes("performance") && normalizedTitle.includes("contract"))
+  ) {
+    return documentContent["Musical Performance Contract"];
   }
   if (
     normalizedTitle.includes("bank reference") ||
@@ -7935,6 +8861,15 @@ export function getDocumentContent(title: string): DocumentContent {
     return documentContent["Debt Settlement Agreement"];
   }
   if (
+    normalizedTitle.includes("mutual release") ||
+    normalizedTitle.includes("mutual release agreement") ||
+    normalizedTitle.includes("release of claims") ||
+    normalizedTitle.includes("release of claims agreement") ||
+    normalizedTitle.includes("mutual release and settlement")
+  ) {
+    return documentContent["Mutual Release Agreement"];
+  }
+  if (
     normalizedTitle.includes("iou") ||
     normalizedTitle.includes("i owe you") ||
     normalizedTitle.includes("promise to pay") ||
@@ -8042,6 +8977,46 @@ export function getDocumentContent(title: string): DocumentContent {
     (normalizedTitle.includes("start") && normalizedTitle.includes("corporation"))
   ) {
     return documentContent["Corporation Formation"];
+  }
+
+  // Map nonprofit bylaws searches to the Nonprofit Bylaws content
+  if (
+    (normalizedTitle.includes("nonprofit") || normalizedTitle.includes("non-profit") || normalizedTitle.includes("ngo") || normalizedTitle.includes("charity")) &&
+    (normalizedTitle.includes("bylaw") || normalizedTitle.includes("bylaws") || normalizedTitle.includes("governance"))
+  ) {
+    return documentContent["Nonprofit Bylaws"];
+  }
+
+  // Map nonprofit formation searches to the Nonprofit Formation content
+  if (
+    normalizedTitle.includes("nonprofit") &&
+    (normalizedTitle.includes("formation") || normalizedTitle.includes("formation") || normalizedTitle.includes("start") || normalizedTitle.includes("register") || normalizedTitle.includes("formation agreement"))
+  ) {
+    return documentContent["Nonprofit Formation"];
+  }
+
+  // Map partnership searches to the Partnership Agreement content
+  if (
+    (normalizedTitle.includes("partnership") || normalizedTitle.includes("partners") || normalizedTitle.includes("partner")) &&
+    (normalizedTitle.includes("agreement") || normalizedTitle.includes("contract") || normalizedTitle.includes("deed") || normalizedTitle.includes("agreement template"))
+  ) {
+    return documentContent["Partnership Agreement"];
+  }
+
+  // Map physician / doctor service searches to the Physician Services Agreement content
+  if (
+    (normalizedTitle.includes("physician") || normalizedTitle.includes("doctor") || normalizedTitle.includes("medical")) &&
+    (normalizedTitle.includes("services") || normalizedTitle.includes("services agreement") || normalizedTitle.includes("contract") || normalizedTitle.includes("agreement") || normalizedTitle.includes("staffing"))
+  ) {
+    return documentContent["Physician Services Agreement"];
+  }
+
+  // Map retailer / retail searches to the Retailer Agreement content
+  if (
+    (normalizedTitle.includes("retailer") || normalizedTitle.includes("retail") || normalizedTitle.includes("reseller")) &&
+    (normalizedTitle.includes("agreement") || normalizedTitle.includes("contract") || normalizedTitle.includes("supply") || normalizedTitle.includes("wholesale") || normalizedTitle.includes("resale"))
+  ) {
+    return documentContent["Retailer Agreement"];
   }
 
   if (
