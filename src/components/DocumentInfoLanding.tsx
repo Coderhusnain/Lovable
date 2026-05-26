@@ -161,18 +161,6 @@ export default function DocumentInfoLanding({
             </ul>
           </div>
 
-          {docContent.sampleText && (
-            <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <FileText className="w-5 h-5 text-gray-600" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">Sample Letter</h2>
-              </div>
-              <pre className="whitespace-pre-wrap text-gray-700 leading-relaxed text-sm">{docContent.sampleText}</pre>
-            </div>
-          )}
-
           {docContent.keyProtections && docContent.keyProtections.length > 0 && (
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
               <div className="flex items-center gap-3 mb-4">
