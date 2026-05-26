@@ -6176,6 +6176,38 @@ export const documentContent: Record<string, DocumentContent> = {
     legalDisclaimer: "This content is informational and not legal advice. For complex matters consult a qualified attorney or the appropriate postal inspector."
   },
 
+  "Request to Cancel Unauthorized Internet Service": {
+    title: "Request to Cancel Unauthorized Internet Service",
+    otherNames: ["Termination of Fraudulent Account", "Request to Cancel Unauthorized Internet Service Agreement"],
+    whatIs:
+      "Request to Cancel Unauthorized Internet Service \n\nTermination of Fraudulent Account\n[Internet Service Provider Name]\n[Address]\nSubject: Request for Termination of Fraudulently Opened Account\nAccount Number: __________________\nDear Sir or Madam,\nI hereby formally request the immediate termination of the internet service associated with the above-referenced account number. This account was fraudulently opened without my authorization, and I am the victim of identity theft.\nEnclosed herewith are copies of the relevant documents evidencing the identity theft incident and supporting this request.\nI respectfully request that the account be closed without penalty, that all charges incurred as a result of the fraudulent activity be canceled, and that no further billing or collection action be taken against me in connection with this account.\nAdditionally, I request that a fraud alert be placed on my name and/or customer profile to prevent any future unauthorized accounts from being opened in my name. Should any attempt be made to establish new service using my personal information, I request that I be contacted immediately.\nPlease provide written confirmation once the above actions have been completed. Should you require any additional information or documentation, you may contact me at the address listed above.\nThank you for your prompt attention and cooperation in this matter.\nYours sincerely,\n\n[Name]\n\n\n\n\n\nFinal Checklist for Request to Cancel Unauthorized Internet Service\nRequesting Party: __________________\nInternet Service Provider: __________________\n\nLegal Formalities\n•\t☐ Ensure the letter is duly signed. Notarization or witnessing is not required unless expressly requested by the Internet Service Provider.\n•\t☐ Attach copies of all available documentation evidencing the identity theft incident.\n\nCopies and Recordkeeping\n•\t☐ Send the original letter to the Internet Service Provider.\n•\t☐ Enclose only photocopies of supporting documents unless original documents are specifically required.\n•\t☐ Retain a complete copy of the letter and all enclosures for your personal records.\n•\t☐ If original documents are submitted, ensure copies are retained.\n\nAdditional Recommendations\n•\t☐ While not mandatory, it is strongly recommended that the letter be sent using a traceable delivery method, such as certified mail or courier service with delivery confirmation.\n•\t☐ After allowing a reasonable period for processing, follow up with the Internet Service Provider to confirm that the account has been terminated and all requested actions have been completed.",
+    shortDescription: "Send a formal request to cancel an internet account opened fraudulently and request fraud protections; includes checklist and delivery guidance.",
+    whenToUse: [
+      "You discovered an internet account opened in your name without authorization",
+      "You are a victim of identity theft and need the ISP to terminate the account",
+      "You need written confirmation to support disputes with creditors or collections"
+    ],
+    faqs: [
+      { q: "What should I attach?", a: "Attach copies of any police reports, FTC identity theft affidavits, and identification documents that corroborate the theft." },
+      { q: "Will the ISP remove charges immediately?", a: "ISPs vary — many will investigate and may suspend charges pending verification. Request written confirmation and follow up as needed." }
+    ],
+    keyProtections: [
+      "Immediate account termination to stop further misuse",
+      "Cancellation of charges arising from the fraudulent account",
+      "Fraud alert or flag on customer profile to prevent future accounts"
+    ],
+    whatYouNeed: [
+      "ISP name and address",
+      "Account number (if known)",
+      "Copies of police report and FTC Identity Theft Affidavit",
+      "Your contact information and identification"
+    ],
+    sampleIncluded: true,
+    sampleNote: "The letter above is ready to print or copy into a Word document. Customize with names, addresses, and attached evidence before sending.",
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific legal guidance."
+  },
+
 
 
   "Letter to Report Unauthorized Use of a Social Security Number": {
