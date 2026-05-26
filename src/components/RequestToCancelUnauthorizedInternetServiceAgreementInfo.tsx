@@ -88,15 +88,15 @@ const generatePDF = (values: Record<string, string>) => {
   write("Final Checklist for Request to Cancel Unauthorized Internet Service", true, 2.2);
   write(`Requesting Party: __________________   Internet Service Provider: __________________`);
   write("Legal Formalities", true);
-  write("- The letter should be signed. Notarization or witnessing is not required unless expressly requested by the Internet Service Provider.");
-  write("- Attach copies of all available documentation evidencing the identity theft incident.");
+  write("☐ Ensure the letter is duly signed. Notarization or witnessing is not required unless expressly requested by the Internet Service Provider.");
+  write("☐ Attach copies of all available documentation evidencing the identity theft incident.");
   write("Copies and Recordkeeping", true);
-  write("- Send the original letter to the Internet Service Provider.");
-  write("- Enclose only photocopies of supporting documents unless original documents are specifically required.");
-  write("- Retain a complete copy of the letter and all enclosures for your personal records.");
+  write("☐ Send the original letter to the Internet Service Provider.");
+  write("☐ Enclose only photocopies of supporting documents unless original documents are specifically required.");
+  write("☐ Retain a complete copy of the letter and all enclosures for your personal records.");
   write("Additional Recommendations", true);
-  write("- It is recommended that the letter be sent using a traceable delivery method, such as certified mail or courier with delivery confirmation.");
-  write("- After allowing a reasonable period for processing, follow up with the Internet Service Provider to confirm that the account has been terminated and all requested actions have been completed.");
+  write("☐ It is recommended that the letter be sent using a traceable delivery method, such as certified mail or courier with delivery confirmation.");
+  write("☐ After allowing a reasonable period for processing, follow up with the Internet Service Provider to confirm that the account has been terminated and all requested actions have been completed.");
 
   doc.save("request_to_cancel_unauthorized_internet_service.pdf");
 };
