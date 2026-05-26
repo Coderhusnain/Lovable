@@ -160,6 +160,294 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "10-20 minutes"
   },
 
+  "Request to Cancel Unauthorized Internet Service": {
+    title: "Request to Cancel Unauthorized Internet Service Agreement",
+    otherNames: [
+      "Request to Cancel Fraudulent Internet Service Agreement",
+      "Letter to Cancel Unauthorized Internet Service Agreement",
+      "Unauthorized Internet Service Cancellation Agreement"
+    ],
+    whatIs: "A Request to Cancel Unauthorized Internet Service Agreement is a formal legal document used to notify an internet service provider (ISP) that internet service was fraudulently opened in your name. This draft Request to Cancel Unauthorized Internet Service agreement helps close unauthorized accounts, stop improper billing, and protect you from future financial liability. If an identity thief has opened internet service using your personal information—or if you receive bills for service at an unfamiliar address—this Unauthorized Internet Service Cancellation Agreement allows you to formally demand cancellation and request that a fraud alert be placed on your account.",
+    whenToUse: [
+      "An identity thief opened internet service in your name",
+      "You received a bill for internet service you never ordered",
+      "Unauthorized service appears on your credit report",
+      "You have already contacted the ISP and are following up in writing"
+    ],
+    keyProtections: [
+      "Terminate fraudulent internet service accounts",
+      "Prevent unwarranted charges and collections",
+      "Support identity theft claims",
+      "Create written proof of your notification"
+    ],
+    faqs: [],
+    estimatedTime: "5-10 minutes"
+  },
+
+  "Letter to Notify the IRS of a Fraudulent Tax Filing Agreement": {
+    title: "Letter to Notify the IRS of a Fraudulent Tax Filing Agreement",
+    otherNames: ["Letter to the Internal Revenue Service to Report a Fraudulent Tax Filing Agreement"],
+    whatIs: "A Letter to Notify the IRS of a Fraudulent Tax Filing Agreement is a formal legal document used to notify the Internal Revenue Service that your personal or financial information has been misused to file false or fraudulent tax returns. This agreement helps create a written record of your actions and supports the correction of your tax records.",
+    whenToUse: [
+      "Someone has used your personal information to file false tax returns",
+      "You have discovered unauthorized tax activity in your name",
+      "You want to follow up a phone call or prior communication with the IRS",
+      "You want written confirmation that the IRS has been notified"
+    ],
+    keyProtections: [
+      "Notify the IRS of tax-related identity theft",
+      "Establish a paper trail for your records",
+      "Request corrections to fraudulent tax filings",
+      "Seek preventive measures against future tax fraud"
+    ],
+    faqs: [],
+    estimatedTime: "5-15 minutes"
+  },
+
+  "Formal Request for Termination of Fraudulent Account No.": {
+    title: "Formal Request for Termination of Fraudulent Account No.",
+    whatIs: "A Formal Request for Termination of Fraudulent Account is a written notice addressed to a telephone or service provider demanding cancellation of an account opened fraudulently using your personal information. This document documents your request, asks for reversal of charges, and requests fraud protections such as placing a fraud alert on your account.",
+    whenToUse: [
+      "You received bills for a service you did not order",
+      "An account was opened in your name without authorization",
+      "You have reported identity theft to law enforcement and are following up in writing",
+      "You want written confirmation that the fraudulent account has been closed and charges reversed"
+    ],
+    keyProtections: [
+      "Closure of the fraudulent account",
+      "Reversal and removal of charges related to the fraudulent activity",
+      "Placement of fraud alerts to prevent future unauthorized accounts",
+      "A written record supporting identity theft claims"
+    ],
+    faqs: [
+      { q: "Do I need to notarize the letter?", a: "Notarization or witness signatures are not typically required unless the provider expressly requests them; a signed letter is usually sufficient." },
+      { q: "What documents should I attach?", a: "Attach copies (not originals) of police reports, FTC identity theft reports, identity affidavits, and any billing or account notices showing the unauthorized activity." }
+    ],
+    whatYouNeed: [
+      "Account number or reference (if available)",
+      "Your full legal name and contact information",
+      "Summary of fraudulent activity and supporting documents",
+      "Signature (physical signature recommended)"
+    ],
+    estimatedTime: "5-10 minutes"
+  },
+
+  "Request to Remove Credit Freeze": {
+    title: "Request to Remove Credit Freeze",
+    otherNames: ["Request to Remove Credit Freeze", "Credit Freeze Removal Request"],
+    whatIs: "Looking for a professionally drafted Request to Remove Credit Freeze? Download the best format Request to Remove Credit Freeze from Legalgram — a legally structured document that allows you to formally ask credit bureaus to lift or remove a credit freeze from your credit file. This draft Request to Remove Credit Freeze is ideal for individuals who previously froze their credit for protection and now wish to restore access for loans, credit cards, or financial approvals.",
+    whyUse: [
+      "Unfreeze your credit report quickly",
+      "Restore access for lenders and creditors",
+      "Provide required documentation",
+      "Prevent delays in financial approvals",
+      "Maintain control over your credit profile"
+    ],
+    whenToUse: [
+      "You want to apply for a credit card or loan",
+      "You need lenders to view your credit file",
+      "You previously placed a fraud alert or freeze",
+      "You are unsure which bureaus hold the freeze",
+      "You want to temporarily or permanently lift the freeze"
+    ],
+    sampleFeatures: [
+      "Fully customizable",
+      "Printable Word & PDF format",
+      "Professional legal structure",
+      "Free download available"
+    ],
+    keyProtections: [
+      "Removal of the security freeze",
+      "Clear instructions for the credit bureau to verify identity",
+      "A documented paper trail of your request",
+      "Compatibility with lender requirements"
+    ],
+    faqs: [],
+    whatYouNeed: [
+      "Your full legal name and contact information",
+      "Social Security number or other identification",
+      "Security freeze PINs (if available)",
+      "Proof of identity and current residence"
+    ],
+    estimatedTime: "5-10 minutes"
+  },
+
+  "Request to Return or Destroy a Credit Report": {
+    title: "Request to Return or Destroy a Credit Report",
+    otherNames: [
+      "Request to Destroy Credit Information",
+      "Credit Report Disposal Request"
+    ],
+    whatIs: "A Request to Return or Destroy a Credit Report is a formal legal document used to require lenders, banks, or organizations to return your credit report to you or permanently destroy it once it is no longer needed. This draft credit report protection request from Legalgram helps you prevent identity theft, protect confidential financial records, ensure proper document handling, and create a formal legal record to maintain credit privacy.",
+    whyUse: [
+      "Prevent identity theft and data misuse",
+      "Protect confidential financial records",
+      "Ensure proper document handling",
+      "Create a formal legal record",
+      "Maintain credit privacy"
+    ],
+    whenToUse: [
+      "You want a lender to return your credit report",
+      "You want confidential data securely destroyed",
+      "Your loan or application process is complete",
+      "You’re concerned about data privacy",
+      "You want written legal confirmation"
+    ],
+    sampleFeatures: [
+      "Professionally drafted legal format",
+      "Easy to edit and customize",
+      "Ready for official submission",
+      "Free download available",
+      "Trusted Legalgram document quality"
+    ],
+    keyProtections: [
+      "Instruction to return or destroy sensitive credit information",
+      "Creates enforceable written direction to the recipient",
+      "Provides a documented paper trail for privacy compliance",
+      "Helps reduce risk of identity theft"
+    ],
+    faqs: [],
+    estimatedTime: "5-10 minutes"
+  },
+
+  "Talent Management Contract": {
+    title: "Talent Management Contract",
+    otherNames: [
+      "Talent Contract",
+      "Talent Agent Contract",
+      "Talent Management Contract",
+      "Artist Representation Contract"
+    ],
+    whatIs: "A Talent Management Contract (also known as a Talent Agent Contract or Talent Contract) is a legal contract between a talent manager or agent and an artist that outlines the terms of representation. This draft Talent Management Contract available on Legalgram establishes clear expectations regarding representation of the artist, duties of the talent manager, payment structure and commissions, duration of the management relationship, and professional responsibilities of both parties. Using a Talent Management Contract template from Legalgram ensures that both parties understand their obligations and reduces the risk of disputes in the future.",
+    whenToUse: [
+      "You are a talent agent representing artists or performers",
+      "You are an artist seeking professional representation",
+      "You want to formalize your artist-manager relationship",
+      "You want clear terms regarding commission and payment",
+      "You want legal protection for both the manager and the artist"
+    ],
+    whyUse: [
+      "Clearly defines the duration of representation",
+      "Establishes responsibilities of the agent and the artist",
+      "Outlines payment structure and commission terms",
+      "Protects both parties from misunderstandings",
+      "Provides legal protection in case of disputes"
+    ],
+    keyDetails: [
+      "Full name and address of the artist/client",
+      "Scope of representation",
+      "Commission or payment structure",
+      "Duration of the contract",
+      "Responsibilities of the talent manager",
+      "Confidentiality obligations",
+      "Dispute resolution terms",
+      "Jurisdiction or governing law"
+    ],
+    sampleFeatures: [
+      "Professionally drafted legal language",
+      "Editable and customizable clauses",
+      "Clear commission and gross-earnings definitions",
+      "Arbitration and notice provisions"
+    ],
+    howToUse: [
+      "Review and customize the contract details",
+      "Insert the names and contact details of both parties",
+      "Specify payment or commission terms",
+      "Define the scope of talent management services",
+      "Print or digitally sign the contract"
+    ],
+    callToAction: "Download the Talent Management Contract draft from Legalgram and customize it according to your requirements.",
+    faqs: [],
+    estimatedTime: "10-20 minutes"
+  },
+
+  "Web Development Agreement": {
+    title: "Web Development Agreement",
+    otherNames: [
+      "Website Development Agreement",
+      "Website Design Contract",
+      "Web Development Contract"
+    ],
+    whatIs: "A Web Development Agreement is a legal contract that records the terms under which a web developer agrees to design, develop, and deliver a website for a client. The Web Development Agreement template on Legalgram is professionally drafted to define project scope, payment structure, timelines, intellectual property ownership, confidentiality obligations, and dispute resolution procedures. Download the Web Development Agreement from Legalgram, customize the draft according to your project details, and use it as a legally structured contract between the web developer and the client.",
+    whenToUse: [
+      "You are hiring a web developer to design or build a website",
+      "You are working as a freelance web developer and need a written contract",
+      "A business or startup requires a formal agreement for website development services",
+      "You want to document payment schedules, milestones, and ownership"
+    ],
+    whyUse: [
+      "Defines the scope, timelines, and deliverables clearly",
+      "Sets payment schedules and milestone expectations",
+      "Clarifies ownership of website code and digital assets",
+      "Provides confidentiality and dispute resolution protections"
+    ],
+    sampleFeatures: [
+      "Professionally structured legal clauses",
+      "Customizable format for different project types",
+      "Suitable for freelancers, agencies, and companies",
+      "Includes change request and approval processes"
+    ],
+    keyDetails: [
+      "Contact information of the client and web developer",
+      "Scope of work including design, development, testing, and deployment",
+      "Payment structure and milestone payments",
+      "Project timelines and delivery schedule",
+      "Intellectual property and ownership rights",
+      "Confidentiality obligations",
+      "Dispute resolution procedures"
+    ],
+    faqs: [
+      { q: "Should freelance web developers always use a Web Development Agreement?", a: "Yes. Even for small or short-term projects, a written Agreement helps ensure the duration, payment schedules, and responsibilities are clear and reduces the risk of disputes." },
+      { q: "What information does a Web Development Agreement template usually contain?", a: "Contact information, scope of work, duration, payment terms, ownership of website code and assets, confidentiality, limitation of liability, and dispute resolution procedures. It may also include change request and approval processes and QA documentation." },
+      { q: "Who prepares the Web Development Agreement?", a: "Either party may prepare the Agreement, but often the developer prepares it because they understand the technical scope. Corporate clients may provide their own contracts. Use Legalgram's template to ensure essential provisions are included." },
+      { q: "How much does it cost to create a Web Development Agreement?", a: "Hiring a lawyer may be costly. Legalgram provides a free professionally drafted template you can download and customize to save on legal fees." },
+      { q: "What should I do after creating the Agreement?", a: "Edit the Agreement to fit your project, save as PDF or Word, print or digitally sign, and retain copies. Make sure both parties keep signed copies." }
+    ],
+    howToUse: [
+      "Download the Web Development Agreement from Legalgram",
+      "Review and customize the contract details",
+      "Insert names, contact details, milestones and payment terms",
+      "Specify delivery and hosting arrangements",
+      "Sign and retain copies for both Parties"
+    ],
+    callToAction: "Download the Web Development Agreement from Legalgram, customize it for your project, and use it to protect both client and developer rights.",
+    estimatedTime: "5-15 minutes"
+  },
+
+  "Response to Payment Request": {
+    title: "Response to Payment Request",
+    otherNames: ["Letter to Debt Collector Request", "Creditor Payment Response Request"],
+    whatIs: "A Response to Payment Request is a formal written document used to communicate with creditors regarding unpaid balances, delayed payments, or disputed charges. This draft creditor response request from Legalgram helps you explain reasons for delayed payment, dispute incorrect billing claims, request additional time to pay, prevent negative credit reporting, and create a formal record of communication. Using the best format Response to Payment Request from Legalgram ensures your response is professional, clear, and legally effective.",
+    whyUse: [
+      "Professionally drafted legal format",
+      "Easy to customize and edit",
+      "Ready for official submission",
+      "Free download available",
+      "Trusted Legalgram document quality"
+    ],
+    whenToUse: [
+      "A creditor is demanding payment",
+      "You need extra time to pay a bill",
+      "You believe a charge is incorrect",
+      "You want to avoid credit score damage",
+      "You want written proof of communication"
+    ],
+    sampleFeatures: [
+      "Fully customizable",
+      "Printable Word & PDF format",
+      "Professional legal structure",
+      "Free download available"
+    ],
+    keyProtections: [
+      "Explain reasons for delayed payment",
+      "Document payments and requests to creditors",
+      "Prevent or reduce harmful credit reporting",
+      "Create an enforceable written record of communication"
+    ],
+    faqs: [],
+    estimatedTime: "5-10 minutes"
+  },
+
   // === BUSINESS AGREEMENTS ===
   "Non-Disclosure Agreement": {
     title: "Non-Disclosure Agreement (NDA)",

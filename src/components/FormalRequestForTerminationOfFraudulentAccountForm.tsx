@@ -60,15 +60,15 @@ const generatePDF = (values: Record<string, string>) => {
   write("Final Compliance Checklist - Unauthorized Local Phone Service Cancellation", true, 2.2);
   write("Requesting Party: __________________________");
   write("Local Telephone Company: __________________________");
-  write("Legal Execution");
-  write("- The letter must be signed by the requesting party. Notarization or witness signatures are not required.");
-  write("- Attach copies of all available evidence supporting the identity theft claim.");
-  write("Copies and Recordkeeping");
-  write("- Send the original signed letter to the local telephone company.");
-  write("- Include only copies of supporting documents unless originals are expressly requested.");
-  write("- Retain a complete copy of the letter and all enclosures for your personal records.");
-  write("Delivery Recommendation");
-  write("- While not mandatory, it is strongly recommended that the letter be sent via a traceable delivery method (e.g., certified mail or courier with confirmation of receipt).");
+  write("Legal Execution", true);
+  write("• The letter must be signed by the requesting party. Notarization or witness signatures are not required.");
+  write("• Attach copies of all available evidence supporting the identity theft claim.");
+  write("Copies and Recordkeeping", true);
+  write("• Send the original signed letter to the local telephone company.");
+  write("• Include only copies of supporting documents unless originals are expressly requested.");
+  write("• Retain a complete copy of the letter and all enclosures for your personal records.");
+  write("Delivery Recommendation", true);
+  write("• While not mandatory, it is strongly recommended that the letter be sent via a traceable delivery method (e.g., certified mail or courier with confirmation of receipt).");
 
   doc.save("formal_request_termination_fraudulent_account_no.pdf");
 };

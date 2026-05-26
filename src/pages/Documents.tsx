@@ -86,6 +86,8 @@ const LetterToReportIdentityTheftToSecretServiceInfo = lazy(() => import("@/comp
 const LetterToReportIdentityTheftToSecretServiceForm = lazy(() => import("@/components/LetterToReportIdentityTheftToSecretServiceForm"));
 const LetterToReportMailTheftInfo = lazy(() => import("@/components/LetterToReportMailTheftInfo"));
 const LetterToReportMailTheftForm = lazy(() => import("@/components/LetterToReportMailTheftForm"));
+const RequestToCancelUnauthorizedInternetServiceForm = lazy(() => import("@/components/RequestToCancelUnauthorizedInternetServiceForm"));
+const RequestToRemoveCreditFreezeForm = lazy(() => import("@/components/RequestToRemoveCreditFreezeForm"));
 const LetterToReportUnauthorizedSSNInfo = lazy(() => import("@/components/LetterToReportUnauthorizedSSNInfo"));
 const LetterToReportUnauthorizedSSNForm = lazy(() => import("@/components/LetterToReportUnauthorizedSSNForm"));
 const LoanModificationLetterInfo = lazy(() => import("@/components/LoanModificationLetterInfo"));
@@ -98,6 +100,10 @@ const HardshipLetterForm = lazy(() => import("@/components/HardshipLetterForm"))
 const HorseLeaseAgreementForm = lazy(() => import("@/components/HorseLeaseAgreementForm"));
 const IDTheftAffidavitForm = lazy(() => import("@/components/IDTheftAffidavitForm"));
 const LetterToRequestACreditReportForm = lazy(() => import("@/components/LetterToRequestACreditReportForm"));
+const RequestToReturnOrDestroyCreditReportForm = lazy(() => import("@/components/RequestToReturnOrDestroyCreditReportForm"));
+const ResponseToPaymentRequestForm = lazy(() => import("@/components/ResponseToPaymentRequestForm"));
+const TalentManagementContractForm = lazy(() => import("@/components/TalentManagementContractForm"));
+const WebDevelopmentAgreementForm = lazy(() => import("@/components/WebDevelopmentAgreementForm"));
 const BrokerAgreementForm = lazy(() => import("@/components/BrokerAgreementForm"));
 const BusinessAgreementForm = lazy(() => import("@/components/BusinessAgreementForm"));
 const BusinessPlanForm = lazy(() => import("@/components/BusinessPlanForm"));
@@ -570,6 +576,8 @@ export const propertyMattersDocs = [
   { id: "personal-financial-statement", title: "Personal Financial Statement", description: "Create a personal financial statement for loan or credit applications.", icon: FileText, category: "Property Protection", component: JointPersonalFinancialStatementForm },
   { id: "personal-property-lease-agreement", title: "Personal Property Lease Agreement", description: "Create a personal property lease agreement for leasing movable property.", icon: FileText, category: "Property Protection", component: PersonalPropertyLeaseAgreementForm },
   { id: "purchase-agreement-for-personal-property", title: "Purchase Agreement for Personal Property", description: "Create a purchase agreement for the sale of personal property.", icon: FileText, category: "Property Sales", component: PurchaseAgreementForPersonalPropertyForm },
+  { id: "talent-management-contract", title: "Talent Management Contract", description: "Create a Talent Management Contract to formalize representation and commission arrangements between an artist and an agency.", icon: FileText, category: "Property Contracts", component: TalentManagementContractForm },
+  { id: "web-development-agreement", title: "Web Development Agreement", description: "Create a Web Development Agreement for website design, development, hosting, and payment terms.", icon: FileText, category: "Property Contracts", component: WebDevelopmentAgreementForm },
   { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters", component: SecurityDepositReturnLetter },
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
   
@@ -588,12 +596,17 @@ export const propertyMattersDocs = [
   // === PROPERTY PROTECTION ===
   { id: "credit-report-challenge", title: "Credit Report Challenge Letter", description: "Dispute inaccurate, outdated, or unverifiable credit report information", icon: Shield, category: "Property Protection", component: CreditReportChallengeForm },
   { id: "letter-to-request-a-credit-report", title: "Letter to Request a Credit Report", description: "Request a copy of your credit report in formal legal format", icon: FileText, category: "Property Protection", component: LetterToRequestACreditReportForm },
+  { id: "request-return-destroy-credit-report", title: "Request to Return or Destroy a Credit Report", description: "Formally request return or destruction of a previously provided credit report and related information.", icon: FileText, category: "Property Protection", component: RequestToReturnOrDestroyCreditReportForm },
   { id: "letter-to-cease-and-desist-collection", title: "Letter to Cease and Desist Collection", description: "Request that a collection agency cease collection activity for fraudulent or identity-theft charges.", icon: FileText, category: "Property Protection", component: lazy(() => import("@/components/LetterToCeaseAndDesistCollectionForm")) },
   { id: "letter-to-irs-fraudulent-tax-filing", title: "Letter to the Internal Revenue Service to Report a Fraudulent Tax Filing", description: "Notify the IRS Criminal Investigation Division about suspected fraudulent tax filings associated with your identity.", icon: FileText, category: "Property Protection", component: lazy(() => import("@/components/LetterToIRSReportFraudulentTaxFilingForm")) },
+  { id: "letter-to-notify-irs-fraudulent-tax-filing-info", title: "Letter to Notify the IRS of a Fraudulent Tax Filing Agreement", description: "Download and learn about the Letter to Notify the IRS of a Fraudulent Tax Filing Agreement.", icon: FileText, category: "Property Protection", component: lazy(() => import("@/components/LetterToNotifyIRSInfo")) },
   { id: "report-of-lost-passport", title: "Report of Lost Passport", description: "Notify the U.S. Department of State Passport Services of a lost or stolen passport and request replacement instructions.", icon: FileText, category: "Property Protection", component: lazy(() => import("@/components/ReportOfLostPassportForm")) },
   { id: "letter-to-report-identity-theft-fbi-form", title: "Letter to Report an Identity Theft to the FBI (Form)", description: "Generate a formal letter to report identity theft to the FBI and download as PDF.", icon: FileText, category: "Property Protection", component: LetterToReportIdentityTheftToFBIForm },
   { id: "letter-to-report-identity-theft-secret-service-form", title: "Letter to Report an Identity Theft to the Secret Service (Form)", description: "Generate a formal letter to report identity theft to the U.S. Secret Service and download as PDF.", icon: FileText, category: "Property Protection", component: LetterToReportIdentityTheftToSecretServiceForm },
   { id: "letter-to-report-mail-theft-form", title: "Letter to Report Mail Theft (Form)", description: "Generate a formal letter to report mail theft to postal inspectors and download as PDF.", icon: FileText, category: "Property Protection", component: LetterToReportMailTheftForm },
+  { id: "request-cancel-unauthorized-internet-service", title: "Request to Cancel Unauthorized Internet Service", description: "Request termination of an internet account opened fraudulently, with checklist and delivery guidance.", icon: FileText, category: "Property Protection", component: RequestToCancelUnauthorizedInternetServiceForm },
+  { id: "response-to-payment-request", title: "Response to Payment Request", description: "A formal response acknowledging and documenting payment toward an alleged balance; includes a compliance checklist.", icon: FileText, category: "Property Protection", component: ResponseToPaymentRequestForm },
+  { id: "request-remove-credit-freeze", title: "Request to Remove Credit Freeze", description: "Generate letters to request permanent removal of security freezes from Equifax, TransUnion, and Experian.", icon: FileText, category: "Property Protection", component: RequestToRemoveCreditFreezeForm },
   { id: "loan-modification-letter", title: "Loan Modification Letter", description: "Request permanent changes to loan repayment terms due to financial hardship; generate and download as PDF.", icon: FileText, category: "Property Protection", component: LoanModificationLetterForm },
   { id: "letter-to-report-unauthorized-ssn", title: "Letter to Report Unauthorized Use of a Social Security Number", description: "Report unauthorized use of your Social Security Number to the Social Security Administration and request an investigation.", icon: FileText, category: "Property Protection", component: LetterToReportUnauthorizedSSNForm },
   { id: "lottery-pool-agreement", title: "Lottery Pool Agreement", description: "Create a legally binding Lottery Pool Agreement that documents contributions, management, custody of tickets, and distribution of winnings.", icon: FileText, category: "Property Protection", component: LotteryPoolAgreementForm },
