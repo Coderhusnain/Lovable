@@ -193,6 +193,9 @@ import MusicalPerformanceInfo from "./pages/MusicalPerformanceInfo";
 import WarehouseLeaseInfo from "./pages/WarehouseLeaseInfo";
 import RoofingContractInfo from "./pages/RoofingContractInfo";
 import SecurityDepositeReturnLetterInfo from "./pages/SecurityDepositeReturnLetterInfo";
+import PersonalPropertyLeaseAgreementInfo from "./pages/PersonalPropertyLeaseAgreementInfo";
+
+import PersonalFinancialStatementInfo from "./pages/PersonalFinancialStatementInfo";
 
 
 // Loading component
@@ -345,6 +348,10 @@ const App = () => {
                 <Route path="/police-report-worksheet-form" element={<Documents />} />
                 <Route path="/lottery-pool-contract-info" element={<LotteryPoolContractInfo/>} />
                 <Route path="/lottery-pool-contract-form" element={<Documents />} />
+                <Route path="/personal-financial-statement-info" element={<PersonalFinancialStatementInfo/>} />
+                <Route path="/personal-financial-statement-form" element={<Documents />} />
+                <Route path="/personal-property-lease-agreement-info" element={<PersonalPropertyLeaseAgreementInfo />} />
+                <Route path="/personal-property-lease-agreement-form" element={<Documents />} />
                 <Route path="/request-bankcredit-reference-info" element={<BankCreditReferenceInfo/>} />
                 <Route path="/request-bankcredit-reference-form" element={<Documents />} />
                 <Route path="/request-remove-personal-information-info" element={<RemovePersonalInfoRequestInfo/>} />

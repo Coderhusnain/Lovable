@@ -43,6 +43,7 @@ const SubleaseForm = lazy(() => import("@/components/SubleaseForm"));
 const LeaseAmendmentForm = lazy(() => import("@/components/LeaseAmendmentForm"));
 const CommercialLeaseForm = lazy(() => import("@/components/CommercialLeaseForm"));
 const TripleNetLeaseForm = lazy(() => import("@/components/TripleNetLeaseForm"));
+const EquipmentLeaseAgreementForm = lazy(() => import("@/components/EquipmentLeaseAgreementForm"));
 const CorporateBylawsForm = lazy(() => import("@/components/CorporateBylawsForm"));
 const BuySellAgreementForm = lazy(() => import("@/components/BuySellAgreementForm"));
 const MutualNDAForm = lazy(() => import("@/components/MutualNDAForm"));
@@ -67,6 +68,8 @@ const LeaseTerminationLetter = lazy(() => import("@/components/LeaseTerminationL
 const LateRentPaymentAgreement = lazy(() => import("@/components/LateRentPaymentAgreement"));
 const NonDisturbanceAgreement = lazy(() => import("@/components/NonDisturbanceAgreement"));
 const CellPhoneInquiryLetterForm = lazy(() => import("@/components/CellPhoneInquiryLetterForm"));
+const CreditReportChallengeForm = lazy(() => import("@/components/CreditReportChallengeForm"));
+const DebtValidationForm = lazy(() => import("@/components/DebtValidationForm"));
 const DueOnDemandPromissoryNoteForm = lazy(() => import("@/components/DueOnDemandPromissoryNoteForm"));
 const DemandForDeliveryForm = lazy(() => import("@/components/DemandForDeliveryForm"));
 const ComplaintLetterInfoForm = lazy(() => import("@/components/ComplaintLetterInfoForm"));
@@ -719,6 +722,30 @@ const MakeDocument = () => {
       content: 'Create a formal notice to terminate a tenancy and initiate eviction proceedings',
       icon: FileText,
       component: EvictionNoticeForm
+    },
+    {
+      id: 'credit-report-challenge',
+      title: 'Credit Report Challenge',
+      description: 'Property Protection',
+      content: 'Create a formal dispute letter for an inaccurate credit report entry and request a review',
+      icon: Shield,
+      component: CreditReportChallengeForm
+    },
+    {
+      id: 'equipment-lease-agreement',
+      title: 'Equipment Lease Agreement',
+      description: 'Property Protection',
+      content: 'Create an equipment lease agreement covering terms, payments, security deposit, insurance, and return',
+      icon: FileSignature,
+      component: EquipmentLeaseAgreementForm
+    },
+    {
+      id: 'debt-validation',
+      title: 'Debt Validation Letter',
+      description: 'Property Protection',
+      content: 'Generate a debt validation / dispute letter under the FDCPA to request verification of an alleged debt',
+      icon: Shield,
+      component: DebtValidationForm
     },
     {
       id: 'affidavit-of-residence',

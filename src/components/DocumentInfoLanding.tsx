@@ -77,6 +77,14 @@ export default function DocumentInfoLanding({
       }
     : fallbackContent;
 
+  // Development debug: warn if getDocumentContent fell back to default
+  // (the helper already logs a warning; this makes it obvious in React devtools/console)
+  // eslint-disable-next-line no-console
+  if (resolvedContent && (resolvedContent as any).suggestions) {
+    // eslint-disable-next-line no-console
+    console.warn(`DocumentInfoLanding: getDocumentContent fell back for "${title}" — suggestions: ${(resolvedContent as any).suggestions.join(", ")}`);
+  }
+
   return (
     <div className="max-w-7xl mx-auto">
       <Button 

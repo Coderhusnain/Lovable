@@ -27,6 +27,55 @@ export interface DocumentContent {
 // ============================================================================
 
 export const documentContent: Record<string, DocumentContent> = {
+  "Personal Property Lease Agreement": {
+    title: "Personal Property Lease Agreement",
+    otherNames: [
+      "Lease of Personal Property",
+      "Personal Property Rental Agreement",
+      "Movable Property Lease Agreement",
+      "Equipment and Personal Assets Lease"
+    ],
+    shortDescription: "A legal contract for leasing movable personal property with clear terms, payment, and return obligations.",
+    whatIs: "A Personal Property Lease Agreement is a legal contract used to rent or lease movable items such as equipment, furniture, machinery, electronics, or other personal assets - excluding real estate and vehicles.\n\nThis agreement clearly defines:\n✔ Lease duration\n✔ Payment terms\n✔ Use of property\n✔ Liability and risk\n✔ Return conditions\n\nUsing a properly drafted Personal Property Lease Agreement from Legalgram helps prevent misunderstandings and protects both lessor and lessee.",
+    whenToUse: [
+      "You are lending personal items to someone",
+      "You are borrowing equipment or valuables",
+      "You run a business that leases tools, machines, or goods",
+      "You want legal protection for rented personal property"
+    ],
+    whyDownload: [
+      "Professionally drafted legal format",
+      "SEO-trusted legal wording",
+      "Court-ready structure",
+      "Free download tenancy agreement style",
+      "Simple and fast customization"
+    ],
+    sample: {
+      description: "Our draft Personal Property Lease Agreement automatically updates based on the details you enter - making it accurate, enforceable, and professional.",
+      highlights: [
+        "Customized by thousands of users",
+        "Legally binding structure",
+        "Easy Word & PDF download",
+        "Free access on Legalgram"
+      ]
+    },
+    faqs: [
+      { q: "Is a Personal Property Lease Agreement legally binding?", a: "Yes. Once signed by all parties, a Personal Property Lease Agreement becomes a legally enforceable contract under applicable law. Legalgram’s format follows standard contract principles used by legal professionals." },
+      { q: "Why should I use a Personal Property Lease Agreement?", a: "Using a properly drafted agreement helps define responsibilities clearly, avoid payment disputes, protect property from misuse, and establish legal remedies. Without a written agreement, you may face delayed payments, damage issues, and limited legal protection." },
+      { q: "What information is required in a Personal Property Lease Agreement?", a: "To complete your agreement, you’ll need a description of the property, names of the parties, lease period, payment terms, and usage conditions. Legalgram’s draft guides you step-by-step." },
+      { q: "Is Legalgram’s Personal Property Lease Agreement free to download?", a: "Yes. You can download the agreement in Word or PDF, print unlimited copies, and edit it anytime - all completely free on Legalgram." },
+      { q: "Should I consult a lawyer?", a: "While Legalgram provides professionally formatted legal documents, consulting a lawyer is always recommended for complex transactions." }
+    ],
+    keyProtections: [
+      "Clearly defines lease duration and payment terms",
+      "Protects both lessor and lessee",
+      "Reduces disputes over property use and return",
+      "Provides a structured legal framework"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This information is provided for educational purposes only and should not be considered legal advice. Personal Property Lease Agreements may have different requirements based on jurisdiction. Please consult a legal professional for guidance."
+  },
+
   "Food Service Contract": {
     title: "Food Service Contract",
     otherNames: ["Food Service Agreement"],
@@ -877,7 +926,7 @@ export const documentContent: Record<string, DocumentContent> = {
       "Group Lottery Agreement",
       "Lottery Pool Contract Draft"
     ],
-    whatIs: "A Lottery Pool Contract is a legal document used by a group of people who agree to jointly purchase lottery tickets and share any winnings according to agreed percentages or equal shares. This Lottery Pool Contract helps avoid misunderstandings, disputes, or fraud by clearly recording who contributed money, who buys tickets, who keeps tickets, and how winnings will be divided.",
+    whatIs: "A Lottery Pool Agreement is a legally binding contract that allows a group of individuals to clearly define how they will jointly purchase lottery tickets and distribute any winnings among the participants. This Lottery Pool Agreement draft ensures transparency, fairness, and legal protection for all members of the lottery pool.\n\nWithout a written Lottery Pool Contract, disputes may arise regarding ownership of the ticket or entitlement to winnings. In many situations, the person who physically holds the ticket could attempt to claim the entire prize. A properly written Lottery Pool Agreement prevents such conflicts by clearly stating that all participants share ownership and are entitled to their agreed portion of any winnings.\n\nThrough a well-structured Lottery Pool Agreement format, participants can establish important terms such as contributions, management of the lottery pool, custody of tickets, and distribution of prize money. This ensures that everyone involved understands their rights and obligations before purchasing any lottery tickets together.\n\nOn Legalgram, users can access the best format Lottery Pool Agreement prepared in clear legal language, making it easy to document a lottery pool arrangement in a professional and legally sound manner.",
     whenToUse: [
       "Friends buy lottery tickets together",
       "Office coworkers run a lottery pool",
@@ -906,9 +955,21 @@ export const documentContent: Record<string, DocumentContent> = {
       "Ticket custody details",
       "Signature and date"
     ],
+    importance: "A Lottery Pool Contract is important because it provides written evidence of the agreement between participants. Most jurisdictions with a state-run lottery recognize and enforce properly executed agreements regarding shared lottery tickets. When all participants sign the Lottery Pool Agreement, it strengthens the enforceability of the arrangement and minimizes the risk of disputes. Using a professionally drafted Lottery Pool Agreement template from Legalgram helps ensure that all essential terms are included, including contributions by each participant, ownership of purchased lottery tickets, appointment of a pool manager, safekeeping of tickets, distribution of winnings, and withdrawal from the pool.",
+    download: "If you are planning to create a lottery pool with friends, colleagues, or family members, you can download the Lottery Pool Agreement from Legalgram in a professionally structured format. This Lottery Pool Agreement draft is designed to help users quickly create a legally clear agreement without complicated legal drafting. On Legalgram, you can: Download Lottery Pool Agreement in the best professional format; Access a free Lottery Pool Agreement template; Use a ready-to-edit Lottery Pool Agreement draft; Get the best format Lottery Pool Agreement from Legalgram for personal or workplace lottery pools.",
+    sample: {
+      description: "The terms in your Lottery Pool Agreement draft will update based on the information you provide. Once completed, the agreement serves as a clear record of how the lottery pool will operate and how winnings will be shared.",
+      highlights: [
+        "This document has been customized over 5.7K times",
+        "Legally binding and enforceable when properly executed",
+        "Option to consult a legal professional before finalizing the agreement",
+        "Sign the Lottery Pool Agreement online or print and sign manually"
+      ]
+    },
     estimatedTime: "10-15 minutes",
     legalDisclaimer: "Lottery participation rules vary by jurisdiction. This template is a general reference only and does not replace local gaming, contract, tax, or employment law advice. For high-value winnings or pool disputes, consult a qualified attorney."
   },
+
   "Gift Affidavit": {
     title: "Gift Affidavit",
     otherNames: [
@@ -3521,6 +3582,65 @@ export const documentContent: Record<string, DocumentContent> = {
       "Performance metrics and reporting frequency"
     ],
     estimatedTime: "12-18 minutes"
+  },
+
+  // === PURCHASE AGREEMENT FOR PERSONAL PROPERTY ===
+  "Purchase Agreement for Personal Property": {
+    title: "Purchase Agreement for Personal Property",
+    otherNames: [
+      "Agreement to Sell Personal Property",
+      "Personal Property Purchase Agreement",
+      "Personal Property Sale Agreement"
+    ],
+    whatIs: "A Purchase Agreement for Personal Property is a legal contract used when movable property — such as furniture, antiques, electronics, collectibles, or equipment — is sold between individuals or businesses.\n\nThis agreement:\n✔ Acts as a written receipt\n✔ Clearly describes the item sold\n✔ Confirms payment terms\n✔ Protects both buyer and seller\n✔ Helps prevent disputes\n\nUsing a properly drafted Purchase Agreement for Personal Property on Legalgram ensures legal clarity and documentation.",
+    whenToUse: [
+      "You are selling personal property to another party",
+      "You are purchasing valuable items privately",
+      "You want legal proof of the transaction",
+      "You need documentation beyond a canceled check"
+    ],
+    sample: {
+      description: "Our draft Purchase Agreement for Personal Property automatically updates as you enter your details.",
+      highlights: [
+        "Customized by thousands of users",
+        "Legally binding format",
+        "Easy to edit",
+        "Free Word & PDF download",
+        "Available on Legalgram"
+      ]
+    },
+    whyDownload: [
+      "Professionally drafted legal language",
+      "Court-ready agreement structure",
+      "Fast and simple customization",
+      "Free download today",
+      "Trusted by thousands"
+    ],
+    faqs: [
+      { q: "What is a Purchase Agreement for Personal Property?", a: "It is a written contract used when movable property is sold between parties. The agreement describes the item, confirms payment, and records the transfer of ownership." },
+      { q: "When should I use this agreement?", a: "Use it when buying or selling valuable items privately, when you need proof of transfer, or when you want clear payment terms documented." },
+      { q: "Can I sell the property 'as is'?", a: "Yes. The agreement can state the property is sold 'AS IS' and 'WHERE IS', disclaiming express and implied warranties unless otherwise agreed." },
+      { q: "Do I need to specify governing law?", a: "Specifying the governing law state helps clarify which jurisdiction's rules apply in case of a dispute." }
+    ],
+    keyProtections: [
+      "Documents the item sold and its condition",
+      "Confirms purchase price and payment terms",
+      "Establishes ownership transfer and possession",
+      "Includes warranty disclaimers and liability protections",
+      "Provides a court-ready written record for both parties"
+    ],
+    whatYouNeed: [
+      "Seller name and address",
+      "Buyer name and address",
+      "Detailed description of the item",
+      "Purchase price and payment method",
+      "Current location of the property",
+      "Who will take possession after execution",
+      "Transfer date and governing law",
+      "Signature names and dates"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This information is provided for educational purposes only and should not be considered legal advice. Purchase agreements may have different requirements based on jurisdiction. Please consult a legal professional for guidance."
   },
 
   // === ASSET PURCHASE AGREEMENT ===
@@ -7271,6 +7391,845 @@ export const documentContent: Record<string, DocumentContent> = {
     legalDisclaimer: "This Corporation Formation information is general guidance and not legal advice. Incorporation involves complex legal, tax, and regulatory considerations that vary significantly by state, business type, and individual circumstances. We strongly recommend consulting with a qualified business attorney and certified public accountant to ensure you choose the right structure and comply with all applicable laws."
   },
 
+  "Bankruptcy Worksheet": {
+    title: "Bankruptcy Worksheet",
+    otherNames: ["Bankruptcy Preparation Worksheet", "Financial Disclosure Worksheet", "Bankruptcy Planning Worksheet"],
+    whatIs: "A Bankruptcy Worksheet is a financial preparation document used to compile the information typically reviewed before filing for bankruptcy. It helps you organize assets, liabilities, income, expenses, creditors, and other financial details so you can better understand your financial position and prepare for attorney consultation or court proceedings.",
+    whenToUse: [
+      "You are considering filing for bankruptcy",
+      "You want a clear overview of debts and assets",
+      "You are assisting someone with bankruptcy preparation",
+      "You plan to consult a bankruptcy attorney",
+      "You want to make informed financial decisions"
+    ],
+    faqs: [
+      { q: "What is a Bankruptcy Worksheet?", a: "A Bankruptcy Worksheet is a financial preparation document used to compile all relevant financial details required for bankruptcy review and filing. It helps you organize debts, assets, income, and expenses before you speak with an attorney or file a petition." },
+      { q: "What should I include in it?", a: "Include your name and contact details, income sources, monthly expenses, assets, debts, creditor information, and any other financial details that help describe your financial situation accurately." },
+      { q: "Why should I use one before filing?", a: "Using a worksheet helps you gather information in one place, avoid omissions, and better understand your financial position before attorney review or court filing." },
+      { q: "Is this worksheet a legal filing?", a: "No. It is a preparation tool only and does not replace court forms or legal advice." }
+    ],
+    keyProtections: [
+      "Organizes debts and creditors",
+      "Lists assets and property",
+      "Tracks income and expenses",
+      "Helps identify your overall financial position",
+      "Supports attorney consultation and court preparation",
+      "Improves clarity and completeness of financial disclosure"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact information",
+      "Residential address and telephone number",
+      "Sources of monthly income",
+      "Monthly household and medical expenses",
+      "Debt balances and creditor names",
+      "Property and asset values",
+      "Any notes about recent financial changes"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This Bankruptcy Worksheet information is general guidance and not legal advice. Bankruptcy law varies significantly by jurisdiction and your financial situation may require additional disclosures or court forms. Federal law requires credit counseling within 180 days before filing in many cases. We strongly recommend consulting a qualified bankruptcy attorney for guidance specific to your circumstances."
+  },
+
+  "Credit Report Challenge Letter": {
+    title: "Credit Report Challenge Letter",
+    otherNames: ["Credit Report Dispute Letter", "Challenge Credit Report Letter"],
+    whatIs: "A Credit Report Challenge Letter is a formal legal document used to notify credit bureaus of incorrect, outdated, or unverifiable information appearing on your credit report. This draft credit report dispute letter from Legalgram helps you correct inaccurate credit entries, protect and improve your credit score, request investigation by credit bureaus, remove unverifiable or outdated data, and maintain accurate financial records. Using the best format Credit Report Challenge Letter from Legalgram ensures your dispute is professionally presented and legally effective.",
+    whenToUse: [
+      "You discovered an error on your credit report",
+      "You want to dispute outdated information",
+      "You need to add explanations to credit entries",
+      "You want incorrect data removed",
+      "You want to protect your credit rating"
+    ],
+    faqs: [
+      { q: "Why use this letter?", a: "A professionally drafted Credit Report Challenge Letter helps create a clear written record, support your dispute, and avoid misunderstandings when communicating with credit bureaus." },
+      { q: "What makes it useful?", a: "With Legalgram, you can use a ready-to-edit legal format that is professionally structured and easy to customize." },
+      { q: "When should I send it?", a: "Use it as soon as you discover an error, outdated entry, or unverifiable item that needs investigation." }
+    ],
+    keyProtections: [
+      "Corrects inaccurate credit entries",
+      "Protects and improves your credit score",
+      "Requests investigation by credit bureaus",
+      "Removes unverifiable or outdated data",
+      "Maintains accurate financial records"
+    ],
+    whatYouNeed: [
+      "Your full legal name and mailing address",
+      "Credit report copy showing the disputed item",
+      "Account number or entry details",
+      "Explanation of why the item is wrong",
+      "Supporting documents or proof",
+      "Delivery and recordkeeping copies"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This Credit Report Challenge Letter information is general guidance and not legal advice. Credit reporting rights and investigation procedures can vary depending on your jurisdiction and the facts of your dispute. Consider consulting a qualified attorney or credit professional for advice specific to your situation."
+  },
+
+  "Debt Validation Letter": {
+    title: "Debt Validation Letter",
+    otherNames: ["Debt Verification Letter", "Verification of Debt Request Letter", "Validation of Debt Letter"],
+    whatIs: "A Debt Validation Letter is a formal written document used to require creditors or collection agencies to prove the legitimacy, amount, and ownership of a claimed debt. This draft debt confirmation letter from Legalgram helps you request proof of debt legally, prevent paying debts you do not owe, stop unlawful collection practices, verify balances and creditor details, and protect your credit record. Using the best format Debt Validation Letter from Legalgram ensures your request is clear, enforceable, and professionally prepared.",
+    whenToUse: [
+      "A debt collector contacts you for payment",
+      "You want proof of an alleged debt",
+      "You suspect inaccurate billing",
+      "You are repairing your credit history",
+      "You are preparing for bankruptcy"
+    ],
+    faqs: [
+      { q: "Why use this letter?", a: "A professionally drafted Debt Validation Letter helps you request proof of debt legally, prevent paying debts you do not owe, and protect your credit record." },
+      { q: "What makes it effective?", a: "Using the best format Debt Validation Letter from Legalgram ensures your request is clear, enforceable, and professionally prepared." },
+      { q: "When should I send it?", a: "Send it when a debt collector contacts you, when you suspect inaccurate billing, or whenever you need proof of an alleged debt." }
+    ],
+    keyProtections: [
+      "Requests proof of debt legally",
+      "Prevents paying debts you do not owe",
+      "Stops unlawful collection practices",
+      "Verifies balances and creditor details",
+      "Protects your credit record"
+    ],
+    whatYouNeed: [
+      "Collector or creditor contact details",
+      "Account number or reference number",
+      "Any billing statements or notices",
+      "A copy of your credit report if relevant",
+      "Your mailing address and contact information"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This Debt Validation Letter information is general guidance and not legal advice. Debt collection rules and consumer protection standards can vary depending on your jurisdiction and the facts of the alleged debt. Consider consulting a qualified attorney or credit professional for advice specific to your situation."
+  },
+
+  "FTC Identity Theft Complaint Agreement": {
+    title: "FTC Identity Theft Complaint Agreement",
+    otherNames: ["Federal Trade Commission Identity Theft Complaint Agreement", "FTC Identity Theft Report Agreement", "FTC Identity Fraud Report Agreement"],
+    whatIs: "An FTC Identity Theft Complaint Agreement is a formal legal document used to report identity theft to the Federal Trade Commission. Filing this agreement creates an official written record of the identity theft incident and provides the FTC with critical information to help track, investigate, and prevent identity fraud. Using a draft FTC Identity Theft Complaint Agreement from Legalgram ensures that your complaint is properly documented, even if you have already reported the incident by phone or online. Written documentation strengthens your position when disputing unauthorized charges or correcting financial and credit records.",
+    whenToUse: [
+      "You want to file an initial identity theft complaint with the FTC",
+      "You want to follow up on a previously filed FTC identity theft report",
+      "You want to assist the FTC in tracking identity theft activity",
+      "You need written documentation of identity fraud for disputes or records"
+    ],
+    faqs: [
+      { q: "Why use this agreement?", a: "An FTC Identity Theft Complaint Agreement helps create an official record with the FTC, supports disputes of unauthorized charges, and aids recovery and prevention efforts." },
+      { q: "What does the agreement include?", a: "Personal identification details, description of the theft, information about unauthorized accounts or transactions, and formal submission to the FTC." },
+      { q: "Is this a substitute for reporting online?", a: "No. This document complements online or phone reports by keeping a clear written record that can be used in disputes and correspondence." }
+    ],
+    keyProtections: [
+      "Creates an official written record with the FTC",
+      "Supports disputes of unauthorized transactions",
+      "Helps investigators track identity theft patterns",
+      "Strengthens recovery and correction efforts"
+    ],
+    whatYouNeed: [
+      "Your full legal name and contact information",
+      "A description of the identity theft incident",
+      "Dates of unauthorized transactions or account openings",
+      "Any supporting documentation (police reports, statements, correspondence)",
+      "Relevant account numbers and creditor information"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This FTC Identity Theft Complaint Agreement information is general guidance and not legal advice. Reporting procedures and legal remedies can vary by jurisdiction and the specifics of the incident. Consider consulting a qualified attorney or identity theft specialist for complex cases."
+  },
+
+  "Letter to Report an Identity Theft to the FBI": {
+    title: "Letter to Report an Identity Theft to the FBI",
+    otherNames: [
+      "Letter to Report Identity Theft to the Federal Bureau of Investigation",
+      "Letter to Report ID Theft to the FBI",
+      "Letter to Report ID Theft to the Federal Bureau of Investigation"
+    ],
+    shortDescription: "Looking for a professionally drafted Letter to Report Identity Theft to the FBI? Download the best format Letter to Report Identity Theft to the FBI from Legalgram — a legally structured document designed to formally notify federal authorities about an identity theft incident and support criminal investigation.",
+    whatIs: "A Letter to Report Identity Theft to the FBI is a formal legal document used to notify federal law enforcement authorities that your identity has been stolen and request official action.\n\nThis draft identity theft reporting letter from Legalgram helps you:\n✔ Report identity theft to a higher law enforcement authority\n✔ Confirm phone or online complaints in writing\n✔ Provide supporting evidence\n✔ Create a formal legal paper trail\n✔ Help prevent future identity theft\n\nUsing the best format Letter to Report Identity Theft to the FBI from Legalgram ensures your report is professional, complete, and legally effective.",
+    whenToUse: [
+      "Your identity has been stolen or misused",
+      "You want federal authorities involved",
+      "You are confirming a phone complaint in writing",
+      "You submitted an online fraud report",
+      "You need strong legal documentation"
+    ],
+    faqs: [
+      {
+        q: "Why Download the Letter to Report Identity Theft to the FBI from Legalgram?",
+        a: "Professionally drafted legal format; Easy to edit and customize; Ready for official submission; Free download available; Trusted legal templates"
+      },
+      {
+        q: "When Should You Use a Letter to Report Identity Theft to the FBI?",
+        a: "Use this letter when your identity has been stolen or misused, you want federal authorities involved, you are confirming a phone complaint in writing, you submitted an online fraud report, or you need strong legal documentation."
+      },
+      {
+        q: "What does the sample letter include?",
+        a: "Each Letter to Report Identity Theft to the FBI from Legalgram updates automatically based on the information you provide. Fully customizable, printable Word & PDF format, professional legal structure, free download available."
+      }
+    ],
+    keyProtections: [
+      "Report identity theft to federal law enforcement",
+      "Create an official written record",
+      "Support criminal investigation and evidence preservation",
+      "Provide documentation for creditors, agencies, and insurers"
+    ],
+    sampleIncluded: true,
+    sampleNote: "Each Letter to Report Identity Theft to the FBI from Legalgram updates automatically based on the information you provide. Fully customizable and ready for professional submission.",
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For complex criminal or jurisdictional issues, consult a qualified attorney or the appropriate law enforcement agency."
+  },
+
+  "Letter to Report an Identity Theft to the Secret Service": {
+    title: "Letter to Report Identity Theft to the Secret Service",
+    otherNames: [
+      "Letter to Report ID Theft to the U.S. Secret Service"
+    ],
+    whatIs: "A Letter to Report Identity Theft to the Secret Service is a formal legal document used to inform federal authorities of identity theft and request investigation.\n\nThis draft identity theft reporting letter from Legalgram helps you:\n✔ Initiate a federal investigation\n✔ Stop ongoing identity theft\n✔ Provide additional evidence\n✔ Confirm phone or online complaints\n✔ Create an official legal paper trail\n\nUsing the best format Letter to Report Identity Theft to the Secret Service from Legalgram ensures your report is professional, complete, and legally effective.",
+    shortDescription: "Notify the U.S. Secret Service of identity theft with a professionally drafted letter and checklist. Free download and printable formats available.",
+    whenToUse: [
+      "Your identity has been stolen",
+      "You want federal agencies involved",
+      "You are confirming a phone complaint in writing",
+      "You are providing additional documentation",
+      "You want a formal legal record"
+    ],
+    faqs: [
+      { q: "Why Download the Identity Theft Reporting Letter from Legalgram?", a: "Professionally drafted legal format; Easy to edit and customize; Ready for official submission; Free download available; Trusted legal document platform" },
+      { q: "What does the sample include?", a: "Each Letter to Report Identity Theft to the Secret Service from Legalgram updates automatically based on your provided information. Fully customizable, printable Word & PDF format, professional legal structure, free download available." }
+    ],
+    keyProtections: [
+      "Initiates a federal record of your report",
+      "Supports investigation and evidence preservation",
+      "Provides documentation for creditors and agencies",
+      "Helps stop further misuse of your identity"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact details",
+      "Summary of the incident",
+      "Any police report or FTC affidavit references",
+      "Copies of supporting documentation"
+    ],
+    sampleIncluded: true,
+    sampleNote: "Each Letter to Report Identity Theft to the Secret Service from Legalgram updates automatically based on your provided information. Fully customizable and ready for download.",
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For complex criminal matters, consult a qualified attorney or the appropriate federal law enforcement office."
+  },
+
+  "Letter to Report Mail Theft": {
+    title: "Letter to Report Mail Theft Mail Letter",
+    otherNames: ["Letter to Report Mail Fraud Mail Letter", "Mail Theft Complaint Mail Letter"],
+    whatIs: "A Letter to Report Mail Theft Mail Letter is a formal legal document used to notify postal inspectors or local authorities that mail has been stolen and to request an official investigation.\n\nThis draft mail theft reporting Mail Letter from Legalgram allows you to:\n✔ Officially report stolen mail\n✔ Confirm prior communication with authorities\n✔ Submit a Mail Theft and Vandalism Complaint Form\n✔ Request a formal investigation\n✔ Prevent future mail theft incidents\n\nUsing the best format Letter to Report Mail Theft Mail Letter from Legalgram ensures your complaint is taken seriously and processed efficiently.",
+    shortDescription: "Download the best format Letter to Report Mail Theft Mail Letter from Legalgram — a professionally drafted letter to notify postal authorities and request an investigation. Free printable formats available.",
+    whenToUse: [
+      "Your mail or packages were stolen",
+      "Important documents never arrived",
+      "You suspect ongoing mail fraud",
+      "You want postal authorities to investigate",
+      "You need written proof of your complaint"
+    ],
+    faqs: [
+      { q: "Why Download the Letter to Report Mail Theft Mail Letter from Legalgram?", a: "Professionally drafted legal format; Easy to edit and customize; Ready for immediate use; Free download available; Trusted legal templates" },
+      { q: "What Is a Letter to Report Mail Theft Mail Letter?", a: "A formal legal document used to notify postal inspectors or local authorities that mail has been stolen and to request an official investigation. The draft helps you present facts, attach Form 2016, and request official action." }
+    ],
+    keyProtections: [
+      "Creates an official record with postal inspectors",
+      "Supports investigation and possible recovery of stolen mail",
+      "Provides documentation for insurance, claims, or follow-up"
+    ],
+    whatYouNeed: [
+      "Completed Postal Service Form 2016",
+      "Summary of the incident and date",
+      "Any supporting documents or evidence",
+      "Your full contact information"
+    ],
+    sampleIncluded: true,
+    sampleNote: "Each Letter to Report Mail Theft Mail Letter from Legalgram automatically updates based on the information you provide. Fully customizable, printable Word & PDF format, designed for official submission.",
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For complex matters consult a qualified attorney or the appropriate postal inspector."
+  },
+
+
+
+  "Letter to Report Unauthorized Use of a Social Security Number": {
+    title: "Letter to Report Unauthorized Use of a Social Security Number",
+    otherNames: [
+      "Letter to Report Fraudulent Use of a Social Security Number (SSN)",
+      "SSN Misuse Reporting Letter",
+      "SSA Unauthorized Use Report",
+      "SSN Fraud Report"
+    ],
+    shortDescription: "Report unauthorized use of your Social Security Number to the SSA with a professionally drafted reporting letter. Fully customizable Word & PDF format available for download.",
+    whatIs: "A Letter to Report Unauthorized Use of a Social Security Number is a formal legal document used to inform the Social Security Administration that your SSN has been stolen or misused.\n\nThis draft SSN misuse reporting letter from Legalgram helps you:\n✔ Officially report identity theft\n✔ Prevent fraudulent credit activity\n✔ Protect bank accounts and tax records\n✔ Create a formal paper trail\n✔ Reduce future fraud risks\n\nUsing the best format Letter to Report Unauthorized Use of a Social Security Number from Legalgram ensures your report is professional, complete, and legally effective.",
+    whenToUse: [
+      "Your SSN has been misused",
+      "You suspect identity theft",
+      "You want written confirmation after a phone complaint",
+      "Fraudulent accounts have appeared in your name",
+      "You want official legal documentation for follow-up"
+    ],
+    faqs: [
+      { q: "Why download this letter from Legalgram?", a: "Professionally drafted legal format; easy to customize and edit; ready for official submission; free download available; trusted legal document platform." },
+      { q: "What should I include in the letter?", a: "Include your identifying information, the SSN (or last four digits as appropriate), date of birth, a concise description of the misuse, a list of enclosed evidence, and any prior fraud hotline contact details." },
+      { q: "How should I send and retain records?", a: "Use a traceable delivery method (certified mail or courier) and retain copies of the letter and all enclosures for your records." }
+    ],
+    keyProtections: [
+      "Creates an official record with the Social Security Administration",
+      "Prevents further fraudulent use of your SSN",
+      "Supports credit and tax-related remediation efforts",
+      "Provides documentation for insurers, creditors, and government agencies"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact information",
+      "Social Security Number (last 4 or full as appropriate)",
+      "Date of birth",
+      "List of enclosed evidence and copies of supporting documents (do not send originals)",
+      "Optional: prior Fraud Hotline contact information"
+    ],
+    sampleIncluded: true,
+    sampleNote: "Each Letter to Report Unauthorized Use of a Social Security Number from Legalgram updates automatically based on your provided details. Fully customizable; printable Word & PDF format; professional legal structure; free download available.",
+    estimatedTime: "5-15 minutes",
+    faqsInline: [],
+    legalDisclaimer: "This content is informational and not legal advice. For complex identity-theft matters consult a qualified attorney or the Social Security Administration."
+  },
+
+  "Loan Modification Letter": {
+    title: "Loan Modification Letter",
+    otherNames: ["Loan Modification Request Letter", "Loan Payment Adjustment Letter"],
+    shortDescription: "Request permanent changes to existing loan repayment terms due to financial hardship. Professionally drafted, fully customizable Word & PDF formats available.",
+    whatIs: "A Loan Modification Letter is a formal written document used to request permanent changes to existing loan repayment terms due to financial hardship.\n\nThis draft loan modification letter from Legalgram helps you:\n✔ Request lower monthly payments\n✔ Extend loan repayment periods\n✔ Adjust interest rates\n✔ Document financial hardship legally\n✔ Seek revised loan terms professionally\n\nUsing the best format Loan Modification Letter from Legalgram ensures your request is professionally presented and legally effective.",
+    whenToUse: [
+      "You have experienced loss of income",
+      "You can no longer meet current loan payments",
+      "Your business revenue has declined",
+      "You need long-term payment relief",
+      "Temporary forbearance is not sufficient"
+    ],
+    faqs: [
+      { q: "Why download this letter from Legalgram?", a: "Professionally drafted legal format; fully customizable and editable; suitable for personal and business loans; free download available; trusted Legalgram document quality." },
+      { q: "What does the sample include?", a: "A structured request with borrower details, loan information, hardship explanation, requested relief, and a checklist of supporting documents." }
+    ],
+    keyProtections: [
+      "Creates a formal written request for modification",
+      "Documents financial hardship and requested relief",
+      "Supports negotiation with the lender or loan servicer"
+    ],
+    whatYouNeed: [
+      "Borrower name and contact information",
+      "Loan/Account number and lender/servicer details",
+      "Documentation of hardship (pay stubs, termination notice, medical bills, business statements)",
+      "Recent loan statement showing balance and payment history"
+    ],
+    sampleIncluded: true,
+    sampleNote: "Each Loan Modification Letter from Legalgram updates automatically based on your information. Fully customizable; printable Word & PDF format; free download available.",
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For complex loan negotiations or large commercial loans consult a qualified attorney or financial advisor."
+  },
+
+  "Letter to the Internal Revenue Service to Report a Fraudulent Tax Filing": {
+    title: "Letter to the Internal Revenue Service to Report a Fraudulent Tax Filing",
+    otherNames: ["Letter to Notify the IRS of a Fraudulent Tax Filing Agreement"],
+    whatIs: "Download the best format Letter to Notify the IRS of a Fraudulent Tax Filing Agreement from Legalgram and formally inform the IRS about unauthorized or fraudulent tax activity involving your personal information. This professionally drafted IRS Fraudulent Tax Filing Agreement is available for free download on Legalgram and is suitable for official correspondence and legal records.\n\nA Letter to Notify the IRS of a Fraudulent Tax Filing Agreement is a formal legal document used to notify the Internal Revenue Service that your personal or financial information has been misused to file false or fraudulent tax returns. This agreement helps create a written record of your actions and supports the correction of your tax records. Using a draft IRS Fraudulent Tax Filing Agreement from Legalgram allows you to follow up on phone communications with the IRS, document your identity theft claim, and initiate corrective and preventive measures to protect your tax profile.",
+    whenToUse: [
+      "Someone has used your personal information to file false tax returns",
+      "You have discovered unauthorized tax activity in your name",
+      "You want to follow up a phone call or prior communication with the IRS",
+      "You want written confirmation that the IRS has been notified",
+      "You need formal documentation to correct fraudulent tax filings"
+    ],
+    faqs: [
+      {
+        q: "What is included in the sample letter?",
+        a: "The draft Letter to Notify the IRS of a Fraudulent Tax Filing Agreement includes personal identification details, a description of fraudulent activity, reference to prior IRS communications, and a clear request for corrective and preventive action. The terms in this agreement will automatically update based on the information you provide."
+      },
+      {
+        q: "Why should I download this agreement from Legalgram?",
+        a: "Downloading the IRS Fraudulent Tax Filing Agreement from Legalgram ensures your notice is clear, legally appropriate, and properly structured. It creates a paper trail, helps request corrections to fraudulent filings, and seeks preventive measures against further tax fraud."
+      },
+      {
+        q: "Can I use this letter for initial notice and follow-up?",
+        a: "Yes. This agreement is designed for both initial notice and formal follow-up to the IRS. It is suitable for documenting the issue and supporting any corrective process the IRS may require."
+      }
+    ],
+    keyProtections: [
+      "Notify the IRS of tax-related identity theft",
+      "Establish a paper trail for your records",
+      "Request corrections to fraudulent tax filings",
+      "Seek preventive measures against future tax fraud",
+      "Clear, professionally drafted and easy to customize"
+    ],
+    whatYouNeed: [
+      "Personal identification details (full legal name, SSN or Tax ID, contact information)",
+      "Description of the fraudulent activity or unauthorized filings",
+      "Reference to any prior IRS communications or case numbers",
+      "Supporting documents (copies of suspicious returns, correspondence, or identity theft reports)",
+      "Clear statement of requested corrective actions"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Tax and identity-theft procedures may vary. For complex cases or jurisdiction-specific guidance, consult a qualified tax professional or attorney."
+  },
+
+  "Identity Theft Complaint (Attorney General)": {
+    title: "Identity Theft Complaint (Attorney General)",
+    otherNames: ["Identity Theft Complaint Agreement", "ID Theft Complaint to Attorney General Agreement", "Attorney General Identity Theft Complaint Form"],
+    whatIs: "An Identity Theft Complaint to an Attorney General Agreement is a formal legal document used to report a company’s failure to safeguard sensitive personal, customer, or employee information. This draft agreement allows individuals to formally notify the Attorney General’s Office of data misuse, negligent recordkeeping, or identity theft caused by inadequate information protection practices.",
+    whenToUse: [
+      "You know of a company that is careless with confidential files",
+      "Sensitive customer or employee records are not adequately protected",
+      "Direct marketing lists are being misused or shared improperly",
+      "Someone’s identity has been stolen due to poor data security practices",
+      "You want regulatory intervention before further harm occurs"
+    ],
+    faqs: [
+      { q: "Why use an Identity Theft Complaint to an Attorney General?", a: "This complaint helps hold companies accountable for careless handling of personal data and can prompt regulatory review or enforcement." },
+      { q: "Can I file this complaint before identity theft occurs?", a: "Yes. You can report risky practices or data mishandling to help prevent future harm." },
+      { q: "Is this agreement legally binding?", a: "Filing a complaint creates a formal record and may prompt investigation; consult an attorney for enforcement and legal remedies." }
+    ],
+    keyProtections: [
+      "Clear statement of alleged data mishandling",
+      "Documentation of dates, communications, and evidence",
+      "Formal notice to regulatory authorities",
+      "Guidance for certified delivery and record-keeping"
+    ],
+    whatYouNeed: [
+      "Company details and nature of the data breach or mishandling",
+      "Copies of correspondence and supporting evidence",
+      "Contact information for the reporting party",
+      "Any prior complaints to the company and their responses"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is general guidance and not legal advice. Regulatory procedures and remedies vary by jurisdiction; consult a qualified attorney for complex matters."
+  },
+
+  "Identity Theft Complaint": {
+    title: "Identity Theft Complaint",
+    otherNames: ["ID Theft Complaint to the Better Business Bureau (BBB)", "Identity Theft BBB Complaint"],
+    whatIs: "An Identity Theft Complaint to the Better Business Bureau is a formal legal document used to report a company’s negligence in protecting customer or employee information that has resulted in, or may result in, identity theft. This draft identity theft complaint allows individuals to formally notify the BBB of unsafe data-handling practices and seek corrective action.",
+    whenToUse: [
+      "You discover a company mishandling sensitive records",
+      "Unsecured employee or customer files are at risk",
+      "You want to report misuse or improper sharing of marketing lists",
+      "You need to create a formal record for regulatory review"
+    ],
+    faqs: [
+      { q: "Why use a BBB complaint for identity theft?", a: "Filing a complaint with the BBB creates a formal record and may prompt the company to investigate and correct unsafe data-handling practices." },
+      { q: "Can I file this complaint before identity theft occurs?", a: "Yes. You can report risky practices to help prevent future identity theft incidents." },
+      { q: "Is this complaint legally binding?", a: "A BBB complaint is not a substitute for legal action, but it provides a documented record that can support regulatory or legal steps." }
+    ],
+    keyProtections: [
+      "Documented notice to the company and BBB",
+      "Clear summary of allegations and supporting evidence",
+      "Guidance on certified delivery and record retention"
+    ],
+    whatYouNeed: [
+      "Company name and contact details",
+      "Description of the unsafe practice or incident",
+      "Copies of supporting evidence and prior communications",
+      "Contact information for the reporting party"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For enforcement or legal remedies consult a qualified attorney."
+  },
+
+  "Joint Personal Financial Statement": {
+    title: "Joint Personal Financial Statement",
+    otherNames: [
+      "Joint Financial Statement",
+      "Divorce Financial Statement",
+      "Married Couple Financial Statement",
+      "Personal Financial Statement for Married Couples",
+      "Financial Worksheet for Divorce",
+      "Personal Financial Statement - Joint"
+    ],
+    whatIs: "A Joint Financial Statement is a comprehensive financial document that summarizes the combined financial assets, debts, income, and obligations of two individuals—typically spouses. This draft from Legalgram helps organize shared assets and liabilities, demonstrate creditworthiness for joint loans, prepare for divorce or estate planning, support financial and legal consultations, and maintain a clear financial snapshot.",
+    whenToUse: [
+      "You are married and applying for a joint loan or credit line",
+      "You are getting divorced and need a full financial inventory",
+      "You are planning your estate or investments",
+      "You are meeting with a lawyer or financial advisor",
+      "You need a combined financial disclosure for lenders or institutions"
+    ],
+    faqs: [
+      { q: "Why download a Joint Financial Statement from Legalgram?", a: "Professionally drafted financial format, easy to customize, suitable for banks and lawyers, printable in Word & PDF, and available as a free download." },
+      { q: "What should be included?", a: "Detailed asset lists, liabilities, income sources, monthly expenses, and signature blocks for both parties certifying accuracy." }
+    ],
+    keyProtections: [
+      "Accurate combined disclosure of assets and liabilities",
+      "Clear signature and certification blocks",
+      "Documentation guidance for lenders and advisors"
+    ],
+    whatYouNeed: [
+      "Full legal names and contact information for both parties",
+      "Account statements, loan documents, and valuations",
+      "Income documentation and proof of monthly expenses"
+    ],
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney or financial professional for jurisdiction-specific guidance."
+  },
+
+  "Personal Financial Statement": {
+    title: "Personal Financial Statement",
+    otherNames: [
+      "Statement of Assets and Liabilities",
+      "Personal Balance Sheet",
+      "Personal Financial Overview",
+      "Personal Wealth Statement",
+      "Financial Health Report"
+    ],
+    shortDescription: "Professional Personal Financial Statement template: assets, liabilities, income, expenses, and net worth.",
+    whatIs: "A Personal Financial Statement is a comprehensive financial document used to summarize your income, assets, debts, and net worth in a clear and organized format.\n\nThis draft Personal Financial Statement from Legalgram allows you to:\n✔ Track assets and liabilities\n✔ Demonstrate creditworthiness\n✔ Prepare for loans and investments\n✔ Support estate and financial planning\n✔ Maintain organized financial records\n\nUsing the best format Personal Financial Statement from Legalgram ensures accuracy, clarity, and professional presentation.",
+    whyDownload: [
+      "Professionally drafted financial format",
+      "Easy to customize and update",
+      "Suitable for banks, lenders, and advisors",
+      "Free download available",
+      "Trusted Legalgram document quality"
+    ],
+    whenToUse: [
+      "You’re applying for a loan or credit line",
+      "You’re buying property or starting a business",
+      "You’re planning your estate or finances",
+      "You want to organize assets and debts",
+      "You’re meeting with a financial advisor"
+    ],
+    faqs: [
+      { q: "What should I include?", a: "List all assets, liabilities, income sources, monthly expenses, and provide truthful supporting details and signature certification." },
+      { q: "Do I need to sign it?", a: "Yes. A signed certification attesting to the accuracy of the information is generally required by lenders." }
+    ],
+    keyProtections: [
+      "Complete disclosure of assets and debts",
+      "Clear certification and signature block",
+      "Useful for loan underwriting and financial planning"
+    ],
+    sample: {
+      description: "Each Personal Financial Statement from Legalgram updates automatically based on the details you provide. Fully customizable, printable in Word & PDF, and professionally structured.",
+      highlights: [
+        "Fully customizable",
+        "Printable Word & PDF format",
+        "Professional financial structure",
+        "Free download available"
+      ]
+    },
+    download: "Download your draft Personal Financial Statement instantly from Legalgram: Free Download Personal Financial Statement, best professional financial format — simple, secure, and easy to use.",
+    cta: "Download Personal Financial Statement Now",
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This template is informational and not a substitute for professional legal or financial advice. Consult a qualified advisor for complex situations."
+  },
+
+  "Letter to Cease and Desist Collection": {
+    title: "Letter to Cease and Desist Collection",
+    otherNames: ["Cease and Desist Collection Letter", "Debt Collection Cease Letter", "Stop Collection Letter", "Request to Stop Collection Activity Agreement"],
+    shortDescription: "Download the best format Request to Stop Collection Activity Agreement from Legalgram and formally notify a collection agency to immediately cease all collection calls, letters, and payment demands. Suitable for identity theft disputes and erroneous collection claims.",
+    whatIs: "A Request to Stop Collection Activity Agreement is a formal legal document used to instruct a collection agency to stop pursuing payment for debts that are disputed, incorrectly assigned, or the result of identity theft. This agreement provides written notice to the collection agency and creates an official paper trail of your objection. Using a draft Request to Cease Collection Activity Agreement from Legalgram can help put an end to repeated phone calls, collection notices, and harassment related to debts you do not owe.",
+    whenToUse: [
+      "Collection agencies are contacting you for debts you did not incur",
+      "You are a victim of identity theft",
+      "You are receiving collection letters or calls in error",
+      "You have already disputed or contested the charges",
+      "You previously requested cessation by phone and need written follow-up"
+    ],
+    faqs: [
+      { q: "Why use a Cease Collection Activity Agreement from Legalgram?", a: "The agreement lets you notify collection agencies of identity theft or billing errors, demand immediate cessation of collection efforts, protect yourself from harassment, and create a formal written record of your dispute." },
+      { q: "What should I include in the Request to Stop Collection Activity Agreement?", a: "Identification of disputed accounts, a clear statement of non-liability due to identity theft or error, a demand to cease all collection actions, and a request for written confirmation. Attach copies of supporting documentation where possible." },
+      { q: "Who should use this agreement?", a: "Identity theft victims, consumers facing incorrect debt collection, individuals disputing unauthorized charges, or anyone seeking to stop improper collection efforts." }
+    ],
+    keyBenefits: [
+      "Notify collection agencies of identity theft or billing errors",
+      "Demand immediate cessation of collection efforts",
+      "Protect yourself from further harassment",
+      "Create a formal written record of your dispute",
+      "Professionally drafted, easy to customize, free to download"
+    ],
+    whatYouNeed: [
+      "Your full legal name and contact information",
+      "Identification of disputed accounts (date, item/description, amount)",
+      "Copies of supporting evidence: police report, FTC identity-theft report, identity-theft affidavit, credit report excerpts, correspondence"
+    ],
+    sampleIncluded: true,
+    sampleNote: "The draft will automatically populate based on the information you provide and includes a sample template and checklist for delivery and record keeping.",
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific guidance."
+  },
+
+  "Report of Lost Passport": {
+    title: "Letter to Report a Lost or Stolen Passport Agreement",
+    otherNames: ["Letter to Report Lost Passport Agreement", "Letter to Report Stolen Passport Agreement", "Lost or Stolen Passport Agreement"],
+    whatIs: "Download the best format Letter to Report a Lost or Stolen Passport Agreement from Legalgram and formally notify authorities about your missing passport. This professionally drafted Lost or Stolen Passport Agreement is available for free download on Legalgram and is suitable for official records, follow-ups, and legal documentation.\n\nA Letter to Report a Lost or Stolen Passport Agreement is a formal written document used to notify relevant authorities—such as passport offices, embassies, or government departments—that your passport has been lost or stolen. This agreement helps create an official record of your report and supports the process of obtaining a replacement passport. Using a draft Lost or Stolen Passport Agreement from Legalgram can help you act quickly, reduce administrative delays, and protect yourself from potential misuse or identity theft. If your passport has been stolen, timely reporting is especially important to avoid legal or security complications.",
+    whenToUse: [
+      "You have lost your passport",
+      "You believe your passport has been stolen",
+      "You want written proof of reporting the loss or theft",
+      "You have already reported the issue to the passport office, embassy, or relevant authority and want to follow up formally"
+    ],
+    faqs: [
+      {
+        q: "What Is a Letter to Report a Lost or Stolen Passport Agreement?",
+        a: "A Letter to Report a Lost or Stolen Passport Agreement is a formal written document used to notify relevant authorities that your passport has been lost or stolen. It creates an official record and supports replacement and identity-protection steps."
+      },
+      {
+        q: "Why Use a Lost or Stolen Passport Agreement from Legalgram?",
+        a: "Losing a passport can be stressful and disruptive. A Legalgram template helps you act quickly, obtain official proof of reporting, protect against identity fraud, and follow up with authorities using a professionally drafted, easy-to-customize format."
+      },
+      {
+        q: "What Does the Sample Letter Include?",
+        a: "The draft is structured to include personal identification details, passport information (if available), date and circumstances of loss or theft, and a formal request for acknowledgment or further instructions. The terms in your agreement will automatically update based on the information you provide."
+      }
+    ],
+    keyProtections: [
+      "Creates an official record with passport authorities",
+      "Supports replacement passport procedures",
+      "Provides evidence for insurance or travel providers",
+      "Helps protect against identity theft and misuse",
+      "Professional, downloadable format"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact information",
+      "Passport number (if available) and issuing country",
+      "Date and circumstances of loss or theft",
+      "Police report or local incident reference (if applicable)",
+      "Any prior correspondence with embassy or passport office"
+    ],
+    sampleIncluded: true,
+    sampleNote: "This draft Letter to Report a Lost or Stolen Passport Agreement includes a template and checklist for submitting or following up with authorities; fields auto-populate from your inputs.",
+    estimatedTime: "5-10 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For specific passport replacement procedures, overseas consular steps, or jurisdictional rules, consult your local embassy, passport authority, or a qualified legal advisor."
+  },
+
+  "Letter to Report a Lost or Stolen Passport Agreement": {
+    title: "Letter to Report a Lost or Stolen Passport Agreement",
+    otherNames: ["Letter to Report Lost Passport Agreement", "Letter to Report Stolen Passport Agreement"],
+    whatIs: "Download the best format Letter to Report a Lost or Stolen Passport Agreement from Legalgram and formally notify authorities about your missing passport. This professionally drafted Lost or Stolen Passport Agreement is available for free download on Legalgram and is suitable for official records, follow-ups, and legal documentation.\n\nA Letter to Report a Lost or Stolen Passport Agreement is a formal written document used to notify relevant authorities—such as passport offices, embassies, or government departments—that your passport has been lost or stolen. This agreement helps create an official record of your report and supports the process of obtaining a replacement passport. Using a draft Lost or Stolen Passport Agreement from Legalgram can help you act quickly, reduce administrative delays, and protect yourself from potential misuse or identity theft. If your passport has been stolen, timely reporting is especially important to avoid legal or security complications.",
+    whenToUse: [
+      "You have lost your passport",
+      "You believe your passport has been stolen",
+      "You want written proof of reporting the loss or theft",
+      "You have already reported the issue to the passport office, embassy, or relevant authority and want to follow up formally"
+    ],
+    faqs: [
+      {
+        q: "What is a Letter to Report a Lost or Stolen Passport Agreement?",
+        a: "A Letter to Report a Lost or Stolen Passport Agreement is a formal written document used to notify relevant authorities that your passport has been lost or stolen. It creates an official record and supports replacement and identity-protection steps."
+      },
+      {
+        q: "Why use the Legalgram template?",
+        a: "Losing a passport can be stressful. The Legalgram template helps you act quickly, obtain official proof of reporting, protect against identity fraud, and follow up with authorities using a professionally drafted, easy-to-customize format."
+      },
+      {
+        q: "What does the sample letter include?",
+        a: "The draft is structured to include personal identification details, passport information (if available), the date and circumstances of loss or theft, and a formal request for acknowledgment or further instructions. The terms will automatically update based on the information you provide."
+      }
+    ],
+    keyProtections: [
+      "Creates an official record with passport authorities",
+      "Supports replacement passport procedures",
+      "Provides evidence for insurance or travel providers",
+      "Helps protect against identity theft and misuse",
+      "Professional, downloadable format"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact information",
+      "Passport number (if available) and issuing country",
+      "Date and circumstances of loss or theft",
+      "Police report or local incident reference (if applicable)",
+      "Any prior correspondence with embassy or passport office"
+    ],
+    sampleIncluded: true,
+    sampleNote: "This draft Letter to Report a Lost or Stolen Passport Agreement includes a template and checklist for submitting or following up with authorities; fields auto-populate from your inputs.",
+    estimatedTime: "5-10 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. For specific passport replacement procedures, overseas consular steps, or jurisdictional rules, consult your local embassy, passport authority, or a qualified legal advisor."
+  },
+
+  "FTC Security Breach Complaint": {
+    title: "FTC Security Breach Complaint",
+    otherNames: ["Federal Trade Commission Security Breach Complaint", "Letter to Report Security Breach to FTC"],
+    whatIs: "An FTC Security Breach Complaint is a formal legal document used to notify the Federal Trade Commission of data breaches, unauthorized disclosures, or mishandling of personal information. This draft security breach reporting complaint from Legalgram helps you file an official complaint with the FTC, document unauthorized data exposure, protect your identity and financial records, create a formal legal trail, and support future legal action if necessary.",
+    whenToUse: [
+      "Your personal information was shared without consent",
+      "You suspect a data breach or hacking incident",
+      "You want to follow up on unauthorized disclosures",
+      "You want to formally report security violations",
+      "You need legal documentation for protection"
+    ],
+    faqs: [
+      { q: "Why file this complaint?", a: "Filing an FTC Security Breach Complaint creates an official record, helps investigators track breach patterns, and can support recovery and legal remedies." },
+      { q: "What should I include?", a: "Include details of the breach, affected data types, dates, evidence, and any steps you've taken to mitigate harm." },
+      { q: "Can this be used in legal actions?", a: "Documentation may support future legal claims or regulatory actions, but consult an attorney for legal strategy." }
+    ],
+    keyProtections: [
+      "Creates an official report with the FTC",
+      "Documents unauthorized data exposure",
+      "Supports identity and financial recovery",
+      "Preserves evidence for legal or regulatory action"
+    ],
+    whatYouNeed: [
+      "Description of the breach or unauthorized disclosure",
+      "Dates and locations of the incident",
+      "Types of personal information affected",
+      "Any evidence (screenshots, notices, correspondence)",
+      "Your contact information and affected account details"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This FTC Security Breach Complaint information is general guidance and not legal advice. Data breach reporting requirements and remedies vary by jurisdiction; consider consulting a qualified attorney or data privacy specialist for complex incidents."
+  },
+
+  "Hardship Letter": {
+    title: "Hardship Letter",
+    otherNames: ["Hardship Request Letter", "Financial Hardship Letter"],
+    whatIs: "A Hardship Letter is a formal written document used to notify landlords, creditors, or loan providers of financial hardship and request modified payment terms or temporary relief. This draft hardship assistance letter from Legalgram helps you explain financial difficulties clearly, request loan modifications or payment relief, document income loss or emergencies, prevent foreclosure or default, and maintain formal communication records.",
+    whenToUse: [
+      "You are experiencing financial hardship",
+      "You lost your job or income was reduced",
+      "You have major medical or emergency expenses",
+      "You want payment relief or loan modification",
+      "You wish to avoid default or foreclosure"
+    ],
+    faqs: [
+      { q: "What should I include in a hardship letter?", a: "Include a clear explanation of circumstances, dates, income information, requested relief, and supporting documentation where available." },
+      { q: "Who should I send it to?", a: "Send it to your lender, landlord, or creditor's designated loss mitigation or customer service contact per their instructions." },
+      { q: "Is this legally binding?", a: "A hardship letter alone does not change contract terms unless a creditor agrees and documents a modification in writing." }
+    ],
+    keyProtections: [
+      "Creates a formal request record",
+      "Documents income loss and hardship circumstances",
+      "Supports loan modification or relief requests",
+      "Helps prevent default or foreclosure when accepted"
+    ],
+    whatYouNeed: [
+      "Description of hardship and dates",
+      "Current income and expenses",
+      "Supporting documentation (termination letter, medical bills)",
+      "Contact details for creditor or lessor",
+      "Requested relief terms"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This Hardship Letter information is general guidance and not legal advice. Modifications to loans or leases require creditor agreement; consult legal counsel for specific cases."
+  },
+
+  "HORSE LEASE AGREEMENT": {
+    title: "Horse Lease Agreement",
+    otherNames: ["Horse Lease", "Equine Lease Agreement"],
+    whatIs: "A Horse Lease Agreement is a legal contract where a horse owner (lessor) allows another person (lessee) to use a horse in exchange for agreed payments, typically covering boarding, feed, veterinary care, and maintenance. Using a properly drafted Horse Lease Agreement from Legalgram ensures both parties understand their rights and obligations.",
+    whenToUse: [
+      "You own a horse and want to lease it to someone else",
+      "You are renting a horse and want legal protection",
+      "You currently lease a horse but don’t have a written agreement",
+      "You want to clearly define costs, time period, and responsibilities"
+    ],
+    faqs: [
+      { q: "What does it mean to lease or half-lease a horse?", a: "Leasing a horse means renting it from the owner under agreed conditions. A half-lease agreement means two people share riding time and care costs such as feed, boarding, and vet bills." },
+      { q: "Is leasing a horse a good idea?", a: "Leasing is often more affordable than buying a horse outright and is suitable for families, students, or short-term riding needs." },
+      { q: "Is a Horse Lease Agreement legally binding?", a: "Yes. Once signed by both parties, a Horse Lease Agreement is legally enforceable under contract law." }
+    ],
+    keyProtections: [
+      "Clear payment and duration terms",
+      "Defined care and veterinary responsibilities",
+      "Protection of ownership rights",
+      "Usage restrictions and dispute resolution"
+    ],
+    whatYouNeed: [
+      "Horse information and description",
+      "Names and contact details of lessor and lessee",
+      "Payment structure and schedule",
+      "Lease start and end dates",
+      "Insurance and maintenance provisions"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This Horse Lease Agreement information is general guidance and not legal advice. Lease requirements and obligations vary by jurisdiction and the nature of the horse. Consult a qualified attorney for complex arrangements."
+  },
+
+  "ID Theft Affidavit": {
+    title: "ID Theft Affidavit",
+    otherNames: ["Identity Theft Affidavit", "Affidavit of Stolen Identity", "Identity Fraud Affidavit"],
+    whatIs: "An ID Theft Affidavit is a sworn legal document used to formally declare that your personal identity has been stolen and misused without your consent. This draft Identity Theft Affidavit from Legalgram is signed before a notary public and helps stop unauthorized charges, prevent new fraudulent accounts, support investigations by creditors, preserve your legal rights, and strengthen your case against identity fraud.",
+    whenToUse: [
+      "Your identity has been stolen or misused",
+      "Fraudulent accounts were opened in your name",
+      "Unauthorized charges appeared on your accounts",
+      "You want to formally assist in fraud investigations",
+      "You need written legal proof of identity theft"
+    ],
+    faqs: [
+      { q: "Where can I download an ID Theft Affidavit for free?", a: "You can download the ID Theft Affidavit on Legalgram in the best professional format, completely free. Our platform allows you to access the draft instantly, customize your legal information, and download in Word or PDF format ready for notarization." },
+      { q: "Do I need a lawyer to prepare an ID Theft Affidavit?", a: "In most cases, using a professionally drafted affidavit format from Legalgram is sufficient. Legal consultation may be helpful for complex fraud situations." },
+      { q: "Is notarization required?", a: "Yes. Every ID Theft Affidavit must be signed in the presence of a notary public to become legally valid. Witnesses are generally not required." },
+      { q: "What does it usually cost to prepare this affidavit?", a: "Traditional legal services may charge hundreds of dollars. With Legalgram, you get a professionally drafted format available for free download." }
+    ],
+    keyProtections: [
+      "Sworn declaration under penalty of perjury",
+      "Clear account and contact details for creditors",
+      "Guidance on notarization and certified delivery",
+      "Supporting evidence checklist to strengthen investigations"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact details",
+      "Details of fraudulent accounts and unauthorized charges",
+      "Copies of supporting documentation (police reports, credit reports, correspondence)",
+      "Identification for notarization"
+    ],
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This ID Theft Affidavit content is general guidance and not legal advice. Notarization and evidentiary requirements vary by jurisdiction; consult a qualified attorney for complex cases."
+  },
+
+  "Equipment Lease Agreement": {
+    title: "Equipment Lease Agreement",
+    otherNames: ["Equipment Rental Agreement", "Equipment Lease Contract", "Equipment Rental Contract", "Equipment Hire Agreement", "Equipment Rental Lease"],
+    whatIs: "An Equipment Lease Agreement is a legal contract that sets out the rental terms between the equipment owner (lessor) and the equipment user (lessee). This agreement clearly defines rental payments, lease duration, responsibilities for repairs, liability and risk, and ownership rights. Using a properly drafted Equipment Lease Agreement on Legalgram helps avoid disputes and ensures legal protection.",
+    whenToUse: [
+      "You own equipment and want to lease it to others",
+      "You are renting machinery or tools for business use",
+      "You want written legal protection for rental terms",
+      "You need clarity on payments and responsibilities"
+    ],
+    faqs: [
+      { q: "Is an Equipment Lease Agreement legally binding?", a: "Yes. Once signed by all parties, an Equipment Lease Agreement becomes a legally enforceable contract under applicable law." },
+      { q: "Why is an Equipment Lease Agreement important?", a: "A written Equipment Lease Agreement clarifies rights and obligations, prevents payment disputes, sets lease duration, and protects equipment ownership." },
+      { q: "Who owns the equipment during the lease?", a: "The lessor retains ownership throughout the lease term. The lessee receives only usage rights as outlined in the agreement." }
+    ],
+    keyProtections: [
+      "Clear payment and duration terms",
+      "Defined maintenance and liability responsibilities",
+      "Protection of ownership rights",
+      "Dispute resolution provisions"
+    ],
+    whatYouNeed: [
+      "Description of the equipment",
+      "Names and contact details of lessor and lessee",
+      "Rental amount and payment schedule",
+      "Lease start and end dates",
+      "Insurance and maintenance provisions"
+    ],
+    estimatedTime: "10-20 minutes",
+    legalDisclaimer: "This Equipment Lease Agreement information is general guidance and not legal advice. Lease requirements and obligations vary by jurisdiction and the nature of the equipment. Consult a qualified attorney for complex or high-value leases."
+  },
+
+  "Confirmation Letter to Follow Up on a Phone Call": {
+    title: "Confirmation Letter to Follow Up on a Phone Call",
+    otherNames: [
+      "Confirmation Letter After a Phone Call",
+      "Phone Call Follow-Up Confirmation Letter",
+      "Telephone Confirmation Letter"
+    ],
+    whatIs: "A Confirmation Letter to Follow Up on a Phone Call is a formal legal document used to confirm and record the details of a telephone conversation. This draft confirmation letter serves as written evidence that a phone call occurred and accurately documents the matters discussed. If you are a victim of identity theft and need to maintain proper records of communications with a company or government authority, using the confirmation letter on Legalgram helps you stay organized and legally protected. This letter may also be used to confirm phone discussions related to business transactions, professional dealings, or other legal matters. Using the best format confirmation letter from Legalgram ensures your verbal communications are formally documented, which is especially important in legal and compliance-related situations.",
+    whenToUse: [
+      "You are a victim of identity theft and want to confirm a phone call with a company or government agency",
+      "You are requesting formal confirmation of a phone conversation for business purposes",
+      "You want to document important verbal communications for legal clarity"
+    ],
+    faqs: [
+      { q: "Why use this letter?", a: "A professionally drafted Confirmation Letter to Follow Up on a Phone Call helps create a clear written record, protect your legal rights, support follow-ups, and avoid misunderstandings in business or legal matters." },
+      { q: "What makes the Legalgram version useful?", a: "With Legalgram, you can download confirmation letter templates that are easy to edit and legally structured." },
+      { q: "When should I send it?", a: "Use it when you need formal confirmation of a phone discussion or when verbal communications need to be documented for legal clarity." }
+    ],
+    keyProtections: [
+      "Creates a clear written record of important phone conversations",
+      "Protects your legal rights through documented confirmation",
+      "Supports follow-ups with companies or government agencies",
+      "Avoids misunderstandings in business or legal matters",
+      "Saves time by using a ready-to-use draft confirmation letter"
+    ],
+    whatYouNeed: [
+      "Details of the phone conversation",
+      "Names of the company or agency involved",
+      "Any supporting records or reference numbers",
+      "Contact information for follow-up",
+      "Your signature and date"
+    ],
+    estimatedTime: "10-15 minutes",
+    legalDisclaimer: "This Confirmation Letter to Follow Up on a Phone Call information is general guidance and not legal advice. Use this document to create a written record of a telephone conversation, and consult a qualified professional if you need advice about a specific legal or compliance matter."
+  },
+
   "default": {
     title: "Legal Document",
     whatIs: "This is a legal document that formalizes an agreement or declaration between parties. Legal documents provide clarity, establish rights and obligations, and serve as evidence in case of disputes. They are designed to protect all parties involved by clearly documenting terms and expectations.",
@@ -7384,14 +8343,32 @@ export const documentContent: Record<string, DocumentContent> = {
     "Limousine Service Contract": {
       title: "Limousine Service Contract",
       otherNames: ["Chauffeur Service Agreement", "Transportation Service Contract"],
-      whatIs: "A Limousine Service Contract defines the terms between a transportation provider and a client for chauffeur-driven services. It includes pickup and drop-off details, fees, gratuity, cancellation policies, passenger limits, and liability limitations.",
+      whatIs: "A Limousine Service Contract is a legal written agreement between a limousine service provider and a client that sets out the terms for chauffeur-driven transportation. It confirms booking details, vehicle and passenger expectations, payment and deposit arrangements, overtime and waiting time rules, cancellation and refund policies, insurance and liability limits, and responsibilities of the chauffeur and the client.",
       whenToUse: ["Hiring a limo or chauffeur for events, airport transfers, or special occasions"],
       faqs: [
-        { q: "What if a flight is delayed?", a: "Include an agreed grace period and procedures for re-booking or additional charges for extended waits." }
+        {
+          q: "What if a flight is delayed?",
+          a: "Include an agreed grace period and procedures for re-booking or additional charges for extended waits. Specify how waiting time is calculated and any hourly or flat fees after the grace period."
+        }
       ],
-      keyProtections: ["Defined service times and locations","Cancellation and refund terms","Passenger limits and conduct rules"],
-      whatYouNeed: ["Pickup and drop-off addresses","Event schedule and times","Payment and deposit details"],
-      estimatedTime: "5-10 minutes"
+      keyProtections: [
+        "Confirmed service times and locations",
+        "Deposit and payment terms",
+        "Overtime, waiting time, and extra fee rules",
+        "Cancellation and rescheduling procedures",
+        "Passenger limits and acceptable conduct",
+        "Liability limitations and insurance coverage"
+      ],
+      whatYouNeed: [
+        "Client and provider names and contact details",
+        "Event or travel date and full schedule",
+        "Pickup and drop-off addresses and timings",
+        "Vehicle requirements and passenger count",
+        "Payment method, deposit amount, and refund policy",
+        "Any special instructions (stops, luggage, child seats)"
+      ],
+      estimatedTime: "10-15 minutes",
+      legalDisclaimer: "This content is informational and not legal advice. For specific legal guidance, consult a licensed attorney."
     },
 
     "Liquidation Agreement": {
@@ -8476,6 +9453,52 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "10-20 minutes"
   },
   "Musical Performance Contract": {
+
+  "Lottery Pool Agreement": {
+    title: "Lottery Pool Agreement",
+    otherNames: ["Lottery Pool Agreement", "Lottery Pool Contract"],
+    shortDescription: "A professionally drafted Lottery Pool Agreement to document contributions, management, custody of tickets, and distribution of winnings among participants.",
+    whatIs: "A Lottery Pool Agreement is a legally binding contract that allows a group of individuals to clearly define how they will jointly purchase lottery tickets and distribute any winnings among the participants. This Lottery Pool Agreement draft ensures transparency, fairness, and legal protection for all members of the lottery pool.\n\nWithout a written Lottery Pool Contract, disputes may arise regarding ownership of the ticket or entitlement to winnings. In many situations, the person who physically holds the ticket could attempt to claim the entire prize. A properly written Lottery Pool Agreement prevents such conflicts by clearly stating that all participants share ownership and are entitled to their agreed portion of any winnings.\n\nThrough a well-structured Lottery Pool Agreement format, participants can establish important terms such as contributions, management of the lottery pool, custody of tickets, and distribution of prize money. This ensures that everyone involved understands their rights and obligations before purchasing any lottery tickets together.\n\nOn Legalgram, users can access the best format Lottery Pool Agreement prepared in clear legal language, making it easy to document a lottery pool arrangement in a professional and legally sound manner.",
+    whenToUse: [
+      "You plan to form a group to purchase lottery tickets together",
+      "You want written evidence of each participant's contribution and ownership",
+      "You want to appoint a manager to purchase and safekeep tickets",
+      "You want a clear procedure for distributing winnings and handling withdrawals"
+    ],
+    faqs: [
+      { q: "Why use a Lottery Pool Agreement?", a: "Provides written evidence of the agreement, reduces disputes, and documents the allocation of winnings and responsibilities of the manager." },
+      { q: "Is a Lottery Pool Agreement enforceable?", a: "Most jurisdictions recognize properly executed agreements regarding shared lottery tickets; consult local law for specifics." }
+    ],
+    keyProtections: [
+      "Documents contributions and ownership interests",
+      "Specifies manager duties and custody of tickets",
+      "Establishes distribution rules for any winnings",
+      "Provides withdrawal and dispute procedures"
+    ],
+    whatYouNeed: [
+      "Names and contributions of all participants",
+      "Designation of a pool manager and contact information",
+      "Description of tickets purchased (entries, drawing date, contest)",
+      "Signature lines for all co-owners and witnesses"
+    ],
+    importance: "A Lottery Pool Contract provides written evidence of the agreement between participants, reduces disputes over ownership or entitlement to winnings, and strengthens enforceability when properly executed. It documents contributions, appoints a manager, and specifies safekeeping and distribution procedures.",
+    download:
+      "Download the Lottery Pool Agreement from Legalgram in a professionally structured format. The template is ready-to-edit, printable as PDF or Word, and available for free download. Using the Legalgram template helps ensure essential terms are included and makes it simple to execute the agreement.",
+    sample: {
+      description:
+        "The terms in your Lottery Pool Agreement draft will update based on the information you provide. Once completed, the agreement serves as a clear record of how the lottery pool will operate and how winnings will be shared.",
+      highlights: [
+        "This document has been customized over 5.7K times",
+        "Legally binding and enforceable when properly executed",
+        "Option to consult a legal professional before finalizing the agreement",
+        "Sign the Lottery Pool Agreement online or print and sign manually"
+      ]
+    },
+    sampleIncluded: true,
+    sampleNote: "This Lottery Pool Agreement draft updates automatically based on the information you provide. Fully customizable; printable Word & PDF formats available for download from Legalgram.",
+    estimatedTime: "5-15 minutes",
+    legalDisclaimer: "This content is informational and not legal advice. Check local lottery regulations and consult an attorney for complex arrangements."
+  },
     title: "Musical Performance Contract",
     otherNames: ["Musical Performance Agreement", "Performance Contract", "Artist Performance Contract", "Band Performance Agreement"],
     whatIs: "A Musical Performance Contract is a legal agreement between a musician, band, performer, or entertainment provider and a client, venue, or organizer for live music services at an event. It outlines performance scope, payment, equipment, and other event logistics.",
@@ -8740,46 +9763,50 @@ export const documentContent: Record<string, DocumentContent> = {
     title: "Staffing Agency Contract",
     otherNames: [
       "Staffing Agreement",
-      "Recruitment Agency Contract",
       "Employee Placement Agreement",
       "Temporary Staffing Agreement",
       "Recruitment Agreement",
       "Staffing Services Agreement"
     ],
-    whatIs: "A Staffing Agency Contract is a legal agreement between a staffing agency and a client company under which the agency agrees to provide qualified personnel for temporary, permanent, or contract roles. The contract sets recruitment services, placement fees, replacement guarantees, confidentiality, and compliance obligations to protect both the agency and the client.",
+    whatIs: "A Staffing Agency Contract is a legal agreement between a staffing agency and a client company where the agency provides temporary, contract, or permanent personnel. The contract typically covers the scope of services, placement or hourly fees and payment terms, replacement guarantees, confidentiality and data protection, background check and compliance obligations, termination rights, and liability and indemnity provisions.",
     whenToUse: [
       "You need temporary or contract workers",
       "You require permanent employee placement services",
       "You engage an agency for executive or technical recruitment",
-      "You need seasonal workforce support",
-      "You want defined replacement and guarantee terms",
-      "You need compliance with labor and employment laws"
+      "You need seasonal or event-based workforce support"
     ],
     faqs: [
-      { q: "What does a Staffing Agency Contract include?", a: "Typical provisions include party details, scope of recruitment services, types and number of staff, fees and payment schedule, placement and replacement guarantees, confidentiality, non-solicitation, independent contractor status, compliance with labor laws, insurance and indemnity, termination rights, and dispute resolution." },
-      { q: "How are agency fees calculated?", a: "Fees are commonly a percentage of the hired employee’s first-year salary for permanent placements, or an hourly/markup rate for temporary staffing. The contract should clearly state fee structure, payment timing, and any refund or replacement terms." },
-      { q: "Can the contract restrict direct hiring?", a: "Yes. Non-solicitation or no-poach clauses can prevent clients from directly hiring agency placements for a defined period, and replacement guarantees can provide remedies if a hire leaves early." },
-      { q: "What compliance obligations exist?", a: "The contract should require the agency to comply with applicable labor, tax, and immigration laws, and to verify candidate qualifications and background checks as agreed." }
+      {
+        q: "What fees does the agency charge?",
+        a: "Fees commonly include a flat placement fee for permanent hires, a percentage of first-year salary for executive placements, or hourly markups for temporary staff. The contract should specify payment timing and any refundable amounts for failed placements."
+      },
+      {
+        q: "Who is the employer for payroll and taxes?",
+        a: "For temporary and contract workers, the staffing agency is usually the employer responsible for payroll taxes and benefits; for permanent hires, the client becomes the employer on acceptance of the placement."
+      },
+      {
+        q: "Does the agency offer replacements?",
+        a: "Many agencies include a replacement or refund policy within a set timeframe if the placed worker is unsuitable. The contract should define the conditions and timeframes for replacements."
+      }
     ],
-    keyProtectations: [
+    keyProtections: [
       "Clear fee and payment terms",
       "Replacement and refund policies",
-      "Confidentiality of client information",
-      "Non-solicitation protections",
-      "Compliance with labor and employment laws",
-      "Defined termination and notice rights"
+      "Confidentiality and data protection",
+      "Compliance with employment and tax laws",
+      "Liability, indemnity and insurance",
+      "Termination and notice periods"
     ],
     whatYouNeed: [
       "Client and agency legal names and contact details",
-      "Description of roles, qualifications, and number of staff",
-      "Fee structure and payment schedule",
+      "Description of roles, qualifications and number of staff required",
+      "Fee structure, deposit and payment schedule",
       "Replacement guarantee terms and timeframes",
-      "Confidentiality and data handling requirements",
-      "Non-solicitation or direct hire restrictions",
-      "Governing law and dispute resolution provisions"
+      "Any required background checks or certifications",
+      "Insurance requirements and notice addresses"
     ],
-    estimatedTime: "10-20 minutes",
-    legalDisclaimer: "This content is informational and not legal advice. Consult a qualified attorney for jurisdiction-specific or complex recruitment arrangements."
+    estimatedTime: "15-25 minutes",
+    legalDisclaimer: "This content is informational and does not constitute legal advice. Consult a qualified attorney for jurisdiction-specific guidance."
   }
 };
 
@@ -8795,6 +9822,18 @@ export function getDocumentContent(title: string): DocumentContent {
 
   const normalizeTitle = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
   const normalizedTitle = normalizeTitle(title);
+
+  // Limousine / Limo mappings - ensure the limousine entry is returned for common variants
+  if (
+    normalizedTitle.includes("limousine") ||
+    normalizedTitle.includes("limo") ||
+    normalizedTitle.includes("chauffeur") ||
+    normalizedTitle.includes("limousine service")
+  ) {
+    if (documentContent["Limousine Service Contract"]) {
+      return documentContent["Limousine Service Contract"];
+    }
+  }
 
   // Staffing / Recruitment mappings
   if (

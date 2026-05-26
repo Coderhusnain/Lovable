@@ -50,6 +50,7 @@
     "countries-states-cities": "^1.0.6",
     "country-state-city": "^3.2.1",
     "date-fns": "^3.6.0",
+    "docx": "^9.6.1",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^12.8.2",
     "groq-sdk": "^0.37.0",
