@@ -88,7 +88,6 @@ const LetterToReportMailTheftInfo = lazy(() => import("@/components/LetterToRepo
 const LetterToReportMailTheftForm = lazy(() => import("@/components/LetterToReportMailTheftForm"));
 const LetterToReportUnauthorizedSSNInfo = lazy(() => import("@/components/LetterToReportUnauthorizedSSNInfo"));
 const LetterToReportUnauthorizedSSNForm = lazy(() => import("@/components/LetterToReportUnauthorizedSSNForm"));
-const RequestToCancelUnauthorizedInternetServiceAgreementInfo = lazy(() => import("@/components/RequestToCancelUnauthorizedInternetServiceAgreementInfo"));
 const LoanModificationLetterInfo = lazy(() => import("@/components/LoanModificationLetterInfo"));
 const LoanModificationLetterForm = lazy(() => import("@/components/LoanModificationLetterForm"));
 const LotteryPoolAgreementInfo = lazy(() => import("@/components/LotteryPoolAgreementInfo"));
@@ -566,7 +565,6 @@ export const propertyMattersDocs = [
   { id: "letter-to-report-identity-theft-fbi", title: "Letter to Report an Identity Theft to the FBI", description: "Formal letter template to report identity theft to the FBI with checklist and delivery guidance.", icon: FileText, category: "Property Protection", component: LetterToReportIdentityTheftToFBIInfo },
   { id: "letter-to-report-identity-theft-secret-service", title: "Letter to Report an Identity Theft to the Secret Service", description: "Formal letter template to report identity theft to the U.S. Secret Service with checklist and delivery guidance.", icon: FileText, category: "Property Protection", component: LetterToReportIdentityTheftToSecretServiceInfo },
   { id: "letter-to-report-mail-theft", title: "Letter to Report Mail Theft", description: "Report mail theft to postal inspectors with a formal letter and checklist.", icon: FileText, category: "Property Protection", component: LetterToReportMailTheftInfo },
-  { id: "request-cancel-unauthorized-internet-service", title: "Request to Cancel Unauthorized Internet Service", description: "Request termination of an internet account opened fraudulently, with checklist and delivery guidance.", icon: Phone, category: "Property Protection", component: RequestToCancelUnauthorizedInternetServiceAgreementInfo },
   { id: "hardship-letter", title: "Hardship Letter", description: "Request financial hardship assistance and a temporary loan payment modification.", icon: FileText, category: "Property Protection", component: HardshipLetterForm },
   { id: "joint-personal-financial-statement", title: "Joint Personal Financial Statement", description: "Create a joint personal financial statement for loan or credit applications.", icon: FileText, category: "Property Protection", component: JointPersonalFinancialStatementForm },
   { id: "personal-financial-statement", title: "Personal Financial Statement", description: "Create a personal financial statement for loan or credit applications.", icon: FileText, category: "Property Protection", component: JointPersonalFinancialStatementForm },
