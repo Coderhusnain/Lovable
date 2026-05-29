@@ -104,6 +104,8 @@ const RequestToReturnOrDestroyCreditReportForm = lazy(() => import("@/components
 const ResponseToPaymentRequestForm = lazy(() => import("@/components/ResponseToPaymentRequestForm"));
 const TalentManagementContractForm = lazy(() => import("@/components/TalentManagementContractForm"));
 const WebDevelopmentAgreementForm = lazy(() => import("@/components/WebDevelopmentAgreementForm"));
+const RequestToCloseUnauthorizedAccountForm = lazy(() => import("@/components/RequestToCloseUnauthorizedAccountForm"));
+const SecurityFreezeRequestLetterForm = lazy(() => import("@/components/SecurityFreezeRequestLetterForm"));
 const BrokerAgreementForm = lazy(() => import("@/components/BrokerAgreementForm"));
 const BusinessAgreementForm = lazy(() => import("@/components/BusinessAgreementForm"));
 const BusinessPlanForm = lazy(() => import("@/components/BusinessPlanForm"));
@@ -578,6 +580,8 @@ export const propertyMattersDocs = [
   { id: "purchase-agreement-for-personal-property", title: "Purchase Agreement for Personal Property", description: "Create a purchase agreement for the sale of personal property.", icon: FileText, category: "Property Sales", component: PurchaseAgreementForPersonalPropertyForm },
   { id: "talent-management-contract", title: "Talent Management Contract", description: "Create a Talent Management Contract to formalize representation and commission arrangements between an artist and an agency.", icon: FileText, category: "Property Contracts", component: TalentManagementContractForm },
   { id: "web-development-agreement", title: "Web Development Agreement", description: "Create a Web Development Agreement for website design, development, hosting, and payment terms.", icon: FileText, category: "Property Contracts", component: WebDevelopmentAgreementForm },
+  { id: "request-to-close-unauthorized-account", title: "Request to Close an Unauthorized Account", description: "Generate a signed letter requesting closure of an account opened fraudulently in your name.", icon: FileText, category: "Property Protection", component: RequestToCloseUnauthorizedAccountForm },
+  { id: "security-freeze-request-letter", title: "Security Freeze Request Letter", description: "Generate security freeze request letters for Experian, TransUnion, and Equifax.", icon: FileText, category: "Property Protection", component: SecurityFreezeRequestLetterForm },
   { id: "security-deposit-return", title: "Security Deposit Return Letter", description: "Create a professional letter for returning security deposits", icon: FileText, category: "Notices & Letters", component: SecurityDepositReturnLetter },
   { id: "lease-termination-letter", title: "Lease Termination Letter", description: "Create a professional letter to notify tenants of lease termination", icon: FileText, category: "Notices & Letters", component: LeaseTerminationLetter },
   

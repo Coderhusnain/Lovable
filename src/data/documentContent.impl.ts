@@ -414,6 +414,76 @@ export const documentContent: Record<string, DocumentContent> = {
     estimatedTime: "5-15 minutes"
   },
 
+  "Request to Close an Unauthorized Account": {
+    title: "Request to Close an Unauthorized Account",
+    otherNames: ["Unauthorized Account Closure Request", "Request to Close Fraudulent Account"],
+    whatIs: "A formal letter requesting that a company close an account that was opened fraudulently in your name. This document helps victims of identity theft obtain closure of unauthorized accounts and remove related obligations from their records.",
+    whenToUse: [
+      "An account (financial, service, utility, or other) was opened in your name without authorization",
+      "You have evidence of identity theft and want the account closed",
+      "You need written confirmation that the account was terminated and charges removed"
+    ],
+    keyProtections: [
+      "Creates a written record requesting account closure",
+      "Requests reversal or removal of obligations tied to the fraudulent account",
+      "Supports identity theft disputes and follow-up with creditors or providers"
+    ],
+    whatYouNeed: [
+      "Name and contact information of the requesting party",
+      "Company or service provider name and account reference (if available)",
+      "Copies of supporting documents (police report, FTC identity theft report, ID affidavits)",
+      "A signed original letter for delivery"
+    ],
+    howToUse: [
+      "Fill in your contact information and a brief description of the identity theft incident",
+      "Attach copies (not originals) of supporting documentation",
+      "Send the original signed letter to the company by a traceable delivery method",
+      "Retain copies of the letter and all enclosures and follow up until the account is closed"
+    ],
+    sampleFeatures: [
+      "Printable PDF letter format",
+      "Clear instructions for supporting documents and delivery",
+      "Bulleted final compliance checklist to guide next steps"
+    ],
+    faqs: [],
+    estimatedTime: "5-10 minutes"
+  },
+
+  "Security Freeze Request Letter": {
+    title: "Security Freeze Request Letter",
+    otherNames: ["Security Freeze Request", "Credit Freeze Letter", "Security Freeze Letter"],
+    whatIs: "A Security Freeze Request Letter is a formal written request asking a consumer credit reporting agency to place a security freeze on your credit file. A security freeze prevents new credit accounts from being opened in your name without your consent and is an important identity theft protection measure.",
+    whenToUse: [
+      "You suspect or have been a victim of identity theft",
+      "You want to prevent new accounts from being opened in your name",
+      "You want to add an additional layer of protection to your credit file"
+    ],
+    keyProtections: [
+      "Stops new accounts from being opened without verification",
+      "Creates a documented request to the credit bureau",
+      "Supports identity theft remediation and follow-up"
+    ],
+    sampleFeatures: [
+      "Pre-filled letter format for Experian, TransUnion, and Equifax",
+      "Editable fields for name, SSN, DOB, and proof documents",
+      "Printable PDF with signature lines"
+    ],
+    whatYouNeed: [
+      "Full legal name and contact information",
+      "Social Security number and date of birth (if requested)",
+      "Proof of identity (government ID) and proof of residence (utility bill)",
+      "A signed original letter for delivery"
+    ],
+    howToUse: [
+      "Fill in your identifying information and documents",
+      "Attach copies (not originals) of supporting documentation",
+      "Send each bureau's letter by certified mail or traceable delivery",
+      "Keep copies and follow up for written confirmation"
+    ],
+    faqs: [],
+    estimatedTime: "5-10 minutes"
+  },
+
   "Response to Payment Request": {
     title: "Response to Payment Request",
     otherNames: ["Letter to Debt Collector Request", "Creditor Payment Response Request"],
