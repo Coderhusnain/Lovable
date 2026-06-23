@@ -1,0 +1,40 @@
+/**
+ * Navbar trigger for Gram AI. No React Context, no shared
+ * state - just dispatches a custom browser event that
+ * ChatWidget.tsx listens for. This avoids any provider/
+ * re-render issues entirely.
+ */
+import { motion } from "framer-motion";
+import { Scale, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { OPEN_GRAM_AI_EVENT } from "@/components/chat/ChatWidget";
+
+interface NavbarChatButtonProps {
+  scrolled?: boolean;
+}
+
+export default function NavbarChatButton({ scrolled }: NavbarChatButtonProps) {
+  const handleClick = () => {
+    window.dispatchEvent(new CustomEvent(OPEN_GRAM_AI_EVENT));
+  };
+
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      onClick={handleClick}
+      className={cn(
+        "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+        "border border-bright-orange-500/40",
+        "bg-transparent text-bright-orange-500/90 hover:text-bright-orange-500 hover:bg-bright-orange-500/10"
+      )}
+      aria-label="Open Gram AI chat"
+    >
+      <Scale size={15} />
+      Gram AI
+      <Sparkles size={12} className="text-bright-orange-400" />
+    </motion.button>
+  );
+}

@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { ChatWidgetProvider } from "@/components/chat/ChatWidgetContext";
+import { useChatWidget } from "@/components/chat/ChatWidgetContext";
+
 
 // Lazy load Core Pages
 const LandingPage = lazy(() => import("./pages/LandingPage"));
@@ -194,7 +197,7 @@ import WarehouseLeaseInfo from "./pages/WarehouseLeaseInfo";
 import RoofingContractInfo from "./pages/RoofingContractInfo";
 import SecurityDepositeReturnLetterInfo from "./pages/SecurityDepositeReturnLetterInfo";
 import PersonalPropertyLeaseAgreementInfo from "./pages/PersonalPropertyLeaseAgreementInfo";
-
+import ChatWidget from "@/components/chat/ChatWidget";
 import PersonalFinancialStatementInfo from "./pages/PersonalFinancialStatementInfo";
 
 
@@ -228,314 +231,318 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                {/* Core Pages */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/home" element={<LandingPage />} />
-                <Route path="/documents" element={<Documents />} />
-                <Route path="/document-categories" element={<DocumentCategories />} />
-                <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
-                <Route path="/community" element={<CommunityFeed />} /> {/* Community Tab */}
-                
-                <Route path="/documents/:id" element={<Documents />} />
-                <Route path="/make-documents" element={<Documents />} />
-                <Route path="/make-documents/:id" element={<Documents />} />
-                
-                {/* Auth & User */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/user-dashboard" element={<UserDashboard />} />
-                <Route path="/sso-callback" element={<SSOCallback />} />
-                
-                {/* Admin */}
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
-                
-                {/* Services */}
-                <Route path="/contact-lawyer" element={<ContactLawyer />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/start-a-business" element={<StartABusiness />} />
-                <Route path="/ask-legal-advice" element={<AskLegalAdvice />} />
-                <Route path="/ask-lawyer" element={<AskALawyer />} />
+          <ChatWidgetProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* Core Pages */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/home" element={<LandingPage />} />
+                  <Route path="/documents" element={<Documents />} />
+                  <Route path="/document-categories" element={<DocumentCategories />} />
+                  <Route path="/most-freq-documents" element={<MostFreqDocuments />} />
+                  <Route path="/community" element={<CommunityFeed />} /> {/* Community Tab */}
 
-                {/* Educational / Static */}
-                <Route path="/whats-an-llc" element={<WhatsAnLLC />} />
-                <Route path="/whats-a-corporation" element={<WhatsACorporation />} />
-                <Route path="/whats-an-s-corp" element={<WhatsAnSCorp />} />
+                  <Route path="/documents/:id" element={<Documents />} />
+                  <Route path="/make-documents" element={<Documents />} />
+                  <Route path="/make-documents/:id" element={<Documents />} />
 
-                {/* --- EXISTING DOCUMENT ROUTES --- */}
-                <Route path="/affidavit-of-marriage-info" element={<AffidavitOfMarriageInfo />} />
-                <Route path="/affidavit-of-residence-info" element={<AffidavitOfResidenceInfo />} />
-                <Route path="/affidavit-of-survivorship-info" element={<AffidavitOfSurvivorshipInfo />} />
-                <Route path="/cell-phone-inquiry-letter-info" element={<CellPhoneInquiryLetterInfo />} />
-                <Route path="/llc-operating-agreement-info" element={<LLCOperatingAgreementInfo />} />
-                <Route path="/special-power-of-attorney-info" element={<SpecialPowerOfAttorneyInfo />} />
-                <Route path="/general-power-of-attorney-info" element={<GeneralPowerOfAttorneyInfo />} />
-                <Route path="/child-care-authorization-info" element={<ChildCareAuthorizationInfo />} />
-                <Route path="/divorce-settlement-agreement-info" element={<DivorceSettlementAgreementInfo />} />
-                <Route path="/general-contract-info" element={<GeneralContractInfo />} />
-                <Route path="/lease-agreement-info" element={<OfferToLeaseInfo />} />
-                <Route path="/lease-renewal-info" element={<LeaseRenewalInfo />} />
-                <Route path="/lease-termination-info" element={<LeaseTerminationInfo />} />
-                <Route path="/condominium-lease-info" element={<CondominiumLeaseInfo />} />
-                <Route path="/rent-increase-info" element={<RentIncreaseInfo />} />
-                <Route path="/sublease-info" element={<SubleaseInfo />} />
-                <Route path="/lease-amendment-info" element={<LeaseAmendmentInfo />} />
-                <Route path="/commercial-lease-info" element={<CommercialLeaseInfo />} />
-                <Route path="/triple-net-lease-info" element={<TripleNetLeaseInfo />} />
-                <Route path="/corporate-bylaws-info" element={<CorporateBylawsInfo />} />
-                <Route path="/corporate-bylaws-form" element={<Documents />} />
-                <Route path="/nonprofit-bylaws-info" element={<NonProfitInfo />} />
-                <Route path="/nonprofit-bylaws-form" element={<Documents />} />
-                <Route path="/partnership-agreement-info" element={<PartnershipInfo />} />
-                <Route path="/partnership-agreement-form" element={<Documents />} />
-                <Route path="/strategic-alliance-agreement-info" element={<StrategicAllianceInfo />} />
-                <Route path="/strategic-alliance-agreement-form" element={<Documents />} />
-                <Route path="/physician-services-info" element={<PhysicianServicesInfo />} />
-                <Route path="/physician-services-form" element={<Documents />} />
-                <Route path="/retailer-agreement-info" element={<RetailerInfo />} />
-                <Route path="/retailer-agreement-form" element={<Documents />} />
-                <Route path="/settlement-and-release-agreement-info" element={<SettlementAndReleaseInfo />} />
-                <Route path="/settlement-and-release-agreement-form" element={<Documents />} />
-                <Route path="/severance-agreement-info" element={<SeveranceInfo />} />
-                <Route path="/severance-agreement-form" element={<Documents />} />
-                <Route path="/trucking-contract-info" element={<TruckingContractInfo />} />
-                <Route path="/trucking-agreement-form" element={<Documents />} />
-                <Route path="/vendor-agreement-info" element={<VendorAgreementInfo />} />
-                <Route path="/vendor-agreement-form" element={<Documents />} />
-                <Route path="/warranty-deed-info" element={<WarrantyDeedInfo />} />
-                <Route path="/warranty-deed-form" element={<Documents />} />
-                <Route path="/work-from-home-info" element={<WorkFromHomeInfo />} />
-                <Route path="/work-from-home-form" element={<Documents />} />
-                <Route path="/buy-sell-agreement-info" element={<BuySellAgreementInfo />} />
-                <Route path="/buy-sell-agreement-form" element={<Documents />} />
-                <Route path="/business-agreement-info" element={<BuySellAgreementInfo />} />
-                <Route path="/mutual-nda-info" element={<MutualNDAInfo />} />
-                <Route path="/mutual-nda-form" element={<Documents />} />
-                <Route path="/nda-info" element={<MutualNDAInfo />} />
-                <Route path="/nda-form" element={<Documents />} />
-                <Route path="/business-plan-info" element={<BusinessPlanInfo />} />
-                <Route path="/business-plan-form" element={<Documents />} />
-                <Route path="/confidential-information-info" element={<ConfidentialInformationInfo />} />
-                <Route path="/confidential-information-form" element={<Documents />} />
-                <Route path="/non-circumvention-info" element={<NonCircumventionInfo />} />
-                <Route path="/non-circumvention-form" element={<Documents />} />
-                <Route path="/copyright-permission-info" element={<CopyrightPermissionInfo />} />
-                <Route path="/copyright-permission-form" element={<Documents />} />
-                <Route path="/license-agreement-info" element={<LicenseAgreementInfo />} />
-                <Route path="/demand-for-delivery-info" element={<DemandForDeliveryInfo />} />
-                <Route path="/demand-for-delivery-form" element={<Documents />} />
-                <Route path="/cell-phone-inquiry-letter" element={<CellPhoneInquiryLetterInfo/>} />
-                <Route path="/cell-phone-inquiry-letter-form" element={<Documents />} />
-                <Route path="/membership-cancellation-letter-info" element={<MembershipCancellationLetterInfo/>} />
-                <Route path="/membership-cancellation-letter-form" element={<Documents />} />         
-                <Route path="/complaint-letter-info" element={<ComplaintLetterInfo/>} />
-                <Route path="/complaint-letter-info-form" element={<Documents />} />
-                <Route path="/note-payable-info" element={<NotePayableInfo/>} />
-                <Route path="/note-payable-form" element={<Documents />} />
-                <Route path="/parenting-plan-info" element={<ParentingPlanInfo/>} />
-                <Route path="/parenting-plan-form" element={<Documents />} />
-                <Route path="/police-report-worksheet-info" element={<PoliceReportInfo/>} />
-                <Route path="/police-report-worksheet-form" element={<Documents />} />
-                <Route path="/lottery-pool-contract-info" element={<LotteryPoolContractInfo/>} />
-                <Route path="/lottery-pool-contract-form" element={<Documents />} />
-                <Route path="/personal-financial-statement-info" element={<PersonalFinancialStatementInfo/>} />
-                <Route path="/personal-financial-statement-form" element={<Documents />} />
-                <Route path="/personal-property-lease-agreement-info" element={<PersonalPropertyLeaseAgreementInfo />} />
-                <Route path="/personal-property-lease-agreement-form" element={<Documents />} />
-                <Route path="/request-bankcredit-reference-info" element={<BankCreditReferenceInfo/>} />
-                <Route path="/request-bankcredit-reference-form" element={<Documents />} />
-                <Route path="/request-remove-personal-information-info" element={<RemovePersonalInfoRequestInfo/>} />
-                <Route path="/request-remove-personal-information-form" element={<Documents />} />
-                <Route path="/security-agreement-info-info" element={<SecurityAgreementInfo/>} />
-                <Route path="/security-agreement-info-form" element={<Documents />} />
-                <Route path="/subordinated-loan-agreement-info" element={<SubordinatedLoanAgreementInfo/>} />
-                <Route path="/subordinated-loan-agreement-form" element={<Documents />} />
-                <Route path="/demand-for-money-owed-info" element={<DemandForMoneyOwedInfo/>} />
-                <Route path="/demand-for-money-owed-form" element={<Documents />} />
-                <Route path="/remove-from-marketing-list-info" element={<RemoveFromMarketingListInfo/>} />
-                <Route path="/remove-from-marketing-list-form" element={<Documents />} />
-                <Route path="/statement-of-claim-against-estate-info" element={<StatementOfClaimAgainstEstateInfo/>} />
-                <Route path="/statement-of-claim-against-estate-form" element={<Documents />} />
-                <Route path="/warranty-repair-request-info" element={<WarrantyRepairRequestInfo/>} />
-                <Route path="/warranty-repair-request-form" element={<Documents />} />
-                <Route path="/license-agreement-form" element={<Documents />} />
-                <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
-                <Route path="/manufacturing-license-form" element={<Documents />} />
-                <Route path="/due-on-demand-promissory-note" element={< DueOnDemandPromissoryNoteInfo/>} />
-                <Route path="/due-on-demand-promissory-note-form" element={< Documents/>} />
-                <Route path="/music-license-info" element={<MusicLicenseInfo />} />
-                <Route path="/music-license-form" element={<Documents />} />
-                <Route path="/patent-assignment-info" element={<PatentAssignmentInfo />} />
-                <Route path="/patent-assignment-form" element={<Documents />} />
-                <Route path="/royalty-agreement-info" element={<RoyaltyAgreementInfo />} />
-                <Route path="/royalty-agreement-form" element={<Documents />} />
-                <Route path="/living-will-info" element={<LivingWillInfo />} />
-                <Route path="/sale-agreement-info" element={<SaleAgreementInfo />} />
-                <Route path="/independent-contractor-info" element={<IndependentContractorInfo />} />
-                <Route path="/loan-agreement-info" element={<LoanAgreementInfo />} />
-                <Route path="/balloon-payment-promissory-note-info" element={<BalloonPaymentPromissoryNoteInfo />} />
-                <Route path="/gift-affidavit-info" element={<GiftAffidavitInfo />} />
-                <Route path="/financial-support-affidavit-info" element={<FinancialSupportAffidavitInfo />} />
-                <Route path="/services-contract-info" element={<ServicesContractInfo />} />
-                <Route path="/billboard-lease-info" element={<BillboardLeaseInfo />} />
-                <Route path="/billboard-lease-form" element={<Documents />} />
-                <Route path="/change-of-beneficiary-form" element={<Documents/>}/>
-                <Route path="/change-of-beneficiary-form-info" element={<ChangeOfBeneficiaryInfo/>}/>
-                <Route path="/change-of-beneficiary-info" element={<ChangeOfBeneficiaryInfo/>}/>
-                <Route path="/debt-collection-worksheet-form" element={<Documents/>}/>
-                <Route path="/debt-collection-worksheet-info" element={<DebtCollectionWorksheetInfo/>}/>
-                <Route path="/direct-mail-request-form" element={<Documents/>}/>
-                <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
-                <Route path="/iou-form" element={<Documents/>}/>
-                <Route path="/iou-info" element={<IOUInfo/>}/>
-                <Route path="/promissory-note-due-on-specific-date-form" element={<Documents/>}/>
-                <Route path="/promissory-note-due-on-specific-date-info" element={<PromissoryNoteDueOnSpecificDateInfo/>}/>
-                <Route path="/promissory-note-form" element={<Documents/>}/>
-                <Route path="/promissory-note-info" element={<PromissoryNoteInfo/>}/>
-                <Route path="/request-credit-reference-form" element={<Documents/>}/>
-                <Route path="/request-credit-reference-info" element={<RequestCreditReferenceInfo/>}/>
-                <Route path="/complaint-letter-to-company-form" element={<Documents/>}/>
-                <Route path="/complaint-letter-to-company-info" element={<ComplaintLetterToCompanyInfo/>}/>
-                <Route path="/installment-promissory-note-form" element={<Documents/>}/>
-                <Route path="/installment-promissory-note-info" element={<InstallmentPromissoryNoteInfo/>}/>
-                <Route path="/secured-promissory-note-form" element={<Documents/>}/>
-                <Route path="/secured-promissory-note-info" element={<SecuredPromissoryNoteInfo/>}/>
-                <Route path="/complaint-demand-refund-form" element={<Documents/>}/>
-                <Route path="/complaint-demand-refund-info" element={<FormalComplaintRefundInfo/>}/>
-                <Route path="/reservation-confirmation-form" element={<Documents/>}/>
-                <Route path="/reservation-confirmation-info" element={<ReservationConfirmationInfo/>}/>
-                <Route path="/debt-settlement-info" element={<DebtSettlementInfo/>}/>
-                <Route path="/debt-settlement-agreement-info" element={<DebtSettlementInfo/>}/>
-                <Route path="/debt-settlement-agreement-form" element={<Documents/>}/>
-                <Route path="/office-space-lease-info" element={<OfficeSpaceLeaseInfo />} />
-                <Route path="/office-space-lease-form" element={<Documents />} />
-                <Route path="/storage-space-lease-info" element={<StorageSpaceLeaseInfo />} />
-                <Route path="/storage-space-lease-form" element={<Documents />} />
-                <Route path="/restaurant-lease-info" element={<RestaurantLeaseInfo />} />
-                <Route path="/restaurant-lease-form" element={<Documents />} />
-                <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
-                <Route path="/roofing-contract-agreement-info" element={<RoofingContractInfo />} />
-                <Route path="/warehouse-lease-form" element={<Documents />} />
-                <Route path="/gas-lease-info" element={<GasLeaseInfo />} />
-                <Route path="/gas-lease-form" element={<Documents />} />
-                <Route path="/home-improvement-contract-info" element={<HomeImprovementInfo />} />
-                <Route path="/home-improvement-contract-form" element={<Documents />} />
-                <Route path="/home-remodelling-agreement-info" element={<HomeRemodellingInfo />} />
-                <Route path="/home-remodelling-agreement-form" element={<Documents />} />
-                <Route path="/interior-design-agreement-info" element={<InteriorDesignInfo />} />
-                <Route path="/interior-design-agreement-form" element={<Documents />} />
-                <Route path="/janitorial-services-agreement-info" element={<JanitorialInfo />} />
-                <Route path="/janitorial-services-agreement-form" element={<Documents />} />
-                <Route path="/security-deposit-return-letter" element={<Documents />} />
-                <Route path="/security-deposit-return-letter-info" element={<SecurityDepositeReturnLetterInfo />} />
-                <Route path="/security-deposite-return-letter-info" element={<SecurityDepositeReturnLetterInfo />} />
-                <Route path="/lease-termination-letter" element={<Documents />} />
-                <Route path="/late-rent-payment-agreement" element={<Documents />} />
-                <Route path="/non-disturbance-agreement" element={<Documents />} />
-                <Route path="/accounting-contract-info" element={<AccountingContractInfo />} />
-                <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
-                <Route path="/co-marketing-agreement-info" element={<CoMarketingAgreementInfo />} />
-                <Route path="/collaboration-agreement-info" element={<CollaborationAgreementInfo />} />
-                <Route path="/consignment-agreement-info" element={<ConsignmentAgreementInfo />} />
-                <Route path="/merchandising-agreement-info" element={<MerchandisingInfo />} />
-                <Route path="/merchandise-license-info" element={<MerchandisingInfo />} />
-                <Route path="/merchandising-agreement-form" element={<Documents />} />
-                <Route path="/moving-contract-info" element={<MovingContractInfo />} />
-                <Route path="/moving-agreement-info" element={<MovingContractInfo />} />
-                <Route path="/moving-contract-form" element={<Documents />} />
-                <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
-                <Route path="/fee-agreement-info" element={<FeeAgreementContractInfo />} />
+                  {/* Auth & User */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/user-dashboard" element={<UserDashboard />} />
+                  <Route path="/sso-callback" element={<SSOCallback />} />
+
+                  {/* Admin */}
+                  <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin-login" element={<AdminLogin />} />
+
+                  {/* Services */}
+                  <Route path="/contact-lawyer" element={<ContactLawyer />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/start-a-business" element={<StartABusiness />} />
+                  <Route path="/ask-legal-advice" element={<AskLegalAdvice />} />
+                  <Route path="/ask-lawyer" element={<AskALawyer />} />
+
+                  {/* Educational / Static */}
+                  <Route path="/whats-an-llc" element={<WhatsAnLLC />} />
+                  <Route path="/whats-a-corporation" element={<WhatsACorporation />} />
+                  <Route path="/whats-an-s-corp" element={<WhatsAnSCorp />} />
+
+                  {/* --- EXISTING DOCUMENT ROUTES --- */}
+                  <Route path="/affidavit-of-marriage-info" element={<AffidavitOfMarriageInfo />} />
+                  <Route path="/affidavit-of-residence-info" element={<AffidavitOfResidenceInfo />} />
+                  <Route path="/affidavit-of-survivorship-info" element={<AffidavitOfSurvivorshipInfo />} />
+                  <Route path="/cell-phone-inquiry-letter-info" element={<CellPhoneInquiryLetterInfo />} />
+                  <Route path="/llc-operating-agreement-info" element={<LLCOperatingAgreementInfo />} />
+                  <Route path="/special-power-of-attorney-info" element={<SpecialPowerOfAttorneyInfo />} />
+                  <Route path="/general-power-of-attorney-info" element={<GeneralPowerOfAttorneyInfo />} />
+                  <Route path="/child-care-authorization-info" element={<ChildCareAuthorizationInfo />} />
+                  <Route path="/divorce-settlement-agreement-info" element={<DivorceSettlementAgreementInfo />} />
+                  <Route path="/general-contract-info" element={<GeneralContractInfo />} />
+                  <Route path="/lease-agreement-info" element={<OfferToLeaseInfo />} />
+                  <Route path="/lease-renewal-info" element={<LeaseRenewalInfo />} />
+                  <Route path="/lease-termination-info" element={<LeaseTerminationInfo />} />
+                  <Route path="/condominium-lease-info" element={<CondominiumLeaseInfo />} />
+                  <Route path="/rent-increase-info" element={<RentIncreaseInfo />} />
+                  <Route path="/sublease-info" element={<SubleaseInfo />} />
+                  <Route path="/lease-amendment-info" element={<LeaseAmendmentInfo />} />
+                  <Route path="/commercial-lease-info" element={<CommercialLeaseInfo />} />
+                  <Route path="/triple-net-lease-info" element={<TripleNetLeaseInfo />} />
+                  <Route path="/corporate-bylaws-info" element={<CorporateBylawsInfo />} />
+                  <Route path="/corporate-bylaws-form" element={<Documents />} />
+                  <Route path="/nonprofit-bylaws-info" element={<NonProfitInfo />} />
+                  <Route path="/nonprofit-bylaws-form" element={<Documents />} />
+                  <Route path="/partnership-agreement-info" element={<PartnershipInfo />} />
+                  <Route path="/partnership-agreement-form" element={<Documents />} />
+                  <Route path="/strategic-alliance-agreement-info" element={<StrategicAllianceInfo />} />
+                  <Route path="/strategic-alliance-agreement-form" element={<Documents />} />
+                  <Route path="/physician-services-info" element={<PhysicianServicesInfo />} />
+                  <Route path="/physician-services-form" element={<Documents />} />
+                  <Route path="/retailer-agreement-info" element={<RetailerInfo />} />
+                  <Route path="/retailer-agreement-form" element={<Documents />} />
+                  <Route path="/settlement-and-release-agreement-info" element={<SettlementAndReleaseInfo />} />
+                  <Route path="/settlement-and-release-agreement-form" element={<Documents />} />
+                  <Route path="/severance-agreement-info" element={<SeveranceInfo />} />
+                  <Route path="/severance-agreement-form" element={<Documents />} />
+                  <Route path="/trucking-contract-info" element={<TruckingContractInfo />} />
+                  <Route path="/trucking-agreement-form" element={<Documents />} />
+                  <Route path="/vendor-agreement-info" element={<VendorAgreementInfo />} />
+                  <Route path="/vendor-agreement-form" element={<Documents />} />
+                  <Route path="/warranty-deed-info" element={<WarrantyDeedInfo />} />
+                  <Route path="/warranty-deed-form" element={<Documents />} />
+                  <Route path="/work-from-home-info" element={<WorkFromHomeInfo />} />
+                  <Route path="/work-from-home-form" element={<Documents />} />
+                  <Route path="/buy-sell-agreement-info" element={<BuySellAgreementInfo />} />
+                  <Route path="/buy-sell-agreement-form" element={<Documents />} />
+                  <Route path="/business-agreement-info" element={<BuySellAgreementInfo />} />
+                  <Route path="/mutual-nda-info" element={<MutualNDAInfo />} />
+                  <Route path="/mutual-nda-form" element={<Documents />} />
+                  <Route path="/nda-info" element={<MutualNDAInfo />} />
+                  <Route path="/nda-form" element={<Documents />} />
+                  <Route path="/business-plan-info" element={<BusinessPlanInfo />} />
+                  <Route path="/business-plan-form" element={<Documents />} />
+                  <Route path="/confidential-information-info" element={<ConfidentialInformationInfo />} />
+                  <Route path="/confidential-information-form" element={<Documents />} />
+                  <Route path="/non-circumvention-info" element={<NonCircumventionInfo />} />
+                  <Route path="/non-circumvention-form" element={<Documents />} />
+                  <Route path="/copyright-permission-info" element={<CopyrightPermissionInfo />} />
+                  <Route path="/copyright-permission-form" element={<Documents />} />
+                  <Route path="/license-agreement-info" element={<LicenseAgreementInfo />} />
+                  <Route path="/demand-for-delivery-info" element={<DemandForDeliveryInfo />} />
+                  <Route path="/demand-for-delivery-form" element={<Documents />} />
+                  <Route path="/cell-phone-inquiry-letter" element={<CellPhoneInquiryLetterInfo/>} />
+                  <Route path="/cell-phone-inquiry-letter-form" element={<Documents />} />
+                  <Route path="/membership-cancellation-letter-info" element={<MembershipCancellationLetterInfo/>} />
+                  <Route path="/membership-cancellation-letter-form" element={<Documents />} />
+                  <Route path="/complaint-letter-info" element={<ComplaintLetterInfo/>} />
+                  <Route path="/complaint-letter-info-form" element={<Documents />} />
+                  <Route path="/note-payable-info" element={<NotePayableInfo/>} />
+                  <Route path="/note-payable-form" element={<Documents />} />
+                  <Route path="/parenting-plan-info" element={<ParentingPlanInfo/>} />
+                  <Route path="/parenting-plan-form" element={<Documents />} />
+                  <Route path="/police-report-worksheet-info" element={<PoliceReportInfo/>} />
+                  <Route path="/police-report-worksheet-form" element={<Documents />} />
+                  <Route path="/lottery-pool-contract-info" element={<LotteryPoolContractInfo/>} />
+                  <Route path="/lottery-pool-contract-form" element={<Documents />} />
+                  <Route path="/personal-financial-statement-info" element={<PersonalFinancialStatementInfo/>} />
+                  <Route path="/personal-financial-statement-form" element={<Documents />} />
+                  <Route path="/personal-property-lease-agreement-info" element={<PersonalPropertyLeaseAgreementInfo />} />
+                  <Route path="/personal-property-lease-agreement-form" element={<Documents />} />
+                  <Route path="/request-bankcredit-reference-info" element={<BankCreditReferenceInfo/>} />
+                  <Route path="/request-bankcredit-reference-form" element={<Documents />} />
+                  <Route path="/request-remove-personal-information-info" element={<RemovePersonalInfoRequestInfo/>} />
+                  <Route path="/request-remove-personal-information-form" element={<Documents />} />
+                  <Route path="/security-agreement-info-info" element={<SecurityAgreementInfo/>} />
+                  <Route path="/security-agreement-info-form" element={<Documents />} />
+                  <Route path="/subordinated-loan-agreement-info" element={<SubordinatedLoanAgreementInfo/>} />
+                  <Route path="/subordinated-loan-agreement-form" element={<Documents />} />
+                  <Route path="/demand-for-money-owed-info" element={<DemandForMoneyOwedInfo/>} />
+                  <Route path="/demand-for-money-owed-form" element={<Documents />} />
+                  <Route path="/remove-from-marketing-list-info" element={<RemoveFromMarketingListInfo/>} />
+                  <Route path="/remove-from-marketing-list-form" element={<Documents />} />
+                  <Route path="/statement-of-claim-against-estate-info" element={<StatementOfClaimAgainstEstateInfo/>} />
+                  <Route path="/statement-of-claim-against-estate-form" element={<Documents />} />
+                  <Route path="/warranty-repair-request-info" element={<WarrantyRepairRequestInfo/>} />
+                  <Route path="/warranty-repair-request-form" element={<Documents />} />
+                  <Route path="/license-agreement-form" element={<Documents />} />
+                  <Route path="/manufacturing-license-info" element={<ManufacturingLicenseInfo />} />
+                  <Route path="/manufacturing-license-form" element={<Documents />} />
+                  <Route path="/due-on-demand-promissory-note" element={< DueOnDemandPromissoryNoteInfo/>} />
+                  <Route path="/due-on-demand-promissory-note-form" element={< Documents/>} />
+                  <Route path="/music-license-info" element={<MusicLicenseInfo />} />
+                  <Route path="/music-license-form" element={<Documents />} />
+                  <Route path="/patent-assignment-info" element={<PatentAssignmentInfo />} />
+                  <Route path="/patent-assignment-form" element={<Documents />} />
+                  <Route path="/royalty-agreement-info" element={<RoyaltyAgreementInfo />} />
+                  <Route path="/royalty-agreement-form" element={<Documents />} />
+                  <Route path="/living-will-info" element={<LivingWillInfo />} />
+                  <Route path="/sale-agreement-info" element={<SaleAgreementInfo />} />
+                  <Route path="/independent-contractor-info" element={<IndependentContractorInfo />} />
+                  <Route path="/loan-agreement-info" element={<LoanAgreementInfo />} />
+                  <Route path="/balloon-payment-promissory-note-info" element={<BalloonPaymentPromissoryNoteInfo />} />
+                  <Route path="/gift-affidavit-info" element={<GiftAffidavitInfo />} />
+                  <Route path="/financial-support-affidavit-info" element={<FinancialSupportAffidavitInfo />} />
+                  <Route path="/services-contract-info" element={<ServicesContractInfo />} />
+                  <Route path="/billboard-lease-info" element={<BillboardLeaseInfo />} />
+                  <Route path="/billboard-lease-form" element={<Documents />} />
+                  <Route path="/change-of-beneficiary-form" element={<Documents/>}/>
+                  <Route path="/change-of-beneficiary-form-info" element={<ChangeOfBeneficiaryInfo/>}/>
+                  <Route path="/change-of-beneficiary-info" element={<ChangeOfBeneficiaryInfo/>}/>
+                  <Route path="/debt-collection-worksheet-form" element={<Documents/>}/>
+                  <Route path="/debt-collection-worksheet-info" element={<DebtCollectionWorksheetInfo/>}/>
+                  <Route path="/direct-mail-request-form" element={<Documents/>}/>
+                  <Route path="/direct-mail-request-info" element={<DirectMailAdvertisingInfo/>}/>
+                  <Route path="/iou-form" element={<Documents/>}/>
+                  <Route path="/iou-info" element={<IOUInfo/>}/>
+                  <Route path="/promissory-note-due-on-specific-date-form" element={<Documents/>}/>
+                  <Route path="/promissory-note-due-on-specific-date-info" element={<PromissoryNoteDueOnSpecificDateInfo/>}/>
+                  <Route path="/promissory-note-form" element={<Documents/>}/>
+                  <Route path="/promissory-note-info" element={<PromissoryNoteInfo/>}/>
+                  <Route path="/request-credit-reference-form" element={<Documents/>}/>
+                  <Route path="/request-credit-reference-info" element={<RequestCreditReferenceInfo/>}/>
+                  <Route path="/complaint-letter-to-company-form" element={<Documents/>}/>
+                  <Route path="/complaint-letter-to-company-info" element={<ComplaintLetterToCompanyInfo/>}/>
+                  <Route path="/installment-promissory-note-form" element={<Documents/>}/>
+                  <Route path="/installment-promissory-note-info" element={<InstallmentPromissoryNoteInfo/>}/>
+                  <Route path="/secured-promissory-note-form" element={<Documents/>}/>
+                  <Route path="/secured-promissory-note-info" element={<SecuredPromissoryNoteInfo/>}/>
+                  <Route path="/complaint-demand-refund-form" element={<Documents/>}/>
+                  <Route path="/complaint-demand-refund-info" element={<FormalComplaintRefundInfo/>}/>
+                  <Route path="/reservation-confirmation-form" element={<Documents/>}/>
+                  <Route path="/reservation-confirmation-info" element={<ReservationConfirmationInfo/>}/>
+                  <Route path="/debt-settlement-info" element={<DebtSettlementInfo/>}/>
+                  <Route path="/debt-settlement-agreement-info" element={<DebtSettlementInfo/>}/>
+                  <Route path="/debt-settlement-agreement-form" element={<Documents/>}/>
+                  <Route path="/office-space-lease-info" element={<OfficeSpaceLeaseInfo />} />
+                  <Route path="/office-space-lease-form" element={<Documents />} />
+                  <Route path="/storage-space-lease-info" element={<StorageSpaceLeaseInfo />} />
+                  <Route path="/storage-space-lease-form" element={<Documents />} />
+                  <Route path="/restaurant-lease-info" element={<RestaurantLeaseInfo />} />
+                  <Route path="/restaurant-lease-form" element={<Documents />} />
+                  <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
+                  <Route path="/roofing-contract-agreement-info" element={<RoofingContractInfo />} />
+                  <Route path="/warehouse-lease-form" element={<Documents />} />
+                  <Route path="/gas-lease-info" element={<GasLeaseInfo />} />
+                  <Route path="/gas-lease-form" element={<Documents />} />
+                  <Route path="/home-improvement-contract-info" element={<HomeImprovementInfo />} />
+                  <Route path="/home-improvement-contract-form" element={<Documents />} />
+                  <Route path="/home-remodelling-agreement-info" element={<HomeRemodellingInfo />} />
+                  <Route path="/home-remodelling-agreement-form" element={<Documents />} />
+                  <Route path="/interior-design-agreement-info" element={<InteriorDesignInfo />} />
+                  <Route path="/interior-design-agreement-form" element={<Documents />} />
+                  <Route path="/janitorial-services-agreement-info" element={<JanitorialInfo />} />
+                  <Route path="/janitorial-services-agreement-form" element={<Documents />} />
+                  <Route path="/security-deposit-return-letter" element={<Documents />} />
+                  <Route path="/security-deposit-return-letter-info" element={<SecurityDepositeReturnLetterInfo />} />
+                  <Route path="/security-deposite-return-letter-info" element={<SecurityDepositeReturnLetterInfo />} />
+                  <Route path="/lease-termination-letter" element={<Documents />} />
+                  <Route path="/late-rent-payment-agreement" element={<Documents />} />
+                  <Route path="/non-disturbance-agreement" element={<Documents />} />
+                  <Route path="/accounting-contract-info" element={<AccountingContractInfo />} />
+                  <Route path="/business-sale-agreement-info" element={<BusinessSaleAgreementInfo />} />
+                  <Route path="/co-marketing-agreement-info" element={<CoMarketingAgreementInfo />} />
+                  <Route path="/collaboration-agreement-info" element={<CollaborationAgreementInfo />} />
+                  <Route path="/consignment-agreement-info" element={<ConsignmentAgreementInfo />} />
+                  <Route path="/merchandising-agreement-info" element={<MerchandisingInfo />} />
+                  <Route path="/merchandise-license-info" element={<MerchandisingInfo />} />
+                  <Route path="/merchandising-agreement-form" element={<Documents />} />
+                  <Route path="/moving-contract-info" element={<MovingContractInfo />} />
+                  <Route path="/moving-agreement-info" element={<MovingContractInfo />} />
+                  <Route path="/moving-contract-form" element={<Documents />} />
+                  <Route path="/clinical-trial-agreement-info" element={<ClinicalTrialAgreementInfo />} />
+                  <Route path="/fee-agreement-info" element={<FeeAgreementContractInfo />} />
 
 
-                {/* --- FIXED & ENABLED ROUTES --- */}
-                {/* <Route path="/security-agreement-info" element={<SecurityAgreementInfo />} /> */}
-                <Route path="/security-agreement-form" element={<Documents />} />
-                <Route path="/mediation-agreement-info" element={<MediationAgreementInfo />} />
-                <Route path="/mediation-agreement-form" element={<Documents />} />
-                <Route path="/mutual-release-info" element={<MutualReleaseInfo />} />
-                <Route path="/mutual-release-form" element={<Documents />} />
-                <Route path="/lease-subordination-agreement-info" element={<LeaseSubordinationAgreementInfo />} />
-                <Route path="/lease-subordination-agreement-form" element={<Documents />} />
-                <Route path="/master-use-license-info" element={<MasterUseLicenseInfo />} />
-                <Route path="/master-use-license-form" element={<Documents />} />
-                <Route path="/master-servant-agreement-info" element={<MasterServiceInfo />} />
-                <Route path="/master-service-agreement-info" element={<MasterServiceInfo />} />
-                <Route path="/master-servant-agreement-form" element={<Documents />} />
-                <Route path="/master-service-agreement-form" element={<Documents />} />
-                <Route path="/memorandum-of-agreement-info" element={<MemorandumOfAgreementInfo />} />
-                <Route path="/moa-info" element={<MemorandumOfAgreementInfo />} />
-                <Route path="/memorandum-of-agreement-form" element={<Documents />} />
-                <Route path="/memorandum-of-understanding-info" element={<MOUInfo />} />
-                <Route path="/mou-info" element={<MOUInfo />} />
-                <Route path="/memorandum-of-understanding-form" element={<Documents />} />
-                <Route path="/flooring-services-agreement-info" element={<FlooringServicesAgreementInfo />} />
-                <Route path="/flooring-services-agreement-form" element={<Documents />} />
-                <Route path="/co-signer-agreement-info" element={<CoSignerAgreementInfo />} />
-                <Route path="/co-signer-agreement-form" element={<Documents />} />
-                <Route path="/copyright-assignment-info" element={<CopyrightAssignmentInfo />} />
-                <Route path="/copyright-assignment-form" element={<Documents />} />
-                <Route path="/copyright-license-info" element={<CopyrightLicenseInfo />} />
-                <Route path="/copyright-license-form" element={<Documents />} />
-                <Route path="/cooperation-agreement-info" element={<CooperationAgreementInfo />} />
-                <Route path="/cooperation-agreement-form" element={<Documents />} />
-                <Route path="/corporate-resolution-info" element={<CorporateResolutionInfo />} />
-                <Route path="/corporate-resolution-form" element={<Documents />} />
-                <Route path="/course-partnership-agreement-info" element={<CoursePartnershipAgreementInfo />} />
-                <Route path="/course-partnership-agreement-form" element={<Documents />} />
-                <Route path="/employee-confidentiality-agreement-info" element={<EmployeeConfidentialityAgreementInfo />} />
-                <Route path="/employee-confidentiality-agreement-form" element={<Documents />} />
-                <Route path="/employee-handbook-info" element={<EmployeeHandbookInfo />} />
-                <Route path="/employee-handbook-form" element={<Documents />} />
-                <Route path="/employee-retirement-agreement-info" element={<EmployeeRetirementAgreementInfo />} />
-                <Route path="/employee-retirement-agreement-form" element={<Documents />} />
+                  {/* --- FIXED & ENABLED ROUTES --- */}
+                  {/* <Route path="/security-agreement-info" element={<SecurityAgreementInfo />} /> */}
+                  <Route path="/security-agreement-form" element={<Documents />} />
+                  <Route path="/mediation-agreement-info" element={<MediationAgreementInfo />} />
+                  <Route path="/mediation-agreement-form" element={<Documents />} />
+                  <Route path="/mutual-release-info" element={<MutualReleaseInfo />} />
+                  <Route path="/mutual-release-form" element={<Documents />} />
+                  <Route path="/lease-subordination-agreement-info" element={<LeaseSubordinationAgreementInfo />} />
+                  <Route path="/lease-subordination-agreement-form" element={<Documents />} />
+                  <Route path="/master-use-license-info" element={<MasterUseLicenseInfo />} />
+                  <Route path="/master-use-license-form" element={<Documents />} />
+                  <Route path="/master-servant-agreement-info" element={<MasterServiceInfo />} />
+                  <Route path="/master-service-agreement-info" element={<MasterServiceInfo />} />
+                  <Route path="/master-servant-agreement-form" element={<Documents />} />
+                  <Route path="/master-service-agreement-form" element={<Documents />} />
+                  <Route path="/memorandum-of-agreement-info" element={<MemorandumOfAgreementInfo />} />
+                  <Route path="/moa-info" element={<MemorandumOfAgreementInfo />} />
+                  <Route path="/memorandum-of-agreement-form" element={<Documents />} />
+                  <Route path="/memorandum-of-understanding-info" element={<MOUInfo />} />
+                  <Route path="/mou-info" element={<MOUInfo />} />
+                  <Route path="/memorandum-of-understanding-form" element={<Documents />} />
+                  <Route path="/flooring-services-agreement-info" element={<FlooringServicesAgreementInfo />} />
+                  <Route path="/flooring-services-agreement-form" element={<Documents />} />
+                  <Route path="/co-signer-agreement-info" element={<CoSignerAgreementInfo />} />
+                  <Route path="/co-signer-agreement-form" element={<Documents />} />
+                  <Route path="/copyright-assignment-info" element={<CopyrightAssignmentInfo />} />
+                  <Route path="/copyright-assignment-form" element={<Documents />} />
+                  <Route path="/copyright-license-info" element={<CopyrightLicenseInfo />} />
+                  <Route path="/copyright-license-form" element={<Documents />} />
+                  <Route path="/cooperation-agreement-info" element={<CooperationAgreementInfo />} />
+                  <Route path="/cooperation-agreement-form" element={<Documents />} />
+                  <Route path="/corporate-resolution-info" element={<CorporateResolutionInfo />} />
+                  <Route path="/corporate-resolution-form" element={<Documents />} />
+                  <Route path="/course-partnership-agreement-info" element={<CoursePartnershipAgreementInfo />} />
+                  <Route path="/course-partnership-agreement-form" element={<Documents />} />
+                  <Route path="/employee-confidentiality-agreement-info" element={<EmployeeConfidentialityAgreementInfo />} />
+                  <Route path="/employee-confidentiality-agreement-form" element={<Documents />} />
+                  <Route path="/employee-handbook-info" element={<EmployeeHandbookInfo />} />
+                  <Route path="/employee-handbook-form" element={<Documents />} />
+                  <Route path="/employee-retirement-agreement-info" element={<EmployeeRetirementAgreementInfo />} />
+                  <Route path="/employee-retirement-agreement-form" element={<Documents />} />
 
-                {/* --- FUTURE ROUTES (Uncomment after creating files) --- */}
-                <Route path="/franchise-agreement-info" element={<FranchiseAgreementInfo />} />
-                <Route path="/administrative-services-info" element={<AdministrativeServicesAgreementInfo />} />
-                <Route path="/advertising-agency-info" element={<AdvertisingAgencyAgreementInfo />} />
-                <Route path="/it-service-agreement-info" element={<ITServiceAgreementInfo />} />
-                <Route path="/fee-agreement-info" element={<FeeAgreementInfo />} />
-                <Route path="/social-media-contract-info" element={<SocialMediaContractInfo />} />
-                <Route path="/merger-agreement-info" element={<MergerAgreementInfo />} />
-                <Route path="/asset-purchase-info" element={<AssetPurchaseAgreementInfo />} />
-                <Route path="/marketing-agreement-info" element={<MarketingAgreementInfo />} />
-                <Route path="/contract-extension-info" element={<ContractExtensionInfo />} />
-                <Route path="/product-distribution-info" element={<ProductDistributionAgreementInfo />} />
-                <Route path="/referral-fee-agreement-info" element={<ReferralFeeAgreementInfo />} />
-                <Route path="/service-level-agreement-info" element={<ServiceLevelAgreementInfo />} />
-                <Route path="/stock-purchase-agreement-info" element={<StockPurchaseAgreementInfo />} />
-                <Route path="/barter-agreement-info" element={<BarterAgreementInfo />} />
-                <Route path="/supplier-agreement-info" element={<SupplierAgreementInfo />} />
-                <Route path="/food-service-contract-info" element={<FoodServiceContractInfo />} />
-                <Route path="/offer-to-lease-info" element={<OfferToLeaseInfo />} />
-                <Route path="/vehicle-lease-info" element={<VehicleLeaseInfo />} />
-                <Route path="/cohabitation-agreement-info" element={<CohabitationInfo />} />
-                <Route path="/dj-services-agreement-info" element={<DJServicesAgreementInfo />} />
-                <Route path="/general-affidavit-info" element={<GeneralAffidavitInfo />} />
-                <Route path="/attorney-engagement-letter-info" element={<AttorneyEngagementLetterInfo />} />
-                <Route path="/composer-agreement-info" element={<ComposerAgreementInfo />} />
-                <Route path="/concession-agreement-info" element={<ConcessionAgreementInfo />} />
-                <Route path="/consulting-agreement-info" element={<ConsultingAgreementInfo />} />
-                <Route path="/dj-contract-info" element={<DJContractInfo />} />
-                <Route path="/musical-performance-info" element={<MusicalPerformanceInfo />} />
-                <Route path="/musical-performance-contract-info" element={<MusicalPerformanceInfo />} />
-                <Route path="/musical-performance-agreement-form" element={<Documents />} />
-                <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
+                  {/* --- FUTURE ROUTES (Uncomment after creating files) --- */}
+                  <Route path="/franchise-agreement-info" element={<FranchiseAgreementInfo />} />
+                  <Route path="/administrative-services-info" element={<AdministrativeServicesAgreementInfo />} />
+                  <Route path="/advertising-agency-info" element={<AdvertisingAgencyAgreementInfo />} />
+                  <Route path="/it-service-agreement-info" element={<ITServiceAgreementInfo />} />
+                  <Route path="/fee-agreement-info" element={<FeeAgreementInfo />} />
+                  <Route path="/social-media-contract-info" element={<SocialMediaContractInfo />} />
+                  <Route path="/merger-agreement-info" element={<MergerAgreementInfo />} />
+                  <Route path="/asset-purchase-info" element={<AssetPurchaseAgreementInfo />} />
+                  <Route path="/marketing-agreement-info" element={<MarketingAgreementInfo />} />
+                  <Route path="/contract-extension-info" element={<ContractExtensionInfo />} />
+                  <Route path="/product-distribution-info" element={<ProductDistributionAgreementInfo />} />
+                  <Route path="/referral-fee-agreement-info" element={<ReferralFeeAgreementInfo />} />
+                  <Route path="/service-level-agreement-info" element={<ServiceLevelAgreementInfo />} />
+                  <Route path="/stock-purchase-agreement-info" element={<StockPurchaseAgreementInfo />} />
+                  <Route path="/barter-agreement-info" element={<BarterAgreementInfo />} />
+                  <Route path="/supplier-agreement-info" element={<SupplierAgreementInfo />} />
+                  <Route path="/food-service-contract-info" element={<FoodServiceContractInfo />} />
+                  <Route path="/offer-to-lease-info" element={<OfferToLeaseInfo />} />
+                  <Route path="/vehicle-lease-info" element={<VehicleLeaseInfo />} />
+                  <Route path="/cohabitation-agreement-info" element={<CohabitationInfo />} />
+                  <Route path="/dj-services-agreement-info" element={<DJServicesAgreementInfo />} />
+                  <Route path="/general-affidavit-info" element={<GeneralAffidavitInfo />} />
+                  <Route path="/attorney-engagement-letter-info" element={<AttorneyEngagementLetterInfo />} />
+                  <Route path="/composer-agreement-info" element={<ComposerAgreementInfo />} />
+                  <Route path="/concession-agreement-info" element={<ConcessionAgreementInfo />} />
+                  <Route path="/consulting-agreement-info" element={<ConsultingAgreementInfo />} />
+                  <Route path="/dj-contract-info" element={<DJContractInfo />} />
+                  <Route path="/musical-performance-info" element={<MusicalPerformanceInfo />} />
+                  <Route path="/musical-performance-contract-info" element={<MusicalPerformanceInfo />} />
+                  <Route path="/musical-performance-agreement-form" element={<Documents />} />
+                  <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
 
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              {/* Chat widget rendered once at root so it persists across all routes */}
+              <ChatWidget />
+            </BrowserRouter>
+          </ChatWidgetProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

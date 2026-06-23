@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import NavbarChatButton from "@/components/navigation/NavbarChatButton";
 
 interface NavLinksProps {
   scrolled: boolean;
@@ -43,7 +44,7 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
   return (
     <NavigationMenu className="hidden md:flex max-w-none">
       <NavigationMenuList className={cn(
-        "gap-8 px-6 py-2 rounded-full",
+        "gap-8 px-6 py-2 rounded-full items-center",
         scrolled ? "bg-white/5 backdrop-blur-md" : "bg-transparent"
       )}>
         {navItems.map((item) => (
@@ -78,10 +79,14 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
             </NavigationMenuItem>
           </motion.div>
         ))}
+
+        {/* Chat assistant trigger - opens the shared ChatWidget panel */}
+        <NavigationMenuItem>
+          <NavbarChatButton scrolled={scrolled} />
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
 });
 
 NavLinks.displayName = 'NavLinks';
-
