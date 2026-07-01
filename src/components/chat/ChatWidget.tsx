@@ -905,9 +905,14 @@ function buildDocReply(
   const uname = userName || null;
 
   if (top.length === 0) {
+    // No document match but let's still give a helpful response
+    const uname = userName ? `${userName}, ` : "";
     return {
-      text: `${uname ? `${uname}, I` : "I"} searched our library of ${DOCUMENT_KB.length}+ legal documents but couldn\'t find an exact match for **"${query}"**.\n\nWould you like me to **build a custom document** tailored to your needs? I\'ll guide you step by step.`,
-      actionButtons: [],
+      text: `${uname}I don't have specific information about that in my document library right now.\n\nHowever, here are some things I can help with:\n\n• **Find the right legal document** — I have 100+ templates covering business, finance, real estate, employment, and more\n• **Explain legal concepts** — Ask me about contracts, agreements, or legal terms\n• **Build a custom document** — I can guide you through creating one tailored to your situation\n\nWhat would you like to do?`,
+      actionButtons: [
+        { label: "Browse Documents", value: "/documents", type: "link" as const },
+        { label: "Create New Document", value: "create new document", type: "action" as const },
+      ],
       noDocumentMatch: true,
     };
   }
@@ -979,10 +984,46 @@ const LEGAL_QUESTION_PATTERNS = [
   /describe (.+)/i,
   /clauses? (of|in|for) (.+)/i,
   /sections? (of|in|for) (.+)/i,
+  /should|must|required|include|termination|period|notice/i,
 ];
 
 function isLegalQuestion(query: string): boolean {
   return LEGAL_QUESTION_PATTERNS.some(p => p.test(query.trim()));
+}
+
+/* General legal knowledge base for common questions */
+function getGeneralLegalAdvice(query: string): string | null {
+  const q = query.toLowerCase();
+  
+  if (q.includes("termination") && (q.includes("lease") || q.includes("rental") || q.includes("tenancy") || q.includes("tenant"))) {
+    return `**Termination Period for Lease/Rental Agreements:**\n\nThe termination period depends on the lease terms and local laws, but here are common standards:\n\n**Typical Notice Periods:**\n• **Month-to-month leases**: Usually 30 days notice required from either party\n• **Fixed-term leases**: Either party may need to provide 30-60 days notice before expiration\n• **Annual leases**: Typically 60-90 days notice before the end of the lease year\n• **Commercial leases**: Often 60-90 days or longer\n\n**Important Considerations:**\n✓ **Check your specific lease** — The exact notice requirement must be in your lease agreement\n✓ **Jurisdiction matters** — Local tenant laws override lease terms in many areas\n✓ **Notice format** — Usually must be in writing (email, certified mail, or hand-delivered)\n✓ **Count correctly** — Count calendar days unless the lease specifies business days\n✓ **Early termination** — Some leases allow early termination with penalty fees\n✓ **"Just cause" laws** — Many jurisdictions require legal grounds for eviction (not arbitrary)\n✓ **Security deposit** — Landlord has specific timeframes to return deposits\n✓ **Keep proof** — Always keep proof of notice delivery\n\n**Consequences of improper notice:**\n• Tenant may continue owing rent\n• Landlord cannot enforce eviction\n• Potential legal liability for damages\n\n**Related documents you should review:**\n• Your signed Lease Agreement\n• Local tenant/landlord laws\n• Any amendments or addendums to your lease\n\nI recommend reviewing your specific lease agreement to confirm the exact termination requirements. Would you like to see a lease template or get help understanding other clauses?`;
+  }
+  
+  if (q.includes("termination") && (q.includes("employment") || q.includes("employee") || q.includes("job") || q.includes("work"))) {
+    return `**Termination Period for Employment Agreements:**\n\n**Notice Periods by Type:**\n• **At-will employment** (USA): No notice required unless contract specifies\n• **Standard practice**: 2 weeks notice is common professional courtesy\n• **Executive roles**: 30-90 days notice typical\n• **Contract positions**: As specified in employment agreement\n• **Unionized jobs**: Per collective bargaining agreement\n\n**Who must give notice:**\n→ Employee leaving: Usually 2 weeks\n→ Employer firing: Depends on reason and local laws\n→ Layoffs: May require WARN Act notice (60 days in USA) or severance\n\n**Key Points:**\n✓ **State laws vary** — Some states require cause for termination\n✓ **Employment contracts override default rules**\n✓ **Documentation is critical** — Get termination in writing\n✓ **Final paycheck** — Must include all earned wages by law\n✓ **Benefits ending** — Usually continue through notice period\n✓ **References** — Agree on what will be said about employment\n\n**During Notice Period:**\n• Employee should train replacement\n• Return company property\n• Maintain confidentiality\n• Continue performing duties\n• Prepare transition documents\n\n**Getting Terminated:**\nIf you're terminated, ensure you receive:\n✓ Final paycheck\n✓ Unused vacation/PTO payout\n✓ Written explanation (if requested)\n✓ COBRA notice (health insurance continuation)\n✓ Severance agreement (if offered)\n\nIf you believe termination was illegal, consult an employment attorney. Would you like help with an employment contract or severance agreement?`;
+  }
+  
+  if ((q.includes("termination") || q.includes("end")) && q.includes("contract")) {
+    return `**How to Properly Terminate a Contract:**\n\n**Standard Termination Provisions:**\n1. **Notice period** — Time required before termination takes effect (30-90 days)\n2. **For cause** — Grounds that allow immediate termination (breach, default)\n3. **For convenience** — Ability to end contract for any reason (with notice)\n4. **Early termination** — Fees or penalties for ending before term expires\n\n**Steps to Terminate Properly:**\n\n**STEP 1: Review the contract**\n→ Find the termination clause\n→ Verify notice period required\n→ Identify any penalties or conditions\n→ Check if cause is required\n\n**STEP 2: Provide written notice**\n→ Send via registered mail or email (with read receipt)\n→ State contract ID/reference\n→ Specify effective date\n→ Keep a copy for your records\n\n**STEP 3: Calculate termination date**\n→ Add notice period to when notice was received\n→ Business days vs. calendar days (check contract)\n→ Include any conditions that must be met\n\n**STEP 4: Wind down obligations**\n→ Transition services/products\n→ Return materials/files\n→ Process final payments\n→ Close any accounts\n\n**STEP 5: Document everything**\n→ Get written confirmation of termination acceptance\n→ Keep proof of notice delivery\n→ Document final transactions\n→ Resolve any disputes in writing\n\n**Common Termination Issues:**\n⚠ Improper notice → Contract continues\n⚠ Missing required conditions → May be invalid\n⚠ No written notice → Difficult to prove\n⚠ Ignoring obligations → Could face legal action\n⚠ Not calculating period correctly → Could violate contract\n\n**What happens after termination:**\n✓ Obligations end on effective date\n✓ No new work accepted after date\n✓ Final invoices/payments processed\n✓ Confidentiality provisions may continue\n✓ Non-compete may still apply\n\nThe exact process depends on your specific contract. Review your contract terms carefully or have an attorney review before terminating. Would you like help with a specific contract type?`;
+  }
+  
+  if (q.includes("notice") && (q.includes("period") || q.includes("days") || q.includes("month") || q.includes("termination"))) {
+    return `**Understanding Notice Periods in Contracts:**\n\nNotice periods are the time required for one party to inform another of contract termination or changes. Here's what you need to know:\n\n**Common Notice Periods:**\n• **Residential leases**: 30-60 days\n• **Commercial contracts**: 30-90 days  \n• **Employment**: 2 weeks to 30 days (varies by region)\n• **Service agreements**: 30-90 days\n• **Vendor/supplier**: 30-60 days\n\n**How to Calculate Notice Correctly:**\n→ Check if "calendar days" or "business days" (M-F only)\n→ Count from when notice is RECEIVED, not sent\n→ Check if start date is day 0 or day 1\n→ Note weekends and holidays if applicable\n→ Verify in writing to avoid disputes\n\n**Key Points:**\n✓ Notice should ALWAYS be in writing\n✓ Use certified mail or email with read receipt\n✓ Keep proof of delivery\n✓ Send to address specified in contract\n✓ Failure to provide proper notice may invalidate termination\n✓ Some contracts auto-renew if no notice is given\n✓ Late notice may mean contract renews for another term\n\n**How to Give Proper Notice:**\n\n1. **Write formally:**\n   - \"This is formal notice of termination\"\n   - Include contract date and reference\n   - State effective termination date\n   - Reference the specific termination clause\n\n2. **Send properly:**\n   - Registered/certified mail (proof of delivery)\n   - Email to official email address (request read receipt)\n   - Hand delivery with signature\n   - DO NOT use text/casual methods\n\n3. **Keep records:**\n   - Save copy of notice sent\n   - Document delivery proof\n   - Note who received it and when\n   - Store safely for 3-7 years\n\n**What can go wrong:**\n⚠ Sending to wrong address → Notice invalid\n⚠ Wrong number of days → Contract continues\n⚠ Verbal notice only → No legal proof\n⚠ Missing formalities → May not be enforceable\n⚠ Late notice → Automatic renewal possible\n\n**Pro Tip:** Always send notice at the beginning of a notice period window so you have buffer time. If giving 30 days notice, send on day 1-2, not day 28!\n\nThe specific requirements depend on your contract type and jurisdiction. Review your contract carefully or have an attorney verify before sending notice.`;
+  }
+  
+  if ((q.includes("what should") || q.includes("what must") || q.includes("what clauses")) && q.includes("include")) {
+    return `**What Should a Contract Include?**\n\nMost legal agreements should have these key elements:\n\n**ESSENTIAL CLAUSES (must have):**\n\n1. **Parties & Effective Date**\n   → Names of all parties involved\n   → Roles/capacity of each party\n   → Effective date and signing date\n\n2. **Scope of Work/Agreement**\n   → What exactly is being agreed to?\n   → Specific deliverables or services\n   → Boundaries and limitations\n\n3. **Term & Duration**\n   → When does it start and end?\n   → Is it renewable?\n   → Conditions for renewal\n\n4. **Payment/Consideration**\n   → What is the exchange of value?\n   → Payment amount and method\n   → Due dates and late payment terms\n   → Any expenses or reimbursements\n\n5. **Responsibilities & Obligations**\n   → What must each party do?\n   → Specific requirements\n   → Performance standards\n   → Timelines and deadlines\n\n6. **Termination Provisions**\n   → How can agreement end?\n   → Notice period required\n   → Grounds for early termination\n   → What happens upon termination\n\n7. **Confidentiality**\n   → What information is confidential?\n   → Who can access it?\n   → Duration of confidentiality\n   → Exceptions (public info, etc.)\n\n8. **Dispute Resolution**\n   → How are conflicts handled?\n   → Mediation/arbitration?\n   → Litigation option?\n   → Who pays legal costs?\n\n9. **Governing Law & Jurisdiction**\n   → Which state/country's laws apply?\n   → Which court has jurisdiction?\n   → Venue for disputes\n\n10. **Signatures**\n    → All parties must sign\n    → Date of signature\n    → Print name under signature\n    → Consider notarization if needed\n\n**COMMON ADDITIONAL CLAUSES:**\n\n• **Liability & Indemnification** — Who pays if something goes wrong?\n• **Insurance Requirements** — Protection needed\n• **Amendment Procedures** — How to change agreement\n• **Force Majeure** — Unforeseen circumstances\n• **Assignment Rights** — Can parties transfer agreement?\n• **Warranties** — Promises about quality/performance\n• **Limitation of Liability** — Caps on damages\n• **Severability** — If one clause is invalid, rest remains\n• **Entire Agreement** — This replaces all prior agreements\n• **Notices** — How to formally contact the other party\n\n**RED FLAGS - AVOID THESE:**\n⚠ Blank fields or \"TBD\" spaces\n⚠ Vague language or undefined terms\n⚠ Missing signature lines\n⚠ One-sided terms heavily favoring one party\n⚠ No termination clause\n⚠ Missing effective date\n⚠ Contradictory provisions\n⚠ Handwritten changes without initials\n\n**BEST PRACTICES:**\n✓ Keep it clear and specific\n✓ Define all key terms\n✓ Use plain English, avoid legal jargon\n✓ Number all sections\n✓ Date and sign in blue ink (not black)\n✓ Keep copies for all parties\n✓ Store safely (original + digital)\n✓ Have attorney review before signing if high-value\n\nThe exact clauses needed depend on your specific agreement type. Would you like help with a particular contract?`;
+  }
+  
+  if (q.includes("should") && (q.includes("agreement") || q.includes("contract"))) {
+    return `**Standard Contract Best Practices:**\n\nWhen creating or reviewing any agreement:\n\n**BEFORE YOU SIGN:**\n\n✓ **Read everything carefully**\n  → Every word matters in contracts\n  → Don't skip the fine print\n  → Ask about anything unclear\n\n✓ **Understand your obligations**\n  → What must YOU do?\n  → What are the deadlines?\n  → What are the consequences if you fail?\n  → Can you afford these obligations?\n\n✓ **Understand your rights**\n  → What are you getting in return?\n  → Can you terminate early?\n  → What happens if the other party breaches?\n  → Who pays if something goes wrong?\n\n✓ **Identify ambiguous language**\n  → Ask for clarification in writing\n  → Define any unclear terms\n  → Get answers in the contract itself\n\n✓ **Verify key information**\n  → Names and addresses are correct\n  → Payment amounts and dates\n  → Delivery/performance schedules\n  → All contact information\n\n✓ **Confirm termination conditions**\n  → Notice period required\n  → Can you exit early?\n  → Any penalties for early exit?\n  → What happens to pending payments?\n\n**PROTECTION CLAUSES YOU SHOULD HAVE:**\n\n• **Liability limits** — Cap on damages if something goes wrong\n• **Confidentiality/NDA** — Protect sensitive information\n• **Dispute resolution** — Arbitration or court option\n• **Governing law** — Which state/country's laws apply\n• **Amendment procedures** — How to change the agreement\n• **Entire agreement** — This document replaces all prior deals\n• **Severability** — If one clause is bad, rest still valid\n• **Force majeure** — Protection for unforeseeable events\n\n**RED FLAGS - DON'T SIGN:**\n\n⚠ **Blank fields** — Always filled with anything later\n⚠ **Vague terms** — \"Reasonable\" or \"appropriate\" undefined\n⚠ **One-sided terms** — All risk on you, all benefit to them\n⚠ **No termination clause** — Stuck forever\n⚠ **Missing effective date** — When does it start?\n⚠ **Contradiction** — Different sections contradict each other\n⚠ **You're forced to rush** — \"Sign today or deal's off\"\n⚠ **Handwritten changes** — Not initialed by both parties\n⚠ **Unclear who's paying what** — Ambiguous payment terms\n\n**AFTER YOU SIGN:**\n\n✓ Keep original in safe place (fire-proof box, safe)\n✓ Keep digital copy (cloud backup)\n✓ Save all amendments separately\n✓ Document all payments made\n✓ Note any changes agreed verbally (get in writing)\n✓ Keep proof of delivery for notices\n✓ Review periodically for renewal dates\n✓ Keep for 3-7 years minimum (longer for important docs)\n\n**CRITICAL:** Have an attorney review important contracts or high-value agreements before signing. A small upfront legal fee can save thousands in disputes.\n\nWould you like help understanding a specific contract or creating one?`;
+  }
+  
+  if (q.includes("payment") && (q.includes("term") || q.includes("schedule") || q.includes("due"))) {
+    return `**Payment Terms in Contracts:**\n\n**Standard Payment Terms:**\n\n• **Net 30/60/90** — Invoice due in 30, 60, or 90 days from invoice date\n• **Net Due on Receipt** — Payment immediately upon invoice/delivery\n• **Deposits/Prepayment** — Payment upfront before work begins\n• **Installments** — Spread payments over contract period\n• **Retainer** — Upfront fee for reserved services/availability\n• **Percentage-based** — Payment tied to project milestones\n• **Upon Completion** — Payment only after work is fully done\n• **C.O.D.** (Cash on Delivery) — Payment when goods received\n\n**Late Payment Consequences:**\n\n→ Late fees (typically 1.5% monthly interest or 18% annual)\n→ Suspension of services if payment is overdue\n→ Collection costs and attorney fees\n→ Right to suspend or terminate for non-payment\n→ Damage to credit score/payment history\n→ Interest may continue accruing\n\n**Payment Methods:**\n\n✓ Bank wire transfer\n✓ ACH (automatic bank transfer)\n✓ Credit card (may include processing fees)\n✓ Check by mail\n✓ PayPal/Venmo/digital wallets\n✓ Cryptocurrency (if parties agree)\n✓ In-kind payment (trade, barter)\n\n**Invoice Best Practices:**\n\n1. **Include:**\n   ✓ Invoice number (for tracking)\n   ✓ Invoice date\n   ✓ Due date (based on payment terms)\n   ✓ Detailed description of goods/services\n   ✓ Quantity and unit price\n   ✓ Total amount due\n   ✓ Payment method instructions\n   ✓ Bank details (wire transfer)\n   ✓ Contact for questions\n\n2. **Tracking:**\n   ✓ Send invoice immediately upon delivery\n   ✓ Follow up 5 days before due date\n   ✓ Send reminder 2-3 days after due date\n   ✓ Document all communications\n   ✓ Keep copy for accounting\n\n3. **Record keeping:**\n   ✓ Save all invoices (3-7 years)\n   ✓ Track payment received date\n   ✓ Note any partial payments\n   ✓ Document late payments\n   ✓ Keep payment receipts\n\n**Payment Terms Negotiation Tips:**\n\n→ Understand industry standards for your field\n→ For large orders, ask for partial upfront payment\n→ Offer discount for early payment (e.g., \"2/10 Net 30\" = 2% off if paid in 10 days)\n→ For new clients, request 50% upfront\n→ For established clients, Net 30 is standard\n→ Don't accept \"Net 90\" unless absolutely necessary\n→ Get everything in writing, including terms\n\n**Common Mistakes to Avoid:**\n\n⚠ Not specifying payment terms clearly\n⚠ Forgetting to include due date on invoice\n⚠ No late payment penalties specified\n⚠ No payment method listed\n⚠ Losing track of who paid what\n⚠ Accepting verbal promises to pay\n⚠ Not following up on overdue payments\n⚠ Delivering before payment (unless established client)\n\n**If Payment is Late:**\n\n1. Send payment reminder (email + formal letter)\n2. Reference invoice number and amount\n3. Reference agreed-upon due date\n4. Request payment within 5-10 days\n5. Specify late fees will be added if unpaid\n6. Threaten suspension of services\n7. If still unpaid, may pursue collection\n\n**Pro Tip:** For large contracts, require 30-50% deposit before work starts, 50% at milestone, 20% upon completion. This protects your cash flow!\n\nMake sure payment terms are crystal clear to avoid disputes and ensure timely payment. Would you like help with a service agreement or payment contract?`;
+  }
+  
+  return null;
 }
 
 /* ─────────────────────────────────────────────
@@ -1234,7 +1275,28 @@ const ChatWidget = () => {
       return true;
     }
 
-    // 3. Always try KB match for ANY message containing legal terms
+    // 3. Check for specific legal advice FIRST (before document KB)
+    const isQuestion = /^(what|how|explain|tell|describe|define|when|why|can|should|is|are|does|do)\b/i.test(lower);
+    const hasLegalTerm = ["legal","law","clause","contract","agreement","document","rights","liability","terms","party","sign","govern"]
+      .some(w => lower.includes(w));
+
+    if (isQuestion || /should|must|required|include|termination|notice|period/i.test(lower)) {
+      const generalAdvice = getGeneralLegalAdvice(text);
+      if (generalAdvice) {
+        const relatedDocs = matchDocuments(lower);
+        const buttons: ActionButton[] = [];
+        if (relatedDocs.length > 0) {
+          relatedDocs.slice(0, 2).forEach(m => {
+            buttons.push({ label: m.doc.name, value: m.doc.url, type: "link" as const });
+          });
+        }
+        buttons.push({ label: "Browse all documents", value: "/documents", type: "link" as const });
+        setTimeout(() => { setIsTyping(false); addBotMessage(generalAdvice, buttons.length > 0 ? buttons : null); }, 700);
+        return true;
+      }
+    }
+
+    // 4. Try KB match for ANY message containing legal terms
     const matches = matchDocuments(lower);
 
     // Strong KB hit — answer from KB regardless of query form
@@ -1244,25 +1306,25 @@ const ChatWidget = () => {
       return true;
     }
 
-    // 4. Informational / question patterns — even with weak KB match, answer from KB
-    const isQuestion = /^(what|how|explain|tell|describe|define|when|why|can|should|is|are|does|do)\b/i.test(lower);
-    const hasLegalTerm = ["legal","law","clause","contract","agreement","document","rights","liability","terms","party","sign","govern"]
-      .some(w => lower.includes(w));
-
+    // 5. Informational / question patterns — even with weak KB match, answer from KB
     if (isQuestion && hasLegalTerm) {
       const reply = buildDocReply(matches, userName, text);  // may be empty -> noDocumentMatch
       setTimeout(() => { setIsTyping(false); addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch); }, 700);
       return true;
     }
 
-    // 5. Browse / find / search intent
+    // 6. Browse / find / search intent
     if (/\b(find|search|look|browse|show|list|need|want|looking for)\b/i.test(lower)) {
       const reply = buildDocReply(matches, userName, text);
       setTimeout(() => { setIsTyping(false); addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch); }, 700);
       return true;
     }
 
-    return false; // only truly off-topic queries hit backend
+    // 7. Default fallback — ANY unmatched query still gets a helpful response locally
+    // Instead of waiting for backend, respond immediately with guidance
+    const fallbackReply = buildDocReply(matches.length > 0 ? matches : [], userName, text);
+    setTimeout(() => { setIsTyping(false); addBotMessage(fallbackReply.text, fallbackReply.actionButtons, true); }, 700);
+    return true;
   };
 
   /* ── Quick action handler ── */
@@ -1378,13 +1440,31 @@ const ChatWidget = () => {
     } catch {
       setIsTyping(false);
       const localMatches = matchDocuments(text);
+      
+      // Try general legal advice first
+      const generalAdvice = getGeneralLegalAdvice(text);
+      if (generalAdvice) {
+        const buttons: ActionButton[] = [];
+        if (localMatches.length > 0) {
+          localMatches.slice(0, 2).forEach(m => {
+            buttons.push({ label: m.doc.name, value: m.doc.url, type: "link" as const });
+          });
+        }
+        buttons.push({ label: "Browse all documents", value: "/documents", type: "link" as const });
+        addBotMessage(generalAdvice, buttons.length > 0 ? buttons : null);
+        return;
+      }
+      
       if (localMatches.length > 0) {
         const reply = buildDocReply(localMatches, sessionRef.current.userName, text);
         addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch);
       } else {
         addBotMessage(
-          `I couldn\'t find a matching document in our library for "**${text}**".\n\nWould you like me to build a **custom document** for you instead?`,
-          null, true
+          `I'm having trouble connecting right now, but I'd love to help!\n\nI can help you:\n• **Find legal documents** from our library of 100+ templates\n• **Explain legal terms** and concepts\n• **Create a custom document** tailored to your needs\n\nWhat would you like to do?`,
+          [
+            { label: "Browse Documents", value: "/documents", type: "link" as const },
+            { label: "Create Document", value: "create new document", type: "action" as const },
+          ]
         );
       }
     }

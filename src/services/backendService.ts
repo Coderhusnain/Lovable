@@ -38,7 +38,6 @@ export interface ChatResponse {
   user_name: string | null;
   suggested_documents: string[] | null;
   action_buttons: ActionButton[] | null;
-  action_buttons: ActionButton[] | null;
   no_document_match?: boolean;
 }
 
@@ -67,7 +66,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const HAS_BACKEND = Boolean(API_BASE_URL);
 
 // ---------------------------------------------------------
-// Document catalog — "its own docs". Extend to match your app.
+// Document catalog
 // ---------------------------------------------------------
 interface CatalogDoc {
   full_name: string;
@@ -75,25 +74,148 @@ interface CatalogDoc {
   description: string;
   keywords: string[];
   route: string;
+  /** Specific Q&A knowledge for this document — answers sub-questions directly */
+  topics?: Record<string, { match: string[]; answer: string }>;
 }
 
 const DOCUMENT_CATALOG: CatalogDoc[] = [
-  { full_name: 'Promissory Note', category: 'Finance', description: 'A written promise to repay a loan under agreed terms.', keywords: ['promissory', 'note', 'loan', 'lend', 'borrow', 'repay', 'iou', 'debt'], route: '/documents' },
-  { full_name: 'Secured Promissory Note', category: 'Finance', description: 'A loan promise backed by collateral.', keywords: ['secured', 'collateral', 'promissory', 'loan', 'pledge'], route: '/documents' },
-  { full_name: 'Catering Agreement', category: 'Services', description: 'Terms between a caterer and a client for an event.', keywords: ['catering', 'caterer', 'event', 'food', 'menu', 'wedding'], route: '/documents' },
-  { full_name: 'Carpenter Contract', category: 'Services', description: 'Agreement for carpentry or woodworking work.', keywords: ['carpenter', 'carpentry', 'woodwork', 'contractor'], route: '/documents' },
-  { full_name: 'Architectural Services Agreement', category: 'Services', description: 'Engagement terms for an architect or design firm.', keywords: ['architect', 'architectural', 'design', 'blueprint'], route: '/documents' },
-  { full_name: 'Construction Performance Bond', category: 'Construction', description: 'Guarantees a contractor completes a construction project.', keywords: ['construction', 'performance', 'bond', 'contractor', 'project'], route: '/documents' },
-  { full_name: 'Property Manager Agreement', category: 'Real Estate', description: 'Defines duties between an owner and a property manager.', keywords: ['property', 'manager', 'management', 'landlord'], route: '/documents' },
-  { full_name: 'Request for Bank or Credit Reference', category: 'Finance', description: 'Requests a credit or banking reference for a party.', keywords: ['bank', 'credit', 'reference', 'creditworthiness'], route: '/documents' },
-  { full_name: 'Statement of Claim Against Estate', category: 'Estate', description: 'Files a creditor claim against a deceased persons estate.', keywords: ['estate', 'claim', 'deceased', 'probate', 'inheritance', 'creditor'], route: '/documents' },
-  { full_name: 'Painting Contract', category: 'Services', description: 'Agreement for interior or exterior painting work.', keywords: ['painting', 'painter', 'paint', 'decorating'], route: '/documents' },
-  { full_name: 'Employment Agreement', category: 'Employment', description: 'Sets terms of employment between employer and employee.', keywords: ['employment', 'employee', 'employer', 'job', 'hire', 'salary'], route: '/documents' },
-  { full_name: 'Non-Disclosure Agreement (NDA)', category: 'Business', description: 'Protects confidential information shared between parties.', keywords: ['nda', 'non-disclosure', 'confidential', 'secret', 'disclosure', 'privacy'], route: '/documents' },
-  { full_name: 'Lease Agreement', category: 'Real Estate', description: 'Terms for renting residential or commercial property.', keywords: ['lease', 'rent', 'rental', 'tenant', 'apartment'], route: '/documents' },
+  {
+    full_name: 'Promissory Note', category: 'Finance',
+    description: 'A written promise to repay a loan under agreed terms.',
+    keywords: ['promissory', 'note', 'loan', 'lend', 'borrow', 'repay', 'iou', 'debt'],
+    route: '/documents',
+    topics: {
+      repayment: { match: ['repay', 'repayment', 'pay back', 'installment', 'instalment', 'schedule'], answer: 'Repayment is usually set as either a lump sum on a fixed due date, or in installments (weekly/monthly) until the principal plus interest is paid off. The note should state the exact schedule, due dates, and what happens on a missed payment (default).' },
+      interest: { match: ['interest', 'rate', 'apr'], answer: 'The interest rate should be a fixed percentage agreed by both parties, stated either as a flat fee or annual percentage rate (APR). Always check your local usury laws — some jurisdictions cap the maximum interest rate that can be charged.' },
+      default: { match: ['default', 'miss payment', 'late', 'non-payment', 'fail to pay'], answer: 'A default clause defines what happens if the borrower misses a payment — typically a grace period (e.g. 5–10 days), followed by a late fee, and if payment still isn\'t made, the lender can demand the full remaining balance immediately ("acceleration clause").' },
+    },
+  },
+  {
+    full_name: 'Secured Promissory Note', category: 'Finance',
+    description: 'A loan promise backed by collateral.',
+    keywords: ['secured', 'collateral', 'promissory', 'loan', 'pledge'],
+    route: '/documents',
+    topics: {
+      collateral: { match: ['collateral', 'security', 'pledge', 'asset'], answer: 'Collateral is the asset (e.g. vehicle, property, equipment) the borrower pledges as security. If the borrower defaults, the lender has the right to seize and sell the collateral to recover the debt — this should be described precisely (make, model, serial number, or property address).' },
+    },
+  },
+  {
+    full_name: 'Catering Agreement', category: 'Services',
+    description: 'Terms between a caterer and a client for an event.',
+    keywords: ['catering', 'caterer', 'event', 'food', 'menu', 'wedding'],
+    route: '/documents',
+    topics: {
+      cancellation: { match: ['cancel', 'cancellation', 'refund'], answer: 'Cancellation terms typically scale with how close to the event date the cancellation happens — e.g. full refund if cancelled 30+ days out, 50% refund 14–29 days out, and no refund inside 7 days, since ingredients and staff are already committed.' },
+      deposit: { match: ['deposit', 'upfront', 'advance payment'], answer: 'Caterers typically require a non-refundable deposit (often 25–50% of the total) to secure the date, with the balance due a set number of days before the event.' },
+    },
+  },
+  {
+    full_name: 'Carpenter Contract', category: 'Services',
+    description: 'Agreement for carpentry or woodworking work.',
+    keywords: ['carpenter', 'carpentry', 'woodwork', 'contractor'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Architectural Services Agreement', category: 'Services',
+    description: 'Engagement terms for an architect or design firm.',
+    keywords: ['architect', 'architectural', 'design', 'blueprint'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Construction Performance Bond', category: 'Construction',
+    description: 'Guarantees a contractor completes a construction project.',
+    keywords: ['construction', 'performance', 'bond', 'contractor', 'project'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Property Manager Agreement', category: 'Real Estate',
+    description: 'Defines duties between an owner and a property manager.',
+    keywords: ['property', 'manager', 'management', 'landlord'],
+    route: '/documents',
+    topics: {
+      fees: { match: ['fee', 'commission', 'percentage', 'cost'], answer: 'Property managers typically charge 8–12% of monthly collected rent, plus possible leasing fees (often one month\'s rent) when placing a new tenant. This should be spelled out clearly in the agreement.' },
+    },
+  },
+  {
+    full_name: 'Request for Bank or Credit Reference', category: 'Finance',
+    description: 'Requests a credit or banking reference for a party.',
+    keywords: ['bank', 'credit', 'reference', 'creditworthiness'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Statement of Claim Against Estate', category: 'Estate',
+    description: 'Files a creditor claim against a deceased persons estate.',
+    keywords: ['estate', 'claim', 'deceased', 'probate', 'inheritance', 'creditor'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Painting Contract', category: 'Services',
+    description: 'Agreement for interior or exterior painting work.',
+    keywords: ['painting', 'painter', 'paint', 'decorating'],
+    route: '/documents',
+  },
+  {
+    full_name: 'Employment Agreement', category: 'Employment',
+    description: 'Sets terms of employment between employer and employee.',
+    keywords: ['employment', 'employee', 'employer', 'job', 'hire', 'salary'],
+    route: '/documents',
+    topics: {
+      termination: { match: ['termination', 'terminate', 'fire', 'dismiss', 'notice period', 'end employment'], answer: 'Termination notice typically ranges from 2 weeks to 1 month for most roles, often scaling with seniority and length of service (e.g. 1 week per year worked, common in many jurisdictions). For gross misconduct, immediate termination without notice is usually allowed. Always check your local labor law minimums — they often override whatever the contract says.' },
+      probation: { match: ['probation', 'probationary', 'trial period'], answer: 'A probationary period is commonly 3–6 months, during which either party can terminate with shorter notice (often just 1 week) to assess fit before the role becomes permanent.' },
+      salary: { match: ['salary', 'pay', 'wage', 'compensation'], answer: 'Salary terms should specify the exact amount, payment frequency (weekly/bi-weekly/monthly), payment method, and whether it\'s gross or net of taxes. Any bonus or commission structure should be defined separately and clearly.' },
+      noncompete: { match: ['non-compete', 'noncompete', 'compete', 'restraint'], answer: 'A non-compete clause restricts the employee from working for a direct competitor for a defined period (commonly 6–12 months) after leaving, within a defined geographic area. Enforceability varies a lot by jurisdiction — some regions (like California) largely ban them.' },
+    },
+  },
+  {
+    full_name: 'Non-Disclosure Agreement (NDA)', category: 'Business',
+    description: 'Protects confidential information shared between parties.',
+    keywords: ['nda', 'non-disclosure', 'confidential', 'secret', 'disclosure', 'privacy'],
+    route: '/documents',
+    topics: {
+      duration: { match: ['duration', 'how long', 'term', 'expire', 'expiry'], answer: 'NDAs commonly last 1–5 years from the date of signing, though some confidential information (like trade secrets) may be protected indefinitely. The duration should be stated explicitly — open-ended NDAs are harder to enforce.' },
+      breach: { match: ['breach', 'violate', 'violation', 'leak'], answer: 'If confidential information is leaked, the disclosing party can typically seek injunctive relief (a court order to stop further disclosure) plus monetary damages for any resulting losses. Many NDAs also include a liquidated damages clause specifying a pre-agreed penalty amount.' },
+      mutual: { match: ['mutual', 'one-way', 'one way', 'unilateral', 'two-way'], answer: 'A "mutual" or "two-way" NDA protects information shared by both parties (common in partnerships or negotiations). A "unilateral" or "one-way" NDA only protects information from one party — typically used when only one side is disclosing sensitive data, like to a contractor or vendor.' },
+    },
+  },
+  {
+    full_name: 'Lease Agreement', category: 'Real Estate',
+    description: 'Terms for renting residential or commercial property.',
+    keywords: ['lease', 'rent', 'rental', 'tenant', 'apartment', 'tenancy'],
+    route: '/documents',
+    topics: {
+      termination: { match: ['termination', 'terminate', 'end lease', 'break lease', 'notice period', 'notice to vacate', 'end tenancy'], answer: 'Termination/notice periods for a lease are usually 30 days for month-to-month tenancies, or 60–90 days for fixed-term leases nearing renewal. Early termination before the lease end date typically requires either a penalty fee (often 1–2 months\' rent) or a valid legal reason (e.g. uninhabitable conditions, landlord breach). Always check your local tenancy laws, since minimum notice periods are often set by statute and can\'t be waived.' },
+      deposit: { match: ['deposit', 'security deposit', 'damage deposit'], answer: 'Security deposits are commonly 1–2 months\' rent, held by the landlord to cover damages or unpaid rent. Most jurisdictions require it be returned within 14–30 days after move-out, with an itemized list of any deductions.' },
+      rent: { match: ['rent increase', 'raise rent', 'rent amount', 'how much rent', 'monthly rent'], answer: 'The lease should state the exact monthly rent amount, due date, accepted payment methods, and late fee policy. For fixed-term leases, rent generally cannot be increased mid-term unless the lease explicitly allows it; for month-to-month leases, the landlord typically must give written notice (commonly 30–60 days) before raising rent.' },
+      subletting: { match: ['sublet', 'subletting', 'sublease', 'sub-let'], answer: 'Subletting clauses define whether the tenant can rent out the unit (or part of it) to someone else. Most leases require written landlord consent before subletting is allowed, and the original tenant usually remains responsible for rent even if a subtenant is in place.' },
+      maintenance: { match: ['maintenance', 'repair', 'who fixes', 'responsible for repairs'], answer: 'Maintenance responsibilities are typically split: the landlord covers structural issues, major systems (plumbing, electrical, heating), and anything not caused by tenant negligence; the tenant is usually responsible for everyday upkeep and any damage they cause.' },
+    },
+  },
 ];
 
 const CATEGORIES = Array.from(new Set(DOCUMENT_CATALOG.map((d) => d.category)));
+
+/**
+ * Try to answer a SPECIFIC sub-question about a matched document
+ * (e.g. "what should the termination period be" for a Lease Agreement)
+ * by scanning that document's `topics` map for a keyword match.
+ * Returns null if no specific topic matched — caller should fall back
+ * to the general document overview.
+ */
+function findTopicAnswer(message: string, doc: CatalogDoc): string | null {
+  if (!doc.topics) return null;
+  const m = message.toLowerCase();
+  let best: { key: string; answer: string; score: number } | null = null;
+  for (const [key, topic] of Object.entries(doc.topics)) {
+    let score = 0;
+    for (const phrase of topic.match) {
+      if (m.includes(phrase)) score += phrase.split(' ').length; // longer phrase = stronger signal
+    }
+    if (score > 0 && (!best || score > best.score)) {
+      best = { key, answer: topic.answer, score };
+    }
+  }
+  return best ? best.answer : null;
+}
 
 // ---------------------------------------------------------
 // Helpers
@@ -104,7 +226,6 @@ const STOPWORDS = new Set([
   'looking', 'help', 'get', 'some', 'any', 'on', 'in', 'write', 'make', 'create', 'draft',
 ]);
 
-// Words that signal the user is making a REQUEST, not giving a name.
 const REQUEST_SIGNALS = [
   'document', 'documents', 'agreement', 'contract', 'note', 'lease', 'rent', 'rental',
   'nda', 'loan', 'form', 'template', 'write', 'make', 'create', 'draft', 'generate',
@@ -148,24 +269,15 @@ const looksLikeThanks = (m: string) => /\b(thanks|thank you|appreciate|cheers)\b
 const looksLikeHelp = (m: string) => /\b(help|what can you|how do you|capabilities|what do you do)\b/i.test(m);
 const looksLikeBrowse = (m: string) => /\b(browse|list|categories|all documents|what documents|show me)\b/i.test(m);
 
-/**
- * Decide whether a message during the "name" step is actually a REQUEST
- * (a question or document ask) rather than a person's name.
- */
 function looksLikeRequest(message: string): boolean {
   const m = message.toLowerCase().trim();
   if (m.endsWith('?')) return true;
   if (matchDocuments(m).length > 0) return true;
   if (REQUEST_SIGNALS.some((w) => new RegExp(`\\b${w}\\b`).test(m))) return true;
-  // Long inputs are almost never a name
   if (m.split(/\s+/).length > 4) return true;
   return false;
 }
 
-/**
- * Decide whether a message looks like a genuine name:
- * 1–3 alphabetic words, no request signals.
- */
 function looksLikeName(message: string): boolean {
   const m = message.trim();
   if (!m) return false;
@@ -183,10 +295,6 @@ function docButtons(docs: CatalogDoc[]): ActionButton[] {
 
 type Base = { session_id: string; suggested_documents: string[] | null; action_buttons: ActionButton[] | null };
 
-/**
- * Core intent handling once we're past name capture (or when the user
- * asked something instead of giving a name). Always returns stage READY.
- */
 function handleIntent(message: string, base: Base, userName: string | null): ChatResponse {
   const namePrefix = userName ? `${userName}, ` : '';
   const wantsWriting = /\b(write|draft|make|create|generate|prepare)\b/i.test(message);
@@ -220,10 +328,27 @@ function handleIntent(message: string, base: Base, userName: string | null): Cha
     };
   }
 
-  // Document matching — the core "answer what's being asked"
   const matches = matchDocuments(message);
   if (matches.length > 0) {
     const top = matches[0];
+
+    // 1) Try to answer a SPECIFIC sub-question about this document first
+    //    e.g. "what should the termination period be" -> answers termination clause directly
+    const topicAnswer = findTopicAnswer(message, top);
+    if (topicAnswer) {
+      return {
+        ...base,
+        response:
+          `${namePrefix}for a **${top.full_name}**:\n\n${topicAnswer}\n\n` +
+          `Want to see the full ${top.full_name} template, or ask about another clause?`,
+        new_stage: 'READY',
+        user_name: userName,
+        suggested_documents: [top.full_name],
+        action_buttons: docButtons([top]),
+      };
+    }
+
+    // 2) No specific topic matched — fall back to general document overview
     const verb = wantsWriting ? 'create' : 'open';
     const intro =
       matches.length === 1
@@ -231,7 +356,7 @@ function handleIntent(message: string, base: Base, userName: string | null): Cha
         : `${namePrefix}here are the documents that best match what you described:`;
     const body =
       matches.length === 1
-        ? `\n\n_${top.description}_\n\nTap below to ${verb} it on Legalgram, or ask me what it covers.`
+        ? `\n\n_${top.description}_\n\nTap below to ${verb} it on Legalgram, or ask me a specific question about it (e.g. "what's the notice period" or "how much deposit").`
         : '\n\n' + matches.map((d) => `• **${d.full_name}** — ${d.description}`).join('\n');
     return {
       ...base,
@@ -247,27 +372,24 @@ function handleIntent(message: string, base: Base, userName: string | null): Cha
     return { ...base, response: `Hello${userName ? `, ${userName}` : ''}! What legal document are you looking for? Describe it in plain words.`, new_stage: 'READY', user_name: userName };
   }
 
-  // Fallback — be honest that it didn't match, and guide.
   return {
     ...base,
     response:
-      `${namePrefix}I couldn't match that to a specific document yet. ` +
-      `Try naming what you need — for example "loan", "rental", "NDA", or "catering" — ` +
-      `or say **browse** to see all categories (${CATEGORIES.join(', ')}).`,
+      `${namePrefix}I couldn't match that to a specific document yet.\n\n` +
+      `Try naming what you need (e.g. "loan", "rental", "NDA", "catering"), or ask a specific clause question once a document comes up, like:\n` +
+      `• "What's the termination period for a lease?"\n` +
+      `• "How much should the deposit be?"\n` +
+      `• "What's the interest rate on a promissory note?"\n\n` +
+      `Or say **browse** to see all categories (${CATEGORIES.join(', ')}).`,
     new_stage: 'READY',
     user_name: userName,
     action_buttons: [{ label: 'Browse all documents', value: '/documents', type: 'link' }],
   };
 }
 
-// ---------------------------------------------------------
-// Local engine: stage flow + intent
-// ---------------------------------------------------------
 function localEngine(message: string, sessionId: string, userName: string | null, stage: string, documentName?: string | null): ChatResponse {
   const base: Base = { session_id: sessionId, suggested_documents: null, action_buttons: null };
 
-  // 0) A document was attached — acknowledge it honestly.
-  // (The local engine can't read file contents; it guides instead.)
   if (documentName) {
     const namePrefix = userName ? `${userName}, ` : '';
     return {
@@ -285,7 +407,6 @@ function localEngine(message: string, sessionId: string, userName: string | null
     };
   }
 
-  // 1) INIT — greet and ask for a name
   if (stage === 'INIT' || !message.trim()) {
     return {
       ...base,
@@ -295,7 +416,6 @@ function localEngine(message: string, sessionId: string, userName: string | null
     };
   }
 
-  // 2) CAPTURE_NAME — but only capture if it actually looks like a name
   if (stage === 'CAPTURE_NAME') {
     if (looksLikeName(message)) {
       const cleanName = message.trim().split(/\s+/).slice(0, 2).join(' ');
@@ -310,17 +430,12 @@ function localEngine(message: string, sessionId: string, userName: string | null
         ],
       };
     }
-    // Not a name — the user asked something. Answer it instead of saving a fake name.
     return handleIntent(message, base, userName);
   }
 
-  // 3) READY — normal intent handling
   return handleIntent(message, base, userName);
 }
 
-// ---------------------------------------------------------
-// Session helpers
-// ---------------------------------------------------------
 function generateSessionId(): string {
   return `lg_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -332,9 +447,6 @@ function getSessionId(): string {
   return newId;
 }
 
-// ---------------------------------------------------------
-// Public API
-// ---------------------------------------------------------
 export const LegalgramAPI = {
   async sendMessage(
     message: string,
