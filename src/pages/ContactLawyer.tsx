@@ -105,7 +105,7 @@ const ContactLawyer = () => {
                   </div>
                   <div className="flex items-center">
                     <Mail className="h-5 w-5 text-rocket-blue-500 mr-3" />
-                    <span className="text-rocket-gray-700 dark:text-rocket-gray-300">lawyers@rocketlawyer.com</span>
+                    <span className="text-rocket-gray-700 dark:text-rocket-gray-300">lawyers@legalgram.org</span>
                   </div>
                   <div className="flex items-center">
                     <Users className="h-5 w-5 text-rocket-blue-500 mr-3" />

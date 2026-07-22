@@ -14,7 +14,7 @@ export default function AskALawyer() {
   return (
     <Layout>
       <Helmet>
-        <title>Ask a Lawyer | Rocket Lawyer</title>
+        <title>Ask a Lawyer | Legalgram</title>
         <meta name="description" content="Get legal advice from our network of certified lawyers through chat, video calls, or our Q&A section." />
       </Helmet>
       

@@ -17,6 +17,7 @@ import {
   ArrowLeft, CheckCircle,
 } from "lucide-react";
 import LegalgramAPI, { ActionButton, ChatResponse } from "@/services/backendService";
+import { generateDocumentWithAI } from "@/services/documentAI";
 
 /* ─────────────────────────────────────────────
    DOCUMENT KNOWLEDGE BASE
@@ -908,7 +909,7 @@ function buildDocReply(
     // No document match but let's still give a helpful response
     const uname = userName ? `${userName}, ` : "";
     return {
-      text: `${uname}I don't have specific information about that in my document library right now.\n\nHowever, here are some things I can help with:\n\n• **Find the right legal document** — I have 100+ templates covering business, finance, real estate, employment, and more\n• **Explain legal concepts** — Ask me about contracts, agreements, or legal terms\n• **Build a custom document** — I can guide you through creating one tailored to your situation\n\nWhat would you like to do?`,
+      text: `${uname}I don't have specific information about that in my document library right now.\n\nHowever, here are some things I can help with:\n\n• **Find the right legal document** — I have 230+ templates covering business, finance, real estate, employment, and more\n• **Explain legal concepts** — Ask me about contracts, agreements, or legal terms\n• **Build a custom document** — I can guide you through creating one tailored to your situation\n\nWhat would you like to do?`,
       actionButtons: [
         { label: "Browse Documents", value: "/documents", type: "link" as const },
         { label: "Create New Document", value: "create new document", type: "action" as const },
@@ -963,7 +964,7 @@ function buildDocReply(
   const actionButtons: ActionButton[] = [
     { label: `Get ${primary.name}`, value: primary.url, type: "link" as const },
     ...top.slice(1, 3).map(m => ({ label: m.doc.name, value: m.doc.url, type: "link" as const })),
-    { label: "Browse all 100+ documents", value: "/documents", type: "link" as const },
+    { label: "Browse all 230+ documents", value: "/documents", type: "link" as const },
     { label: "Build custom version", value: `create custom ${primary.name}`, type: "action" as const },
   ];
 
@@ -1101,6 +1102,7 @@ const ChatWidget = () => {
 
   // Keep a live ref of the session so async callbacks read fresh values
   const sessionRef = useRef(session);
+  const lastCustomAnswersRef = useRef<Record<string, string>>({});
   useEffect(() => { sessionRef.current = session; }, [session]);
 
   /* ── Open / Close ── */
@@ -1339,6 +1341,17 @@ const ChatWidget = () => {
   /* Action button handler - local KB first, backend only for non-doc queries */
   const handleActionButton = (button: ActionButton) => {
     if (button.type === "link") { window.location.href = button.value; return; }
+    // Fallback: build a basic template PDF from the last collected answers (no AI).
+    if (button.value === "__fallback_template__") {
+      atBottomRef.current = true;
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        addBotMessage("No problem — here's a basic template version, downloading now.");
+        generateStructuredDocumentPdf(lastCustomAnswersRef.current || {});
+      }, 250);
+      return;
+    }
     atBottomRef.current = true;
     const msg = button.value;
     setMessages(prev => [...prev, { id: Date.now().toString(), sender: "user", text: msg, timestamp: getCurrentTime() }]);
@@ -1409,8 +1422,8 @@ const ChatWidget = () => {
         setIsTyping(true);
         setTimeout(() => {
           setIsTyping(false);
-          addBotMessage("✅ Perfect! Generating your document now — it will download in a moment.");
-          generateStructuredDocumentPdf(updated);
+          addBotMessage("✅ Got everything I need. Drafting your document with Gram AI — this can take up to a minute…");
+          generateAIDocument(updated);
         }, 350);
       }
       return;
@@ -1460,7 +1473,7 @@ const ChatWidget = () => {
         addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch);
       } else {
         addBotMessage(
-          `I'm having trouble connecting right now, but I'd love to help!\n\nI can help you:\n• **Find legal documents** from our library of 100+ templates\n• **Explain legal terms** and concepts\n• **Create a custom document** tailored to your needs\n\nWhat would you like to do?`,
+          `I'm having trouble connecting right now, but I'd love to help!\n\nI can help you:\n• **Find legal documents** from our library of 230+ templates\n• **Explain legal terms** and concepts\n• **Create a custom document** tailored to your needs\n\nWhat would you like to do?`,
           [
             { label: "Browse Documents", value: "/documents", type: "link" as const },
             { label: "Create Document", value: "create new document", type: "action" as const },
@@ -1470,7 +1483,143 @@ const ChatWidget = () => {
     }
   };
 
-  /* ── PDF generator ── */
+  /* ── AI document generation (Claude via edge function) ── */
+  const generateAIDocument = async (answers: Record<string, string>) => {
+    const documentType = (answers.documentTitle || "Custom Agreement").trim();
+    const { document, error } = await generateDocumentWithAI({ documentType, details: answers });
+
+    if (error || !document) {
+      addBotMessage(
+        `⚠️ ${error || "I couldn't generate that document just now."}\n\nYou can try again, or I can fall back to a basic template.`,
+        [
+          { label: "Try again", value: "create new document", type: "action" },
+          { label: "Use a basic template", value: "__fallback_template__", type: "action" },
+        ],
+      );
+      // Stash answers so a fallback can reuse them.
+      lastCustomAnswersRef.current = answers;
+      return;
+    }
+
+    // Render Claude's draft into a downloadable PDF…
+    renderTextToPdf(documentType, document);
+
+    // …and show it in the chat so the user can read it immediately.
+    addBotMessage(
+      `✅ **${documentType}** is ready and has been downloaded as a PDF.\n\nHere's the draft:\n\n${document}`,
+      [
+        { label: "Create another document", value: "create new document", type: "action" },
+        { label: "Browse all documents", value: "/documents", type: "link" },
+      ],
+    );
+  };
+
+  /* ── Render document text into a clean, professionally formatted PDF ── */
+  const renderTextToPdf = (documentType: string, text: string) => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pw = 595, ph = 842;
+    const mx = 64, top = 78, bottom = ph - 70;
+    const cw = pw - mx * 2;
+    let y = top;
+
+    const ensure = (h: number) => { if (y + h > bottom) { doc.addPage(); y = top; } };
+
+    const rawLines = text.replace(/\r\n/g, "\n").split("\n");
+    // Drop leading blank lines.
+    while (rawLines.length && rawLines[0].trim() === "") rawLines.shift();
+
+    let titleDone = false;
+    rawLines.forEach((raw) => {
+      // Strip markdown bold markers and trailing whitespace.
+      const line = raw.replace(/\*\*/g, "").replace(/^#+\s*/, "").trimEnd();
+      if (line.trim() === "") { y += 9; return; }
+
+      const trimmed = line.trim();
+      const letters = trimmed.replace(/[^A-Za-z]/g, "");
+      const isAllCaps = letters.length > 1 && letters === letters.toUpperCase();
+
+      // 1) TITLE — the first non-empty line: centered, bold, underlined.
+      if (!titleDone) {
+        titleDone = true;
+        doc.setFont("times", "bold");
+        doc.setFontSize(16);
+        const wrapped = doc.splitTextToSize(trimmed.toUpperCase(), cw);
+        ensure(wrapped.length * 20 + 16);
+        wrapped.forEach((w: string) => {
+          doc.text(w, pw / 2, y, { align: "center" });
+          y += 20;
+        });
+        // underline under the (widest) title line
+        const tw = Math.min(cw, doc.getTextWidth(wrapped[0]));
+        doc.setLineWidth(1);
+        doc.line((pw - tw) / 2, y - 6, (pw + tw) / 2, y - 6);
+        y += 18;
+        return;
+      }
+
+      // 2) DISCLAIMER — the closing generated-by line: small, italic, separated.
+      if (/^["“]?This document was generated/i.test(trimmed)) {
+        y += 10;
+        ensure(40);
+        doc.setDrawColor(180);
+        doc.setLineWidth(0.5);
+        doc.line(mx, y, pw - mx, y);
+        y += 14;
+        doc.setFont("times", "italic");
+        doc.setFontSize(8.5);
+        doc.setTextColor(120);
+        const wrapped = doc.splitTextToSize(trimmed.replace(/^["“]|["”]$/g, ""), cw);
+        doc.text(wrapped, mx, y);
+        y += wrapped.length * 12;
+        doc.setTextColor(0);
+        return;
+      }
+
+      // 3) SECTION HEADING — "1. PURPOSE" or a short ALL-CAPS line (RECITALS…).
+      const isNumberedHeading = /^\d+\.\s+\S/.test(trimmed) && trimmed.length < 80;
+      const isCapsHeading = isAllCaps && trimmed.length < 70;
+      if (isNumberedHeading || isCapsHeading) {
+        doc.setFont("times", "bold");
+        doc.setFontSize(11.5);
+        const wrapped = doc.splitTextToSize(trimmed, cw);
+        ensure(wrapped.length * 15 + 14);
+        y += 10; // space above heading
+        doc.text(wrapped, mx, y);
+        y += wrapped.length * 15 + 3;
+        return;
+      }
+
+      // 4) BODY paragraph — justified, comfortable line height.
+      doc.setFont("times", "normal");
+      doc.setFontSize(11);
+      const wrapped = doc.splitTextToSize(line, cw);
+      const lh = 15.5;
+      ensure(wrapped.length * lh + 6);
+      // Justify all lines except the last of the paragraph.
+      wrapped.forEach((w: string, i: number) => {
+        const isLast = i === wrapped.length - 1;
+        doc.text(w, mx, y, isLast ? undefined : { align: "justify", maxWidth: cw });
+        y += lh;
+      });
+      y += 5; // paragraph spacing
+    });
+
+    // Page numbers on every page.
+    const pages = doc.getNumberOfPages();
+    for (let i = 1; i <= pages; i++) {
+      doc.setPage(i);
+      doc.setFont("times", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(140);
+      doc.text(`Page ${i} of ${pages}`, pw / 2, ph - 32, { align: "center" });
+      doc.setTextColor(0);
+    }
+
+    const safe = documentType.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    doc.save(`${safe || "document"}-${Date.now()}.pdf`);
+  };
+
+  /* ── PDF generator (basic template fallback — no AI) ── */
   const generateStructuredDocumentPdf = (answers: Record<string, string>) => {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const mx = 56, pw = 595, cw = pw - mx * 2; let y = 64;
