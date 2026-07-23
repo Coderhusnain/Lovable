@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Layout from "@/components/layout/Layout";
 import PricingHero from "@/components/pricing/PricingHero";
@@ -32,6 +33,8 @@ interface Plan {
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("annually");
+  const [searchParams] = useSearchParams();
+  const checkoutStatus = searchParams.get("checkout"); // "success" | "cancelled" | null
   const isMobile = useIsMobile();
   
   const plans: Plan[] = [
@@ -128,6 +131,21 @@ const Pricing = () => {
 
       <div className="bg-gradient-to-b from-soft-peach-50 to-white">
         <PricingHero billingCycle={billingCycle} setBillingCycle={setBillingCycle} />
+
+        {checkoutStatus === "success" && (
+          <div className="mx-auto max-w-2xl px-4 -mt-24 relative z-10">
+            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-center text-green-800 shadow-sm">
+              🎉 Payment successful! Your subscription is now active. Thank you for choosing Legalgram.
+            </div>
+          </div>
+        )}
+        {checkoutStatus === "cancelled" && (
+          <div className="mx-auto max-w-2xl px-4 -mt-24 relative z-10">
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-amber-800 shadow-sm">
+              Checkout was cancelled — no charge was made. You can pick a plan whenever you're ready.
+            </div>
+          </div>
+        )}
 
         <div className="relative -mt-32 px-4 pb-20">
           <div className="mx-auto max-w-7xl">

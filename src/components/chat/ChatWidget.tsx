@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import LegalgramAPI, { ActionButton, ChatResponse } from "@/services/backendService";
 import { generateDocumentWithAI } from "@/services/documentAI";
+import { searchForms, type FormResult } from "@/services/formSearch";
 
 /* ─────────────────────────────────────────────
    DOCUMENT KNOWLEDGE BASE
@@ -1038,6 +1039,64 @@ interface Message {
   actionButtons?: ActionButton[] | null;
   attachmentName?: string | null;
   noDocumentMatch?: boolean;
+  recommendations?: FormResult[] | null;
+}
+
+/* Build a form recommendation reply using the intelligent search engine.
+   Recommends ONLY real forms from the catalog; never invents names. */
+function buildRecommendation(
+  query: string,
+  userName: string | null,
+): { text: string; recommendations: FormResult[]; actionButtons: ActionButton[]; noDocumentMatch: boolean } {
+  const uname = userName ? `${userName}, ` : "";
+  const res = searchForms(query, 5);
+
+  if (res.status === "none") {
+    return {
+      text: `${uname}I couldn't find a matching form in our library for that. I don't want to guess or invent one.\n\nI can create a **custom legal document** tailored to you instead — or you can browse the full library.`,
+      recommendations: [],
+      actionButtons: [
+        { label: "Browse all 230+ documents", value: "/documents", type: "link" as const },
+        { label: "Create a custom document", value: "create new document", type: "action" as const },
+      ],
+      noDocumentMatch: true,
+    };
+  }
+
+  // Informational intent — the user wants to understand a form (its details,
+  // required fields, what to fill), not just a link. Give a helpful answer.
+  const informational =
+    /\b(detail|details|parameter|parameters|require|required|requirement|requirements|needed|information|info|field|fields|fill|filling|contain|contains|include|includes|clause|clauses|what.?s? (in|inside|needed|required)|how (do i|to)|steps?|explain|about)\b/i.test(
+      query,
+    );
+
+  const top = res.results[0];
+  let intro: string;
+
+  if (informational && res.status === "good") {
+    intro =
+      `${uname}the **${top.title}** is the right form for that.\n\n` +
+      `_${top.description}._\n\n` +
+      `You don't need to know the required details in advance — when you open it, Gram AI walks you through every field step by step. Tap **Open** below to start` +
+      `${res.results.length > 1 ? ", or pick a closely related option:" : ":"}`;
+  } else if (res.status === "ambiguous") {
+    intro = `${uname}I found a few possibilities — which one fits best?`;
+  } else {
+    intro =
+      res.results.length === 1
+        ? `${uname}here's the best match from our library:`
+        : `${uname}here are the most relevant forms from our library:`;
+  }
+
+  return {
+    text: intro,
+    recommendations: res.results.slice(0, res.status === "ambiguous" ? 5 : 4),
+    actionButtons: [
+      { label: "Browse all documents", value: "/documents", type: "link" as const },
+      { label: "None of these — build custom", value: "create new document", type: "action" as const },
+    ],
+    noDocumentMatch: false,
+  };
 }
 interface SessionState { sessionId: string; userName: string | null; stage: string; }
 interface CustomDocField { key: string; question: string; }
@@ -1131,11 +1190,12 @@ const ChatWidget = () => {
 
   const getCurrentTime = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  const addBotMessage = (text: string, actionButtons?: ActionButton[] | null, noDocumentMatch = false) => {
+  const addBotMessage = (text: string, actionButtons?: ActionButton[] | null, noDocumentMatch = false, recommendations: FormResult[] | null = null) => {
     setMessages(prev => [...prev, {
       id: `${Date.now()}-bot-${Math.random()}`,
       sender: "assistant", text, timestamp: getCurrentTime(),
       actionButtons: actionButtons ?? null, noDocumentMatch,
+      recommendations: recommendations ?? null,
     }]);
   };
 
@@ -1238,6 +1298,7 @@ const ChatWidget = () => {
     const looksLikeRequest =
       CUSTOM_DOC_TRIGGERS.some(t => lower.includes(t)) ||
       isLegalQuestion(text) ||
+      searchForms(text).status !== "none" ||
       matchDocuments(lower).some(m => m.score >= 2) ||
       wordCount >= 4;
 
@@ -1285,47 +1346,50 @@ const ChatWidget = () => {
     if (isQuestion || /should|must|required|include|termination|notice|period/i.test(lower)) {
       const generalAdvice = getGeneralLegalAdvice(text);
       if (generalAdvice) {
-        const relatedDocs = matchDocuments(lower);
-        const buttons: ActionButton[] = [];
-        if (relatedDocs.length > 0) {
-          relatedDocs.slice(0, 2).forEach(m => {
-            buttons.push({ label: m.doc.name, value: m.doc.url, type: "link" as const });
-          });
-        }
-        buttons.push({ label: "Browse all documents", value: "/documents", type: "link" as const });
-        setTimeout(() => { setIsTyping(false); addBotMessage(generalAdvice, buttons.length > 0 ? buttons : null); }, 700);
+        // Attach REAL matching forms (from the catalog engine) as cards.
+        const eng = searchForms(text, 3);
+        setTimeout(() => {
+          setIsTyping(false);
+          addBotMessage(
+            generalAdvice,
+            [{ label: "Browse all documents", value: "/documents", type: "link" as const }],
+            false,
+            eng.status !== "none" ? eng.results : null,
+          );
+        }, 700);
         return true;
       }
     }
 
-    // 4. Try KB match for ANY message containing legal terms
+    // 4. Educational "what is X / explain" → knowledge-base explanation text,
+    //    but always back it with REAL form cards from the catalog engine.
     const matches = matchDocuments(lower);
-
-    // Strong KB hit — answer from KB regardless of query form
-    if (matches.length > 0 && matches[0].score >= 2) {
+    if (isQuestion && hasLegalTerm && matches.length > 0 && matches[0].score >= 2) {
       const reply = buildDocReply(matches, userName, text);
-      setTimeout(() => { setIsTyping(false); addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch); }, 700);
+      const eng = searchForms(text, 4);
+      setTimeout(() => {
+        setIsTyping(false);
+        addBotMessage(
+          reply.text,
+          [
+            { label: "Browse all documents", value: "/documents", type: "link" as const },
+            { label: "Build a custom document", value: "create new document", type: "action" as const },
+          ],
+          false,
+          eng.status !== "none" ? eng.results : null,
+        );
+      }, 700);
       return true;
     }
 
-    // 5. Informational / question patterns — even with weak KB match, answer from KB
-    if (isQuestion && hasLegalTerm) {
-      const reply = buildDocReply(matches, userName, text);  // may be empty -> noDocumentMatch
-      setTimeout(() => { setIsTyping(false); addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch); }, 700);
-      return true;
-    }
-
-    // 6. Browse / find / search intent
-    if (/\b(find|search|look|browse|show|list|need|want|looking for)\b/i.test(lower)) {
-      const reply = buildDocReply(matches, userName, text);
-      setTimeout(() => { setIsTyping(false); addBotMessage(reply.text, reply.actionButtons, reply.noDocumentMatch); }, 700);
-      return true;
-    }
-
-    // 7. Default fallback — ANY unmatched query still gets a helpful response locally
-    // Instead of waiting for backend, respond immediately with guidance
-    const fallbackReply = buildDocReply(matches.length > 0 ? matches : [], userName, text);
-    setTimeout(() => { setIsTyping(false); addBotMessage(fallbackReply.text, fallbackReply.actionButtons, true); }, 700);
+    // 5. Everything else → intelligent form recommendation (real forms only).
+    //    Ranks the catalog, returns top matches with reasons, asks a clarifying
+    //    question when ambiguous, and offers a custom document when nothing fits.
+    const rec = buildRecommendation(text, userName);
+    setTimeout(() => {
+      setIsTyping(false);
+      addBotMessage(rec.text, rec.actionButtons, rec.noDocumentMatch, rec.recommendations);
+    }, 650);
     return true;
   };
 
@@ -1871,6 +1935,29 @@ const ChatWidget = () => {
                               {msg.text && (
                                 <div className={msg.sender === "user" ? "text-white" : "text-gray-700"}>
                                   {renderText(msg.text)}
+                                </div>
+                              )}
+                              {msg.recommendations && msg.recommendations.length > 0 && (
+                                <div className="mt-3 space-y-2">
+                                  {msg.recommendations.map((rec) => (
+                                    <div key={rec.id} className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                                      <div className="flex items-start justify-between gap-2">
+                                        <div className="min-w-0">
+                                          <p className="text-sm font-semibold text-gray-800 leading-snug">{rec.title}</p>
+                                          <span className="inline-block mt-1 text-[10px] font-medium text-bright-orange-600 bg-bright-orange-50 px-2 py-0.5 rounded-full">{rec.category}</span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          onClick={() => handleActionButton({ label: "Open", value: `/documents/${rec.id}`, type: "link" })}
+                                          className="shrink-0 text-xs bg-bright-orange-500 hover:bg-bright-orange-600 text-white px-3 py-1.5 rounded-full transition-colors"
+                                        >
+                                          Open
+                                        </button>
+                                      </div>
+                                      <p className="mt-1.5 text-xs text-gray-600 leading-snug">{rec.description}</p>
+                                      <p className="mt-1 text-[11px] italic text-gray-400">{rec.reason}</p>
+                                    </div>
+                                  ))}
                                 </div>
                               )}
                               {msg.actionButtons && msg.actionButtons.length > 0 && (

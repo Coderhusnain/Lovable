@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { startCheckout } from "@/services/checkout";
 import { Check, X, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,6 +43,29 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
+  const planId = plan.name.toLowerCase();
+  const isEnterprise = planId === "enterprise";
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const handleCheckout = async () => {
+    setErr(null);
+    setLoading(true);
+    const res = await startCheckout(planId as "starter" | "premium", billingCycle);
+    if (!res.ok) {
+      setErr(res.error || "Something went wrong. Please try again.");
+      setLoading(false);
+    }
+    // On success the browser is redirected to Stripe, so no further UI needed.
+  };
+
+  const ctaClasses = cn(
+    "w-full text-base font-semibold py-6 transition-all duration-300",
+    plan.popular
+      ? "bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 hover:from-bright-orange-600 hover:to-bright-orange-700 text-white shadow-lg"
+      : "bg-bright-orange-50 hover:bg-bright-orange-100 text-bright-orange-700",
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -86,18 +110,18 @@ const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
             )}
           </div>
 
-          <Link to="/signup" className="block mb-8">
-            <Button
-              className={cn(
-                "w-full text-base font-semibold py-6 transition-all duration-300",
-                plan.popular
-                  ? "bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 hover:from-bright-orange-600 hover:to-bright-orange-700 text-white shadow-lg"
-                  : "bg-bright-orange-50 hover:bg-bright-orange-100 text-bright-orange-700"
-              )}
-            >
-              {plan.callToAction}
-            </Button>
-          </Link>
+          {isEnterprise ? (
+            <Link to="/contact" className="block mb-8">
+              <Button className={ctaClasses}>{plan.callToAction}</Button>
+            </Link>
+          ) : (
+            <div className="mb-8">
+              <Button className={ctaClasses} onClick={handleCheckout} disabled={loading}>
+                {loading ? "Redirecting to checkout…" : plan.callToAction}
+              </Button>
+              {err && <p className="mt-2 text-sm text-red-600 text-center">{err}</p>}
+            </div>
+          )}
 
           <ul className="space-y-4 text-left flex-grow">
             {plan.features.map((feature, index) => (
