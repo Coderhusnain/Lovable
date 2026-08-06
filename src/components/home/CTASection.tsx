@@ -5,7 +5,7 @@ import { memo } from "react";
 
 const CTASection = () => {
   return (
-    <section className="py-16 md:py-24 bg-[#FDE1D3]">
+    <section className="py-12 md:py-16 bg-[#FDE1D3]">
       <div className="container-custom">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -66,14 +66,14 @@ const CTASection = () => {
                 <p className="text-white italic mb-4">
                   "Legalgram made creating my LLC so easy. The step-by-step process and customer service were excellent!"
                 </p>
-                <p className="font-medium text-white">— Michael T., Small Business Owner</p>
+                <p className="font-medium text-white">Michael T., Small Business Owner</p>
               </div>
               
               <div className="border-l-4 border-[#F18F01] pl-4">
                 <p className="text-white italic mb-4">
                   "I was able to create my will quickly and easily. The guidance provided made the process stress-free."
                 </p>
-                <p className="font-medium text-white">— Sarah L., Family Protection</p>
+                <p className="font-medium text-white">Sarah L., Family Protection</p>
               </div>
               
               <div className="flex items-center justify-between mt-6">

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
@@ -8,24 +9,28 @@ import { Badge } from "@/components/ui/badge";
 const ConfidenceSlider = () => {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
-  
+  const navigate = useNavigate();
+
   const slides = [
     {
-      title: "CONTRACT AT A SINGLE™",
-      subtitle: "Contract a pro to have a tailored contract",
-      cta: "DRAFT YOUR LEGAL",
+      title: "GET YOUR CONTRACT DRAFTED BY A PRO",
+      subtitle: "Professionally tailored legal contracts for your exact needs",
+      cta: "Draft Your Document",
+      link: "/documents",
       image: "/lovable-uploads/697f8a63-6e9a-41a0-9995-812ce5ce9381.png"
     },
     {
-      title: "GET A LEGAL ADVICE TO DEAL WITH ISSUES",
-      subtitle: "Our Team is ready to fight on your behalf",
-      cta: "ADVICE FREE",
+      title: "GET A GUIDANCE TO DEAL WITH ISSUES",
+      subtitle: "Our team is ready to fight on your behalf",
+      cta: "Get Legal Advice",
+      link: "/ask-legal-advice",
       image: "/lovable-uploads/74a69ce1-a6bf-4425-b520-90e996d23567.png"
     },
     {
       title: "BETTER TO KNOW YOUR RIGHTS TO DEAL WITH COPS",
       subtitle: "Subscribe to our weekly articles to know your rights",
-      cta: "Sign up",
+      cta: "Sign Up",
+      link: "/signup",
       image: "/lovable-uploads/895c7048-27af-4849-a014-fb3c7e9d698c.png"
     }
   ];
@@ -45,7 +50,7 @@ const ConfidenceSlider = () => {
   }, [api]);
 
   return (
-    <section className="relative w-full min-h-[560px] sm:min-h-[75vh] overflow-hidden pb-16">
+    <section className="relative w-full min-h-[560px] sm:min-h-[75vh] overflow-hidden pb-16 mt-[72px]">
       <Carousel setApi={setApi} className="h-full" opts={{ loop: true }}>
         <CarouselContent className="h-full">
           {slides.map((slide, index) => (
@@ -72,8 +77,9 @@ const ConfidenceSlider = () => {
                         {slide.subtitle}
                       </p>
                       <div className="space-y-3 sm:space-y-4">
-                        <Button 
+                        <Button
                           size="lg"
+                          onClick={() => navigate(slide.link)}
                           className="bg-bright-orange-500 hover:bg-bright-orange-600 text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg h-auto w-full sm:w-auto"
                         >
                           {slide.cta}
@@ -95,6 +101,8 @@ const ConfidenceSlider = () => {
         {slides.map((_, index) => (
           <button
             key={index}
+            type="button"
+            aria-label={`Go to slide ${index + 1}`}
             className={`w-2 h-2 rounded-full transition-all ${
               index === current 
                 ? "bg-white w-4" 

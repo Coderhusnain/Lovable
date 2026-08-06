@@ -24,7 +24,7 @@ const DocumentsSection = () => {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-white">
+    <section className="py-12 md:py-16 bg-white">
       <div className="container-custom">
         <div className="text-center mb-16">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">Popular Documents</span>
@@ -36,7 +36,7 @@ const DocumentsSection = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {popularDocuments.map(({ link, text }) => (
             <Link 
               to={link} 

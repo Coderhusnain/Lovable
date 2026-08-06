@@ -1,14 +1,12 @@
 
 import { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
-import { 
-  FileText, 
-  MessageCircle, 
-  Scale, 
-  ArrowRight, 
-  BookOpen, 
-  Users, 
-  Building, 
+import {
+  FileSignature,
+  Rocket,
+  Library,
+  ShieldCheck,
+  ArrowRight,
   Shield,
   CheckCircle2,
   Sparkles
@@ -50,25 +48,24 @@ const FeatureCard = memo(({
       }`}
       style={{ transitionDelay: `${delay * 150}ms` }}
     >
-      <Card className="h-full overflow-hidden group border border-gray-200 hover:border-bright-orange-300 shadow-sm hover:shadow-xl transition-all duration-500 relative">
-        <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${gradient}`}></div>
-        <CardContent className="p-8">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${gradient} text-white shadow-lg transform group-hover:scale-110 transition-transform duration-500`}>
-            <Icon className="h-8 w-8" />
-          </div>
-          <h3 className="text-xl md:text-2xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors duration-300">{title}</h3>
-          <p className="text-white-600 mb-4 group-hover:text-orange-800 transition-colors duration-300">{description}</p>
-        </CardContent>
-        <CardFooter className="px-8 pb-8 pt-0">
-          <Link 
-            to={linkTo} 
-            className="inline-flex items-center font-medium text-bright-orange-500 hover:text-bright-orange-600 group/link"
-          >
-            <span>{linkText}</span>
-            <ArrowRight className="ml-2 h-4 w-4 transform group-hover/link:translate-x-1 transition-transform" />
-          </Link>
-        </CardFooter>
-      </Card>
+      <Link to={linkTo} className="block h-full">
+        <Card className="h-full overflow-hidden group border border-gray-200 hover:border-bright-orange-300 shadow-sm hover:shadow-xl transition-all duration-500 relative cursor-pointer">
+          <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${gradient}`}></div>
+          <CardContent className="p-8">
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${gradient} text-white shadow-lg transform group-hover:scale-110 transition-transform duration-500`}>
+              <Icon className="h-8 w-8" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors duration-300">{title}</h3>
+            <p className="text-gray-600 mb-4 transition-colors duration-300">{description}</p>
+          </CardContent>
+          <CardFooter className="px-8 pb-8 pt-0">
+            <span className="inline-flex items-center font-medium text-bright-orange-500 group-hover:text-bright-orange-600">
+              <span>{linkText}</span>
+              <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+            </span>
+          </CardFooter>
+        </Card>
+      </Link>
     </div>
   );
 });
@@ -104,57 +101,41 @@ const Features = () => {
 
   const features = [
     {
-      icon: FileText,
+      icon: FileSignature,
       title: "Legal Documents",
-      description: "Create customized legal documents in minutes with our easy-to-use templates.",
+      description: "Create customized legal documents in minutes with our easy to use templates.",
       linkText: "Browse documents",
       linkTo: "/documents",
       gradient: "from-blue-500 to-blue-600"
     },
     {
-      icon: MessageCircle,
-      title: "Ask a Lawyer",
-      description: "Connect with experienced attorneys for personalized legal advice when you need it.",
-      linkText: "Get legal advice",
-      linkTo: "/ask-a-lawyer",
-      gradient: "from-amber-500 to-amber-600"
-    },
-    {
-      icon: Building,
+      icon: Rocket,
       title: "Business Formation",
       description: "Start your business the right way with our LLC and incorporation services.",
       linkText: "Start a business",
-      linkTo: "/business-formation",
+      linkTo: "/start-a-business",
       gradient: "from-green-500 to-green-600"
     },
     {
-      icon: Scale,
-      title: "Attorney Services",
-      description: "Work with dedicated attorneys for more complex legal matters at affordable rates.",
-      linkText: "Find an attorney",
-      linkTo: "/attorney-services",
-      gradient: "from-purple-500 to-purple-600"
-    },
-    {
-      icon: BookOpen,
+      icon: Library,
       title: "Legal Resources",
       description: "Access free articles and guides covering a wide range of legal topics.",
       linkText: "Explore resources",
-      linkTo: "/legal-resources",
+      linkTo: "/community",
       gradient: "from-rose-500 to-rose-600"
     },
     {
-      icon: Users,
+      icon: ShieldCheck,
       title: "Legal Plans",
       description: "Get ongoing legal protection for your family or business with our subscription plans.",
       linkText: "View plans",
-      linkTo: "/legal-plans",
+      linkTo: "/pricing",
       gradient: "from-indigo-500 to-indigo-600"
     }
   ];
 
   return (
-    <section id="features-section" className="py-24 md:py-32 relative">
+    <section id="features-section" className="py-12 md:py-16 relative">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-bright-orange-100 rounded-full opacity-20 blur-3xl"></div>
@@ -211,7 +192,7 @@ const Features = () => {
         </div>
         
         {/* Features grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {features.map((feature, index) => (
             <FeatureCard
               key={index}

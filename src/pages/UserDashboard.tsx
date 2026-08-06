@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import UserDashboardSidebar from '@/components/dashboard/UserDashboardSidebar';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 
@@ -144,9 +144,13 @@ const UserDashboard = () => {
           />
           
           <div className="flex-1 overflow-auto">
-            <div className="container-custom p-8">
+            <div className="container-custom p-4 md:p-8">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold">Welcome to Legal Portal</h1>
+                <div className="flex items-center gap-2 mb-2 md:hidden">
+                  <SidebarTrigger className="h-9 w-9 border rounded-md" />
+                  <span className="text-sm text-muted-foreground">Menu</span>
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold">Welcome to Legal Portal</h1>
                 <p className="text-muted-foreground mt-2">
                   Manage your legal documents, consultations, and get expert advice.
                 </p>

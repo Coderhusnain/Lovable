@@ -60,7 +60,7 @@ const LegalTeamSection = () => {
   ];
 
   return (
-    <section id="legal-team-section" className="py-20 md:py-28 bg-[#FDE1D3]/30">
+    <section id="legal-team-section" className="py-12 md:py-16 bg-[#FDE1D3]/30">
       <div className="container-custom">
         <div className="text-center mb-16">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">Our Legal Experts</span>

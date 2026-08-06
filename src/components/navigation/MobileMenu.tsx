@@ -25,7 +25,7 @@ export const MobileMenu = memo(({
 
   return (
     <motion.div 
-      className="md:hidden bg-white border-t border-black/20 shadow-md"
+      className="xl:hidden bg-white border-t border-black/20 shadow-md"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}

@@ -38,48 +38,48 @@ const WhyChooseUsSection = () => {
     {
       icon: Shield,
       title: "Secure & Confidential",
-      description: "Your legal information is protected with enterprise-grade security and encryption.",
+      description: "Your legal documents and personal information are protected with enterprise-grade security and encryption.",
       gradient: "from-blue-500/20 via-blue-400/10 to-transparent"
     },
     {
       icon: Clock,
       title: "Save Time",
-      description: "Create legal documents in minutes instead of hours with our streamlined process.",
+      description: "Create attorney drafted legal documents online in minutes with no appointments and no paperwork.",
       gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent"
     },
     {
       icon: BadgeCheck,
-      title: "Attorney-Reviewed",
-      description: "All documents and services are created and reviewed by qualified attorneys.",
+      title: "Attorney Reviewed",
+      description: "Every legal form and contract template is drafted and reviewed by licensed and experienced attorneys.",
       gradient: "from-purple-500/20 via-purple-400/10 to-transparent"
     },
     {
       icon: Scale,
       title: "Legal Compliance",
-      description: "Our documents are continuously updated to comply with current laws and regulations.",
+      description: "Our legal documents are continuously updated to comply with the latest state and federal laws.",
       gradient: "from-pink-500/20 via-pink-400/10 to-transparent"
     },
     {
       icon: Users,
       title: "Expert Support",
-      description: "Get help from our team of legal professionals whenever you need it.",
+      description: "Get affordable legal help and guidance from our team of legal professionals whenever you need it.",
       gradient: "from-amber-500/20 via-amber-400/10 to-transparent"
     },
     {
       icon: Award,
       title: "Trusted by Millions",
-      description: "Join the millions of individuals and businesses who trust us with their legal needs.",
+      description: "Join individuals and businesses nationwide who rely on Legalgram for fast online legal services.",
       gradient: "from-cyan-500/20 via-cyan-400/10 to-transparent"
     }
   ];
 
   return (
-    <section id="why-choose-us" className="py-24 md:py-32 bg-gradient-to-b from-white to-[#F8F9FF] relative overflow-hidden">
+    <section id="why-choose-us" className="pt-10 md:pt-12 pb-16 md:pb-20 bg-gradient-to-b from-white to-[#F8F9FF] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-bright-orange-100/50 to-rocket-blue 100/30 rounded-full opacity-30 blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div className="absolute bottom-40 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-blue-100/50 to-bright-orange-100/30 rounded-full opacity-30 blur-3xl -translate-x-1/2"></div>
       
       <div className="container-custom relative z-10">
-        <div className="text-center mb-20">
+        <div className="text-center mb-12">
           <motion.span 
             className="inline-block bg-gradient-to-r from-bright-orange-100 to-bright-orange-200 text-bright-orange-600 font-medium px-6 py-2 rounded-full text-sm mb-4"
             initial={{ opacity: 0, y: 20 }}
@@ -117,11 +117,11 @@ const WhyChooseUsSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="relative group"
+              className="relative group h-full"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className="relative overflow-hidden bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100">
+              <div className="relative overflow-hidden h-full flex flex-col bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100">
                 <div className={`absolute inset-0 bg-gradient-to-br ${reason.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
                 
                 <div className="relative z-10">
@@ -148,7 +148,7 @@ const WhyChooseUsSection = () => {
         </div>
 
         <motion.div 
-          className="mt-20 relative overflow-hidden"
+          className="mt-12 relative overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.7 }}

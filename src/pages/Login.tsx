@@ -16,6 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [weeklyEmails, setWeeklyEmails] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,7 +62,7 @@ const Login = () => {
 
     console.log("Attempting login with:", { 
       email, 
-      supabaseUrl: "https://abxrphctohxctpmaozvc.supabase.co",
+      supabaseUrl: "https://nksumgiugukzdmrhhroj.supabase.co",
       timestamp: new Date().toISOString()
     });
 
@@ -86,13 +87,30 @@ const Login = () => {
           status: error.status || 'No status',
           name: error.name || 'Unknown error type'
         });
-        setErrorMessage(error.message);
+        let friendlyMessage = error.message;
+        if (/invalid login credentials/i.test(error.message)) {
+          friendlyMessage = "Incorrect email or password. Please try again or use Forgot password below.";
+        } else if (/email not confirmed/i.test(error.message)) {
+          friendlyMessage = "Please confirm your email first. Check your inbox for the confirmation link.";
+        }
+        setErrorMessage(friendlyMessage);
         toast.error("Login failed");
         setIsSubmitting(false);
         return;
       }
       
       console.log("Login successful, redirecting...");
+
+      if (weeklyEmails) {
+        // Subscribe to the weekly legal advice emails; duplicates are fine
+        const { error: subscribeError } = await (supabase as any)
+          .from("newsletter_subscribers")
+          .insert({ email: email.trim().toLowerCase(), source: "login" });
+        if (!subscribeError || subscribeError.code === "23505") {
+          toast.success("You are subscribed to weekly legal advice emails");
+        }
+      }
+
       toast.success("Welcome back!");
       navigate(getRedirectPath());
     } catch (error) {
@@ -110,7 +128,7 @@ const Login = () => {
 
   return (
     <Layout>
-      <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"
@@ -197,6 +215,18 @@ const Login = () => {
                 <Link to="/forgot-password" className="text-white text-sm hover:text-white/70 transition-colors">
                   Forgot password?
                 </Link>
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="weekly-emails"
+                  checked={weeklyEmails}
+                  onCheckedChange={(checked) => setWeeklyEmails(!!checked)}
+                  className="border-white/50 data-[state=checked]:bg-white mt-0.5"
+                />
+                <label htmlFor="weekly-emails" className="text-sm cursor-pointer text-white hover:text-white/70 transition-colors leading-snug">
+                  Send me weekly email reports with legal tips and updates about my rights
+                </label>
               </div>
 
               <Button

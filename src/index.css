@@ -26,6 +26,15 @@
     --radius: 0.75rem;
   }
 
+  /* Prevent any stray wide element from causing sideways scroll on mobile */
+  html, body {
+    overflow-x: hidden;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+
   /* Base text styling */
   * { @apply text-foreground text-[15px]; }
 

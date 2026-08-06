@@ -37,7 +37,7 @@ const Signup = () => {
 
     console.log("Attempting signup with:", { 
       email, 
-      supabaseUrl: "https://abxrphctohxctpmaozvc.supabase.co",
+      supabaseUrl: "https://nksumgiugukzdmrhhroj.supabase.co",
       timestamp: new Date().toISOString()
     });
 
@@ -86,20 +86,41 @@ const Signup = () => {
         return;
       }
       
+      // Supabase returns a user with no identities when the email is
+      // already registered (instead of an error) - surface that clearly
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setErrorMessage("An account with this email already exists. Please sign in instead.");
+        toast.error("An account with this email already exists");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Store email for login page
       localStorage.setItem("lastLoginEmail", email);
 
-      console.log("Signup successful, redirecting to login...");
-      // Redirect to login page
-      toast.success("Account created successfully! Please log in.");
-      
+      if (data.session) {
+        // Email confirmation is disabled, the user is already signed in
+        console.log("Signup successful with active session, redirecting...");
+        toast.success("Account created successfully! Welcome to Legalgram.");
+        if (redirectTo === 'ask-legal-advice' && redirectStep) {
+          navigate(`/ask-legal-advice?step=${redirectStep}`);
+        } else {
+          navigate("/user-dashboard");
+        }
+        return;
+      }
+
+      // Email confirmation is required before the account can be used
+      console.log("Signup successful, confirmation email sent...");
+      toast.success("Account created! Please check your email to confirm your account, then log in.");
+
       // Redirect to login with the same redirect parameters
       if (redirectTo && redirectStep) {
         navigate(`/login?redirect=${redirectTo}&step=${redirectStep}`);
       } else {
         navigate("/login");
       }
-      
+
     } catch (error) {
       console.error("Signup exception:", error);
       console.error("Error details:", {
@@ -115,7 +136,7 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"

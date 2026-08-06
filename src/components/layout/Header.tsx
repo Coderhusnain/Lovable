@@ -102,7 +102,7 @@ const Header = () => {
       scale: 1,
       transition: { 
         duration: 0.5,
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100
       }
     }
@@ -120,9 +120,9 @@ const Header = () => {
       animate="animate"
       variants={navBarVariants}
     >
-      <div className="container-custom py-4 flex items-center justify-between">
+      <div className="w-full max-w-[1400px] mx-auto px-4 lg:px-6 py-4 flex items-center justify-between gap-6">
         <motion.div variants={logoVariants}>
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center shrink-0">
             <div className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/legalgram.jpeg" 
@@ -138,7 +138,7 @@ const Header = () => {
 
         <NavLinks scrolled={scrolled} isActive={isActive} />
 
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden xl:flex items-center gap-3 shrink-0">
           {isAuthenticated ? (
             <motion.div variants={logoVariants}>
               <UserMenu 
@@ -152,7 +152,7 @@ const Header = () => {
           )}
         </div>
 
-        <motion.div variants={logoVariants} className="md:hidden flex items-center">
+        <motion.div variants={logoVariants} className="xl:hidden flex items-center">
           <button 
             className="text-bright-orange-500" 
             onClick={toggleMenu}

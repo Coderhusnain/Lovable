@@ -62,7 +62,7 @@ const GettingStartedSection = () => {
   ];
 
   return (
-    <section id="getting-started" className="py-20 md:py-28 bg-white relative overflow-hidden">
+    <section id="getting-started" className="py-12 md:py-16 bg-white relative overflow-hidden">
       <div className="hidden lg:block absolute top-1/2 left-0 w-[80%] h-0.5 bg-gradient-to-r from-bright-orange-300/0 via-bright-orange-300 to-bright-orange-300/0 transform -translate-y-1/2 z-0"></div>
       <div className="absolute top-40 right-0 w-64 h-64 bg-bright-orange-100 rounded-full opacity-30 blur-3xl"></div>
       <div className="absolute bottom-20 left-0 w-64 h-64 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>

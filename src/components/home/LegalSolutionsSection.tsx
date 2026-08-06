@@ -4,7 +4,7 @@ import { FileText, CheckCircle, Fingerprint, ArrowRight } from "lucide-react";
 
 const LegalSolutionsSection = () => {
   return (
-    <section className="py-20 md:py-28 relative overflow-hidden">
+    <section className="py-12 md:py-16 relative overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/c9d521b5-31e5-47a0-9d04-c2539ddd886e.png" 

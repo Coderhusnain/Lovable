@@ -57,7 +57,8 @@ export const GranularFormWizard: React.FC<GranularFormWizardProps> = ({
   const isFirstStep = currentStep === 0;
 
   const currentStepData = steps[currentStep];
-  const progressPercentage = ((currentStep + 1) / steps.length) * 100;
+  // Progress reflects completed steps only: 0% at the start, 100% when every step is done
+  const progressPercentage = (completedSteps.size / steps.length) * 100;
   const completedPercentage = (completedSteps.size / steps.length) * 100;
 
   // Validate current step

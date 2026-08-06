@@ -8,12 +8,13 @@
  */
 
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import {
   X, Send, Scale, Loader2, Sparkles, User,
   ExternalLink, ChevronDown, Paperclip, FileText,
   FileDown, Search, BookOpen, MessageSquare,
-  BarChart2, GitCompare, ArrowUp, SlidersHorizontal, Zap,
+  BarChart2, GitCompare, ArrowUp,
   ArrowLeft, CheckCircle,
 } from "lucide-react";
 import LegalgramAPI, { ActionButton, ChatResponse } from "@/services/backendService";
@@ -1138,6 +1139,7 @@ const QUICK_ACTIONS = [
    COMPONENT
 ───────────────────────────────────────────── */
 const ChatWidget = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen]                     = useState(false);
   const [isAnimatingIn, setIsAnimatingIn]       = useState(false);
   const [isAnimatingOut, setIsAnimatingOut]     = useState(false);
@@ -1164,15 +1166,81 @@ const ChatWidget = () => {
   const lastCustomAnswersRef = useRef<Record<string, string>>({});
   useEffect(() => { sessionRef.current = session; }, [session]);
 
+  // Live ref of hasStarted so the popstate handler reads the current view
+  const hasStartedRef = useRef(hasStarted);
+  useEffect(() => { hasStartedRef.current = hasStarted; }, [hasStarted]);
+
   /* ── Open / Close ── */
   const openChat = () => {
     setIsOpen(true); setIsAnimatingIn(true);
     document.body.style.overflow = "hidden";
+    // Push a history entry so the browser back button closes the chat
+    // instead of leaving the page underneath.
+    window.history.pushState({ gramAiOpen: true }, "");
     setTimeout(() => setIsAnimatingIn(false), 400);
   };
+
+  const finishClose = () => {
+    setIsOpen(false);
+    setIsAnimatingOut(false);
+    document.body.style.overflow = "";
+  };
+
   const closeChat = () => {
+    // If our history entry is on top, go back so browser history stays
+    // consistent; the popstate handler animates the close.
+    if (window.history.state && window.history.state.gramAiOpen) {
+      window.history.back();
+      return;
+    }
     setIsAnimatingOut(true);
-    setTimeout(() => { setIsOpen(false); setIsAnimatingOut(false); document.body.style.overflow = ""; }, 350);
+    setTimeout(finishClose, 350);
+  };
+
+  /* Open a link from inside the chat. Internal links close the widget and
+     navigate with the SPA router, replacing the chat's history entry so the
+     browser Back button returns to the page the user was on before opening
+     Gram AI. External links open in a new tab. */
+  const openLink = (url: string) => {
+    if (!url) return;
+    if (/^https?:\/\//i.test(url)) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      return;
+    }
+    const hadHistoryEntry = !!(window.history.state && window.history.state.gramAiOpen);
+    finishClose();
+    navigate(url, { replace: hadHistoryEntry });
+  };
+
+  // Browser back button (popstate): from a conversation go back to the
+  // Gram AI landing view first; from the landing view close the overlay.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onPop = () => {
+      if (hasStartedRef.current) {
+        resetChat();
+        // Re-arm the history entry so the next Back closes the widget
+        window.history.pushState({ gramAiOpen: true }, "");
+        return;
+      }
+      setIsAnimatingOut(true);
+      setTimeout(finishClose, 350);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [isOpen]);
+
+  /* Header back arrow: conversation → landing view → close */
+  const handleHeaderBack = () => {
+    if (hasStarted) {
+      if (window.history.state && window.history.state.gramAiOpen) {
+        window.history.back();
+      } else {
+        resetChat();
+      }
+      return;
+    }
+    closeChat();
   };
 
   useEffect(() => {
@@ -1404,7 +1472,7 @@ const ChatWidget = () => {
 
   /* Action button handler - local KB first, backend only for non-doc queries */
   const handleActionButton = (button: ActionButton) => {
-    if (button.type === "link") { window.location.href = button.value; return; }
+    if (button.type === "link") { openLink(button.value); return; }
     // Fallback: build a basic template PDF from the last collected answers (no AI).
     if (button.value === "__fallback_template__") {
       atBottomRef.current = true;
@@ -1683,68 +1751,120 @@ const ChatWidget = () => {
     doc.save(`${safe || "document"}-${Date.now()}.pdf`);
   };
 
-  /* ── PDF generator (basic template fallback — no AI) ── */
+  /* ── PDF generator (basic template fallback — no AI) ──
+     Composes a complete, conventionally structured agreement from the
+     collected answers, then renders it through the same professional PDF
+     renderer used for AI-drafted documents. */
   const generateStructuredDocumentPdf = (answers: Record<string, string>) => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-    const mx = 56, pw = 595, cw = pw - mx * 2; let y = 64;
-    const pA = answers.partyAName || "Party A", pAA = answers.partyAAddress || "[address]";
-    const pB = answers.partyBName || "Party B", pBA = answers.partyBAddress || "[address]";
-    const ed = answers.effectiveDate || "[date]";
-    const es = (n: number) => { if (y + n > 770) { doc.addPage(); y = 64; } };
-    const wp = (t: string, bold = false, gap = 14, size = 10.5) => {
-      doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setFontSize(size);
-      const lines = doc.splitTextToSize(t, cw); es(lines.length * (size * 1.35) + gap);
-      doc.text(lines, mx, y); y += lines.length * (size * 1.35) + gap;
-    };
-    const wh = (t: string) => {
-      es(32); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
-      doc.text(t, pw / 2, y, { align: "center" });
-      const tw = doc.getTextWidth(t), ux = (pw / 2) - (tw / 2);
-      doc.setLineWidth(0.5); doc.line(ux, y + 2, ux + tw, y + 2); y += 20;
-    };
-    const title = (answers.documentTitle || "Custom Agreement").toUpperCase();
-    doc.setFont("helvetica", "bold"); doc.setFontSize(16);
-    const tl = doc.splitTextToSize(title, cw);
-    doc.text(tl, pw / 2, y, { align: "center" });
-    tl.forEach((l: string, i: number) => { const lw = doc.getTextWidth(l), lx = (pw / 2) - (lw / 2); doc.setLineWidth(0.8); doc.line(lx, y + (i * 22) + 3, lx + lw, y + (i * 22) + 3); });
-    y += tl.length * 22 + 14;
-    wp(`This ${answers.documentTitle || "Agreement"} is made and entered into as of ${ed}, by and between ${pA}, having its principal office at ${pAA}, and ${pB}, having its principal office at ${pBA}.`);
-    wp(`Each may be referred to individually as a "Party" and collectively as the "Parties."`);
-    wp(`In consideration of the mutual promises contained herein, the Parties agree as follows:`, false, 18);
+    const title = (answers.documentTitle || "Custom Agreement").trim();
+    const pA = answers.partyAName || "[FIRST PARTY NAME]";
+    const pAA = answers.partyAAddress || "[FIRST PARTY ADDRESS]";
+    const pB = answers.partyBName || "[SECOND PARTY NAME]";
+    const pBA = answers.partyBAddress || "[SECOND PARTY ADDRESS]";
+    const ed = answers.effectiveDate || "[EFFECTIVE DATE]";
+    const purpose = answers.purpose || "[Describe the purpose of this agreement.]";
+    const keyTerms = answers.keyTerms || "[Describe the key terms and obligations of each Party.]";
+    const payment = (answers.paymentOrConsideration || "").trim();
+    const noPayment = !payment || /^(none|no|n\/a|nil)\.?$/i.test(payment);
+    const duration = answers.duration || "until terminated by mutual written consent of the Parties";
+    const law = answers.governingLaw || "[GOVERNING JURISDICTION]";
 
-    // If the document matches a known type, include its standard clauses
+    // Include standard clauses when the title matches a known document type
     const docMatches = matchDocuments(answers.documentTitle || "");
     const standardClauses = docMatches.length > 0 ? docMatches[0].doc.clauses : [];
 
-    let sn = 1;
-    wh(`${sn++}. PURPOSE`); wp(answers.purpose || "[not provided]");
-    wh(`${sn++}. KEY TERMS AND OBLIGATIONS`); wp(answers.keyTerms || "[not provided]");
-    wh(`${sn++}. PAYMENT / CONSIDERATION`); wp(answers.paymentOrConsideration || "None specified.");
-    wh(`${sn++}. TERM AND DURATION`); wp(`This Agreement takes effect on ${ed} and continues until ${answers.duration || "terminated by mutual written consent"}.`);
-    if (standardClauses.length > 0) {
-      wh(`${sn++}. STANDARD PROVISIONS`);
-      standardClauses.forEach(c => wp(`• ${c}`));
-    }
-    wh(`${sn++}. GOVERNING LAW`); wp(`This Agreement is governed by the laws of ${answers.governingLaw || "[not provided]"}.`);
-    wh(`${sn++}. AMENDMENT`); wp("This Agreement may only be amended in writing signed by both Parties.");
-    wh(`${sn++}. SEVERABILITY`); wp("If any provision is held invalid, the remaining provisions continue in full force.");
-    wh(`${sn++}. ENTIRE AGREEMENT`); wp("This Agreement supersedes all prior negotiations and agreements on this subject matter.");
-    es(140); wh(`${sn++}. SIGNATORIES`); y += 6;
-    const sb = (name: string) => {
-      es(90); doc.setFont("helvetica", "bold"); doc.setFontSize(10.5);
-      doc.text(`[${name}]`, mx, y); y += 22; doc.setFont("helvetica", "normal");
-      doc.text("By: ___________________________", mx, y); y += 20;
-      doc.text(`Name: ${name}`, mx, y); y += 20;
-      doc.text("Title: ___________________________", mx, y); y += 20;
-      doc.text("Date: ___________________________", mx, y); y += 30;
+    const sections: string[] = [];
+    let n = 1;
+    const section = (heading: string, body: string) => {
+      sections.push(`${n}. ${heading.toUpperCase()}\n${body}`);
+      n++;
     };
-    sb(pA); sb(pB);
-    es(40); doc.setFont("helvetica", "italic"); doc.setFontSize(8.5); doc.setTextColor(140);
-    doc.text("Generated by Gram AI · Legalgram. Not reviewed by an attorney. Please review before use.", mx, y, { maxWidth: cw });
-    const safe = (answers.documentTitle || "custom-agreement").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    doc.save(`${safe}-${Date.now()}.pdf`);
+
+    section("Purpose", `The purpose of this Agreement is as follows: ${purpose}`);
+    section("Obligations of the Parties", keyTerms);
+    section(
+      "Payment and Consideration",
+      noPayment
+        ? "The Parties agree that no monetary payment is exchanged under this Agreement. The mutual promises and covenants contained herein constitute good and sufficient consideration."
+        : `In consideration of the obligations described in this Agreement, the Parties agree to the following payment terms: ${payment}`
+    );
+    section(
+      "Term and Termination",
+      `This Agreement shall commence on the Effective Date and shall continue ${duration}. Either Party may terminate this Agreement upon thirty (30) days' prior written notice to the other Party. Termination shall not relieve either Party of obligations accrued before the effective date of termination.`
+    );
+    if (standardClauses.length > 0) {
+      section(
+        "Additional Provisions",
+        standardClauses.map((c: string) => `The Parties acknowledge and agree to the following provision: ${c}`).join("\n\n")
+      );
+    }
+    section(
+      "Confidentiality",
+      "Each Party agrees to keep confidential all non-public information disclosed by the other Party in connection with this Agreement, and to use such information solely for the purposes of performing its obligations hereunder. This obligation survives the termination of this Agreement."
+    );
+    section(
+      "Governing Law",
+      `This Agreement shall be governed by and construed in accordance with the laws of ${law}, without regard to its conflict of laws principles.`
+    );
+    section(
+      "Dispute Resolution",
+      "The Parties shall first attempt in good faith to resolve any dispute arising out of or relating to this Agreement through direct negotiation. If the dispute cannot be resolved within thirty (30) days, the Parties agree to submit the dispute to mediation before pursuing any other remedy available at law."
+    );
+    section(
+      "Severability",
+      "If any provision of this Agreement is held to be invalid, illegal, or unenforceable, the remaining provisions shall continue in full force and effect, and the invalid provision shall be modified to the minimum extent necessary to make it enforceable."
+    );
+    section(
+      "Entire Agreement and Amendment",
+      "This Agreement constitutes the entire agreement between the Parties with respect to its subject matter and supersedes all prior agreements, understandings, negotiations, and representations, whether written or oral. Any amendment to this Agreement must be made in writing and signed by both Parties."
+    );
+
+    const documentText = [
+      title,
+      "",
+      `This ${title} (the "Agreement") is made and entered into as of ${ed} (the "Effective Date"), by and between:`,
+      "",
+      `${pA}, with a principal address at ${pAA} (the "First Party"); and`,
+      "",
+      `${pB}, with a principal address at ${pBA} (the "Second Party").`,
+      "",
+      `The First Party and the Second Party may be referred to individually as a "Party" and collectively as the "Parties".`,
+      "",
+      "RECITALS",
+      "",
+      "WHEREAS, the Parties wish to enter into this Agreement for the purposes described herein; and",
+      "",
+      "WHEREAS, the Parties intend to be legally bound by the terms and conditions of this Agreement;",
+      "",
+      "NOW, THEREFORE, in consideration of the mutual covenants and promises contained herein, and for other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:",
+      "",
+      sections.join("\n\n"),
+      "",
+      "IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.",
+      "",
+      "FIRST PARTY",
+      "",
+      "Signature: _______________________________",
+      "",
+      `Name: ${pA}`,
+      "",
+      "Date: _______________________________",
+      "",
+      "SECOND PARTY",
+      "",
+      "Signature: _______________________________",
+      "",
+      `Name: ${pB}`,
+      "",
+      "Date: _______________________________",
+      "",
+      "This document was generated by Gram AI (Legalgram) and has not been reviewed by a licensed attorney. Please review it carefully before use.",
+    ].join("\n");
+
+    renderTextToPdf(title, documentText);
+
     addBotMessage(
-      `✅ **"${answers.documentTitle || "Your document"}"** has been downloaded!\n\nPlease review it carefully before use, as it has not been reviewed by a licensed attorney.`,
+      `✅ **"${title}"** has been downloaded as a professionally formatted PDF.\n\nPlease review it carefully before use, as it has not been reviewed by a licensed attorney.`,
       [{ label: "Create another document", value: "create new document", type: "action" }, { label: "Browse all documents", value: "/documents", type: "link" }]
     );
   };
@@ -1768,7 +1888,25 @@ const ChatWidget = () => {
       .replace(/_(.*?)_/g, "<em>$1</em>")
       .replace(/^• /, "• ")
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="underline text-bright-orange-600">$1</a>');
-    return <p key={i} className={`text-sm leading-relaxed ${line.startsWith("• ") ? "ml-1" : ""}`} dangerouslySetInnerHTML={{ __html: l }} />;
+    return (
+      <p
+        key={i}
+        className={`text-sm leading-relaxed ${line.startsWith("• ") ? "ml-1" : ""}`}
+        onClick={(e) => {
+          const anchor = (e.target as HTMLElement).closest("a");
+          if (!anchor) return;
+          const href = anchor.getAttribute("href") || "";
+          if (href.startsWith("/")) {
+            e.preventDefault();
+            openLink(href);
+          } else if (/^https?:\/\//i.test(href)) {
+            e.preventDefault();
+            window.open(href, "_blank", "noopener,noreferrer");
+          }
+        }}
+        dangerouslySetInnerHTML={{ __html: l }}
+      />
+    );
   });
 
   const resetChat = () => {
@@ -1799,7 +1937,7 @@ const ChatWidget = () => {
 
           {/* ── HEADER ── */}
           <div className="shrink-0 bg-gradient-to-r from-deep-blue-500 to-deep-blue-600 px-4 py-3 flex items-center gap-3 shadow-sm">
-            <button onClick={closeChat} className="text-blue-200 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors" aria-label="Go back">
+            <button onClick={handleHeaderBack} className="text-blue-200 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors" aria-label="Go back">
               <ArrowLeft size={20} />
             </button>
             <div className="w-9 h-9 rounded-full bg-bright-orange-500 flex items-center justify-center shadow">
@@ -1822,47 +1960,43 @@ const ChatWidget = () => {
 
           {/* ── LANDING VIEW ── */}
           {!hasStarted && (
-            <div className="flex flex-col items-center justify-start pt-10 px-5 pb-8 flex-1 overflow-y-auto bg-white max-w-2xl mx-auto w-full">
-              <div className="w-14 h-14 rounded-full bg-bright-orange-500 flex items-center justify-center shadow-md mb-6">
-                <Scale size={26} className="text-white" />
+            <div className="flex flex-col items-center justify-center px-5 py-10 flex-1 overflow-y-auto bg-gradient-to-b from-white to-orange-50/30 w-full">
+              <div className="max-w-3xl w-full mx-auto flex flex-col items-center">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 flex items-center justify-center shadow-lg mb-6">
+                <Scale size={36} className="text-white" />
               </div>
-              <h2 className="font-serif text-[1.75rem] leading-[1.2] font-medium text-gray-900 text-center tracking-tight mb-2 px-2">
+              <h2 className="font-serif text-3xl md:text-5xl leading-tight font-medium text-gray-900 text-center tracking-tight mb-3 px-2">
                 AI Agent for Legal Documents
               </h2>
-              <p className="text-[12px] text-gray-400 text-center mb-8">Powered by Gram AI · Legalgram</p>
+              <p className="text-sm text-gray-500 text-center mb-10">Powered by Gram AI · Legalgram</p>
 
               {/* Search box */}
-              <div className="w-full rounded-2xl border border-gray-200 shadow-sm bg-white mb-6 overflow-hidden transition-all focus-within:border-bright-orange-300 focus-within:shadow-md">
-                <div className="flex items-center gap-2.5 px-4 py-4">
-                  <div className="w-8 h-8 rounded-lg bg-bright-orange-500 flex items-center justify-center shrink-0">
-                    <Scale size={14} className="text-white" />
+              <div className="w-full rounded-2xl border border-gray-200 shadow-md bg-white mb-8 overflow-hidden transition-all focus-within:border-bright-orange-300 focus-within:shadow-lg">
+                <div className="flex items-center gap-3 px-5 py-5">
+                  <div className="w-10 h-10 rounded-xl bg-bright-orange-500 flex items-center justify-center shrink-0">
+                    <Scale size={18} className="text-white" />
                   </div>
-                  <Search size={16} className="text-gray-400 shrink-0" />
+                  <Search size={18} className="text-gray-400 shrink-0" />
                   <input
                     ref={inputRef}
                     value={inputMessage}
                     onChange={e => setInputMessage(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter" && inputMessage.trim()) handleSendMessage(e as any); }}
                     placeholder="Ask about any legal document…"
-                    className="flex-1 text-sm text-gray-700 placeholder-gray-400 bg-transparent outline-none"
+                    className="flex-1 text-base text-gray-700 placeholder-gray-400 bg-transparent outline-none"
                   />
                   <button type="button" onClick={e => { if (inputMessage.trim()) handleSendMessage(e as any); }}
-                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors shrink-0 ${inputMessage.trim() ? "bg-bright-orange-500 text-white shadow" : "border border-gray-200 text-gray-300"}`}>
-                    <ArrowUp size={15} />
+                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shrink-0 ${inputMessage.trim() ? "bg-bright-orange-500 text-white shadow" : "border border-gray-200 text-gray-300"}`}>
+                    <ArrowUp size={17} />
                   </button>
                 </div>
-                <div className="flex items-center gap-2 px-4 pb-4 border-t border-gray-100 pt-3">
+                <div className="flex flex-wrap items-center gap-2 px-4 pb-4 border-t border-gray-100 pt-3">
                   <input ref={fileInputRef} type="file" accept={ACCEPTED_TYPES} className="hidden" onChange={handleFilePick} />
                   <button type="button" onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-1 text-xs text-gray-500 hover:text-bright-orange-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-bright-orange-300 transition-colors">
-                    <span className="font-medium">+</span> Add
+                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-bright-orange-500 border border-gray-200 rounded-lg px-3.5 py-2 hover:border-bright-orange-300 transition-colors">
+                    <span className="font-medium">+</span> Attach a document
                   </button>
-                  <button type="button" className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 transition-colors">
-                    <SlidersHorizontal size={12} /> Filters
-                  </button>
-                  <button type="button" className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 transition-colors">
-                    <Zap size={12} /> Light
-                  </button>
+                  <span className="text-xs text-gray-400 ml-1">PDF, Word, or image up to {MAX_FILE_MB}MB</span>
                   {attachedFile && (
                     <div className="flex items-center gap-1 bg-orange-50 border border-bright-orange-200 rounded-lg px-2 py-1 ml-auto">
                       <FileText size={12} className="text-bright-orange-500" />
@@ -1874,21 +2008,26 @@ const ChatWidget = () => {
               </div>
 
               {/* Quick actions */}
-              <div className="grid grid-cols-2 gap-3 w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                 {QUICK_ACTIONS.map((action, i) => (
                   <button key={i} type="button" onClick={() => handleQuickAction(action.value)}
-                    className="flex flex-col items-start gap-2.5 p-4 rounded-xl border border-gray-200 bg-white hover:border-bright-orange-300 hover:bg-orange-50/40 transition-all text-left group">
-                    <action.icon size={20} className="text-bright-orange-500 group-hover:scale-110 transition-transform shrink-0" />
-                    <span className="text-sm font-semibold text-gray-800 leading-tight">{action.label}</span>
-                    <span className="text-[11px] text-gray-400 leading-snug">{action.desc}</span>
+                    className="flex items-start gap-4 p-6 rounded-2xl border border-gray-200 bg-white shadow-sm hover:border-bright-orange-300 hover:shadow-lg hover:-translate-y-0.5 transition-all text-left group">
+                    <div className="w-12 h-12 rounded-xl bg-orange-50 group-hover:bg-orange-100 flex items-center justify-center shrink-0 transition-colors">
+                      <action.icon size={22} className="text-bright-orange-500" />
+                    </div>
+                    <div>
+                      <span className="block text-base font-semibold text-gray-900 leading-tight mb-1.5">{action.label}</span>
+                      <span className="block text-sm text-gray-500 leading-snug">{action.desc}</span>
+                    </div>
                   </button>
                 ))}
               </div>
 
               {/* Doc count badge */}
-              <div className="mt-6 flex items-center gap-2 text-[11px] text-gray-400">
-                <CheckCircle size={13} className="text-green-500" />
+              <div className="mt-8 flex items-center gap-2 text-sm text-gray-500">
+                <CheckCircle size={16} className="text-green-500" />
                 {DOCUMENT_KB.length} legal document types available · Custom creation for anything else
+              </div>
               </div>
             </div>
           )}
@@ -1915,8 +2054,8 @@ const ChatWidget = () => {
                               </div>
                             )}
                             <div className={`${msg.sender === "user"
-                              ? "bg-bright-orange-500 text-white rounded-2xl rounded-br-md max-w-[60%]"
-                              : "bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-bl-md max-w-[70%]"
+                              ? "bg-bright-orange-500 text-white rounded-2xl rounded-br-md max-w-[85%] sm:max-w-[60%]"
+                              : "bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-bl-md max-w-[90%] sm:max-w-[70%]"
                             } px-4 py-3 shadow-sm`}>
                               {msg.sender === "assistant" && (
                                 <p className="text-[10px] uppercase tracking-widest text-bright-orange-500 font-bold mb-1.5">Gram AI</p>

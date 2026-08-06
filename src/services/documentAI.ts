@@ -30,9 +30,22 @@ export async function generateDocumentWithAI(
 
     if (error) {
       console.error("[documentAI] invoke error:", error);
+      // supabase.functions.invoke wraps non-2xx responses in FunctionsHttpError;
+      // the function's own error message is in error.context (a Response).
+      let detail = "";
+      try {
+        const ctx = (error as { context?: Response }).context;
+        if (ctx && typeof ctx.json === "function") {
+          const body = await ctx.json();
+          if (body?.error) detail = String(body.error);
+        }
+      } catch {
+        // body was not JSON or already consumed - keep the generic message
+      }
       return {
         document: null,
         error:
+          detail ||
           "Couldn't reach the document generator right now. Please try again in a moment.",
       };
     }

@@ -89,7 +89,7 @@ const Testimonials = () => {
   }, [activeIndex, isAnimating]);
 
   return (
-    <section className="py-16 md:py-24 bg-[#FDE1D3]">
+    <section className="py-12 md:py-16 bg-[#FDE1D3]">
       <div className="container-custom">
         <div className="text-center mb-12">
           <span className="text-black font-medium mb-2 block">Testimonials</span>

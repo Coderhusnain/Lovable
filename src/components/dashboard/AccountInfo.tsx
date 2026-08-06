@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Pencil, Save, KeyRound, LogOut, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface User {
   firstName: string;
@@ -24,13 +25,69 @@ const AccountInfo = ({ user, onSignOut }: AccountInfoProps) => {
   const [email, setEmail] = useState(user.email);
   const [phone, setPhone] = useState(user.phone);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const handleSave = () => {
-    // In a real app, we would send this data to the backend
-    toast.success("Profile information updated successfully", {
-      icon: <CheckCircle className="h-4 w-4 text-green-500" />
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          first_name: firstName,
+          last_name: lastName,
+          phone: phone
+        }
+      });
+
+      if (error) {
+        toast.error(error.message || "Failed to update profile");
+        return;
+      }
+
+      toast.success("Profile information updated successfully", {
+        icon: <CheckCircle className="h-4 w-4 text-green-500" />
+      });
+      setIsEditing(false);
+    } catch {
+      toast.error("Failed to update profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters long");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+      if (error) {
+        toast.error(error.message || "Failed to change password");
+        return;
+      }
+
+      toast.success("Password changed successfully", {
+        icon: <CheckCircle className="h-4 w-4 text-green-500" />
+      });
+      setShowPasswordForm(false);
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch {
+      toast.error("Failed to change password. Please try again.");
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   return (
@@ -81,9 +138,10 @@ const AccountInfo = ({ user, onSignOut }: AccountInfoProps) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={!isEditing}
-                className={`w-full ${isEditing ? "border-primary/50 focus:border-primary" : ""}`}
+                disabled
+                className="w-full"
               />
+              <p className="text-xs text-muted-foreground">Your email is your login and cannot be changed here.</p>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Phone Number</label>
@@ -103,9 +161,9 @@ const AccountInfo = ({ user, onSignOut }: AccountInfoProps) => {
                 <Button variant="outline" onClick={() => setIsEditing(false)} className="mr-2">
                   Cancel
                 </Button>
-                <Button onClick={handleSave} className="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-colors">
+                <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-colors">
                   <Save className="h-4 w-4" />
-                  Save Changes
+                  {isSaving ? "Saving..." : "Save Changes"}
                 </Button>
               </>
             ) : (
@@ -131,12 +189,58 @@ const AccountInfo = ({ user, onSignOut }: AccountInfoProps) => {
         </CardHeader>
         <CardContent className="p-6">
           <p className="text-muted-foreground mb-4">Change your password or update your security settings.</p>
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary transition-colors"
-          >
-            Change Password
-          </Button>
+          {showPasswordForm ? (
+            <div className="space-y-4 max-w-md">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">New Password</label>
+                <Input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Confirm New Password</label>
+                <Input
+                  type="password"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="w-full"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setNewPassword("");
+                    setConfirmNewPassword("");
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={isChangingPassword}
+                  className="flex items-center gap-2 bg-primary hover:bg-primary/90 transition-colors"
+                >
+                  <KeyRound className="h-4 w-4" />
+                  {isChangingPassword ? "Updating..." : "Update Password"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => setShowPasswordForm(true)}
+              className="flex items-center gap-2 hover:bg-primary/10 hover:text-primary transition-colors"
+            >
+              Change Password
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

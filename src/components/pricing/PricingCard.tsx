@@ -1,8 +1,7 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { startCheckout } from "@/services/checkout";
 import { Check, X, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,21 +42,11 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
-  const planId = plan.name.toLowerCase();
-  const isEnterprise = planId === "enterprise";
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const isFree = plan.price.monthly === 0 && plan.price.annually === 0;
 
-  const handleCheckout = async () => {
-    setErr(null);
-    setLoading(true);
-    const res = await startCheckout(planId as "starter" | "premium", billingCycle);
-    if (!res.ok) {
-      setErr(res.error || "Something went wrong. Please try again.");
-      setLoading(false);
-    }
-    // On success the browser is redirected to Stripe, so no further UI needed.
-  };
+  // Free plan goes to signup; paid plans go to the contact page
+  // (online checkout is intentionally disabled for now)
+  const ctaTarget = isFree ? "/signup" : "/contact";
 
   const ctaClasses = cn(
     "w-full text-base font-semibold py-6 transition-all duration-300",
@@ -96,32 +85,32 @@ const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
           </div>
 
           <div className="mb-8">
-            <div className="flex items-baseline text-bright-orange-700">
-              <span className="text-5xl font-bold tracking-tight">
-                ${plan.price[billingCycle]}
-              </span>
-              <span className="ml-2 text-bright-orange-500">/month</span>
-            </div>
+            {isFree ? (
+              <div className="flex items-baseline text-bright-orange-700">
+                <span className="text-5xl font-bold tracking-tight">$0</span>
+                <span className="ml-2 text-bright-orange-500">/month</span>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-baseline text-bright-orange-700">
+                  <span className="text-5xl font-bold tracking-tight">
+                    ${plan.price[billingCycle]}
+                  </span>
+                  <span className="ml-2 text-bright-orange-500">/month</span>
+                </div>
 
-            {billingCycle === "annually" && plan.price.annually > 0 && (
-              <p className="mt-2 text-sm text-bright-orange-600">
-                Save ${savings.amount.toFixed(2)} per year ({savings.percentage}%)
-              </p>
+                {billingCycle === "annually" && plan.price.annually > 0 && (
+                  <p className="mt-2 text-sm text-bright-orange-600">
+                    Save ${savings.amount.toFixed(2)} per year ({savings.percentage}%)
+                  </p>
+                )}
+              </>
             )}
           </div>
 
-          {isEnterprise ? (
-            <Link to="/contact" className="block mb-8">
-              <Button className={ctaClasses}>{plan.callToAction}</Button>
-            </Link>
-          ) : (
-            <div className="mb-8">
-              <Button className={ctaClasses} onClick={handleCheckout} disabled={loading}>
-                {loading ? "Redirecting to checkout…" : plan.callToAction}
-              </Button>
-              {err && <p className="mt-2 text-sm text-red-600 text-center">{err}</p>}
-            </div>
-          )}
+          <Link to={ctaTarget} className="block mb-8">
+            <Button className={ctaClasses}>{plan.callToAction}</Button>
+          </Link>
 
           <ul className="space-y-4 text-left flex-grow">
             {plan.features.map((feature, index) => (

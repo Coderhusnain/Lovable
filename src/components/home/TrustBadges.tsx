@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import { Shield, Award, CheckCircle, Clock, Star, Link } from "lucide-react";
+import { Shield, Award, Clock, Star } from "lucide-react";
 
 const TrustBadges = () => {
   return (
@@ -15,7 +15,7 @@ const TrustBadges = () => {
           <p className="text-sm text-rocket-gray-600 mt-1">Rated 4.8/5 based on 10,000+ reviews</p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
             <Shield className="w-6 h-6 text-[#F18F01]" />
             <span className="text-xs md:text-sm font-medium text-black text-center">100% Secure & Confidential</span>
@@ -23,12 +23,7 @@ const TrustBadges = () => {
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
             <Award className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Attorney-Reviewed Documents</span>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <CheckCircle className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Trusted by 1M+ Customers</span>
+            <span className="text-xs md:text-sm font-medium text-black text-center">Attorney Reviewed Documents</span>
           </div>
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
@@ -38,7 +33,7 @@ const TrustBadges = () => {
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
             <Shield className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Money-Back Guarantee</span>
+            <span className="text-xs md:text-sm font-medium text-black text-center">Money Back Guarantee</span>
           </div>
         </div>
         

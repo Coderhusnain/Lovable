@@ -41,24 +41,20 @@ const Pricing = () => {
     {
       name: "Starter",
       price: {
-        monthly: 39.99,
-        annually: 29.99
+        monthly: 0,
+        annually: 0
       },
-      description: "Essential legal coverage for individuals",
+      description: "Essential legal tools for individuals",
       icon: <Shield className="w-8 h-8 text-bright-orange-500" />,
       features: [
         { name: "Unlimited legal document creation", included: true },
-        { name: "Attorney document review (2/month)", included: true },
         { name: "Digital signature platform", included: true },
-        { name: "30-minute attorney consultation", included: true },
-        { name: "Standard customer support", included: true },
         { name: "Document storage (5GB)", included: true },
-        { name: "Mobile app access", included: true },
-        { name: "Priority support", included: false },
-        { name: "Advanced document automation", included: false },
+        { name: "Standard customer support", included: true },
+        { name: "Attorney consultations", included: false },
         { name: "Custom contract creation", included: false },
       ],
-      callToAction: "Start Free Trial"
+      callToAction: "Get Started Free"
     },
     {
       name: "Premium",
@@ -74,13 +70,9 @@ const Pricing = () => {
         { name: "Priority document review (24h)", included: true },
         { name: "Custom contract creation", included: true },
         { name: "Advanced document automation", included: true },
-        { name: "Priority customer support", included: true },
         { name: "Document storage (25GB)", included: true },
-        { name: "Team collaboration tools", included: true },
-        { name: "API access", included: true },
-        { name: "Dedicated account manager", included: true },
       ],
-      callToAction: "Start Premium Trial",
+      callToAction: "Contact Us to Upgrade",
       popular: true
     },
     {
@@ -93,15 +85,11 @@ const Pricing = () => {
       icon: <Users className="w-8 h-8 text-bright-orange-500" />,
       features: [
         { name: "Everything in Premium, plus:", included: true },
-        { name: "Custom contract workflows", included: true },
         { name: "Unlimited team members", included: true },
-        { name: "Enterprise API access", included: true },
-        { name: "Custom integrations", included: true },
+        { name: "Custom integrations and workflows", included: true },
         { name: "Dedicated legal team", included: true },
         { name: "Document storage (100GB)", included: true },
-        { name: "Compliance monitoring", included: true },
         { name: "24/7 priority support", included: true },
-        { name: "Custom reporting", included: true },
       ],
       callToAction: "Contact Sales"
     }

@@ -27,7 +27,7 @@ const ANTHROPIC_API_KEY = (Deno.env.get("ANTHROPIC_API_KEY") ?? "").replace(
   /[^\x21-\x7E]/g,
   "",
 );
-const MODEL = "claude-opus-4-8";
+const MODEL = "claude-opus-5";
 
 interface GenerateRequest {
   /** e.g. "Partnership Agreement", "Non-Disclosure Agreement" */
@@ -118,12 +118,16 @@ serve(async (req: Request) => {
         "Content-Type": "application/json",
         "x-api-key": ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
+        "anthropic-beta": "server-side-fallback-2026-07-01",
       },
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 12000,
         thinking: { type: "adaptive" },
-        output_config: { effort: "medium" },
+        output_config: { effort: "high" },
+        // If safety classifiers decline a request, retry it server-side on
+        // Anthropic's recommended fallback model instead of failing.
+        fallbacks: "default",
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: buildUserPrompt(body) }],
       }),

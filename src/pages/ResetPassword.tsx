@@ -22,47 +22,50 @@ const ResetPassword = () => {
   const [isTokenProcessed, setIsTokenProcessed] = useState(false);
 
   useEffect(() => {
-    const processRecoveryToken = async () => {
-      // Check if the URL contains a hash which includes the access_token
-      const hasRecoveryHash = window.location.hash && window.location.hash.includes('access_token');
-      console.log("URL hash check:", { hash: window.location.hash, hasToken: hasRecoveryHash });
-      
-      setHashPresent(hasRecoveryHash);
-      
-      if (hasRecoveryHash) {
-        try {
-          // The supabase client will automatically process the hash
-          const { data, error } = await supabase.auth.getSession();
-          console.log("Session check result:", { hasSession: !!data.session, error });
-          
-          if (error) {
-            console.error("Recovery token processing error:", error);
-            setError("Invalid or expired password reset link");
-            toast.error("Invalid or expired password reset link");
-            setIsTokenProcessed(false);
-          } else if (data.session) {
-            console.log("Recovery token processed successfully");
-            setIsTokenProcessed(true);
-          } else {
-            console.error("No session found after processing recovery token");
-            setError("Invalid or expired password reset link");
-            toast.error("Invalid or expired password reset link");
-            setIsTokenProcessed(false);
-          }
-        } catch (err) {
-          console.error("Error processing recovery token:", err);
-          setError("Failed to process recovery token");
-          setIsTokenProcessed(false);
-        }
-      } else {
-        console.log("No recovery hash found in URL");
+    // The recovery link lands here with a token in the URL hash. Supabase
+    // processes it asynchronously, so we must wait for the auth event
+    // instead of checking the session synchronously on mount.
+    let resolved = false;
+
+    const markValid = () => {
+      resolved = true;
+      setHashPresent(true);
+      setIsTokenProcessed(true);
+      setError("");
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" || session) {
+        markValid();
+      }
+    });
+
+    const hasRecoveryHash = !!window.location.hash &&
+      (window.location.hash.includes("access_token") || window.location.hash.includes("type=recovery"));
+    if (hasRecoveryHash) {
+      setHashPresent(true);
+    }
+
+    // The token may already have been processed before this effect ran
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        markValid();
+      }
+    });
+
+    // Only declare the link invalid if nothing has arrived after a grace period
+    const timer = setTimeout(() => {
+      if (!resolved) {
         setError("Invalid or expired password reset link");
         toast.error("Invalid or expired password reset link");
         setIsTokenProcessed(false);
       }
-    };
+    }, 4000);
 
-    processRecoveryToken();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -106,7 +109,7 @@ const ResetPassword = () => {
 
   return (
     <Layout>
-      <div className="w-screen h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"

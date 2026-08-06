@@ -1,5 +1,5 @@
 import React, { useState, lazy, Suspense, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 import DocumentAboutSidebar from "@/components/DocumentAboutSidebar";
@@ -594,6 +594,7 @@ export const propertyMattersDocs = [
 const Documents = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -604,6 +605,16 @@ const Documents = () => {
       setSelectedDocument(id);
     }
   }, [id]);
+
+  // Practice area tiles link here as /documents?search=term
+  useEffect(() => {
+    const urlSearch = searchParams.get("search");
+    if (urlSearch !== null) {
+      setSearchQuery(urlSearch);
+      setSelectedCategory(null);
+      setSelectedDocument(null);
+    }
+  }, [searchParams]);
 
   const allDocumentTypes = [...familyProtectionDocs, ...businessSecurityDocs, ...propertyMattersDocs];
   const selectedDocumentType = allDocumentTypes.find(doc => doc.id === selectedDocument);
@@ -748,19 +759,106 @@ const Documents = () => {
     );
   }
 
+  // 2b. Render Global Search Results (e.g. arriving from a practice area tile)
+  if (searchQuery.trim()) {
+    const searchResults = filterDocuments(allDocumentTypes);
+
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-12 bg-white min-h-screen pt-24">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2 pt-4">Legal Documents</h1>
+            <p className="text-muted-foreground mb-2">Documents matching your selection</p>
+            <p className="text-sm text-blue-600 font-medium mb-6">{searchResults.length} documents found</p>
+
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search documents by name or category..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 max-w-md"
+              />
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchQuery("");
+              navigate('/documents');
+            }}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to All Documents
+          </Button>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {searchResults.length > 0 ? (
+              searchResults.map((docType) => {
+                const IconComponent = docType.icon;
+                return (
+                  <Card
+                    key={docType.id}
+                    className="flex flex-col h-full cursor-pointer hover:shadow-lg transition-all duration-200 bg-white hover:border-blue-300"
+                    onClick={() => {
+                      setSelectedDocument(docType.id);
+                      navigate(`/documents/${docType.id}`);
+                    }}
+                  >
+                    <CardHeader className="text-center flex flex-col flex-grow">
+                      <IconComponent className="w-12 h-12 mx-auto mb-4 text-primary" />
+                      <CardTitle className="text-xl">{docType.title}</CardTitle>
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-2 w-fit mx-auto">{docType.category}</span>
+                      <CardDescription className="flex-grow flex items-center justify-center min-h-[64px] mt-2">
+                        {docType.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <div className="flex-1" />
+                    <CardContent className="text-center mt-auto">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">Start Creating Document</Button>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No documents found matching your search.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   // 3. Render Main Category Selection
   return (
     <Layout>
       <div className="bg-white min-h-screen">
-        <div className="container mx-auto px-4 pb-8 pt-28">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 pt-4">Legal Documents</h1>
-            <p className="text-muted-foreground mb-2">
-              Create professional legal documents from our comprehensive library
+        <div className="bg-gradient-to-b from-rocket-gray-50 to-white">
+          <div className="container mx-auto px-4 pb-10 pt-32 text-center">
+            <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-4">
+              {totalDocuments}+ Documents Available
+            </span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+              Legal Documents Library
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Create professional legal documents from our comprehensive library of attorney drafted templates
             </p>
-            <p className="text-lg text-blue-600 font-semibold">
-              📄 {totalDocuments}+ Documents Available
-            </p>
+            <div className="relative max-w-xl mx-auto">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                type="text"
+                placeholder="Search documents by name or category..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-12 rounded-full shadow-sm border-gray-200 focus:border-bright-orange-300"
+              />
+            </div>
           </div>
         </div>
         <LegalConcernsSection onCategorySelect={(cat) => setSelectedCategory(cat)} />

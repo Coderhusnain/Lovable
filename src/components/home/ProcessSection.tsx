@@ -158,7 +158,7 @@ const ProcessSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 bg-gradient-to-b from-white to-rocket-gray-50 relative overflow-hidden">
+    <section ref={sectionRef} className="py-12 md:py-16 bg-gradient-to-b from-white to-rocket-gray-50 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-0 w-64 h-64 bg-bright-orange-50 rounded-full opacity-60 blur-3xl"></div>
         <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-blue-50 rounded-full opacity-60 blur-3xl"></div>

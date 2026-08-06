@@ -186,7 +186,8 @@ export const FormWizard: React.FC<FormWizardProps> = ({
 
   const isLastStep = currentStep === transformedSteps.length - 1;
   const isFirstStep = currentStep === 0;
-  const progress = Math.round(((currentStep + 1) / transformedSteps.length) * 100);
+  // Progress reflects completed steps only: 0% at the start, 100% when every step is done
+  const progress = Math.round((completedSteps.size / transformedSteps.length) * 100);
 
   // Validate current step
   const validateStep = (): boolean => {

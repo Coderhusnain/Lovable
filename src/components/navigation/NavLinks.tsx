@@ -42,17 +42,17 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
   ];
 
   return (
-    <NavigationMenu className="hidden md:flex max-w-none">
+    <NavigationMenu className="hidden xl:flex">
       <NavigationMenuList className={cn(
-        "gap-8 px-6 py-2 rounded-full items-center",
+        "gap-1 2xl:gap-2 px-3 py-2 rounded-full items-center",
         scrolled ? "bg-white/5 backdrop-blur-md" : "bg-transparent"
       )}>
         {navItems.map((item) => (
-          <motion.div key={item.path} variants={navItemVariants}>
-            <NavigationMenuItem>
-              <NavigationMenuLink 
+          <motion.div key={item.path} variants={navItemVariants} className="flex items-center">
+            <NavigationMenuItem className="flex items-center">
+              <NavigationMenuLink
                 className={cn(
-                  "font-medium transition-all duration-300 relative group px-4 py-2 rounded-full",
+                  "inline-flex items-center whitespace-nowrap text-sm 2xl:text-base font-medium transition-all duration-300 relative group px-3 py-2 rounded-full",
                   isActive(item.path) 
                     ? "text-bright-orange-500" 
                     : "text-bright-orange-500/90 hover:text-bright-orange-500"
@@ -63,7 +63,7 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
                   <button
                     type="button"
                     className={cn(
-                      "bg-transparent border-none outline-none p-0 m-0 font-inherit text-bright-orange-500 transition-colors duration-300 hover:text-bright-orange-600",
+                      "bg-transparent border-none outline-none p-0 m-0 font-inherit whitespace-nowrap text-bright-orange-500 transition-colors duration-300 hover:text-bright-orange-600",
                       isActive(item.path)
                         ? "text-bright-orange-500"
                         : "text-bright-orange-500/90 hover:text-bright-orange-500"
@@ -81,7 +81,7 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
         ))}
 
         {/* Chat assistant trigger - opens the shared ChatWidget panel */}
-        <NavigationMenuItem>
+        <NavigationMenuItem className="flex items-center">
           <NavbarChatButton scrolled={scrolled} />
         </NavigationMenuItem>
       </NavigationMenuList>

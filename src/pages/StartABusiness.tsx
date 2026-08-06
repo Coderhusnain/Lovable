@@ -7,15 +7,10 @@ import {
   BookOpen, HelpCircle, FileText, XCircle, Table
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import BusinessBackgroundSlideshow from "@/components/business/BusinessBackgroundSlideshow";
 import FAQSection from "@/components/business/FAQSection";
-import LLCBusinessFormation from "@/components/LLCBusinessFormation";
-import CorporationFormation from "@/components/CorporationFormation";
-import NonprofitFormation from "@/components/NonprofitFormation";
 import {
   Table as UITable,
   TableBody,
@@ -26,14 +21,10 @@ import {
 } from "@/components/ui/table";
 
 const StartABusiness = () => {
-  const [isLLCFlowOpen, setIsLLCFlowOpen] = useState(false);
-  const [isCorpFlowOpen, setIsCorpFlowOpen] = useState(false);
-  const [isNonprofitFlowOpen, setIsNonprofitFlowOpen] = useState(false);
-
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden mt-[72px]">
         <BusinessBackgroundSlideshow />
         
         <div className="container-custom relative z-10">
@@ -94,22 +85,22 @@ const StartABusiness = () => {
               </h3>
               <ul className="space-y-3 mb-4">
                 <li>
-                  <Link to="/documents/llc" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/whats-an-llc" className="text-black hover:text-bright-orange-500 transition-colors">
                     Start an LLC
                   </Link>
                 </li>
                 <li>
-                  <Link to="/documents/corporation" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/whats-a-corporation" className="text-black hover:text-bright-orange-500 transition-colors">
                     Start a Corporation
                   </Link>
                 </li>
                 <li>
-                  <Link to="/documents/non-profit" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/documents?search=business+formation" className="text-black hover:text-bright-orange-500 transition-colors">
                     Start a Non-profit
                   </Link>
                 </li>
               </ul>
-              <Link to="/documents" className="text-bright-orange-500 hover:underline">
+              <Link to="/documents?search=business+formation" className="text-bright-orange-500 hover:underline">
                 Learn More →
               </Link>
             </div>
@@ -121,12 +112,12 @@ const StartABusiness = () => {
               </h3>
               <ul className="space-y-3 mb-4">
                 <li>
-                  <Link to="/documents/operating-agreement" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/documents/llc-operating-agreement" className="text-black hover:text-bright-orange-500 transition-colors">
                     Operating Agreement
                   </Link>
                 </li>
                 <li>
-                  <Link to="/documents/annual-report" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/documents?search=report" className="text-black hover:text-bright-orange-500 transition-colors">
                     Annual Report Filing
                   </Link>
                 </li>
@@ -136,7 +127,7 @@ const StartABusiness = () => {
                   </Link>
                 </li>
               </ul>
-              <Link to="/documents" className="text-bright-orange-500 hover:underline">
+              <Link to="/documents?search=business" className="text-bright-orange-500 hover:underline">
                 Learn More →
               </Link>
             </div>
@@ -148,12 +139,12 @@ const StartABusiness = () => {
               </h3>
               <ul className="space-y-3 mb-4">
                 <li>
-                  <Link to="/documents/trademark" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/documents?search=intellectual+property" className="text-black hover:text-bright-orange-500 transition-colors">
                     Trademark Registration
                   </Link>
                 </li>
                 <li>
-                  <Link to="/documents/copyright" className="text-black hover:text-bright-orange-500 transition-colors">
+                  <Link to="/documents?search=copyright" className="text-black hover:text-bright-orange-500 transition-colors">
                     Copyright Protection
                   </Link>
                 </li>
@@ -163,7 +154,7 @@ const StartABusiness = () => {
                   </Link>
                 </li>
               </ul>
-              <Link to="/documents" className="text-bright-orange-500 hover:underline">
+              <Link to="/documents?search=intellectual+property" className="text-bright-orange-500 hover:underline">
                 Learn More →
               </Link>
             </div>
@@ -195,19 +186,13 @@ const StartABusiness = () => {
                Setting up a Limited Liability Company (LLC) helps shield your personal assets from business-related debts or legal issues. It also gives you more options when it comes to managing taxes. That's why it's a go-to structure for solo business owners and entrepreneurs.
               </p>
               <div className="flex gap-4">
-                <Dialog open={isLLCFlowOpen} onOpenChange={setIsLLCFlowOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      size="lg"
-                      className="bg-bright-orange-500 hover:bg-bright-orange-600"
-                    >
-                      Get Started
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-                    <LLCBusinessFormation onClose={() => setIsLLCFlowOpen(false)} />
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  size="lg"
+                  className="bg-bright-orange-500 hover:bg-bright-orange-600"
+                  asChild
+                >
+                  <Link to="/documents/llc-business-formation">Get Started</Link>
+                </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -240,20 +225,13 @@ const StartABusiness = () => {
                 Save money on self-employment taxes while keeping things simple. An S-Corp election combines the flexibility of an LLC with potential tax savings. It's perfect for profitable businesses looking to reduce their tax burden.
               </p>
               <div className="flex gap-4">
-                <Dialog open={isCorpFlowOpen} onOpenChange={setIsCorpFlowOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      size="lg"
-                      className="bg-bright-orange-500 hover:bg-bright-orange-600"
-                      onClick={() => setIsCorpFlowOpen(true)}
-                    >
-                      Get Started
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-                    <CorporationFormation onClose={() => setIsCorpFlowOpen(false)} />
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  size="lg"
+                  className="bg-bright-orange-500 hover:bg-bright-orange-600"
+                  asChild
+                >
+                  <Link to="/documents/corporation-formation">Get Started</Link>
+                </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -279,20 +257,13 @@ const StartABusiness = () => {
                 Looking to make a difference? Starting a nonprofit allows you to pursue your mission while enjoying tax benefits and eligibility for grants. We'll help you navigate the process from formation to tax-exempt status.
               </p>
               <div className="flex gap-4">
-                <Dialog open={isNonprofitFlowOpen} onOpenChange={setIsNonprofitFlowOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      size="lg"
-                      className="bg-bright-orange-500 hover:bg-bright-orange-600"
-                      onClick={() => setIsNonprofitFlowOpen(true)}
-                    >
-                      Get Started
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-                    <NonprofitFormation onClose={() => setIsNonprofitFlowOpen(false)} />
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  size="lg"
+                  className="bg-bright-orange-500 hover:bg-bright-orange-600"
+                  asChild
+                >
+                  <Link to="/documents/nonprofit-formation">Get Started</Link>
+                </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -303,10 +274,10 @@ const StartABusiness = () => {
               </div>
             </div>
             <div>
-              <img 
-                src="/lovable-uploads/609d30f6-95e3-406f-810f-a8f6a462c3f1.png"
-                alt="Nonprofit Formation" 
-                className="rounded-lg w-full h-auto"
+              <img
+                src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1600&auto=format&fit=crop"
+                alt="Legal documents and scales of justice for nonprofit formation"
+                className="rounded-lg w-full h-80 md:h-96 object-cover shadow-lg"
               />
             </div>
           </div>

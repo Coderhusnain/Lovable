@@ -1,14 +1,14 @@
 import { memo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  Home, 
-  Building, 
-  Users, 
-  FileText, 
-  Briefcase, 
-  Scale, 
-  ScrollText, 
-  HelpingHand,
+import {
+  Building2,
+  Rocket,
+  HeartHandshake,
+  ScrollText,
+  Briefcase,
+  Gavel,
+  FileSignature,
+  Lightbulb,
   GraduationCap,
   ArrowRight
 } from "lucide-react";
@@ -49,19 +49,19 @@ const PracticeAreas = () => {
   };
 
   const areas = [
-    { icon: Home, name: "Real Estate", path: "/documents/real-estate", color: "from-blue-500 to-blue-600" },
-    { icon: Building, name: "Business Formation", path: "/documents/business", color: "from-amber-500 to-amber-600" },
-    { icon: Users, name: "Family Law", path: "/documents/family", color: "from-green-500 to-green-600" },
-    { icon: FileText, name: "Estate Planning", path: "/documents/estate", color: "from-purple-500 to-purple-600" },
-    { icon: Briefcase, name: "Employment", path: "/documents/employment", color: "from-rose-500 to-rose-600" },
-    { icon: Scale, name: "Civil Litigation", path: "/documents/litigation", color: "from-indigo-500 to-indigo-600" },
-    { icon: ScrollText, name: "Contracts", path: "/documents/contracts", color: "from-cyan-500 to-cyan-600" },
-    { icon: HelpingHand, name: "Intellectual Property", path: "/documents/ip", color: "from-red-500 to-red-600" },
-    { icon: GraduationCap, name: "Education Law", path: "/documents/education", color: "from-emerald-500 to-emerald-600" }
+    { icon: Building2, name: "Real Estate", path: "/documents?search=lease", color: "from-blue-500 to-blue-600" },
+    { icon: Rocket, name: "Business Formation", path: "/documents?search=business+formation", color: "from-amber-500 to-amber-600" },
+    { icon: HeartHandshake, name: "Family Law", path: "/documents?search=family", color: "from-green-500 to-green-600" },
+    { icon: ScrollText, name: "Estate Planning", path: "/documents?search=estate", color: "from-purple-500 to-purple-600" },
+    { icon: Briefcase, name: "Employment", path: "/documents?search=employment", color: "from-rose-500 to-rose-600" },
+    { icon: Gavel, name: "Civil Litigation", path: "/documents?search=dispute", color: "from-indigo-500 to-indigo-600" },
+    { icon: FileSignature, name: "Contracts", path: "/documents?search=contract", color: "from-cyan-500 to-cyan-600" },
+    { icon: Lightbulb, name: "Intellectual Property", path: "/documents?search=intellectual+property", color: "from-red-500 to-red-600" },
+    { icon: GraduationCap, name: "Education Law", path: "/documents?search=education", color: "from-emerald-500 to-emerald-600" }
   ];
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-rocket-gray-50 to-white">
+    <section className="py-12 md:py-16 bg-gradient-to-b from-rocket-gray-50 to-white">
       <div className="container-custom">
         <div className="text-center mb-16">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">Practice Areas</span>

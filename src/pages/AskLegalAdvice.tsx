@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { ShieldCheck } from "lucide-react";
 
 const AskLegalAdvice = () => {
   const navigate = useNavigate();
@@ -149,10 +150,16 @@ const AskLegalAdvice = () => {
       </div>
 
       {/* Login requirement notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-blue-700 text-sm">
-          📝 <strong>Next Step:</strong> After clicking Continue, you'll be asked to log in or create an account to complete your legal advice request. This helps us connect you with the right attorney and keep your information secure.
-        </p>
+      <div className="flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-bright-orange-100">
+          <ShieldCheck className="h-5 w-5 text-bright-orange-600" />
+        </div>
+        <div className="text-sm">
+          <p className="font-semibold text-gray-900 mb-1">Secure sign in required</p>
+          <p className="text-gray-600 leading-relaxed">
+            After you click Continue, you will sign in or create a free account to submit your legal advice request. This keeps your information private and connects you with the right attorney.
+          </p>
+        </div>
       </div>
 
       <Button type="submit" className="w-full bg-bright-orange-500 hover:bg-bright-orange-600 text-white">

@@ -26,7 +26,7 @@ export default function NavbarChatButton({ scrolled }: NavbarChatButtonProps) {
       transition={{ duration: 0.3 }}
       onClick={handleClick}
       className={cn(
-        "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300",
+        "inline-flex items-center whitespace-nowrap gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-all duration-300",
         "border border-bright-orange-500/40",
         "bg-transparent text-bright-orange-500/90 hover:text-bright-orange-500 hover:bg-bright-orange-500/10"
       )}

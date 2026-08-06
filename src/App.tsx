@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ChatWidgetProvider } from "@/components/chat/ChatWidgetContext";
 import { useChatWidget } from "@/components/chat/ChatWidgetContext";
@@ -199,6 +199,11 @@ import SecurityDepositeReturnLetterInfo from "./pages/SecurityDepositeReturnLett
 import PersonalPropertyLeaseAgreementInfo from "./pages/PersonalPropertyLeaseAgreementInfo";
 import ChatWidget from "@/components/chat/ChatWidget";
 import PersonalFinancialStatementInfo from "./pages/PersonalFinancialStatementInfo";
+import HowItWorks from "./pages/HowItWorks";
+import WhatsANonprofit from "./pages/WhatsANonprofit";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import DisclaimerPage from "./pages/DisclaimerPage";
 
 
 // Loading component
@@ -272,9 +277,11 @@ const App = () => {
                   <Route path="/ask-lawyer" element={<AskALawyer />} />
 
                   {/* Educational / Static */}
+                  <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/whats-an-llc" element={<WhatsAnLLC />} />
                   <Route path="/whats-a-corporation" element={<WhatsACorporation />} />
                   <Route path="/whats-an-s-corp" element={<WhatsAnSCorp />} />
+                  <Route path="/whats-a-nonprofit" element={<WhatsANonprofit />} />
 
                   {/* --- EXISTING DOCUMENT ROUTES --- */}
                   <Route path="/affidavit-of-marriage-info" element={<AffidavitOfMarriageInfo />} />
@@ -535,6 +542,30 @@ const App = () => {
                   <Route path="/musical-performance-contract-info" element={<MusicalPerformanceInfo />} />
                   <Route path="/musical-performance-agreement-form" element={<Documents />} />
                   <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
+
+                  {/* Legal pages */}
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/disclaimer" element={<DisclaimerPage />} />
+
+                  {/* Alias redirects for legacy/alternate link spellings */}
+                  <Route path="/ask-a-lawyer" element={<Navigate to="/ask-lawyer" replace />} />
+                  <Route path="/dashboard" element={<Navigate to="/user-dashboard" replace />} />
+                  <Route path="/dashboard/make-document" element={<Navigate to="/user-dashboard" replace />} />
+                  <Route path="/our-attorneys" element={<Navigate to="/contact-lawyer" replace />} />
+                  <Route path="/attorney-profile" element={<Navigate to="/contact-lawyer" replace />} />
+                  <Route path="/testimonials" element={<Navigate to="/community" replace />} />
+                  <Route path="/start-business" element={<Navigate to="/start-a-business" replace />} />
+                  <Route path="/whats-a-nonprofit-org" element={<Navigate to="/whats-a-nonprofit" replace />} />
+                  <Route path="/asset-purchase-form" element={<Navigate to="/documents/AssetPurchaseForm" replace />} />
+                  <Route path="/asset-purchase-agreement-form" element={<Navigate to="/documents/AssetPurchaseForm" replace />} />
+                  <Route path="/barter-agreement-form" element={<Navigate to="/documents/BarterAgreementForm" replace />} />
+                  <Route path="/vehicle-lease-form" element={<Navigate to="/documents/vehicle-lease" replace />} />
+                  <Route path="/sale-of-goods-form" element={<Navigate to="/documents/SaleOfGoodsForm" replace />} />
+                  <Route path="/contract-extension-form" element={<Navigate to="/documents/ContractExtensionForm" replace />} />
+                  <Route path="/cohabitation-form" element={<Navigate to="/documents/Cohabitation-AgreementForm" replace />} />
+                  <Route path="/supplier-agreement-form" element={<Navigate to="/documents/SupplierAgreementForm" replace />} />
+                  <Route path="/advertising-agency-agreement-form" element={<Navigate to="/documents/AdvertisingAgencyAgreementForm" replace />} />
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
