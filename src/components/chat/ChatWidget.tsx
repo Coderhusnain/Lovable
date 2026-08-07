@@ -1230,7 +1230,7 @@ const ChatWidget = () => {
     return () => window.removeEventListener("popstate", onPop);
   }, [isOpen]);
 
-  /* Header back arrow: conversation → landing view → close */
+  /* Header back arrow: conversation → landing view → home page */
   const handleHeaderBack = () => {
     if (hasStarted) {
       if (window.history.state && window.history.state.gramAiOpen) {
@@ -1240,7 +1240,25 @@ const ChatWidget = () => {
       }
       return;
     }
-    closeChat();
+    // Landing view: close the chat and land on the home page without
+    // leaving duplicate history entries behind.
+    const hadHistoryEntry = !!(window.history.state && window.history.state.gramAiOpen);
+    const isHome = window.location.pathname === "/";
+    if (hadHistoryEntry) {
+      if (isHome) {
+        // Already on home underneath: consume the chat's history entry;
+        // the popstate handler animates the close.
+        window.history.back();
+      } else {
+        // Replace the chat's entry with home so Back returns to the
+        // page the user came from, not to a reopened chat.
+        finishClose();
+        navigate("/", { replace: true });
+      }
+      return;
+    }
+    finishClose();
+    if (!isHome) navigate("/");
   };
 
   useEffect(() => {
