@@ -67,7 +67,7 @@ const WhyChooseUsSection = () => {
     },
     {
       icon: Award,
-      title: "Trusted by Millions",
+      title: "Trusted Nationwide",
       description: "Join individuals and businesses nationwide who rely on Legalgram for fast online legal services.",
       gradient: "from-cyan-500/20 via-cyan-400/10 to-transparent"
     }

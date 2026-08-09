@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useRef } from "react";
-import { Users, FileText, MessageSquare, Clock } from "lucide-react";
+import { FileText, Map, Clock, ShieldCheck, Scale } from "lucide-react";
 
 // Animated counter hook
 const useCountUp = (end: number, duration: number = 2000) => {
@@ -77,31 +77,38 @@ const StatsSection = () => {
   const stats = [
     {
       icon: FileText,
-      value: 230,
+      value: 100,
       suffix: "+",
       label: "Legal Documents",
-      description: "Attorney drafted templates ready to customize"
+      description: "Ready-to-use templates drafted by qualified lawyers"
     },
     {
-      icon: Users,
+      icon: Map,
       value: 50,
-      suffix: "",
-      label: "States Covered",
-      description: "Business formation and documents nationwide"
-    },
-    {
-      icon: MessageSquare,
-      value: 24,
-      suffix: "/7",
-      label: "Gram AI Support",
-      description: "Legal help at any time of day"
+      suffix: " States",
+      label: "Nationwide Coverage",
+      description: "Every document reviewed for US jurisdictional compliance"
     },
     {
       icon: Clock,
+      value: 24,
+      suffix: "/7",
+      label: "AI-Powered Access",
+      description: "Draft documents and review contracts anytime"
+    },
+    {
+      icon: ShieldCheck,
       value: 100,
       suffix: "%",
-      label: "Attorney Reviewed",
-      description: "Every template built with legal expertise"
+      label: "Money-Back Guarantee",
+      description: "Not satisfied? Full refund, no questions"
+    },
+    {
+      icon: Scale,
+      value: 9,
+      suffix: "+",
+      label: "Practice Areas",
+      description: "From real estate to intellectual property, all in one place"
     }
   ];
 
@@ -118,16 +125,16 @@ const StatsSection = () => {
 
       <div className="container-custom relative z-10">
         <div className="text-center mb-10">
-          <span className="inline-block bg-white/10 backdrop-blur-sm text-white font-medium px-4 py-1 rounded-full text-sm mb-3">Our Impact</span>
+          <span className="inline-block bg-white/10 backdrop-blur-sm text-white font-medium px-4 py-1 rounded-full text-sm mb-3">Why Legalgram</span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
-            Everything You Need in One Platform
+            New Platform. Experienced Lawyers.
           </h2>
           <p className="text-lg text-white/80 max-w-3xl mx-auto">
-            Real legal protection, built with attorney expertise and available whenever you need it.
+            Legalgram launched in 2024, but the team behind it has spent the last five-plus years drafting contracts, running arbitrations, and advising businesses across multiple jurisdictions. You get the freshness of a modern legal-tech platform with the judgment of lawyers who have already done the work at law firms and in-house.
           </p>
         </div>
-        
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-8">
+
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
           {stats.map((stat, index) => (
             <StatItem key={index} stat={stat} index={index} />
           ))}

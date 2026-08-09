@@ -1,173 +1,48 @@
-import { useState, memo, useEffect } from "react";
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { memo } from "react";
+import { BadgeCheck, Shield, HeartHandshake } from "lucide-react";
 
-// Client-provided testimonial data (avatars removed, ratings kept)
-const testimonials = [
+const promises = [
   {
-    author: "Jennifer M., Small Business Owner",
-    text: "Legalgram made the process of creating essential legal documents for my business simple and stress-free...",
-    rating: 5
+    icon: BadgeCheck,
+    title: "Drafted or reviewed by qualified lawyers.",
+    text: "Every template on our platform was built by attorneys with real practice experience, not scraped from the internet."
   },
   {
-    author: "Marcus T., Teacher",
-    text: "I needed to create my will but didn’t want to spend thousands on legal fees. Legalgram guided me...",
-    rating: 5
+    icon: Shield,
+    title: "Written to protect you.",
+    text: "Our documents are drafted to favor the person or business using them, not to be \"neutral\" in a way that quietly favors the other side."
   },
   {
-    author: "Sarah L., Family Protection",
-    text: "Creating my will was fast, simple, and completely stress-free. The clear guidance of Legalgram...",
-    rating: 5
+    icon: HeartHandshake,
+    title: "Honest scope.",
+    text: "If your matter needs a licensed attorney in your state, we tell you plainly and help you find one. No overselling."
   }
 ];
 
-const TestimonialCard = memo(({ 
-  testimonial, 
-  isActive 
-}: { 
-  testimonial: typeof testimonials[0]; 
-  isActive: boolean;
-}) => {
-  return (
-    <div 
-      className={`bg-white dark:bg-rocket-gray-800 p-8 rounded-xl shadow-lg border border-rocket-gray-200 dark:border-rocket-gray-700 transform transition-all duration-700 ${
-        isActive ? 'scale-100 opacity-100' : 'scale-95 opacity-0 absolute'
-      }`}
-      style={{ display: isActive ? 'block' : 'none' }}
-    >
-      <Quote className="h-10 w-10 text-black mb-4 transform -scale-x-100" />
-      <p className="text-lg text-black italic mb-6 leading-relaxed">
-        "{testimonial.text}"
-      </p>
-      <div className="flex items-center gap-4">
-        <div>
-          <h4 className="font-semibold text-black">{testimonial.author}</h4>
-          <div className="flex mt-1">
-            {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
-                fill={i < testimonial.rating ? "currentColor" : "none"} 
-                className={`h-4 w-4 ${i < testimonial.rating ? 'text-yellow-500' : 'text-black'}`} 
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-TestimonialCard.displayName = 'TestimonialCard';
-
 const Testimonials = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  
-  const handlePrev = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setActiveIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-  
-  const handleNext = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
-  // Auto rotate testimonials
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (!isAnimating) {
-        handleNext();
-      }
-    }, 8000);
-    
-    return () => clearInterval(timer);
-  }, [activeIndex, isAnimating]);
-
   return (
     <section className="py-8 md:py-12 bg-[#FDE1D3]">
       <div className="container-custom">
-        <div className="text-center mb-12">
-          <span className="text-black font-medium mb-2 block">Testimonials</span>
+        <div className="text-center mb-10">
+          <span className="text-black font-medium mb-2 block">Our Promise</span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
-            Trusted by Millions
+            What You Get with Every Legalgram Document
           </h2>
-          <p className="text-lg text-black max-w-3xl mx-auto">
-            See what our customers have to say about their experience with Legalgram.
-          </p>
         </div>
-        
-        <div className="max-w-3xl mx-auto relative">
-          <div className="relative min-h-[280px]">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard 
-                key={index} 
-                testimonial={testimonial} 
-                isActive={index === activeIndex}
-              />
-            ))}
-          </div>
-          
-          <div className="flex justify-between mt-8">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handlePrev}
-              className="border-rocket-gray-300 dark:border-rocket-gray-600 hover:bg-rocket-gray-100 dark:hover:bg-rocket-gray-700"
-              disabled={isAnimating}
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {promises.map((p) => (
+            <div
+              key={p.title}
+              className="bg-white rounded-2xl p-7 shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              <ChevronLeft className="h-5 w-5" />
-              <span className="sr-only">Previous</span>
-            </Button>
-            
-            <div className="flex gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  className={`h-2 rounded-full transition-all ${
-                    index === activeIndex ? 'w-8 bg-rocket-blue-500' : 'w-2 bg-rocket-gray-300 dark:bg-rocket-gray-600'
-                  }`}
-                  onClick={() => {
-                    if (!isAnimating) {
-                      setIsAnimating(true);
-                      setActiveIndex(index);
-                      setTimeout(() => setIsAnimating(false), 500);
-                    }
-                  }}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
+              <div className="w-12 h-12 rounded-xl bg-bright-orange-100 flex items-center justify-center mb-4">
+                <p.icon className="h-6 w-6 text-bright-orange-500" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
+              <p className="text-gray-600 leading-relaxed">{p.text}</p>
             </div>
-            
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleNext}
-              className="border-rocket-gray-300 dark:border-rocket-gray-600 hover:bg-rocket-gray-100 dark:hover:bg-rocket-gray-700"
-              disabled={isAnimating}
-            >
-              <ChevronRight className="h-5 w-5" />
-              <span className="sr-only">Next</span>
-            </Button>
-          </div>
-        </div>
-        
-        <div className="text-center mt-12">
-          <div className="flex items-center justify-center mb-6">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} fill="currentColor" className="h-6 w-6 text-yellow-500 mx-0.5" />
-            ))}
-          </div>
-          <p className="text-xl md:text-2xl font-medium text-black mb-8">
-            Join over 20 million satisfied customers
-          </p>
-          <Button variant="orange" className="bg-bright-orange-500 hover:bg-bright-orange-600 text-white">
-            Get started today
-          </Button>
+          ))}
         </div>
       </div>
     </section>
