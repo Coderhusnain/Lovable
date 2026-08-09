@@ -17,22 +17,29 @@ const NotFound = () => {
 
   return (
     <Layout>
-      <div className="container-custom py-16 md:py-24 flex items-center justify-center min-h-[60vh]">
+      <div className="container-custom pt-24 pb-12 flex items-center justify-center min-h-[70vh]">
         <div className="text-center max-w-md">
           <div className="flex justify-center mb-6">
-            <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-full">
-              <FileX className="h-12 w-12 text-red-500 dark:text-red-400" />
+            <div className="p-4 bg-bright-orange-100 rounded-full">
+              <FileX className="h-12 w-12 text-bright-orange-500" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold mb-4">404</h1>
-          <p className="text-xl text-rocket-gray-600 dark:text-rocket-gray-300 mb-8">
-            Oops! The page you're looking for doesn't exist.
+          <h1 className="text-5xl font-bold mb-3 text-gray-900">404</h1>
+          <p className="text-xl text-gray-600 mb-8">
+            The page you're looking for doesn't exist or may have moved.
           </p>
-          <Link to="/">
-            <Button size="lg">
-              Return to Home
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link to="/">
+              <Button size="lg" className="bg-bright-orange-500 hover:bg-bright-orange-600 text-white">
+                Return to Home
+              </Button>
+            </Link>
+            <Link to="/documents">
+              <Button size="lg" variant="outline" className="border-bright-orange-300 text-bright-orange-600 hover:bg-bright-orange-50">
+                Browse Documents
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </Layout>

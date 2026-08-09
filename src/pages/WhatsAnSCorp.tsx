@@ -19,7 +19,7 @@ const WhatsAnSCorp = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 pt-32 pb-16">
+      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 pt-24 pb-10">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
@@ -77,7 +77,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* What is an S-Corp Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-8 text-center" {...fadeUp}>
@@ -136,7 +136,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* How S-Corp Election Works */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-12 text-center" {...fadeUp}>
@@ -187,7 +187,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* Requirements and Considerations */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-12 text-center" {...fadeUp}>
@@ -238,7 +238,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* When S-Corp Makes Sense */}
-      <section className="py-16 bg-blue-50">
+      <section className="py-10 bg-blue-50">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-8" {...fadeUp}>
@@ -296,7 +296,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* Professional Help Section */}
-      <section className="py-16 bg-gray-900 text-white">
+      <section className="py-10 bg-gray-900 text-white">
         <div className="container-custom">
           <motion.div className="max-w-4xl mx-auto text-center" {...fadeUp}>
             <h2 className="text-3xl font-bold mb-6 text-white">
@@ -327,7 +327,7 @@ const WhatsAnSCorp = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-12 text-center" {...fadeUp}>

@@ -4,7 +4,7 @@ import { FileText, CheckCircle, Fingerprint, ArrowRight } from "lucide-react";
 
 const LegalSolutionsSection = () => {
   return (
-    <section className="py-12 md:py-16 relative overflow-hidden">
+    <section className="py-8 md:py-12 relative overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/c9d521b5-31e5-47a0-9d04-c2539ddd886e.png" 
@@ -15,7 +15,7 @@ const LegalSolutionsSection = () => {
       </div>
       
       <div className="container-custom relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">How It Works</span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 text-black">
             Simple, Affordable Legal Solutions
@@ -25,7 +25,7 @@ const LegalSolutionsSection = () => {
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid md:grid-cols-3 gap-8 md:gap-8">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
             <div className="bg-rocket-blue-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-6 relative">
               <FileText className="h-10 w-10 text-[#F18F01]" />

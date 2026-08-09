@@ -37,6 +37,16 @@
 
   /* Base text styling */
   * { @apply text-foreground text-[15px]; }
+}
+
+@layer components {
+  /* Shared heading scale used across pages */
+  .heading-xl { @apply text-3xl md:text-4xl font-bold; }
+  .heading-lg { @apply text-2xl md:text-3xl font-bold; }
+  .heading-md { @apply text-xl md:text-2xl font-semibold; }
+}
+
+@layer base {
 
   html {
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif, 

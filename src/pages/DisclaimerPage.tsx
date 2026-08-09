@@ -3,7 +3,7 @@ import Layout from "@/components/layout/Layout";
 const DisclaimerPage = () => {
   return (
     <Layout>
-      <section className="pt-32 pb-16 bg-white min-h-screen">
+      <section className="pt-24 pb-10 bg-white min-h-screen">
         <div className="container-custom max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Legal Disclaimer</h1>
           <p className="text-gray-500 mb-10">Last updated: August 2026</p>

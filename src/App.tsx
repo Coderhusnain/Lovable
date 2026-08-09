@@ -202,6 +202,8 @@ import PersonalFinancialStatementInfo from "./pages/PersonalFinancialStatementIn
 import HowItWorks from "./pages/HowItWorks";
 import WhatsANonprofit from "./pages/WhatsANonprofit";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import VisionMission from "./pages/VisionMission";
+import OurServices from "./pages/OurServices";
 import TermsOfService from "./pages/TermsOfService";
 import DisclaimerPage from "./pages/DisclaimerPage";
 
@@ -542,6 +544,11 @@ const App = () => {
                   <Route path="/musical-performance-contract-info" element={<MusicalPerformanceInfo />} />
                   <Route path="/musical-performance-agreement-form" element={<Documents />} />
                   <Route path="/warehouse-lease-info" element={<WarehouseLeaseInfo />} />
+
+                  {/* About */}
+                  <Route path="/services" element={<OurServices />} />
+                  <Route path="/vision-mission" element={<VisionMission />} />
+                  <Route path="/about/vision" element={<Navigate to="/vision-mission" replace />} />
 
                   {/* Legal pages */}
                   <Route path="/privacy" element={<PrivacyPolicy />} />

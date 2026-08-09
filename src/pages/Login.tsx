@@ -36,9 +36,7 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        console.log("Checking existing session...");
         const { data, error } = await supabase.auth.getSession();
-        console.log("Session check result:", { data, error });
         if (data.session) {
           navigate(getRedirectPath());
         }
@@ -60,12 +58,6 @@ const Login = () => {
     setIsSubmitting(true);
     setErrorMessage("");
 
-    console.log("Attempting login with:", { 
-      email, 
-      supabaseUrl: "https://nksumgiugukzdmrhhroj.supabase.co",
-      timestamp: new Date().toISOString()
-    });
-
     if (rememberMe) {
       localStorage.setItem("lastLoginEmail", email);
     } else {
@@ -73,20 +65,12 @@ const Login = () => {
     }
 
     try {
-      console.log("Calling supabase.auth.signInWithPassword...");
-      const { data, error } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      
-      console.log("Login response:", { data, error });
-      
+
       if (error) {
-        console.error("Login error details:", {
-          message: error.message,
-          status: error.status || 'No status',
-          name: error.name || 'Unknown error type'
-        });
         let friendlyMessage = error.message;
         if (/invalid login credentials/i.test(error.message)) {
           friendlyMessage = "Incorrect email or password. Please try again or use Forgot password below.";
@@ -99,7 +83,6 @@ const Login = () => {
         return;
       }
       
-      console.log("Login successful, redirecting...");
 
       if (weeklyEmails) {
         // Subscribe to the weekly legal advice emails; duplicates are fine
@@ -128,7 +111,7 @@ const Login = () => {
 
   return (
     <Layout>
-      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-10">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"

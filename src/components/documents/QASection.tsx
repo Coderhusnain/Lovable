@@ -43,9 +43,9 @@ const QASection = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 bg-white relative overflow-hidden">
+    <section className="py-8 md:py-12 bg-white relative overflow-hidden">
       <div className="container-custom">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left side - Interactive Q&A Preview */}
           <div>
             <Card className="bg-blue-50/60 border border-blue-100 shadow-lg rounded-2xl">
@@ -91,7 +91,7 @@ const QASection = () => {
 
             <div className="relative z-10 -mt-5 text-center">
               <p className="text-sm text-gray-600 bg-white border border-gray-200 px-5 py-2 rounded-full inline-block shadow-md">
-                Every 5 seconds someone gets free legal help on our platform
+                Free legal Q&A, powered by Gram AI and reviewed workflows
               </p>
             </div>
           </div>

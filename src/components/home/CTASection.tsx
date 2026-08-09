@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, ArrowRight, Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { memo } from "react";
 
 const CTASection = () => {
   return (
-    <section className="py-12 md:py-16 bg-[#FDE1D3]">
+    <section className="py-8 md:py-12 bg-[#FDE1D3]">
       <div className="container-custom">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-black mb-6">
-              Join millions who trust Legalgram
+              Get complete legal protection with Legalgram
             </h2>
             <p className="text-lg text-black mb-6">
               Get access to all our legal documents, attorney advice, and more with a monthly membership.
@@ -20,8 +20,8 @@ const CTASection = () => {
               <div className="flex items-start gap-2">
                 <Star className="h-5 w-5 text-[#F18F01] mt-1 flex-shrink-0" fill="#F18F01" />
                 <div>
-                  <span className="font-medium text-black">Trusted by millions</span>
-                  <p className="text-black">Over 20 million people have used our services</p>
+                  <span className="font-medium text-black">Attorney reviewed templates</span>
+                  <p className="text-black">Every document is built with real legal expertise</p>
                 </div>
               </div>
               
@@ -89,23 +89,6 @@ const CTASection = () => {
               </div>
             </div>
             
-            <div className="mt-8 pt-6 border-t border-[#F18F01]/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="text-lg font-bold text-[#F18F01]">4.8/5</div>
-                  <div className="text-sm text-white/80">Overall rating</div>
-                </div>
-                <a
-                  href="#"
-                  className="text-white/80 hover:text-white inline-flex items-center"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="text-sm">Verified reviews</span>
-                  <ExternalLink size={14} className="ml-1" />
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>

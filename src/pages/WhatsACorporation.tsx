@@ -7,7 +7,7 @@ const WhatsACorporation = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-bright-orange-50 to-white">
+      <section className="py-10 bg-gradient-to-br from-bright-orange-50 to-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
@@ -28,7 +28,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* What is a Corporation Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -50,7 +50,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* Key Benefits Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -122,7 +122,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* Types of Corporations */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -192,7 +192,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* Corporation vs Other Structures */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -271,7 +271,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* When to Choose Corporation */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -314,7 +314,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* Formation Process */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
@@ -440,7 +440,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* Cost Savings Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -496,7 +496,7 @@ const WhatsACorporation = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-bright-orange-500">
+      <section className="py-10 bg-bright-orange-500">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-white mb-6">

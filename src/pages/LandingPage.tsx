@@ -62,16 +62,6 @@ const LandingPage = () => {
     return () => clearTimeout(timer);
   }, [navigate]);
 
-  const handleProtectedNavigation = (path: string) => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        navigate(path);
-      } else {
-        navigate("/login");
-      }
-    });
-  };
-
   return (
     <Layout>
       <div className={`w-full transition-all duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -88,21 +78,6 @@ const LandingPage = () => {
         <Suspense {...loadingConfig}><DocumentsSection /></Suspense>
         <Suspense {...loadingConfig}><Testimonials /></Suspense>
         <Suspense {...loadingConfig}><CTASection /></Suspense>
-        {/* Add Make Documents and Start a Business buttons with protected navigation */}
-        <div className="flex justify-center gap-6 mt-8">
-          <button
-            className="bg-bright-orange-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-bright-orange-600 transition"
-            onClick={() => handleProtectedNavigation('/dashboard/make-document')}
-          >
-            Make Documents
-          </button>
-          <button
-            className="bg-bright-orange-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-bright-orange-600 transition"
-            onClick={() => handleProtectedNavigation('/start-a-business')}
-          >
-            Start a Business
-          </button>
-        </div>
       </div>
     </Layout>
   );

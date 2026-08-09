@@ -2,7 +2,8 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { memo } from "react";
+import { memo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import NavbarChatButton from "@/components/navigation/NavbarChatButton";
 
@@ -41,6 +42,9 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
     { path: "/community", label: "Community", protected: false }
   ];
 
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const aboutActive = isActive("/services") || isActive("/vision-mission");
+
   return (
     <NavigationMenu className="hidden xl:flex">
       <NavigationMenuList className={cn(
@@ -52,7 +56,7 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
             <NavigationMenuItem className="flex items-center">
               <NavigationMenuLink
                 className={cn(
-                  "inline-flex items-center whitespace-nowrap text-sm 2xl:text-base font-medium transition-all duration-300 relative group px-3 py-2 rounded-full",
+                  "inline-flex items-center whitespace-nowrap text-sm 2xl:text-base font-medium transition-all duration-300 relative group px-2.5 py-2 rounded-full",
                   isActive(item.path) 
                     ? "text-bright-orange-500" 
                     : "text-bright-orange-500/90 hover:text-bright-orange-500"
@@ -79,6 +83,45 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
             </NavigationMenuItem>
           </motion.div>
         ))}
+
+        {/* About dropdown: Services + Vision & Mission */}
+        <NavigationMenuItem
+          className="flex items-center relative"
+          onMouseEnter={() => setAboutOpen(true)}
+          onMouseLeave={() => setAboutOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setAboutOpen((o) => !o)}
+            className={cn(
+              "inline-flex items-center gap-1 whitespace-nowrap text-sm 2xl:text-base font-medium transition-all duration-300 px-2.5 py-2 rounded-full",
+              aboutActive ? "text-bright-orange-500" : "text-bright-orange-500/90 hover:text-bright-orange-500"
+            )}
+          >
+            About
+            <ChevronDown size={14} className={cn("transition-transform duration-200", aboutOpen && "rotate-180")} />
+          </button>
+          {aboutOpen && (
+            <div className="absolute left-0 top-full pt-2 z-50">
+              <div className="w-56 rounded-xl border border-gray-100 bg-white shadow-xl py-2">
+                <Link
+                  to="/services"
+                  onClick={() => setAboutOpen(false)}
+                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-bright-orange-50 hover:text-bright-orange-600 transition-colors"
+                >
+                  Our Services
+                </Link>
+                <Link
+                  to="/vision-mission"
+                  onClick={() => setAboutOpen(false)}
+                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-bright-orange-50 hover:text-bright-orange-600 transition-colors"
+                >
+                  Our Vision & Mission
+                </Link>
+              </div>
+            </div>
+          )}
+        </NavigationMenuItem>
 
         {/* Chat assistant trigger - opens the shared ChatWidget panel */}
         <NavigationMenuItem className="flex items-center">

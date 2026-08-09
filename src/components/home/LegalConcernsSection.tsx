@@ -33,9 +33,9 @@ const LegalConcernsSection = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-8 md:py-12 bg-gradient-to-b from-white to-gray-50">
       <div className="container-custom">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">
             Legal Protection
           </span>

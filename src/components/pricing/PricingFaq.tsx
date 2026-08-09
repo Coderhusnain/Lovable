@@ -42,7 +42,7 @@ const PricingFaq = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#fff6eb] to-[#fef1de] py-16">
+    <div className="bg-gradient-to-b from-[#fff6eb] to-[#fef1de] py-10">
       <div className="container mx-auto px-4 relative overflow-hidden">
         <div className="absolute -left-20 top-20 w-60 h-60 bg-bright-orange-500/5 rounded-full blur-3xl animate-pulse" />
         <div className="absolute -right-20 bottom-20 w-60 h-60 bg-bright-orange-500/5 rounded-full blur-3xl animate-pulse delay-300" />

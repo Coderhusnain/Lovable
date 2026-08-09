@@ -137,7 +137,7 @@ const Pricing = () => {
 
         <div className="relative -mt-32 px-4 pb-20">
           <div className="mx-auto max-w-7xl">
-            <div className="grid gap-8 md:gap-12 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
               {plans.map((plan) => (
                 <PricingCard 
                   key={plan.name}
@@ -154,7 +154,7 @@ const Pricing = () => {
         
         {/* Stats Section */}
         <motion.div 
-          className="bg-white py-20"
+          className="bg-white py-12"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -163,9 +163,9 @@ const Pricing = () => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
-                { number: "20K+", label: "Satisfied Clients" },
-                { number: "50K+", label: "Documents Created" },
-                { number: "98%", label: "Success Rate" },
+                { number: "230+", label: "Legal Documents" },
+                { number: "50", label: "States Covered" },
+                { number: "$0", label: "Starter Plan" },
                 { number: "24/7", label: "Support Available" }
               ].map((stat, index) => (
                 <motion.div 
@@ -177,7 +177,7 @@ const Pricing = () => {
                   className="p-6 rounded-2xl bg-gradient-to-br from-bright-orange-50 to-white shadow-lg"
                 >
                   <h3 className="text-3xl md:text-4xl font-bold text-bright-orange-600 mb-2">{stat.number}</h3>
-                  <p className="text-bright-orange-700">{stat.label}</p>
+                  <p className="text-gray-600">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
@@ -186,14 +186,14 @@ const Pricing = () => {
 
         {/* Testimonials */}
         <motion.div 
-          className="bg-gradient-to-b from-white to-soft-peach-50 py-20"
+          className="bg-gradient-to-b from-white to-soft-peach-50 py-12"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 bg-gradient-to-r from-bright-orange-700 to-bright-orange-500 bg-clip-text text-transparent">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 bg-gradient-to-r from-bright-orange-700 to-bright-orange-500 bg-clip-text text-transparent">
               What Our Clients Say
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -230,10 +230,10 @@ const Pricing = () => {
                       <StarIcon key={i} className="w-5 h-5 text-bright-orange-500" />
                     ))}
                   </div>
-                  <p className="text-bright-orange-700 mb-4">{testimonial.text}</p>
+                  <p className="text-gray-700 mb-4">{testimonial.text}</p>
                   <div className="border-t pt-4">
-                    <p className="font-semibold text-bright-orange-700">{testimonial.name}</p>
-                    <p className="text-sm text-bright-orange-500">{testimonial.role}</p>
+                    <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                    <p className="text-sm text-gray-500">{testimonial.role}</p>
                   </div>
                 </motion.div>
               ))}
@@ -242,7 +242,7 @@ const Pricing = () => {
         </motion.div>
 
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-12">
             <div className="relative rounded-2xl overflow-hidden shadow-xl">
               <img 
                 src="/lovable-uploads/7386c995-bf25-47e2-a3bb-095150b52e65.png"
@@ -251,23 +251,23 @@ const Pricing = () => {
               />
             </div>
             <div className="flex flex-col justify-center">
-              <h2 className="text-3xl font-bold mb-6 text-bright-orange-700">Professional Legal Support</h2>
-              <p className="text-lg text-bright-orange-600 mb-8">
+              <h2 className="text-3xl font-bold mb-6 text-gray-900">Professional Legal Support</h2>
+              <p className="text-lg text-gray-600 mb-8">
                 Get expert legal advice and support from our team of experienced attorneys. 
                 We're here to help you navigate complex legal matters with confidence.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Shield className="w-6 h-6 text-bright-orange-500" />
-                  <span className="text-bright-orange-600">Comprehensive legal protection</span>
+                  <span className="text-gray-700">Comprehensive legal protection</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Users className="w-6 h-6 text-bright-orange-500" />
-                  <span className="text-bright-orange-600">Dedicated legal team</span>
+                  <span className="text-gray-700">Dedicated legal team</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Package className="w-6 h-6 text-bright-orange-500" />
-                  <span className="text-bright-orange-600">Customized solutions</span>
+                  <span className="text-gray-700">Customized solutions</span>
                 </div>
               </div>
             </div>

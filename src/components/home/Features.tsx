@@ -135,7 +135,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="features-section" className="py-12 md:py-16 relative">
+    <section id="features-section" className="py-8 md:py-12 relative">
       {/* Background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-bright-orange-100 rounded-full opacity-20 blur-3xl"></div>
@@ -143,7 +143,7 @@ const Features = () => {
       </div>
       
       <div className="container-custom relative z-10">
-        <div className="text-center mb-16 md:mb-20">
+        <div className="text-center mb-10 md:mb-20">
           <div className={`transform transition-all duration-700 ${visibleSection ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <span className="inline-block bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 text-white font-medium px-4 py-2 rounded-full text-sm mb-4">Our Services</span>
             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-black">

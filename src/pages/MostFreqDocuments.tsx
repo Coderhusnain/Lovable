@@ -52,7 +52,7 @@ const MostFreqDocuments = () => {
     const Component = documentComponents[selectedDoc];
     return (
       <Layout>
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-12 md:py-28 bg-white">
         <div className="container-custom">
 
           {/* Back button */}
@@ -79,9 +79,9 @@ const MostFreqDocuments = () => {
   // Default view → show the 5 blocks
   return (
     <Layout>
-    <section className="py-20 md:py-28 bg-white">
+    <section className="py-12 md:py-28 bg-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">
             Popular Documents
           </span>

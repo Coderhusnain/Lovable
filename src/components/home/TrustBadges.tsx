@@ -1,18 +1,15 @@
 
 import { memo } from "react";
-import { Shield, Award, Clock, Star } from "lucide-react";
+import { Shield, Award, Clock } from "lucide-react";
 
 const TrustBadges = () => {
   return (
     <section className="py-8 bg-white border-b border-rocket-gray-200">
       <div className="container-custom">
         <div className="text-center mb-4">
-          <div className="flex items-center justify-center gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star key={star} fill="currentColor" className="h-4 w-4 text-yellow-500" />
-            ))}
-          </div>
-          <p className="text-sm text-rocket-gray-600 mt-1">Rated 4.8/5 based on 10,000+ reviews</p>
+          <p className="text-sm font-medium text-rocket-gray-600">
+            Trusted legal documents, built with attorney expertise
+          </p>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -37,11 +34,16 @@ const TrustBadges = () => {
           </div>
         </div>
         
-        <div className="flex flex-wrap justify-center items-center gap-8 mt-8">
-          <img src="https://placehold.co/120x40/F0F0F0/333333?text=Norton+Secure" alt="Norton Secure" className="h-8 opacity-70 hover:opacity-100 transition-opacity" />
-          <img src="https://placehold.co/120x40/F0F0F0/333333?text=McAfee+Secure" alt="McAfee Secure" className="h-8 opacity-70 hover:opacity-100 transition-opacity" />
-          <img src="https://placehold.co/120x40/F0F0F0/333333?text=TrustE" alt="TrustE Certified" className="h-8 opacity-70 hover:opacity-100 transition-opacity" />
-          <img src="https://placehold.co/120x40/F0F0F0/333333?text=SSL+Secured" alt="SSL Secured" className="h-8 opacity-70 hover:opacity-100 transition-opacity" />
+        <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
+            <Shield className="h-3.5 w-3.5 text-[#F18F01]" /> SSL Encrypted
+          </span>
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
+            <Shield className="h-3.5 w-3.5 text-[#F18F01]" /> Your Data Stays Private
+          </span>
+          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
+            <Award className="h-3.5 w-3.5 text-[#F18F01]" /> Attorney Reviewed Templates
+          </span>
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import { Helmet } from "react-helmet";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -230,7 +231,11 @@ const AskLegalAdvice = () => {
 
   return (
     <Layout>
-      <div 
+      <Helmet>
+        <title>Ask Legal Advice Online | Get Answers from Legal Experts | Legalgram</title>
+        <meta name="description" content="Ask any legal question and get a structured answer from Legalgram. Affordable online legal advice for landlords, tenants, freelancers, families, and small businesses." />
+      </Helmet>
+      <div
     className="min-h-screen bg-cover bg-center relative"
     style={{ backgroundImage: "url('/lovable-uploads/0f2430fd-a1bc-47ab-a2f7-2d0459002225.png')" }}
   >

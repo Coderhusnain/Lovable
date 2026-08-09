@@ -64,6 +64,16 @@ const Footer = () => {
                   Contact Us
                 </FooterLink>
               </li>
+              <li>
+                <FooterLink to="/services">
+                  Our Services
+                </FooterLink>
+              </li>
+              <li>
+                <FooterLink to="/vision-mission">
+                  Our Vision & Mission
+                </FooterLink>
+              </li>
             </ul>
           </div>
 

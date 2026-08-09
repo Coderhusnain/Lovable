@@ -64,49 +64,49 @@ const StatItem = ({ stat, index }: { stat: any, index: number }) => {
       <div className="mx-auto bg-gradient-to-br from-bright-orange-400 to-bright-orange-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-bright-orange-500/20">
         <Icon className="h-8 w-8 text-white" />
       </div>
-      <h3 className="text-4xl md:text-5xl font-bold mb-2 text-black">
+      <h3 className="text-4xl md:text-5xl font-bold mb-2 text-white">
         {count}{stat.suffix}
       </h3>
-      <p className="text-xl font-medium mb-2 text-black">{stat.label}</p>
-      <p className="text-sm text-black/70">{stat.description}</p>
+      <p className="text-xl font-medium mb-2 text-white">{stat.label}</p>
+      <p className="text-sm text-white/70">{stat.description}</p>
     </div>
   );
 };
 
 const StatsSection = () => {
   const stats = [
-    { 
-      icon: Users, 
-      value: 1, 
-      suffix: "M+", 
-      label: "Customers", 
-      description: "People who trust our services"
+    {
+      icon: FileText,
+      value: 230,
+      suffix: "+",
+      label: "Legal Documents",
+      description: "Attorney drafted templates ready to customize"
     },
-    { 
-      icon: FileText, 
-      value: 1, 
-      suffix: "M+", 
-      label: "Documents", 
-      description: "Legal documents created" 
+    {
+      icon: Users,
+      value: 50,
+      suffix: "",
+      label: "States Covered",
+      description: "Business formation and documents nationwide"
     },
-    { 
-      icon: MessageSquare, 
-      value: 5, 
-      suffix: "K+", 
-      label: "Consultations", 
-      description: "Legal advice sessions provided" 
+    {
+      icon: MessageSquare,
+      value: 24,
+      suffix: "/7",
+      label: "Gram AI Support",
+      description: "Legal help at any time of day"
     },
-    { 
-      icon: Clock, 
-      value: 5, 
-      suffix: "+", 
-      label: "Years", 
-      description: "Of legal service experience" 
+    {
+      icon: Clock,
+      value: 100,
+      suffix: "%",
+      label: "Attorney Reviewed",
+      description: "Every template built with legal expertise"
     }
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-r from-primary to-rocket-blue-800 text-black relative overflow-hidden">
+    <section className="py-8 md:py-12 bg-gradient-to-r from-primary to-rocket-blue-800 text-white relative overflow-hidden">
       {/* Enhanced background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMzYgMzRjMC0yLjItMS44LTQtNC00cy00IDEuOC00IDQgMS44IDQgNCA0IDQtMS44IDQtNHptMC0zMGMwLTIuMi0xLjgtNC00LTRzLTQgMS44LTQgNCAxLjggNCA0IDQgNC0xLjggNC00em0wIDYwYzAtMi4yLTEuOC00LTQtNHMtNCAxLjgtNCA0IDEuOCA0IDQgNCA0LTEuOCA0LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')]"></div>
@@ -117,17 +117,17 @@ const StatsSection = () => {
       <div className="absolute bottom-0 right-1/4 w-60 h-60 bg-bright-orange-300/20 rounded-full blur-3xl"></div>
 
       <div className="container-custom relative z-10">
-        <div className="text-center mb-16">
-          <span className="inline-block bg-white/10 backdrop-blur-sm text-black font-medium px-4 py-1 rounded-full text-sm mb-3">Our Impact</span>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-black">
-            Trusted by Millions Nationwide
+        <div className="text-center mb-10">
+          <span className="inline-block bg-white/10 backdrop-blur-sm text-white font-medium px-4 py-1 rounded-full text-sm mb-3">Our Impact</span>
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+            Everything You Need in One Platform
           </h2>
-          <p className="text-lg text-black/80 max-w-3xl mx-auto">
-            Our track record speaks for itself - millions of satisfied customers and counting.
+          <p className="text-lg text-white/80 max-w-3xl mx-auto">
+            Real legal protection, built with attorney expertise and available whenever you need it.
           </p>
         </div>
         
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-8">
           {stats.map((stat, index) => (
             <StatItem key={index} stat={stat} index={index} />
           ))}

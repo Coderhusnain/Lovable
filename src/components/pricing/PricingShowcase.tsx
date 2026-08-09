@@ -26,10 +26,10 @@ const PricingShowcase = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-white to-soft-peach-50 py-20">
+    <div className="bg-gradient-to-b from-white to-soft-peach-50 py-12">
       <div className="container mx-auto px-4">
         <motion.h2 
-          className="text-3xl md:text-4xl font-bold text-center mb-16 bg-gradient-to-r from-bright-orange-700 to-bright-orange-500 bg-clip-text text-transparent"
+          className="text-3xl md:text-4xl font-bold text-center mb-10 bg-gradient-to-r from-bright-orange-700 to-bright-orange-500 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

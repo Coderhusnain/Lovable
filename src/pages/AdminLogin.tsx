@@ -37,7 +37,7 @@ const AdminLogin = () => {
 
   return (
     <Layout>
-      <div className="container-custom py-16 flex items-center justify-center min-h-[70vh]">
+      <div className="container-custom py-10 flex items-center justify-center min-h-[70vh]">
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">

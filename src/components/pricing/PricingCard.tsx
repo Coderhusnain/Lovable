@@ -79,24 +79,24 @@ const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
           <div className="flex items-center gap-4 mb-6">
             {plan.icon}
             <div>
-              <h3 className="text-2xl font-bold text-bright-orange-700">{plan.name}</h3>
-              <p className="text-bright-orange-600/80">{plan.description}</p>
+              <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
+              <p className="text-gray-600">{plan.description}</p>
             </div>
           </div>
 
           <div className="mb-8">
             {isFree ? (
-              <div className="flex items-baseline text-bright-orange-700">
+              <div className="flex items-baseline text-gray-900">
                 <span className="text-5xl font-bold tracking-tight">$0</span>
-                <span className="ml-2 text-bright-orange-500">/month</span>
+                <span className="ml-2 text-gray-500">/month</span>
               </div>
             ) : (
               <>
-                <div className="flex items-baseline text-bright-orange-700">
+                <div className="flex items-baseline text-gray-900">
                   <span className="text-5xl font-bold tracking-tight">
                     ${plan.price[billingCycle]}
                   </span>
-                  <span className="ml-2 text-bright-orange-500">/month</span>
+                  <span className="ml-2 text-gray-500">/month</span>
                 </div>
 
                 {billingCycle === "annually" && plan.price.annually > 0 && (
@@ -120,7 +120,7 @@ const PricingCard = ({ plan, billingCycle, savings }: PricingCardProps) => {
                 ) : (
                   <X className="h-5 w-5 text-gray-300 mt-0.5 shrink-0" />
                 )}
-                <span className="ml-3 text-bright-orange-600">
+                <span className="ml-3 text-gray-700">
                   {feature.name}
                   {feature.info && (
                     <TooltipProvider>

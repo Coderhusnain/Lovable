@@ -61,9 +61,9 @@ const PracticeAreas = () => {
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-rocket-gray-50 to-white">
+    <section className="py-8 md:py-12 bg-gradient-to-b from-rocket-gray-50 to-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">Practice Areas</span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 text-black">
             Legal Solutions for Every Need

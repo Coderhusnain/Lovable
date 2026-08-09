@@ -18,7 +18,7 @@ const WhatsANonprofit = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-emerald-50 to-teal-100 pt-32 pb-16">
+      <section className="bg-gradient-to-br from-emerald-50 to-teal-100 pt-24 pb-10">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
@@ -76,7 +76,7 @@ const WhatsANonprofit = () => {
       </section>
 
       {/* What is a Nonprofit Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-8 text-center" {...fadeUp}>
@@ -135,7 +135,7 @@ const WhatsANonprofit = () => {
       </section>
 
       {/* How Formation Works */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-12 text-center" {...fadeUp}>
@@ -186,7 +186,7 @@ const WhatsANonprofit = () => {
       </section>
 
       {/* Is a Nonprofit Right for You */}
-      <section className="py-16 bg-emerald-50">
+      <section className="py-10 bg-emerald-50">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h2 className="text-3xl font-bold text-gray-900 mb-8" {...fadeUp}>
@@ -241,7 +241,7 @@ const WhatsANonprofit = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gray-900 text-white">
+      <section className="py-10 bg-gray-900 text-white">
         <div className="container-custom">
           <motion.div className="max-w-4xl mx-auto text-center" {...fadeUp}>
             <h2 className="text-3xl font-bold mb-6 text-white">

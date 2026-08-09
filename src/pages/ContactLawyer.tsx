@@ -67,7 +67,7 @@ const ContactLawyer = () => {
 
   return (
     <Layout>
-      <div className="container-custom py-12 md:py-16">
+      <div className="container-custom pt-24 pb-12 md:pb-16">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h1 className="heading-xl mb-4">Contact a Lawyer</h1>

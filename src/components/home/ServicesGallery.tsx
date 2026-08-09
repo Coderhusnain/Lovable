@@ -57,7 +57,7 @@ const ServicesGallery = () => {
   return (
     <section id="services-gallery" className="pt-16 md:pt-20 pb-10 md:pb-12 bg-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3">
             Our Legal Services
           </span>
@@ -119,7 +119,7 @@ const ServicesGallery = () => {
           ))}
         </div>
         
-        <div className="mt-16">
+        <div className="mt-10">
           <div className="relative overflow-hidden rounded-xl">
             <img 
               src="https://images.unsplash.com/photo-1593115057322-e94b77572f20?q=80&w=2400&auto=format&fit=crop" 
@@ -135,7 +135,7 @@ const ServicesGallery = () => {
                 <p className="text-white/90 mb-8 text-lg">
                   Our team of expert attorneys provides a wide range of legal services to meet your personal and business needs.
                 </p>
-                <Link to="/documents">
+                <Link to="/services">
                   <button className="px-8 py-3 bg-bright-orange-500 text-white rounded-lg font-medium hover:bg-bright-orange-600 transition-colors flex items-center">
                     View all services <ArrowRight className="ml-2 h-5 w-5" />
                   </button>

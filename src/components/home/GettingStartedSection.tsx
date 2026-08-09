@@ -62,13 +62,13 @@ const GettingStartedSection = () => {
   ];
 
   return (
-    <section id="getting-started" className="py-12 md:py-16 bg-white relative overflow-hidden">
+    <section id="getting-started" className="py-8 md:py-12 bg-white relative overflow-hidden">
       <div className="hidden lg:block absolute top-1/2 left-0 w-[80%] h-0.5 bg-gradient-to-r from-bright-orange-300/0 via-bright-orange-300 to-bright-orange-300/0 transform -translate-y-1/2 z-0"></div>
       <div className="absolute top-40 right-0 w-64 h-64 bg-bright-orange-100 rounded-full opacity-30 blur-3xl"></div>
       <div className="absolute bottom-20 left-0 w-64 h-64 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
       
       <div className="container-custom">
-        <div className="text-center mb-16 relative z-10">
+        <div className="text-center mb-10 relative z-10">
           <motion.span 
             className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-3"
             initial={{ opacity: 0, y: 20 }}

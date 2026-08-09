@@ -15,7 +15,7 @@ const Advice = () => {
     <Layout>
       <div className="container-custom">
         {/* Hero Section */}
-        <section className="py-16 md:py-24 text-center">
+        <section className="py-10 md:py-24 text-center">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-rocket-gray-900 dark:text-white mb-6">
               Get Expert <span className="text-gradient-blue">Legal Advice</span>

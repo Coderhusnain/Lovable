@@ -35,12 +35,6 @@ const Signup = () => {
     setIsSubmitting(true);
     setErrorMessage("");
 
-    console.log("Attempting signup with:", { 
-      email, 
-      supabaseUrl: "https://nksumgiugukzdmrhhroj.supabase.co",
-      timestamp: new Date().toISOString()
-    });
-
     // Validation
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
@@ -57,7 +51,6 @@ const Signup = () => {
     }
 
     try {
-      console.log("Calling supabase.auth.signUp...");
       // Create a new account without email verification
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -72,7 +65,6 @@ const Signup = () => {
         }
       });
 
-      console.log("Signup response:", { data, error });
 
       if (error) {
         console.error("Signup error details:", {
@@ -100,7 +92,6 @@ const Signup = () => {
 
       if (data.session) {
         // Email confirmation is disabled, the user is already signed in
-        console.log("Signup successful with active session, redirecting...");
         toast.success("Account created successfully! Welcome to Legalgram.");
         if (redirectTo === 'ask-legal-advice' && redirectStep) {
           navigate(`/ask-legal-advice?step=${redirectStep}`);
@@ -111,7 +102,6 @@ const Signup = () => {
       }
 
       // Email confirmation is required before the account can be used
-      console.log("Signup successful, confirmation email sent...");
       toast.success("Account created! Please check your email to confirm your account, then log in.");
 
       // Redirect to login with the same redirect parameters
@@ -136,7 +126,7 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-10">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"

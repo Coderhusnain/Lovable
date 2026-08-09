@@ -109,7 +109,7 @@ const ResetPassword = () => {
 
   return (
     <Layout>
-      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-28 pb-16">
+      <div className="w-full min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-10">
         <div className="absolute inset-0 z-0">
           <img
             src="/lovable-uploads/067c7b04-b1a2-4236-97eb-2b7cf8b24291.png"

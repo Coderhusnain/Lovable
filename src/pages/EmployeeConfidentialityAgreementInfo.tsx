@@ -12,7 +12,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-r from-purple-600 to-indigo-600">
+        <section className="py-10 bg-gradient-to-r from-purple-600 to-indigo-600">
           <div className="container-custom">
             <div className="max-w-4xl mx-auto text-center text-white">
               <div className="flex justify-center mb-6">
@@ -29,7 +29,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* Why Important Section */}
-        <section className="py-16 bg-white">
+        <section className="py-10 bg-white">
           <div className="container-custom">
             <div className="max-w-4xl mx-auto">
               <div className="flex gap-4 mb-6">
@@ -48,7 +48,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* Key Benefits Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-10 bg-gray-50">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Key Benefits
@@ -67,7 +67,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 bg-white">
+        <section className="py-10 bg-white">
           <div className="container-custom">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -89,7 +89,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* When to Use Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-10 bg-gray-50">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               When to Use This Agreement
@@ -105,7 +105,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* Ideal For Section */}
-        <section className="py-16 bg-white">
+        <section className="py-10 bg-white">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Who Should Use This Agreement?
@@ -122,7 +122,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* What Includes Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-10 bg-gray-50">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               What This Agreement Includes
@@ -141,7 +141,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* FAQs Section */}
-        <section className="py-16 bg-white">
+        <section className="py-10 bg-white">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Frequently Asked Questions
@@ -165,7 +165,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* Highlights Section */}
-        <section className="py-16 bg-gradient-to-r from-purple-50 to-indigo-50">
+        <section className="py-10 bg-gradient-to-r from-purple-50 to-indigo-50">
           <div className="container-custom">
             <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
               Why Choose Our Template?
@@ -182,7 +182,7 @@ const EmployeeConfidentialityAgreementInfo: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-purple-600 to-indigo-600">
+        <section className="py-10 bg-gradient-to-r from-purple-600 to-indigo-600">
           <div className="container-custom text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Ready to Protect Your Business Information?

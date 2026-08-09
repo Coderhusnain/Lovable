@@ -1,4 +1,5 @@
 import Layout from "@/components/layout/Layout";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -60,8 +61,12 @@ const benefits = [
 const HowItWorks = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>How It Works | Create Legal Documents Online in 4 Steps | Legalgram</title>
+        <meta name="description" content="See how Legalgram works: choose a legal document, answer simple questions, review and customize, then download, sign and share. Attorney drafted templates in minutes." />
+      </Helmet>
       {/* Hero */}
-      <section className="pt-32 pb-12 md:pb-16 bg-gradient-to-b from-rocket-gray-50 to-white">
+      <section className="pt-24 pb-8 md:pb-12 bg-gradient-to-b from-rocket-gray-50 to-white">
         <div className="container-custom text-center">
           <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-4">
             How It Works
@@ -76,7 +81,7 @@ const HowItWorks = () => {
       </section>
 
       {/* Steps */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-8 md:py-12 bg-white">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto space-y-8">
             {steps.map((step, index) => (
@@ -105,7 +110,7 @@ const HowItWorks = () => {
       </section>
 
       {/* Benefits */}
-      <section className="py-12 md:py-16 bg-rocket-gray-50">
+      <section className="py-8 md:py-12 bg-rocket-gray-50">
         <div className="container-custom">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-10">
             Why People Trust Legalgram
@@ -128,7 +133,7 @@ const HowItWorks = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-8 md:py-12 bg-white">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
             Ready to Create Your Legal Document?

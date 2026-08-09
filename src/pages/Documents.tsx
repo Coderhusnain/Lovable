@@ -1,6 +1,7 @@
 import React, { useState, lazy, Suspense, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
+import { Helmet } from "react-helmet";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 import DocumentAboutSidebar from "@/components/DocumentAboutSidebar";
 import DocumentInfoLanding from "@/components/DocumentInfoLanding";
@@ -837,9 +838,13 @@ const Documents = () => {
   // 3. Render Main Category Selection
   return (
     <Layout>
+      <Helmet>
+        <title>Legal Document Templates | 230+ Attorney Drafted Forms | Legalgram</title>
+        <meta name="description" content="Browse 230+ attorney drafted legal document templates. Create contracts, leases, NDAs, wills, business formation documents and more in minutes." />
+      </Helmet>
       <div className="bg-white min-h-screen">
         <div className="bg-gradient-to-b from-rocket-gray-50 to-white">
-          <div className="container mx-auto px-4 pb-10 pt-32 text-center">
+          <div className="container mx-auto px-4 pb-8 pt-24 text-center">
             <span className="inline-block bg-bright-orange-100 text-bright-orange-600 font-medium px-4 py-1 rounded-full text-sm mb-4">
               {totalDocuments}+ Documents Available
             </span>

@@ -72,7 +72,7 @@ const ProcessCard = memo(({
         
         <h3 className="text-2xl md:text-3xl font-bold mb-4 text-black">{title}</h3>
         
-        <p className="text-white-600 dark:text-white-300 mb-6 text-lg">{description}</p>
+        <p className="text-gray-600 mb-6 text-lg">{description}</p>
         
         <div className="mt-auto">
           <Link to="/how-it-works" className="inline-flex items-center text-bright-orange-500 hover:text-bright-orange-600 font-medium group">
@@ -158,7 +158,7 @@ const ProcessSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="py-12 md:py-16 bg-gradient-to-b from-white to-rocket-gray-50 relative overflow-hidden">
+    <section ref={sectionRef} className="py-8 md:py-12 bg-gradient-to-b from-white to-rocket-gray-50 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-0 w-64 h-64 bg-bright-orange-50 rounded-full opacity-60 blur-3xl"></div>
         <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-blue-50 rounded-full opacity-60 blur-3xl"></div>
@@ -175,7 +175,7 @@ const ProcessSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-16 md:mb-20"
+          className="text-center mb-10 md:mb-20"
         >
           <span className="inline-block bg-gradient-to-r from-bright-orange-100 to-amber-100 text-bright-orange-600 font-medium px-4 py-2 rounded-full text-sm mb-4">Our Simple Process</span>
           <h2 className="text-3xl md:text-5xl font-bold mb-5 text-black">
@@ -197,7 +197,7 @@ const ProcessSection = () => {
               <Award className="h-40 w-40 text-bright-orange-500" stroke="1" />
             </div>
             
-            <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-8 items-center">
               <div>
                 <div className="inline-flex items-center bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium mb-4">
                   <Clock className="h-4 w-4 mr-1" /> Ready in minutes
@@ -237,7 +237,7 @@ const ProcessSection = () => {
             variants={containerVariants}
             initial="hidden"
             animate={isVisible ? "visible" : "hidden"}
-            className="grid md:grid-cols-3 gap-8 md:gap-12 relative z-10"
+            className="grid md:grid-cols-3 gap-8 md:gap-8 relative z-10"
           >
             {processes.map((process, index) => (
               <motion.div key={index} variants={itemVariants}>
@@ -257,7 +257,7 @@ const ProcessSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.7, delay: 0.8 }}
-          className="text-center mt-16 md:mt-24"
+          className="text-center mt-10 md:mt-24"
         >
           <Link to="/signup">
             <Button variant="orange" size="lg" className="px-10 py-7 h-auto text-lg shadow-lg hover:shadow-xl hover:transform hover:scale-105 transition-all bg-gradient-to-r from-bright-orange-500 to-bright-orange-600">

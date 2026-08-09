@@ -1,11 +1,12 @@
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Phone, Mail, MapPin, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -46,6 +47,10 @@ const Contact = () => {
 
   return (
     <Layout>
+      <Helmet>
+        <title>Contact Us | Legalgram</title>
+        <meta name="description" content="Get in touch with the Legalgram team. Send us a message and we will reply to your email within 1 to 2 business days." />
+      </Helmet>
       <div  className="min-h-screen bg-cover bg-center relative"
     style={{ backgroundImage: "url('/lovable-uploads/0f2430fd-a1bc-47ab-a2f7-2d0459002225.png')" }} >
 
@@ -61,7 +66,7 @@ const Contact = () => {
         </div>
       </div> */}
 
-      <div className="container-custom section-padding">
+      <div className="container-custom section-padding pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {isSuccess ? (
@@ -163,72 +168,22 @@ const Contact = () => {
           </div>
 
           <div>
-            <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-6 md:p-8 mb-6">
-             <div className={`border-blue-200 bg-gray-50 rounded-lg shadow-lg p-3 mt-3`}>
-
-              <h2 className="text-xl font-bold mb-6 text-black ">Contact Information</h2>
-              
-              <div className="space-y-6">
-                {/* <div className="flex items-start gap-4">
-                  <div className="bg-rocket-blue-50 dark:bg-rocket-blue-900 p-3 rounded-lg">
-                    <Phone className="h-5 w-5 text-rocket-blue-500 dark:text-rocket-blue-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-black">Phone</h3>
-                    <p className="text-black mt-1">+1 (555) 123-4567</p>
-                  </div>
-                </div> */}
-                
-                <div className="flex items-start gap-4">
-                  <div className="bg-rocket-blue-50 dark:bg-rocket-blue-900 p-3 rounded-lg">
-                    <Mail className="h-5 w-5 text-rocket-blue-500 dark:text-rocket-blue-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-black">Email</h3>
-                    <p className="text-black mt-1">
-                      <a href="mailto:info@legalgram.org" className="text-black hover:text-rocket-blue-500">
-                        info@legalgram.org
-                      </a>
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="bg-rocket-blue-50 dark:bg-rocket-blue-900 p-3 rounded-lg">
-                    <MapPin className="h-5 w-5 text-rocket-blue-500 dark:text-rocket-blue-300" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-black">Office Address</h3>
-                    <p className="text-black mt-1">
-                      123 Legal Avenue<br />
-                      Suite 400<br />
-                      San Francisco, CA 94103
-                    </p>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-8">
-              <div className={`border-blue-200 bg-gray-50 rounded-lg shadow-lg p-6 mt-3`}>
-              
-              <h3 className="font-semibold mb-3 text-black">Office Hours</h3>
-              <ul className="space-y-2 text-black">
-                <li className="flex justify-between">
-                  <span>Monday - Friday:</span>
-                  <span>9:00 AM - 6:00 PM</span>
+            <div className="bg-white dark:bg-rocket-gray-800 rounded-lg shadow-lg p-6 md:p-8">
+              <h2 className="text-xl font-bold mb-4 text-black">What Happens Next</h2>
+              <ul className="space-y-4 text-black">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-bright-orange-500 mt-0.5 shrink-0" />
+                  <span>Fill out the form and tell us how we can help.</span>
                 </li>
-                <li className="flex justify-between">
-                  <span>Saturday:</span>
-                  <span>10:00 AM - 2:00 PM</span>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-bright-orange-500 mt-0.5 shrink-0" />
+                  <span>Our team reviews your message and finds the right person to assist.</span>
                 </li>
-                <li className="flex justify-between">
-                  <span>Sunday:</span>
-                  <span>Closed</span>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-bright-orange-500 mt-0.5 shrink-0" />
+                  <span>We reply to the email address you provide, usually within 1 to 2 business days.</span>
                 </li>
               </ul>
-                </div>
             </div>
           </div>
         </div>

@@ -13,4 +13,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split large stable dependencies into separate cacheable chunks so
+        // the main app bundle is smaller and repeat visits load faster.
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'motion': ['framer-motion'],
+          'supabase': ['@supabase/supabase-js'],
+          'pdf': ['jspdf'],
+        },
+      },
+    },
+  },
 });

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import BusinessBackgroundSlideshow from "@/components/business/BusinessBackgroundSlideshow";
 import FAQSection from "@/components/business/FAQSection";
@@ -23,6 +24,10 @@ import {
 const StartABusiness = () => {
   return (
     <Layout>
+      <Helmet>
+        <title>Start a Business | LLC, Corporation & Nonprofit Formation | Legalgram</title>
+        <meta name="description" content="Form your LLC, corporation, or nonprofit in any US state. Compare business structures and get the legal documents you need to start your business properly." />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center overflow-hidden mt-[72px]">
         <BusinessBackgroundSlideshow />
@@ -51,27 +56,27 @@ const StartABusiness = () => {
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="font-bold text-3xl text-bright-orange-500 mb-2">50K+</div>
-              <div className="text-gray-600">Businesses Formed</div>
+              <div className="font-bold text-3xl text-bright-orange-500 mb-2">50</div>
+              <div className="text-gray-600">States Covered</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-3xl text-bright-orange-500 mb-2">98%</div>
-              <div className="text-gray-600">Success Rate</div>
+              <div className="font-bold text-3xl text-bright-orange-500 mb-2">230+</div>
+              <div className="text-gray-600">Legal Documents</div>
             </div>
             <div className="text-center">
               <div className="font-bold text-3xl text-bright-orange-500 mb-2">24/7</div>
               <div className="text-gray-600">Support Available</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-3xl text-bright-orange-500 mb-2">4.9/5</div>
-              <div className="text-gray-600">Customer Rating</div>
+              <div className="font-bold text-3xl text-bright-orange-500 mb-2">100%</div>
+              <div className="text-gray-600">Attorney Reviewed</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             Everything You Need to Start Your Business
@@ -163,9 +168,9 @@ const StartABusiness = () => {
       </section>
 
       {/* Business Types Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <div className="absolute -top-4 left-0">
                 <span className="bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -207,9 +212,9 @@ const StartABusiness = () => {
       </section>
 
       {/* S-Corp Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
               <img 
                 src="/lovable-uploads/697f8a63-6e9a-41a0-9995-812ce5ce9381.png"
@@ -246,9 +251,9 @@ const StartABusiness = () => {
       </section>
 
       {/* Nonprofit Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <h2 className="text-4xl font-bold text-gray-900">
                 Start Your Nonprofit Organization
@@ -285,7 +290,7 @@ const StartABusiness = () => {
       </section>
 
       {/* Business Structure Comparison */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             Compare Business Structures
@@ -385,7 +390,7 @@ const StartABusiness = () => {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             Why Choose Legalgram?
@@ -462,7 +467,7 @@ const StartABusiness = () => {
       </section>
 
       {/* Process Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             How It Works
@@ -503,7 +508,7 @@ const StartABusiness = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             Simple, Transparent Pricing
@@ -621,14 +626,14 @@ const StartABusiness = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container-custom">
           <FAQSection />
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-16 bg-white">
+      <section className="py-10 bg-white">
         <div className="container-custom">
           <h2 className="text-3xl font-bold text-black text-center mb-12">
             What Our Customers Say
@@ -677,7 +682,7 @@ const StartABusiness = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 text-white">
+      <section className="py-10 bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 text-white">
         <div className="container-custom text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Start Your Business Journey?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">Join thousands of successful business owners who trusted us with their business formation</p>

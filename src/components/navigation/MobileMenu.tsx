@@ -44,12 +44,21 @@ export const MobileMenu = memo(({
         <MobileNavLink to="/pricing" isActive={isActive("/pricing")} onClick={onToggle}>
           Pricing
         </MobileNavLink>
-        <MobileNavLink 
-          to="/ask-legal-advice" 
-          isActive={isActive("/ask-legal-advice")} 
+        <MobileNavLink
+          to="/ask-legal-advice"
+          isActive={isActive("/ask-legal-advice")}
           onClick={onToggle}
         >
           Ask Legal Advice
+        </MobileNavLink>
+        <MobileNavLink to="/community" isActive={isActive("/community")} onClick={onToggle}>
+          Community
+        </MobileNavLink>
+        <MobileNavLink to="/services" isActive={isActive("/services")} onClick={onToggle}>
+          Our Services
+        </MobileNavLink>
+        <MobileNavLink to="/vision-mission" isActive={isActive("/vision-mission")} onClick={onToggle}>
+          Our Vision & Mission
         </MobileNavLink>
         <div className="flex flex-col space-y-2 pt-4 border-t border-black/20">
           {isAuthenticated ? (
