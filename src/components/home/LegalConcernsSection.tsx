@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import { Shield, Gavel, ScrollText } from "lucide-react";
+import { Heart, Briefcase, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const LegalConcernsSection = () => {
       title: "Family Protection",
       description: "Secure your family's future with wills, trusts, and estate planning documents.",
       image: "/lovable-uploads/bbae67ec-7fdd-49d8-adfd-ca2a1c8a05a1.png",
-      icon: Shield,
+      icon: Heart,
       link: "/family-law",
       gradient: "from-blue-500/20 to-blue-600/20"
     },
@@ -18,7 +18,7 @@ const LegalConcernsSection = () => {
       title: "Business Security",
       description: "Protect your business with contracts, agreements, and legal compliance documents.",
       image: "/lovable-uploads/c9d521b5-31e5-47a0-9d04-c2539ddd886e.png",
-      icon: Gavel,
+      icon: Briefcase,
       link: "/business-law",
       gradient: "from-orange-500/20 to-orange-600/20"
     },
@@ -26,7 +26,7 @@ const LegalConcernsSection = () => {
       title: "Property Matters",
       description: "Handle real estate transactions and property disputes with proper legal documentation.",
       image: "/lovable-uploads/f71dcb3e-44f6-47f2-a368-b65778dfe4da.png",
-      icon: ScrollText,
+      icon: Building2,
       link: "/property-law",
       gradient: "from-green-500/20 to-green-600/20"
     }

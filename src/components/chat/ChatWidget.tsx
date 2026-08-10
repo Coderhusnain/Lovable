@@ -13,8 +13,8 @@ import jsPDF from "jspdf";
 import {
   X, Send, Scale, Loader2, Sparkles, User,
   ExternalLink, ChevronDown, Paperclip, FileText,
-  FileDown, Search, BookOpen, MessageSquare,
-  BarChart2, GitCompare, ArrowUp,
+  FileDown, Search, FileSearch, MessageSquare,
+  FilePlus, ArrowUp,
   ArrowLeft, CheckCircle,
 } from "lucide-react";
 import LegalgramAPI, { ActionButton, ChatResponse } from "@/services/backendService";
@@ -1129,10 +1129,10 @@ const CUSTOM_DOC_TRIGGERS = [
 ];
 
 const QUICK_ACTIONS = [
-  { icon: BookOpen,      label: "Find a Document",      desc: "Search and find the right legal document for your needs.",    value: "Help me find the right legal document" },
+  { icon: FileSearch,    label: "Find a Document",      desc: "Search and find the right legal document for your needs.",    value: "Help me find the right legal document" },
   { icon: MessageSquare, label: "Ask a Legal Question",  desc: "Get a practical understanding of legal concepts.",            value: "What is a partnership agreement and what clauses should it have?" },
-  { icon: BarChart2,     label: "Make a Legal Analysis", desc: "Assess your situation considering facts and legal framework.", value: "I need a legal analysis for my situation" },
-  { icon: GitCompare,    label: "Create a Document",     desc: "Build a custom legal document tailored to your needs.",       value: "create new document" },
+  { icon: Scale,         label: "Make a Legal Analysis", desc: "Assess your situation considering facts and legal framework.", value: "I need a legal analysis for my situation" },
+  { icon: FilePlus,      label: "Create a Document",     desc: "Build a custom legal document tailored to your needs.",       value: "create new document" },
 ];
 
 /* ─────────────────────────────────────────────

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, MessageSquare, FileText, Building } from "lucide-react";
+import { Scale, MessageSquare, FileText, FileSignature, Building, Calculator } from "lucide-react";
 
 const benefitCards = [
   {
@@ -12,7 +12,7 @@ const benefitCards = [
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    icon: FileText,
+    icon: FileSignature,
     title: "Sign legal documents",
     description: "Sign your documents quickly and securely",
     plans: ["Legalgram", "Legalgram+"],
@@ -24,7 +24,7 @@ const benefitCards = [
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    icon: User,
+    icon: Scale,
     title: "Retain a Legal Pro",
     description: "Get legal help from an experienced pro at a discounted rate.",
     price: "$149.99/15 mins",
@@ -39,7 +39,7 @@ const benefitCards = [
     upgradeText: "Upgrade to get your first business FREE",
   },
   {
-    icon: FileText,
+    icon: Calculator,
     title: "Book a Tax Pro Consult",
     description: "Plan ahead with a Tax Pro and keep more of your money at tax time.",
     price: "$199.99",

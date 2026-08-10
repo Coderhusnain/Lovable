@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Scale, Building2, ArrowRight, LayoutGrid } from "lucide-react";
+import { Heart, Briefcase, Building2, ArrowRight, LayoutGrid } from "lucide-react";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 interface LegalConcernsSectionProps {
@@ -17,13 +17,13 @@ const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategoryS
       id: 'family-protection',
       title: 'Family Protection',
       description: 'Secure your family\'s future with wills, trusts, and estate planning documents',
-      icon: Shield
+      icon: Heart
     },
     {
       id: 'business-security',
       title: 'Business Security',
       description: 'Protect your business with contracts, agreements, and legal compliance documents',
-      icon: Scale
+      icon: Briefcase
     },
     {
       id: 'property-matters',

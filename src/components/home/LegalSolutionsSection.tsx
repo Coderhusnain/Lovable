@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { FileText, CheckCircle, Fingerprint, ArrowRight } from "lucide-react";
+import { FileSearch, PenLine, FileSignature, ArrowRight } from "lucide-react";
 
 const LegalSolutionsSection = () => {
   return (
@@ -28,7 +28,7 @@ const LegalSolutionsSection = () => {
         <div className="grid md:grid-cols-3 gap-8 md:gap-8">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
             <div className="bg-rocket-blue-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-              <FileText className="h-10 w-10 text-[#F18F01]" />
+              <FileSearch className="h-10 w-10 text-[#F18F01]" />
               <span className="absolute -top-2 -right-2 bg-[#F18F01] text-white h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
                 1
               </span>
@@ -41,7 +41,7 @@ const LegalSolutionsSection = () => {
           
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
             <div className="bg-rocket-blue-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-              <CheckCircle className="h-10 w-10 text-[#F18F01]" />
+              <PenLine className="h-10 w-10 text-[#F18F01]" />
               <span className="absolute -top-2 -right-2 bg-[#F18F01] text-white h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
                 2
               </span>
@@ -54,7 +54,7 @@ const LegalSolutionsSection = () => {
           
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
             <div className="bg-rocket-blue-50 h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-              <Fingerprint className="h-10 w-10 text-[#F18F01]" />
+              <FileSignature className="h-10 w-10 text-[#F18F01]" />
               <span className="absolute -top-2 -right-2 bg-[#F18F01] text-white h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
                 3
               </span>
