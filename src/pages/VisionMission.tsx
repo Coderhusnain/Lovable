@@ -138,14 +138,14 @@ const VisionMission = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <p>That's the sentence we come back to every time we're deciding what to build next at Legalgram.</p>
-            <p>
+            <p className="text-gray-300">That's the sentence we come back to every time we're deciding what to build next at Legalgram.</p>
+            <p className="text-gray-300">
               For most of modern history, the law has quietly worked better for people who can afford to hire someone to explain it. Big companies keep expensive attorneys on retainer. Regular people read the fine print and hope for the best. When something goes wrong, one side walks in with a legal team and the other side walks in with a Google search.
             </p>
-            <p>
+            <p className="text-gray-300">
               We think the internet, and specifically what artificial intelligence can now do with legal reasoning, finally makes it possible to close that access-to-justice gap. Not partially. Not for a handful of carefully chosen use cases. Actually close it.
             </p>
-            <p>
+            <p className="text-gray-300">
               That's the world Legalgram is building toward. A world where a freelancer signing her first big client has the same quality of contract protection as a Fortune 500 procurement team. Where a small landlord doesn't lose a case because he didn't know what "quiet enjoyment" meant. Where a founder in a garage sets up her company as properly as any Delaware-incorporated startup ever has. Where a family reading an insurance policy actually understands what they just agreed to.
             </p>
             <p className="font-semibold text-white">

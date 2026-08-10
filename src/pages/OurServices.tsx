@@ -407,12 +407,12 @@ const OurServices = () => {
         <div className="container-custom max-w-3xl mx-auto text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
-            <div className="text-lg text-gray-300 mb-10 space-y-3">
-              <p>Start wherever you want.</p>
-              <p>
+            <div className="text-lg mb-10 space-y-3">
+              <p className="text-gray-300">Start wherever you want.</p>
+              <p className="text-gray-300">
                 Describe your situation and let us draft your document. Upload an agreement and find out what it actually says. Ask a legal question and get a real answer. Tell us you want to form a company and we'll take it from there.
               </p>
-              <p>
+              <p className="text-gray-300">
                 Whatever you bring us, you'll walk away with a document you understand, a decision you feel confident about, and rights that are properly protected.
               </p>
             </div>
