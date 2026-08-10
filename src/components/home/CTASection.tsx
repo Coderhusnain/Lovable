@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, DollarSign, MousePointerClick } from "lucide-react";
+import { Scale, Wallet, CalendarX } from "lucide-react";
 import { memo } from "react";
 
 const trustPoints = [
   {
-    icon: BadgeCheck,
+    icon: Scale,
     title: "Built by qualified lawyers",
     text: "Every document and workflow is designed by attorneys with real practice experience, not generic templates."
   },
   {
-    icon: DollarSign,
+    icon: Wallet,
     title: "Affordable legal help",
     text: "Get contracts drafted and reviewed at a fraction of the cost of a traditional law firm."
   },
   {
-    icon: MousePointerClick,
+    icon: CalendarX,
     title: "Cancel anytime",
     text: "No long-term commitments. No hidden fees. No fine print you'll wish you had read."
   }

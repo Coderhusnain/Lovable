@@ -6,7 +6,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check, Star, Shield, Lock, MousePointerClick, BadgeCheck, ArrowRight } from "lucide-react";
+import { Check, Star, Lock, MousePointerClick, FileCheck, Receipt, ArrowRight } from "lucide-react";
 import { OPEN_GRAM_AI_EVENT } from "@/components/chat/ChatWidget";
 
 const fadeUp = {
@@ -111,10 +111,10 @@ const plans: PlanDef[] = [
 ];
 
 const trustStrip = [
-  { icon: BadgeCheck, text: "Attorney-drafted, state-specific templates" },
+  { icon: FileCheck, text: "Attorney-drafted, state-specific templates" },
   { icon: Lock, text: "Bank-level encryption on every document" },
   { icon: MousePointerClick, text: "One-click cancellation" },
-  { icon: Shield, text: "No hidden fees, no auto-billed add-ons" }
+  { icon: Receipt, text: "No hidden fees, no auto-billed add-ons" }
 ];
 
 type Cell = string | boolean;

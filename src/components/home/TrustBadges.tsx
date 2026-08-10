@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import { Shield, Award, Clock } from "lucide-react";
+import { Shield, Award, Clock, Lock, ShieldCheck, BadgeDollarSign, Scale } from "lucide-react";
 
 const TrustBadges = () => {
   return (
@@ -19,7 +19,7 @@ const TrustBadges = () => {
           </div>
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Award className="w-6 h-6 text-[#F18F01]" />
+            <Scale className="w-6 h-6 text-[#F18F01]" />
             <span className="text-xs md:text-sm font-medium text-black text-center">Attorney Reviewed Documents</span>
           </div>
           
@@ -29,17 +29,17 @@ const TrustBadges = () => {
           </div>
           
           <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Shield className="w-6 h-6 text-[#F18F01]" />
+            <BadgeDollarSign className="w-6 h-6 text-[#F18F01]" />
             <span className="text-xs md:text-sm font-medium text-black text-center">Money Back Guarantee</span>
           </div>
         </div>
         
         <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
           <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
-            <Shield className="h-3.5 w-3.5 text-[#F18F01]" /> SSL Encrypted
+            <Lock className="h-3.5 w-3.5 text-[#F18F01]" /> SSL Encrypted
           </span>
           <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
-            <Shield className="h-3.5 w-3.5 text-[#F18F01]" /> Your Data Stays Private
+            <ShieldCheck className="h-3.5 w-3.5 text-[#F18F01]" /> Your Data Stays Private
           </span>
           <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
             <Award className="h-3.5 w-3.5 text-[#F18F01]" /> Attorney Reviewed Templates
