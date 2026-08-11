@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
 import DocumentAboutSidebar from "@/components/DocumentAboutSidebar";
 import DocumentInfoLanding from "@/components/DocumentInfoLanding";
+import DocumentPreview from "@/components/documents/DocumentPreview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input"; 
@@ -724,18 +725,19 @@ const Documents = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {filteredDocuments.length > 0 ? (
               filteredDocuments.map((docType) => {
-                const IconComponent = docType.icon;
                 return (
-                  <Card 
+                  <Card
                     key={docType.id}
-                    className="flex flex-col h-full cursor-pointer hover:shadow-lg transition-all duration-200 bg-white hover:border-blue-300"
+                    className="group flex flex-col h-full cursor-pointer hover:shadow-lg transition-all duration-200 bg-white hover:border-blue-300"
                     onClick={() => {
                       setSelectedDocument(docType.id);
                       navigate(`/documents/${docType.id}`);
                     }}
                   >
                     <CardHeader className="text-center flex flex-col flex-grow">
-                      <IconComponent className="w-12 h-12 mx-auto mb-4 text-primary" />
+                      <div className="rounded-xl bg-gradient-to-b from-slate-50 via-slate-100/80 to-slate-200/60 border border-slate-100 py-5 mb-4 overflow-hidden">
+                        <DocumentPreview title={docType.title} docId={docType.id} />
+                      </div>
                       <CardTitle className="text-xl">{docType.title}</CardTitle>
                       <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-2 w-fit mx-auto">{docType.category}</span>
                       <CardDescription className="flex-grow flex items-center justify-center min-h-[64px] mt-2">
@@ -799,18 +801,19 @@ const Documents = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {searchResults.length > 0 ? (
               searchResults.map((docType) => {
-                const IconComponent = docType.icon;
                 return (
                   <Card
                     key={docType.id}
-                    className="flex flex-col h-full cursor-pointer hover:shadow-lg transition-all duration-200 bg-white hover:border-blue-300"
+                    className="group flex flex-col h-full cursor-pointer hover:shadow-lg transition-all duration-200 bg-white hover:border-blue-300"
                     onClick={() => {
                       setSelectedDocument(docType.id);
                       navigate(`/documents/${docType.id}`);
                     }}
                   >
                     <CardHeader className="text-center flex flex-col flex-grow">
-                      <IconComponent className="w-12 h-12 mx-auto mb-4 text-primary" />
+                      <div className="rounded-xl bg-gradient-to-b from-slate-50 via-slate-100/80 to-slate-200/60 border border-slate-100 py-5 mb-4 overflow-hidden">
+                        <DocumentPreview title={docType.title} docId={docType.id} />
+                      </div>
                       <CardTitle className="text-xl">{docType.title}</CardTitle>
                       <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full mt-2 w-fit mx-auto">{docType.category}</span>
                       <CardDescription className="flex-grow flex items-center justify-center min-h-[64px] mt-2">
