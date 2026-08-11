@@ -1,13 +1,13 @@
 
 import { useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
-import { 
-  Shield, 
-  Clock, 
-  BadgeCheck, 
-  Scale, 
-  Users,
-  Award,
+import {
+  Lock,
+  Timer,
+  FileCheck,
+  Scale,
+  LifeBuoy,
+  Globe,
   ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,19 +36,19 @@ const WhyChooseUsSection = () => {
 
   const reasons = [
     {
-      icon: Shield,
+      icon: Lock,
       title: "Secure & Confidential",
       description: "Your legal documents and personal information are protected with enterprise-grade security and encryption.",
       gradient: "from-blue-500/20 via-blue-400/10 to-transparent"
     },
     {
-      icon: Clock,
+      icon: Timer,
       title: "Save Time",
       description: "Create attorney drafted legal documents online in minutes with no appointments and no paperwork.",
       gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent"
     },
     {
-      icon: BadgeCheck,
+      icon: FileCheck,
       title: "Attorney Reviewed",
       description: "Every legal form and contract template is drafted and reviewed by licensed and experienced attorneys.",
       gradient: "from-purple-500/20 via-purple-400/10 to-transparent"
@@ -60,13 +60,13 @@ const WhyChooseUsSection = () => {
       gradient: "from-pink-500/20 via-pink-400/10 to-transparent"
     },
     {
-      icon: Users,
+      icon: LifeBuoy,
       title: "Expert Support",
       description: "Get affordable legal help and guidance from our team of legal professionals whenever you need it.",
       gradient: "from-amber-500/20 via-amber-400/10 to-transparent"
     },
     {
-      icon: Award,
+      icon: Globe,
       title: "Trusted Nationwide",
       description: "Join individuals and businesses nationwide who rely on Legalgram for fast online legal services.",
       gradient: "from-cyan-500/20 via-cyan-400/10 to-transparent"
@@ -127,7 +127,7 @@ const WhyChooseUsSection = () => {
                 <div className="relative z-10">
                   <div className="mb-6 transform transition-transform duration-300 group-hover:scale-110">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                      <reason.icon className="h-8 w-8 text-orange" />
+                      <reason.icon className="h-8 w-8 text-white" />
                     </div>
                   </div>
                   

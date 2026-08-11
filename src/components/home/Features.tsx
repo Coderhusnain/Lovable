@@ -2,10 +2,10 @@
 import { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
 import {
-  FileSignature,
-  Rocket,
-  Library,
-  ShieldCheck,
+  FileText,
+  Building2,
+  Newspaper,
+  ClipboardList,
   ArrowRight,
   Shield,
   CheckCircle2,
@@ -101,7 +101,7 @@ const Features = () => {
 
   const features = [
     {
-      icon: FileSignature,
+      icon: FileText,
       title: "Legal Documents",
       description: "Create customized legal documents in minutes with our easy to use templates.",
       linkText: "Browse documents",
@@ -109,7 +109,7 @@ const Features = () => {
       gradient: "from-blue-500 to-blue-600"
     },
     {
-      icon: Rocket,
+      icon: Building2,
       title: "Business Formation",
       description: "Start your business the right way with our LLC and incorporation services.",
       linkText: "Start a business",
@@ -117,7 +117,7 @@ const Features = () => {
       gradient: "from-green-500 to-green-600"
     },
     {
-      icon: Library,
+      icon: Newspaper,
       title: "Legal Resources",
       description: "Access free articles and guides covering a wide range of legal topics.",
       linkText: "Explore resources",
@@ -125,7 +125,7 @@ const Features = () => {
       gradient: "from-rose-500 to-rose-600"
     },
     {
-      icon: ShieldCheck,
+      icon: ClipboardList,
       title: "Legal Plans",
       description: "Get ongoing legal protection for your family or business with our subscription plans.",
       linkText: "View plans",
