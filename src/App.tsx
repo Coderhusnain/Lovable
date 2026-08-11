@@ -16,6 +16,8 @@ const Documents = lazy(() => import("./pages/Documents"));
 const DocumentCategories = lazy(() => import("./pages/DocumentCategories"));
 const UserDashboard = lazy(() => import("./pages/UserDashboard"));
 const WhatsAnLLC = lazy(() => import("./pages/WhatsAnLLC"));
+const Careers = lazy(() => import("./pages/Careers"));
+const Blogs = lazy(() => import("./pages/Blogs"));
 const WhatsACorporation = lazy(() => import("./pages/WhatsACorporation"));
 const WhatsAnSCorp = lazy(() => import("./pages/WhatsAnSCorp"));
 const DocumentTemplates = lazy(() => import("./pages/DocumentTemplates"));
@@ -279,6 +281,9 @@ const App = () => {
                   <Route path="/ask-lawyer" element={<AskALawyer />} />
 
                   {/* Educational / Static */}
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/blogs" element={<Blogs />} />
+                  <Route path="/blog" element={<Navigate to="/blogs" replace />} />
                   <Route path="/how-it-works" element={<HowItWorks />} />
                   <Route path="/whats-an-llc" element={<WhatsAnLLC />} />
                   <Route path="/whats-a-corporation" element={<WhatsACorporation />} />

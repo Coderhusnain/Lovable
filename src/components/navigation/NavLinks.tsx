@@ -38,12 +38,23 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
     { path: "/start-a-business", label: "Start a Business", protected: false },
     { path: "/documents", label: "Make Documents", protected: false },
     { path: "/pricing", label: "Pricing", protected: false },
-    { path: "/ask-legal-advice", label: "Ask Legal Advice", protected: false },
-    { path: "/community", label: "Community", protected: false }
+    { path: "/ask-legal-advice", label: "Ask Legal Advice", protected: false }
   ];
 
   const [aboutOpen, setAboutOpen] = useState(false);
   const aboutActive = isActive("/services") || isActive("/vision-mission");
+
+  const [companyOpen, setCompanyOpen] = useState(false);
+  const companyActive =
+    isActive("/careers") || isActive("/contact") || isActive("/blogs") || isActive("/community");
+
+  const companyLinks = [
+    { to: "/vision-mission", title: "About Us", desc: "Who we are and how we make legal help affordable" },
+    { to: "/careers", title: "Careers", desc: "Life at Legalgram and how we work" },
+    { to: "/contact", title: "Contact Us", desc: "Sales, partnerships, and general inquiries" },
+    { to: "/blogs", title: "Blogs", desc: "Legal guides, business tips, and plain language answers" },
+    { to: "/community", title: "Community", desc: "Ask questions and learn from other members" },
+  ];
 
   return (
     <NavigationMenu className="hidden xl:flex">
@@ -118,6 +129,45 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
                 >
                   Our Vision & Mission
                 </Link>
+              </div>
+            </div>
+          )}
+        </NavigationMenuItem>
+
+        {/* Company dropdown: About Us, Careers, Contact Us, Blogs, Community */}
+        <NavigationMenuItem
+          className="flex items-center relative"
+          onMouseEnter={() => setCompanyOpen(true)}
+          onMouseLeave={() => setCompanyOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setCompanyOpen((o) => !o)}
+            className={cn(
+              "inline-flex items-center gap-1 whitespace-nowrap text-sm 2xl:text-base font-medium transition-all duration-300 px-2.5 py-2 rounded-full",
+              companyActive ? "text-bright-orange-500" : "text-bright-orange-500/90 hover:text-bright-orange-500"
+            )}
+          >
+            Company
+            <ChevronDown size={14} className={cn("transition-transform duration-200", companyOpen && "rotate-180")} />
+          </button>
+          {companyOpen && (
+            <div className="absolute right-0 top-full pt-2 z-50">
+              <div className="w-80 rounded-xl border border-gray-100 bg-white shadow-xl py-3">
+                <p className="px-5 pb-2 text-xs font-medium text-gray-400">Company</p>
+                {companyLinks.map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setCompanyOpen(false)}
+                    className="block px-5 py-2.5 hover:bg-bright-orange-50 transition-colors group"
+                  >
+                    <span className="block text-sm font-semibold text-gray-800 group-hover:text-bright-orange-600">
+                      {l.title}
+                    </span>
+                    <span className="block text-xs text-gray-500 mt-0.5">{l.desc}</span>
+                  </Link>
+                ))}
               </div>
             </div>
           )}
