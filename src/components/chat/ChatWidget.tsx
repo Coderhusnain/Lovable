@@ -1170,87 +1170,122 @@ const ChatWidget = () => {
   const hasStartedRef = useRef(hasStarted);
   useEffect(() => { hasStartedRef.current = hasStarted; }, [hasStarted]);
 
-  /* ── Open / Close ── */
-  const openChat = () => {
+  /* ── Open / Close ──
+     History model: each Gram AI screen owns a real history entry.
+       [page underneath]  →  {gramView:"landing"}  →  {gramView:"chat"}
+     Back simply pops entries — no pushState-inside-popstate tricks, which
+     some browsers (notably mobile) handle unreliably. The single popstate
+     listener below syncs the widget to whatever entry the browser is on. */
+  const isOpenRef = useRef(false);
+
+  const doOpen = () => {
     setIsOpen(true); setIsAnimatingIn(true);
+    isOpenRef.current = true;
     document.body.style.overflow = "hidden";
-    // Push a history entry so the browser back button closes the chat
-    // instead of leaving the page underneath.
-    window.history.pushState({ gramAiOpen: true }, "");
     setTimeout(() => setIsAnimatingIn(false), 400);
+  };
+
+  const doClose = () => {
+    setIsAnimatingOut(true);
+    setTimeout(finishClose, 350);
+  };
+
+  const openChat = () => {
+    doOpen();
+    const st = window.history.state;
+    if (!(st && st.gramAiOpen)) {
+      window.history.pushState({ gramAiOpen: true, gramView: "landing" }, "");
+    }
+    // A previous conversation is still loaded — give it its own entry so
+    // Back steps conversation → landing → page.
+    if (hasStartedRef.current && !(window.history.state && window.history.state.gramView === "chat")) {
+      window.history.pushState({ gramAiOpen: true, gramView: "chat" }, "");
+    }
   };
 
   const finishClose = () => {
     setIsOpen(false);
     setIsAnimatingOut(false);
+    isOpenRef.current = false;
     document.body.style.overflow = "";
   };
 
+  // When a conversation starts while the widget is open, push its entry.
+  useEffect(() => {
+    if (!isOpen || !hasStarted) return;
+    const st = window.history.state;
+    if (st && st.gramAiOpen && st.gramView !== "chat") {
+      window.history.pushState({ gramAiOpen: true, gramView: "chat" }, "");
+    }
+  }, [hasStarted, isOpen]);
+
   const closeChat = () => {
-    // If our history entry is on top, go back so browser history stays
-    // consistent; the popstate handler animates the close.
-    if (window.history.state && window.history.state.gramAiOpen) {
-      window.history.back();
+    const st = window.history.state;
+    if (st && st.gramAiOpen) {
+      // Unwind every Gram AI entry in one jump; the popstate listener
+      // closes the widget when it lands on the page entry.
+      window.history.go(st.gramView === "chat" ? -2 : -1);
       return;
     }
-    setIsAnimatingOut(true);
-    setTimeout(finishClose, 350);
+    doClose();
   };
 
   /* Open a link from inside the chat. Internal links close the widget and
-     navigate with the SPA router, replacing the chat's history entry so the
-     browser Back button returns to the page the user was on before opening
-     Gram AI. External links open in a new tab. */
+     push the new page on top of the chat's entries, so the browser Back
+     button returns to Gram AI first and then out to the original page.
+     External links open in a new tab. */
   const openLink = (url: string) => {
     if (!url) return;
     if (/^https?:\/\//i.test(url)) {
       window.open(url, "_blank", "noopener,noreferrer");
       return;
     }
-    const hadHistoryEntry = !!(window.history.state && window.history.state.gramAiOpen);
+    // From a conversation, the new page takes over the conversation's entry:
+    // Back then goes doc page → Gram AI landing → original page (3 stops).
+    const st = window.history.state;
     finishClose();
-    navigate(url, { replace: hadHistoryEntry });
+    navigate(url, { replace: !!(st && st.gramAiOpen && st.gramView === "chat") });
   };
 
-  // Browser back button (popstate): from a conversation go back to the
-  // Gram AI landing view first; from the landing view close the overlay.
+  // Single history listener: the browser's current entry decides what shows.
   useEffect(() => {
-    if (!isOpen) return;
-    const onPop = () => {
-      if (hasStartedRef.current) {
-        resetChat();
-        // Re-arm the history entry so the next Back closes the widget
-        window.history.pushState({ gramAiOpen: true }, "");
+    const onPop = (e: PopStateEvent) => {
+      const st = e.state;
+      if (st && st.gramAiOpen) {
+        if (!isOpenRef.current) doOpen();
+        if (st.gramView !== "chat" && hasStartedRef.current) resetChat();
         return;
       }
-      setIsAnimatingOut(true);
-      setTimeout(finishClose, 350);
+      if (isOpenRef.current) doClose();
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [isOpen]);
+  }, []);
+
+  // If the page loads while the current history entry belongs to Gram AI
+  // (refresh mid-chat, or Back from another site into the widget's entry),
+  // show the widget so the entry and the screen agree.
+  useEffect(() => {
+    const st = window.history.state;
+    if (st && st.gramAiOpen && !isOpenRef.current) doOpen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* Header back arrow: conversation → landing view → home page */
   const handleHeaderBack = () => {
+    const st = window.history.state;
     if (hasStarted) {
-      if (window.history.state && window.history.state.gramAiOpen) {
-        window.history.back();
-      } else {
-        resetChat();
-      }
+      if (st && st.gramAiOpen) window.history.back();
+      else resetChat();
       return;
     }
-    // Landing view: close the chat and land on the home page without
-    // leaving duplicate history entries behind.
-    const hadHistoryEntry = !!(window.history.state && window.history.state.gramAiOpen);
+    // Landing view → leave the widget.
     const isHome = window.location.pathname === "/";
-    if (hadHistoryEntry) {
+    if (st && st.gramAiOpen) {
       if (isHome) {
-        // Already on home underneath: consume the chat's history entry;
-        // the popstate handler animates the close.
         window.history.back();
       } else {
-        // Replace the chat's entry with home so Back returns to the
+        // Replace the widget's entry with home so Back returns to the
         // page the user came from, not to a reopened chat.
         finishClose();
         navigate("/", { replace: true });
@@ -1970,7 +2005,7 @@ const ChatWidget = () => {
               </p>
             </div>
             {hasStarted && messages.length > 0 && (
-              <button onClick={resetChat} className="text-blue-200 hover:text-white text-[11px] px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors border border-white/20">
+              <button onClick={handleHeaderBack} className="text-blue-200 hover:text-white text-[11px] px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors border border-white/20">
                 Home
               </button>
             )}

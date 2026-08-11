@@ -3,7 +3,6 @@ import { ReactNode, memo, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-import ChatWidget from "../chat/ChatWidget";
 import { cn } from "@/lib/utils";
 
 interface LayoutProps {
@@ -41,9 +40,6 @@ const Layout = memo(({ children }: LayoutProps) => {
       <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
         <Footer />
       </div>
-      
-      {/* Chat Widget */}
-      <ChatWidget />
     </div>
   );
 });
