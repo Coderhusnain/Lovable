@@ -5,7 +5,7 @@
  * re-render issues entirely.
  */
 import { motion } from "framer-motion";
-import { Scale, Sparkles } from "lucide-react";
+import GramAiIcon from "@/components/icons/GramAiIcon";
 import { cn } from "@/lib/utils";
 import { OPEN_GRAM_AI_EVENT } from "@/components/chat/ChatWidget";
 
@@ -32,9 +32,8 @@ export default function NavbarChatButton({ scrolled }: NavbarChatButtonProps) {
       )}
       aria-label="Open Gram AI chat"
     >
-      <Scale size={15} />
+      <GramAiIcon size={16} />
       Gram AI
-      <Sparkles size={12} className="text-bright-orange-400" />
     </motion.button>
   );
 }

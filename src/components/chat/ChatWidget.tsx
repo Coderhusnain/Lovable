@@ -17,6 +17,7 @@ import {
   FilePlus, ArrowUp,
   ArrowLeft, CheckCircle,
 } from "lucide-react";
+import GramAiIcon from "@/components/icons/GramAiIcon";
 import LegalgramAPI, { ActionButton, ChatResponse } from "@/services/backendService";
 import { generateDocumentWithAI } from "@/services/documentAI";
 import { searchForms, type FormResult } from "@/services/formSearch";
@@ -2268,7 +2269,7 @@ const ChatWidget = () => {
           <button type="button" onClick={openChat}
             className="bg-bright-orange-500 hover:bg-bright-orange-600 transition-all rounded-full w-14 h-14 flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105"
             aria-label="Open Gram AI">
-            <Scale size={24} className="text-white" />
+            <GramAiIcon size={26} color="#ffffff" />
           </button>
         </div>
       )}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Briefcase, Building2, ArrowRight, LayoutGrid } from "lucide-react";
+import DocumentPreview from "@/components/documents/DocumentPreview";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 interface LegalConcernsSectionProps {
@@ -47,7 +48,6 @@ const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategoryS
 
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
           {categories.map((category) => {
-            const IconComponent = category.icon;
             return (
               <Card
                 key={category.id}
@@ -55,8 +55,8 @@ const LegalConcernsSection: React.FC<LegalConcernsSectionProps> = ({ onCategoryS
                 onClick={() => onCategorySelect(category.id)}
               >
                 <CardHeader className="text-center pb-2">
-                  <div className="mx-auto w-16 h-16 bg-bright-orange-50 group-hover:bg-bright-orange-100 rounded-2xl flex items-center justify-center mb-4 transition-colors duration-300">
-                    <IconComponent className="w-8 h-8 text-bright-orange-500" />
+                  <div className="rounded-xl bg-gradient-to-b from-slate-50 via-slate-100/80 to-slate-200/60 border border-slate-100 py-5 mb-4 overflow-hidden">
+                    <DocumentPreview title={category.title} />
                   </div>
                   <CardTitle className="text-xl font-bold text-gray-900 mb-2">
                     {category.title}

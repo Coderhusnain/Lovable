@@ -49,11 +49,11 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
     isActive("/careers") || isActive("/contact") || isActive("/blogs") || isActive("/community");
 
   const companyLinks = [
-    { to: "/vision-mission", title: "About Us", desc: "Who we are and how we make legal help affordable" },
+    { to: "/vision-mission", title: "About Us", desc: "Who we are and what we stand for" },
     { to: "/careers", title: "Careers", desc: "Life at Legalgram and how we work" },
-    { to: "/contact", title: "Contact Us", desc: "Sales, partnerships, and general inquiries" },
-    { to: "/blogs", title: "Blogs", desc: "Legal guides, business tips, and plain language answers" },
-    { to: "/community", title: "Community", desc: "Ask questions and learn from other members" },
+    { to: "/contact", title: "Contact Us", desc: "Sales, partnerships, and inquiries" },
+    { to: "/blogs", title: "Blogs", desc: "Legal guides in plain language" },
+    { to: "/community", title: "Community", desc: "Ask questions, learn from members" },
   ];
 
   return (
@@ -113,23 +113,28 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
             <ChevronDown size={14} className={cn("transition-transform duration-200", aboutOpen && "rotate-180")} />
           </button>
           {aboutOpen && (
-            <div className="absolute left-0 top-full pt-2 z-50">
-              <div className="w-56 rounded-xl border border-gray-100 bg-white shadow-xl py-2">
+            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="w-56 rounded-2xl border border-gray-100 bg-white shadow-2xl py-2"
+              >
                 <Link
                   to="/services"
                   onClick={() => setAboutOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-bright-orange-50 hover:text-bright-orange-600 transition-colors"
+                  className="block mx-2 px-3 py-2.5 rounded-xl text-sm !text-gray-900 font-medium hover:bg-bright-orange-50 hover:!text-bright-orange-600 transition-colors"
                 >
                   Our Services
                 </Link>
                 <Link
                   to="/vision-mission"
                   onClick={() => setAboutOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-bright-orange-50 hover:text-bright-orange-600 transition-colors"
+                  className="block mx-2 px-3 py-2.5 rounded-xl text-sm !text-gray-900 font-medium hover:bg-bright-orange-50 hover:!text-bright-orange-600 transition-colors"
                 >
                   Our Vision & Mission
                 </Link>
-              </div>
+              </motion.div>
             </div>
           )}
         </NavigationMenuItem>
@@ -152,23 +157,30 @@ export const NavLinks = memo(({ scrolled, isActive }: NavLinksProps) => {
             <ChevronDown size={14} className={cn("transition-transform duration-200", companyOpen && "rotate-180")} />
           </button>
           {companyOpen && (
-            <div className="absolute right-0 top-full pt-2 z-50">
-              <div className="w-80 rounded-xl border border-gray-100 bg-white shadow-xl py-3">
-                <p className="px-5 pb-2 text-xs font-medium text-gray-400">Company</p>
+            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="w-72 rounded-2xl border border-gray-100 bg-white shadow-2xl py-2.5"
+              >
+                <p className="px-4 pb-1.5 text-[10px] font-semibold uppercase tracking-widest !text-gray-400">
+                  Company
+                </p>
                 {companyLinks.map((l) => (
                   <Link
                     key={l.to}
                     to={l.to}
                     onClick={() => setCompanyOpen(false)}
-                    className="block px-5 py-2.5 hover:bg-bright-orange-50 transition-colors group"
+                    className="block mx-2 px-3 py-2 rounded-xl hover:bg-bright-orange-50 transition-colors group"
                   >
-                    <span className="block text-sm font-semibold text-gray-800 group-hover:text-bright-orange-600">
+                    <span className="block text-sm font-semibold !text-gray-900 group-hover:!text-bright-orange-600 leading-snug">
                       {l.title}
                     </span>
-                    <span className="block text-xs text-gray-500 mt-0.5">{l.desc}</span>
+                    <span className="block text-xs !text-gray-500 mt-0.5 truncate">{l.desc}</span>
                   </Link>
                 ))}
-              </div>
+              </motion.div>
             </div>
           )}
         </NavigationMenuItem>
