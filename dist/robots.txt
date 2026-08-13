@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://legalgram.org/sitemap.xml
+Sitemap: https://legalgram.co/sitemap.xml
