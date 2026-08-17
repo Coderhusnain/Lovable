@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Instagram  } from "lucide-react";
+import { Mail } from "lucide-react";
 import { memo } from "react";
 
 // Memoized footer link component
@@ -102,8 +102,8 @@ const Footer = () => {
             <h5 className="font-semibold text-lg mb-4">Contact</h5>
             <ul className="space-y-2">
               <ContactItem icon={Mail}>
-                <a href="mailto:info@legalgram.com" className="text-rocket-gray-200  transition-all duration-200 transform hover:scale-105">
-                  info@legalgram.com
+                <a href="mailto:info@legalgram.co" className="text-rocket-gray-200  transition-all duration-200 transform hover:scale-105">
+                  info@legalgram.co
                 </a>
               </ContactItem>
               <li>
@@ -150,7 +150,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-6 border-t border-rocket-blue-400 dark:border-rocket-blue-800 text-center text-rocket-gray-200">
-          <p>&copy; 2020 Legalgram. All rights reserved.</p>
+          <p>&copy; {currentYear} Legalgram. All rights reserved.</p>
         </div>
       </div>
     </footer>
