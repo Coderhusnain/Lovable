@@ -1,6 +1,7 @@
 
 import { ReactNode, memo, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import Header from "./Header";
 import Footer from "./Footer";
 import { cn } from "@/lib/utils";
@@ -34,8 +35,15 @@ const Layout = memo(({ children }: LayoutProps) => {
       mounted ? 'animate-fade-in' : 'opacity-0'
     )}>
       {!isDashboard && <Header />}
-      <main className="flex-grow w-full transition-all duration-300 text-deep-blue">
-        {children}
+      <main className="flex-grow w-full text-deep-blue">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {children}
+        </motion.div>
       </main>
       <div className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
         <Footer />
