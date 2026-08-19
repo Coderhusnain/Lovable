@@ -1,5 +1,5 @@
 import React, { useState, lazy, Suspense, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams, Navigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
@@ -652,13 +652,6 @@ const Documents = () => {
 
   // Get total document count
   const totalDocuments = allDocumentTypes.length;
-
-  // The "LLC Business Formation" catalog entry stays listed, but its builder
-  // is now the dedicated DIY LLC formation flow (the old mixed-up form is
-  // no longer shown). The LLC Operating Agreement remains a separate document.
-  if (id === "llc-business-formation") {
-    return <Navigate to="/form-my-llc" replace />;
-  }
 
   // 1. Render Specific Document Form or Landing Page
   if (selectedDocument && selectedDocumentType) {
