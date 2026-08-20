@@ -13,6 +13,7 @@ import { useChatWidget } from "@/components/chat/ChatWidgetContext";
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const StartABusiness = lazy(() => import("./pages/StartABusiness"));
 const FormMyLlc = lazy(() => import("./pages/FormMyLlc"));
+const LlcDashboard = lazy(() => import("./pages/LlcDashboard"));
 const Documents = lazy(() => import("./pages/Documents"));
 const DocumentCategories = lazy(() => import("./pages/DocumentCategories"));
 const UserDashboard = lazy(() => import("./pages/UserDashboard"));
@@ -279,6 +280,7 @@ const App = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/start-a-business" element={<StartABusiness />} />
                   <Route path="/form-my-llc" element={<FormMyLlc />} />
+                  <Route path="/llc-dashboard" element={<LlcDashboard />} />
                   <Route path="/form-llc" element={<Navigate to="/form-my-llc" replace />} />
                   <Route path="/ask-legal-advice" element={<AskLegalAdvice />} />
                   <Route path="/ask-lawyer" element={<AskALawyer />} />

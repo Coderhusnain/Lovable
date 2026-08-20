@@ -141,6 +141,8 @@ const FormMyLlc = () => {
   const back = () => { setStepIdx((i) => Math.max(i - 1, 0)); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const handleSubmit = async () => {
+    // Persist the completed formation so the post-formation dashboard can load it.
+    try { localStorage.setItem("legalgram_llc_formation", JSON.stringify(data)); } catch { /* ignore */ }
     try {
       await supabase.from("llc_formation_leads").insert([{
         state: data.state,
@@ -185,7 +187,7 @@ const FormMyLlc = () => {
               {downloading ? "Preparing documents…" : "Download My 4 Documents"}
               {!downloading && <Check className="h-4 w-4 ml-2" />}
             </Button>
-            <Button variant="outline" asChild><a href="/">Back to Home</a></Button>
+            <Button variant="outline" asChild><a href="/llc-dashboard">Go to My LLC Dashboard</a></Button>
           </div>
           <p className="text-xs text-gray-400 mt-4">
             Your ZIP contains the {rules?.articlesLabel}, Operating Agreement, Filing Instructions, and EIN Worksheet.
