@@ -96,6 +96,45 @@ export class DocBuilder {
     d.setCharSpace(0); this.y += 6;
   }
 
+  /** Clean two-line article heading: orange kicker over a navy title + rule. */
+  articleHeading(kicker: string, title: string) {
+    this.ensure(24);
+    const d = this.doc;
+    this.gap(4);
+    if (kicker) {
+      d.setFont("helvetica", "bold"); d.setFontSize(9); this.setColor(ORANGE);
+      d.setCharSpace(2.5);
+      d.text(kicker.toUpperCase(), this.pageW / 2, this.y, { align: "center" });
+      d.setCharSpace(0); this.y += 6;
+    }
+    const upper = title.toUpperCase();
+    d.setFont("helvetica", "bold"); this.setColor(NAVY);
+    let size = 13, cs = 0.6;
+    for (; size >= 9; size -= 0.5) {
+      d.setFontSize(size);
+      if (d.getTextWidth(upper) + cs * Math.max(0, upper.length - 1) <= this.textW - 6) break;
+      if (size <= 10.5) cs = 0.2;
+    }
+    d.setCharSpace(cs);
+    d.text(upper, this.pageW / 2, this.y, { align: "center" });
+    d.setCharSpace(0); this.y += 4.5;
+    const ruleW = Math.min(this.textW, 130);
+    d.setDrawColor(NAVY[0], NAVY[1], NAVY[2]); d.setLineWidth(0.4);
+    d.line(this.pageW / 2 - ruleW / 2, this.y, this.pageW / 2 + ruleW / 2, this.y);
+    d.setLineWidth(0.2); this.y += 6.5;
+  }
+
+  /** Sub-section: bold navy label on its own line, then body paragraph. */
+  clause(label: string, body: string) {
+    this.ensure(11);
+    const d = this.doc;
+    d.setFont("helvetica", "bold"); d.setFontSize(10.5); this.setColor(NAVY);
+    (d.splitTextToSize(label, this.textW) as string[]).forEach((ln) => {
+      this.ensure(6); d.text(ln, this.margin, this.y); this.y += 5;
+    });
+    this.para(body, { gapAfter: 3.5 });
+  }
+
   /** Numbered/lettered section heading: orange marker + navy title. */
   heading(marker: string, text: string) {
     this.ensure(12);

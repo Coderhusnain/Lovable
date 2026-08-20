@@ -202,76 +202,76 @@ export function buildOperatingAgreement(d: LlcFormationData, r: StateRules): jsP
   b.noteBox("About This Document", "This Operating Agreement governs the internal operation of the LLC. It is not filed with the state. It is a private contract among the members. Keep the signed original with your business records.");
   b.gap(2);
 
-  b.centerHeading("Article I — Formation");
+  b.articleHeading("Article I", "Formation");
   b.para(`This Operating Agreement (this "Agreement") of ${name} (the "Company") is entered into and effective as of ${effDate(d)} (the "Effective Date"), by and among the persons executing this Agreement as members (each a "Member"). The Company was formed as a limited liability company under the laws of the State of ${r.name}.`);
-  b.para(`1.2 Name. The name of the Company is ${name}.`);
-  b.para(`1.3 Principal Office. The principal office of the Company is located at ${fmtAddr(d.principalOffice)}, or at such other location as the Members may designate.`);
-  b.para(`1.4 Registered Agent. The Company's registered agent for service of process in ${r.name} is ${d.raChoice === "sos_default" ? `the ${r.name} Secretary of State` : (d.raName || "____________________")}${d.raAddress.street ? `, with a registered office at ${fmtAddr(d.raAddress)}` : ""}.`);
-  b.para(`1.5 Purpose. The Company is formed for the following purpose(s): ${(d.businessPurpose || "any lawful business").replace(/\.\s*$/, "")}. The Company may also engage in any lawful business permitted by the laws of ${r.name}.`);
-  b.para(`1.6 Term. The Company shall continue perpetually unless dissolved earlier in accordance with this Agreement or applicable law.`);
+  b.clause("1.2 Name", `The name of the Company is ${name}.`);
+  b.clause("1.3 Principal Office", `The principal office of the Company is located at ${fmtAddr(d.principalOffice)}, or at such other location as the Members may designate.`);
+  b.clause("1.4 Registered Agent", `The Company's registered agent for service of process in ${r.name} is ${d.raChoice === "sos_default" ? `the ${r.name} Secretary of State` : (d.raName || "____________________")}${d.raAddress.street ? `, with a registered office at ${fmtAddr(d.raAddress)}` : ""}.`);
+  b.clause("1.5 Purpose", `The Company is formed for the following purpose(s): ${(d.businessPurpose || "any lawful business").replace(/\.\s*$/, "")}. The Company may also engage in any lawful business permitted by the laws of ${r.name}.`);
+  b.clause("1.6 Term", `The Company shall continue perpetually unless dissolved earlier in accordance with this Agreement or applicable law.`);
 
-  b.centerHeading("Article II — Members and Membership Interests");
-  b.para(`2.1 Initial Members. The initial Members, their addresses, capital contributions, and percentage interests are set forth in Schedule A, which is incorporated by reference.`);
-  b.para(`2.2 Membership Interests. Each Member's interest consists of the Member's share of the Company's profits, losses, and distributions, and the right to participate in management as provided in this Agreement.`);
+  b.articleHeading("Article II", "Members & Membership Interests");
+  b.clause("2.1 Initial Members", `The initial Members, their addresses, capital contributions, and percentage interests are set forth in Schedule A, which is incorporated by reference.`);
+  b.clause("2.2 Membership Interests", `Each Member's interest consists of the Member's share of the Company's profits, losses, and distributions, and the right to participate in management as provided in this Agreement.`);
 
-  b.centerHeading("Article III — Capital Contributions");
-  b.para(`3.1 Initial Contributions. Each Member has made or shall make the initial capital contribution set forth opposite the Member's name on Schedule A.`);
-  b.para(`3.2 Additional Contributions. No Member shall be required to make any additional capital contribution.`);
-  b.para(`3.3 Capital Accounts. A separate capital account shall be maintained for each Member in accordance with Treasury Regulation Section 1.704-1(b)(2)(iv).`);
+  b.articleHeading("Article III", "Capital Contributions");
+  b.clause("3.1 Initial Contributions", `Each Member has made or shall make the initial capital contribution set forth opposite the Member's name on Schedule A.`);
+  b.clause("3.2 Additional Contributions", `No Member shall be required to make any additional capital contribution.`);
+  b.clause("3.3 Capital Accounts", `A separate capital account shall be maintained for each Member in accordance with Treasury Regulation Section 1.704-1(b)(2)(iv).`);
 
-  b.centerHeading("Article IV — Allocations and Distributions");
-  b.para(d.profitLossMethod === "custom"
-    ? `4.1 Allocation. Profits and losses shall be allocated in accordance with a custom allocation agreed by the Members, who acknowledge they have reviewed the tax consequences with their own advisors.`
-    : `4.1 Allocation. Profits and losses shall be allocated to the Members in proportion to their respective Percentage Interests as set forth on Schedule A.`);
-  b.para(`4.2 Distributions. The Company shall make distributions at such times and amounts as the ${d.managementStructure === "manager_managed" ? "Managers" : "Members"} determine, pro rata in accordance with Percentage Interests, provided no distribution renders the Company insolvent.`);
-  b.para(`4.4 Tax Classification. The Company shall be treated as a partnership for U.S. federal income tax purposes if it has two or more Members, or as a disregarded entity if it has a single Member, unless the Members elect otherwise.`);
+  b.articleHeading("Article IV", "Allocations & Distributions");
+  b.clause("4.1 Allocation", d.profitLossMethod === "custom"
+    ? `Profits and losses shall be allocated in accordance with a custom allocation agreed by the Members, who acknowledge they have reviewed the tax consequences with their own advisors.`
+    : `Profits and losses shall be allocated to the Members in proportion to their respective Percentage Interests as set forth on Schedule A.`);
+  b.clause("4.2 Distributions", `The Company shall make distributions at such times and amounts as the ${d.managementStructure === "manager_managed" ? "Managers" : "Members"} determine, pro rata in accordance with Percentage Interests, provided no distribution renders the Company insolvent.`);
+  b.clause("4.3 Tax Classification", `The Company shall be treated as a partnership for U.S. federal income tax purposes if it has two or more Members, or as a disregarded entity if it has a single Member, unless the Members elect otherwise.`);
 
-  b.centerHeading("Article V — Management");
-  b.para(d.managementStructure === "manager_managed"
-    ? `5.1 Management Structure. The Company shall be managed by one or more Managers. The initial Manager(s) shall be ${d.managers.filter((m) => m.name).map((m) => m.name).join(", ") || "____________________"}. A Manager need not be a Member.`
-    : `5.1 Management Structure. The Company shall be managed by its Members. Each Member shall have authority to bind the Company in the ordinary course of its business, subject to the voting requirements below for Major Decisions.`);
-  b.para(d.votingThreshold === "unanimous"
-    ? `5.2 Voting. Major Decisions require the affirmative vote of all Members (unanimous consent).`
+  b.articleHeading("Article V", "Management");
+  b.clause("5.1 Management Structure", d.managementStructure === "manager_managed"
+    ? `The Company shall be managed by one or more Managers. The initial Manager(s) shall be ${d.managers.filter((m) => m.name).map((m) => m.name).join(", ") || "____________________"}. A Manager need not be a Member.`
+    : `The Company shall be managed by its Members. Each Member shall have authority to bind the Company in the ordinary course of its business, subject to the voting requirements below for Major Decisions.`);
+  b.clause("5.2 Voting on Major Decisions", (d.votingThreshold === "unanimous"
+    ? `Major Decisions require the affirmative vote of all Members (unanimous consent). `
     : d.votingThreshold === "custom"
-      ? `5.2 Voting. Major Decisions require the affirmative vote of Members holding a specified percentage of the Percentage Interests as agreed by the Members.`
-      : `5.2 Voting. Major Decisions require the affirmative vote of Members holding a majority of the Percentage Interests.`);
-  b.para(`Major Decisions include amending this Agreement or the Articles, admitting a new Member, approving a transfer of a Membership Interest, merging or converting the Company, selling substantially all assets, dissolving the Company, and changing the Company's tax classification.`);
-  b.para(`5.5 Indemnification. The Company shall indemnify each Member and Manager against liabilities incurred in connection with their service to the Company, except for gross negligence, willful misconduct, or knowing violation of law.`);
+      ? `Major Decisions require the affirmative vote of Members holding a specified percentage of the Percentage Interests as agreed by the Members. `
+      : `Major Decisions require the affirmative vote of Members holding a majority of the Percentage Interests. `)
+    + `Major Decisions include amending this Agreement or the Articles, admitting a new Member, approving a transfer of a Membership Interest, merging or converting the Company, selling substantially all assets, dissolving the Company, and changing the Company's tax classification.`);
+  b.clause("5.5 Indemnification", `The Company shall indemnify each Member and Manager against liabilities incurred in connection with their service to the Company, except for gross negligence, willful misconduct, or knowing violation of law.`);
 
-  b.centerHeading("Article VI — Transfer of Membership Interests");
+  b.articleHeading("Article VI", "Transfer of Membership Interests");
   b.para(d.transferRestrictions === "free_transfer"
     ? `A Member may transfer economic rights freely. A transfer of full Membership Interests, including voting and management rights, requires the written consent of a majority of the non-transferring Members.`
     : d.transferRestrictions === "unanimous_consent"
       ? `A Member may not transfer any Membership Interest without the prior written consent of all other Members. This restriction is a material term of this Agreement.`
       : `A Member may not transfer any Membership Interest except in accordance with a right of first refusal: the Selling Member shall first offer the interest to the Company and then to the other Members pro rata, on the same terms as any bona fide third-party offer.`);
 
-  b.centerHeading("Article VII — Withdrawal, Death, and Buyout");
-  b.para(`7.1 A Member may withdraw on 90 days' written notice. Upon withdrawal, death, incapacity, or expulsion for cause, the Member (or successor) shall be entitled to the Buyout Price.`);
-  b.para(d.buyoutMethod === "book_value"
-    ? `7.4 Buyout Price. The Buyout Price shall equal the Member's capital account balance as of the effective date, per the Company's books.`
+  b.articleHeading("Article VII", "Withdrawal, Death & Buyout");
+  b.clause("7.1 Withdrawal", `A Member may withdraw on 90 days' written notice. Upon withdrawal, death, incapacity, or expulsion for cause, the Member (or successor) shall be entitled to the Buyout Price.`);
+  b.clause("7.4 Buyout Price", d.buyoutMethod === "book_value"
+    ? `The Buyout Price shall equal the Member's capital account balance as of the effective date, per the Company's books.`
     : d.buyoutMethod === "custom"
-      ? `7.4 Buyout Price. The Buyout Price shall be determined by a custom formula agreed by the Members.`
-      : `7.4 Buyout Price. The Buyout Price shall equal the fair market value of the Member's Interest, determined by an independent appraiser jointly selected by the parties.`);
-  b.para(`7.5 Payment Terms. The Buyout Price shall be paid in equal monthly installments over 36 months, with interest at the applicable federal rate. The Company may prepay without penalty.`);
+      ? `The Buyout Price shall be determined by a custom formula agreed by the Members.`
+      : `The Buyout Price shall equal the fair market value of the Member's Interest, determined by an independent appraiser jointly selected by the parties.`);
+  b.clause("7.5 Payment Terms", `The Buyout Price shall be paid in equal monthly installments over 36 months, with interest at the applicable federal rate. The Company may prepay without penalty.`);
 
-  b.centerHeading("Article VIII — Books, Records, and Reporting");
+  b.articleHeading("Article VIII", "Books, Records & Reporting");
   b.para(`The Company shall maintain complete books and records at its principal office, including the Articles, this Agreement, a current list of Members, and tax returns. Each Member has inspection rights. The fiscal year is the calendar year unless the Members elect otherwise.`);
 
-  b.centerHeading("Article IX — Dissolution and Winding Up");
+  b.articleHeading("Article IX", "Dissolution & Winding Up");
   b.para(`The Company shall dissolve upon the written consent of the Members required for Major Decisions, a judicial decree, an event making the business unlawful, or the sale of substantially all assets. On dissolution, assets are applied first to creditors, then to reserves, then to Members per their capital accounts and Percentage Interests. A Certificate of Cancellation shall be filed with the ${r.name} Secretary of State.`);
 
-  b.centerHeading("Article X — General Provisions");
-  b.para(`10.2 Governing Law. This Agreement shall be governed by the laws of the State of ${r.name}.`);
-  b.para(`10.3 Dispute Resolution. Disputes shall first be submitted to good-faith negotiation, and if unresolved within 30 days, to binding arbitration seated in ${r.name}.`);
-  b.para(`10.6 Counterparts and Electronic Signatures. This Agreement may be executed in counterparts and by electronic signature, each with the same force as an original.`);
+  b.articleHeading("Article X", "General Provisions");
+  b.clause("10.2 Governing Law", `This Agreement shall be governed by the laws of the State of ${r.name}.`);
+  b.clause("10.3 Dispute Resolution", `Disputes shall first be submitted to good-faith negotiation, and if unresolved within 30 days, to binding arbitration seated in ${r.name}.`);
+  b.clause("10.6 Counterparts & Electronic Signatures", `This Agreement may be executed in counterparts and by electronic signature, each with the same force as an original.`);
 
-  b.centerHeading("Schedule A — Members, Contributions, and Percentage Interests");
+  b.articleHeading("Schedule A", "Members, Contributions & Percentage Interests");
   d.members.filter((m) => m.name).forEach((m) => {
-    b.para(`${m.name} — ${m.address || "____________________"} — Contribution: ${m.contribution || "____"} — Percentage Interest: ${m.ownershipPct || (d.memberCount === "single" ? "100" : "____")}%`);
+    b.para(`${m.name} — ${m.address || "____________________"} — Contribution: ${m.contribution || "____"} — Percentage Interest: ${m.ownershipPct || (d.memberCount === "single" ? "100" : "____")}%`, { gapAfter: 1.5 });
   });
   b.para(`TOTAL: 100%`, { bold: true });
 
-  b.centerHeading("Signatures");
+  b.articleHeading("", "Signatures");
   b.para(`IN WITNESS WHEREOF, the undersigned Members have executed this Operating Agreement as of the Effective Date.`);
   d.members.filter((m) => m.name).forEach((m) => {
     b.signature("Signature", "Date");
