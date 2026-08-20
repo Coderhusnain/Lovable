@@ -10,6 +10,7 @@ import {
   MapPin, Users, CalendarClock, ScrollText, Lock, Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { generateLlcZip } from "@/services/llcDocuments";
 import {
   LLC_STATE_LIST, LLC_STATES, NY_COUNTIES, IRS_ACTIVITY_CATEGORIES,
   type StateCode,
@@ -77,6 +78,25 @@ const FormMyLlc = () => {
   const [data, setData] = useState<LlcFormationData>(createEmptyFormation());
   const [stepIdx, setStepIdx] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const downloadDocuments = async () => {
+    setDownloading(true);
+    try {
+      const blob = await generateLlcZip(data);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(data.llcName || "LLC").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "_")}_Formation_Documents.zip`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Your documents are downloading.");
+    } catch {
+      toast.error("Something went wrong generating your documents. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  };
   const set = (patch: Partial<LlcFormationData>) => setData((d) => ({ ...d, ...patch }));
 
   const rules = data.state ? LLC_STATES[data.state as StateCode] : null;
@@ -160,7 +180,16 @@ const FormMyLlc = () => {
             file with the {rules?.name} Secretary of State yourself. Any state filing fees are
             paid directly to the state.
           </div>
-          <Button variant="orange" asChild><a href="/">Back to Home</a></Button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button variant="orange" onClick={downloadDocuments} disabled={downloading} className="px-6">
+              {downloading ? "Preparing documents…" : "Download My 4 Documents"}
+              {!downloading && <Check className="h-4 w-4 ml-2" />}
+            </Button>
+            <Button variant="outline" asChild><a href="/">Back to Home</a></Button>
+          </div>
+          <p className="text-xs text-gray-400 mt-4">
+            Your ZIP contains the {rules?.articlesLabel}, Operating Agreement, Filing Instructions, and EIN Worksheet.
+          </p>
         </div>
       </Layout>
     );
