@@ -336,7 +336,7 @@ export function buildEinWorksheet(d: LlcFormationData, r: StateRules): jsPDF {
   b.labeled("Line 8a — Is this an LLC?", "Yes");
   b.labeled("Line 8b — Number of LLC members:", d.memberCount === "single" ? "1" : String(d.members.filter((m) => m.name).length));
   b.labeled("Line 8c — Organized in the US?", "Yes");
-  b.para(`Line 9a — Type of entity: Check "Other" and write "Limited Liability Company."`);
+  b.labeled("Line 9a — Type of entity:", `Check "Other" and write "Limited Liability Company."`);
   b.labeled("Line 10 — Reason for applying:", "Started new business");
   b.labeled("Line 11 — Date business started:", d.effectiveDateType === "delayed" && d.formationDate ? d.formationDate : "On formation");
   b.labeled("Line 16 — Principal activity:", d.businessActivityCategory || "____________________");
