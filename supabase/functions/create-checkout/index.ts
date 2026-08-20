@@ -46,11 +46,44 @@ serve(async (req: Request) => {
     );
   }
 
-  let body: { plan?: string; cycle?: Cycle; origin?: string; email?: string };
+  let body: { plan?: string; cycle?: Cycle; origin?: string; email?: string; product?: string };
   try {
     body = await req.json();
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON body" }), { status: 400, headers });
+  }
+
+  const originClean = (body.origin || "").replace(/[^\x21-\x7E]/g, "").replace(/\/$/, "") || "https://legalgram.co";
+
+  // ── One-time DIY LLC formation payment ($49, mode: payment) ──
+  if ((body.product || "").toLowerCase() === "llc_formation") {
+    const p = new URLSearchParams();
+    p.set("mode", "payment");
+    p.set("success_url", `${originClean}/form-my-llc?payment=success`);
+    p.set("cancel_url", `${originClean}/form-my-llc?payment=cancelled`);
+    p.set("allow_promotion_codes", "true");
+    if (body.email) p.set("customer_email", body.email);
+    p.set("line_items[0][quantity]", "1");
+    p.set("line_items[0][price_data][currency]", "usd");
+    p.set("line_items[0][price_data][product_data][name]", "Legalgram DIY LLC Formation");
+    p.set("line_items[0][price_data][product_data][description]", "Prepares your Articles, Operating Agreement, Filing Instructions, and EIN Worksheet.");
+    p.set("line_items[0][price_data][unit_amount]", "4900");
+    try {
+      const resp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${STRIPE_SECRET_KEY}`, "Content-Type": "application/x-www-form-urlencoded" },
+        body: p.toString(),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        console.error("Stripe error (llc):", resp.status, JSON.stringify(data?.error || data));
+        return new Response(JSON.stringify({ error: "Could not start checkout. Please try again.", detail: data?.error?.message ?? null }), { status: 502, headers });
+      }
+      return new Response(JSON.stringify({ url: data.url }), { status: 200, headers });
+    } catch (error) {
+      console.error("create-checkout llc error:", error);
+      return new Response(JSON.stringify({ error: "Unexpected error starting checkout." }), { status: 500, headers });
+    }
   }
 
   const plan = PLANS[(body.plan || "").toLowerCase()];

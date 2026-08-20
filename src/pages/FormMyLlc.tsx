@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout/Layout";
@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateLlcZip } from "@/services/llcDocuments";
+import { startLlcCheckout } from "@/services/checkout";
+
+const STORE = "legalgram_llc_formation";
 import {
   LLC_STATE_LIST, LLC_STATES, NY_COUNTIES, IRS_ACTIVITY_CATEGORIES,
   type StateCode,
@@ -79,6 +82,26 @@ const FormMyLlc = () => {
   const [stepIdx, setStepIdx] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [paying, setPaying] = useState(false);
+
+  // Handle return from Stripe checkout.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pay = params.get("payment");
+    if (pay === "success") {
+      try { const saved = JSON.parse(localStorage.getItem(STORE) || ""); if (saved) setData(saved); } catch { /* ignore */ }
+      setSubmitted(true);
+      window.history.replaceState({}, "", "/form-my-llc");
+    } else if (pay === "cancelled") {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORE) || "");
+        if (saved) { setData(saved); setStepIdx(ALL_STEPS.length - 1); }
+      } catch { /* ignore */ }
+      toast.error("Payment was cancelled — your answers are saved. You can try again.");
+      window.history.replaceState({}, "", "/form-my-llc");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const downloadDocuments = async () => {
     setDownloading(true);
@@ -141,8 +164,9 @@ const FormMyLlc = () => {
   const back = () => { setStepIdx((i) => Math.max(i - 1, 0)); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   const handleSubmit = async () => {
-    // Persist the completed formation so the post-formation dashboard can load it.
-    try { localStorage.setItem("legalgram_llc_formation", JSON.stringify(data)); } catch { /* ignore */ }
+    // Persist the completed formation so it survives the Stripe round-trip and
+    // powers the post-formation dashboard.
+    try { localStorage.setItem(STORE, JSON.stringify(data)); } catch { /* ignore */ }
     try {
       await supabase.from("llc_formation_leads").insert([{
         state: data.state,
@@ -154,8 +178,12 @@ const FormMyLlc = () => {
     } catch {
       /* non-blocking: lead capture is best-effort */
     }
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Start the one-time $49 Stripe checkout. On success Stripe redirects back
+    // to /form-my-llc?payment=success, where the documents become available.
+    setPaying(true);
+    const res = await startLlcCheckout({ email: data.businessEmail || undefined });
+    if (!res.ok) { toast.error(res.error || "Couldn't start checkout. Please try again."); setPaying(false); }
+    // On success the browser redirects to Stripe.
   };
 
   /* ── Success screen ── */
@@ -167,13 +195,11 @@ const FormMyLlc = () => {
           <div className="mx-auto w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center mb-6">
             <Check className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">You're all set</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Payment received — your documents are ready</h1>
           <p className="text-gray-600 mb-6 leading-relaxed">
-            We've saved your {LLC_STATES[data.state as StateCode]?.name} LLC details for
-            <span className="font-semibold"> {data.llcName} {data.designator}</span>. Document
-            checkout and instant download are launching soon — we'll email
-            {data.businessEmail ? <span className="font-semibold"> {data.businessEmail}</span> : " you"} the
-            moment your documents are ready to generate.
+            Thank you. Your {LLC_STATES[data.state as StateCode]?.name} LLC documents for
+            <span className="font-semibold"> {data.llcName} {data.designator}</span> have been prepared from
+            your answers. Download your package below, then head to your dashboard to track filing and next steps.
           </p>
           <div className="bg-orange-50 border border-orange-100 rounded-xl p-5 text-left text-sm text-gray-700 mb-8">
             <p className="font-semibold text-gray-900 mb-1">What happens next</p>
@@ -251,9 +277,10 @@ const FormMyLlc = () => {
               className="disabled:opacity-40">
               <ArrowLeft className="h-4 w-4 mr-2" /> Back
             </Button>
-            <Button variant="orange" onClick={next}>
-              {step.id === "attest" ? "Submit" : step.id === "review" ? "Looks Good" : "Continue"}
-              <ArrowRight className="h-4 w-4 ml-2" />
+            <Button variant="orange" onClick={next} disabled={paying}>
+              {step.id === "attest" ? (paying ? "Redirecting to payment…" : "Pay $49 & Get My Documents")
+                : step.id === "review" ? "Looks Good" : "Continue"}
+              {!paying && <ArrowRight className="h-4 w-4 ml-2" />}
             </Button>
           </div>
 
