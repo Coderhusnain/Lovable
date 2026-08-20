@@ -37,6 +37,11 @@
 
   /* Base text styling */
   * { @apply text-foreground text-[15px]; }
+
+  /* Icon fix: let lucide icon shapes inherit color from the icon element, so
+     that text-{color} on the icon (e.g. text-white on a colored tile) applies
+     to the strokes instead of the universal foreground color above. */
+  .lucide * { color: inherit; }
 }
 
 @layer components {

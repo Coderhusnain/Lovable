@@ -53,7 +53,7 @@ const FeatureCard = memo(({
           <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${gradient}`}></div>
           <CardContent className="p-8">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 bg-gradient-to-br ${gradient} text-white shadow-lg transform group-hover:scale-110 transition-transform duration-500`}>
-              <Icon className="h-8 w-8" />
+              <Icon className="h-8 w-8 !text-white" />
             </div>
             <h3 className="text-xl md:text-2xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors duration-300">{title}</h3>
             <p className="text-gray-600 mb-4 transition-colors duration-300">{description}</p>
@@ -106,7 +106,7 @@ const Features = () => {
       description: "Create customized legal documents in minutes with our easy to use templates.",
       linkText: "Browse documents",
       linkTo: "/documents",
-      gradient: "from-blue-500 to-blue-600"
+      gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
       icon: Building2,
@@ -114,7 +114,7 @@ const Features = () => {
       description: "Start your business the right way with our LLC and incorporation services.",
       linkText: "Start a business",
       linkTo: "/start-a-business",
-      gradient: "from-green-500 to-green-600"
+      gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
       icon: Newspaper,
@@ -122,7 +122,7 @@ const Features = () => {
       description: "Access free articles and guides covering a wide range of legal topics.",
       linkText: "Explore resources",
       linkTo: "/community",
-      gradient: "from-rose-500 to-rose-600"
+      gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
       icon: ClipboardList,
@@ -130,7 +130,7 @@ const Features = () => {
       description: "Get ongoing legal protection for your family or business with our subscription plans.",
       linkText: "View plans",
       linkTo: "/pricing",
-      gradient: "from-indigo-500 to-indigo-600"
+      gradient: "from-bright-orange-500 to-bright-orange-600"
     }
   ];
 
