@@ -2,7 +2,8 @@
 import { useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, UserCheck, FileText, FileCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { UserIcon, DocIcon, DownloadIcon } from "@/components/icons/BrandIcons";
 
 const GettingStartedSection = () => {
   const [inView, setInView] = useState(false);
@@ -39,21 +40,21 @@ const GettingStartedSection = () => {
 
   const steps = [
     {
-      icon: UserCheck,
+      icon: UserIcon,
       title: "Create Your Account",
       description: "Sign up in less than 2 minutes with your email or social accounts",
       linkText: "Sign up now",
       linkTo: "/signup"
     },
     {
-      icon: FileText,
+      icon: DocIcon,
       title: "Select Your Document",
       description: "Browse our library of professional legal documents and templates",
       linkText: "Browse documents",
       linkTo: "/documents"
     },
     {
-      icon: FileCheck,
+      icon: DownloadIcon,
       title: "Complete & Download",
       description: "Answer a few questions and your document is ready to use",
       linkText: "See how it works",
@@ -116,12 +117,12 @@ const GettingStartedSection = () => {
                 onMouseLeave={() => setActiveStep(null)}
               >
                 <div className="mb-6 relative">
-                  <div className={`w-20 h-20 rounded-full transition-all duration-300 flex items-center justify-center mx-auto shadow-lg ${
-                    activeStep === index 
-                      ? 'bg-gradient-to-br from-bright-orange-500 to-bright-orange-600' 
-                      : 'bg-gradient-to-br from-rocket-blue-500 to-rocket-blue-600'
+                  <div className={`w-20 h-20 rounded-2xl transition-all duration-300 flex items-center justify-center mx-auto ring-1 shadow-sm ${
+                    activeStep === index
+                      ? 'bg-gradient-to-br from-orange-100 to-amber-200/80 ring-bright-orange-300 scale-105'
+                      : 'bg-gradient-to-br from-orange-50 to-amber-100/70 ring-bright-orange-200'
                   }`}>
-                    <step.icon className="h-10 w-10 text-white" />
+                    <step.icon size={38} />
                   </div>
                   <div className="absolute -top-4 -right-4 bg-rocket-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
                     {index + 1}

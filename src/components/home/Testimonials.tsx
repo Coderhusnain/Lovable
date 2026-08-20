@@ -1,19 +1,19 @@
 import { memo } from "react";
-import { BadgeCheck, Shield, HeartHandshake } from "lucide-react";
+import { BadgeIcon, SecureIcon, HeartIcon, BrandIconTile } from "@/components/icons/BrandIcons";
 
 const promises = [
   {
-    icon: BadgeCheck,
+    icon: BadgeIcon,
     title: "Drafted or reviewed by qualified lawyers.",
     text: "Every template on our platform was built by attorneys with real practice experience, not scraped from the internet."
   },
   {
-    icon: Shield,
+    icon: SecureIcon,
     title: "Written to protect you.",
     text: "Our documents are drafted to favor the person or business using them, not to be \"neutral\" in a way that quietly favors the other side."
   },
   {
-    icon: HeartHandshake,
+    icon: HeartIcon,
     title: "Honest scope.",
     text: "If your matter needs a licensed attorney in your state, we tell you plainly and help you find one. No overselling."
   }
@@ -36,9 +36,9 @@ const Testimonials = () => {
               key={p.title}
               className="bg-white rounded-2xl p-7 shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="w-12 h-12 rounded-xl bg-bright-orange-100 flex items-center justify-center mb-4">
-                <p.icon className="h-6 w-6 text-bright-orange-500" />
-              </div>
+              <BrandIconTile size="lg" className="mb-4">
+                <p.icon size={32} />
+              </BrandIconTile>
               <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
               <p className="text-gray-600 leading-relaxed">{p.text}</p>
             </div>

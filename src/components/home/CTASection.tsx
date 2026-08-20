@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Scale, Wallet, CalendarX } from "lucide-react";
 import { memo } from "react";
+import { JusticeIcon, MoneyIcon, CalendarIcon, BrandIconTile } from "@/components/icons/BrandIcons";
 
 const trustPoints = [
   {
-    icon: Scale,
+    icon: JusticeIcon,
     title: "Built by qualified lawyers",
     text: "Every document and workflow is designed by attorneys with real practice experience, not generic templates."
   },
   {
-    icon: Wallet,
+    icon: MoneyIcon,
     title: "Affordable legal help",
     text: "Get contracts drafted and reviewed at a fraction of the cost of a traditional law firm."
   },
   {
-    icon: CalendarX,
+    icon: CalendarIcon,
     title: "Cancel anytime",
     text: "No long-term commitments. No hidden fees. No fine print you'll wish you had read."
   }
@@ -37,9 +37,9 @@ const CTASection = () => {
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
           {trustPoints.map((t) => (
             <div key={t.title} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
-              <div className="mx-auto w-12 h-12 rounded-xl bg-bright-orange-500/20 flex items-center justify-center mb-4">
-                <t.icon className="h-6 w-6 text-bright-orange-400" />
-              </div>
+              <BrandIconTile size="lg" className="mx-auto mb-4">
+                <t.icon size={32} />
+              </BrandIconTile>
               <h3 className="font-bold text-white mb-2">{t.title}</h3>
               <p className="text-sm text-gray-300 leading-relaxed">{t.text}</p>
             </div>
