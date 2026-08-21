@@ -2,29 +2,25 @@ import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Scale, Laptop, HeartHandshake, Rocket, Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight } from "lucide-react";
 
 const values = [
   {
-    icon: Scale,
     title: "Legal Knowledge Meets Technology",
     description:
       "We combine attorney drafted legal content with modern software so everyday people and small businesses can handle legal matters without the traditional price tag."
   },
   {
-    icon: Laptop,
     title: "Build Real Products",
     description:
       "From document automation to Gram AI, our team works on tools that people actually use to protect their families, homes, and businesses every day."
   },
   {
-    icon: HeartHandshake,
     title: "Put People First",
     description:
       "Legal help should be clear, honest, and affordable. We write in plain language, price fairly, and treat every user the way we would want to be treated."
   },
   {
-    icon: Rocket,
     title: "Grow With Us",
     description:
       "Legalgram is a young platform with big goals. Joining now means real ownership, real impact, and the chance to shape how the product grows."
@@ -64,10 +60,7 @@ const Careers = () => {
           </h2>
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {values.map((v) => (
-              <div key={v.title} className="border border-gray-100 rounded-2xl p-6 shadow-sm bg-white">
-                <div className="w-12 h-12 rounded-xl bg-bright-orange-100 flex items-center justify-center mb-4">
-                  <v.icon className="h-6 w-6 text-bright-orange-600" />
-                </div>
+              <div key={v.title} className="border border-gray-100 border-t-[3px] border-t-bright-orange-500 rounded-2xl p-6 shadow-sm bg-white">
                 <h3 className="font-bold text-gray-900 mb-2">{v.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">{v.description}</p>
               </div>

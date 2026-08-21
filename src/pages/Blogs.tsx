@@ -1,11 +1,10 @@
 import Layout from "@/components/layout/Layout";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
-import { Building2, Landmark, FileText, Heart, Rocket, BookOpen, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const guides = [
   {
-    icon: FileText,
     category: "Legal Documents",
     title: "How Legal Documents Work on Legalgram",
     description:
@@ -13,7 +12,6 @@ const guides = [
     to: "/how-it-works"
   },
   {
-    icon: Building2,
     category: "Business Formation",
     title: "What Is an LLC and Is It Right for You?",
     description:
@@ -21,7 +19,6 @@ const guides = [
     to: "/whats-an-llc"
   },
   {
-    icon: Landmark,
     category: "Business Formation",
     title: "What Is a Corporation? C Corps Explained",
     description:
@@ -29,7 +26,6 @@ const guides = [
     to: "/whats-a-corporation"
   },
   {
-    icon: Rocket,
     category: "Business Formation",
     title: "What Is an S Corp? Tax Election Basics",
     description:
@@ -37,7 +33,6 @@ const guides = [
     to: "/whats-an-s-corp"
   },
   {
-    icon: Heart,
     category: "Business Formation",
     title: "What Is a Nonprofit? Starting a 501(c)(3)",
     description:
@@ -45,7 +40,6 @@ const guides = [
     to: "/whats-a-nonprofit"
   },
   {
-    icon: BookOpen,
     category: "About Legalgram",
     title: "Our Services: What Legalgram Offers",
     description:
@@ -84,12 +78,9 @@ const Blogs = () => {
               <Link
                 key={g.to}
                 to={g.to}
-                className="group border border-gray-100 rounded-2xl p-6 shadow-sm bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                className="group border border-gray-100 border-t-[3px] border-t-bright-orange-500 rounded-2xl p-6 shadow-sm bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
               >
-                <div className="w-12 h-12 rounded-xl bg-bright-orange-100 flex items-center justify-center mb-4">
-                  <g.icon className="h-6 w-6 text-bright-orange-600" />
-                </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-bright-orange-600 mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-bright-orange-600 mb-2">
                   {g.category}
                 </span>
                 <h2 className="font-bold text-gray-900 mb-2 group-hover:text-bright-orange-600 transition-colors">
