@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Shield, Clock, FileText, CheckCircle, ArrowLeft, AlertTriangle, 
-  Lightbulb, Scale, Clipboard, FileSignature, ChevronDown, ChevronUp,
-  HelpCircle, ListChecks, BookOpen, BadgeCheck, Timer, Info
+import {
+  CheckCircle, ArrowLeft, FileSignature, ChevronDown, ChevronUp, ListChecks
 } from 'lucide-react';
 import { documentContent, getDocumentContent, DocumentContent } from '../data/documentContent';
 
@@ -99,44 +97,33 @@ export default function DocumentInfoLanding({
       <div className="grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3 space-y-8">
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="p-3 bg-blue-600 rounded-xl shadow-lg">
-                <FileText className="w-8 h-8 text-white" />
-              </div>
-              <div className="flex-1">
-                <span className="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
-                  {category}
-                </span>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mt-3 leading-tight">
-                  {title}
-                </h1>
-              </div>
+            <div className="mb-4">
+              <span className="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+                {category}
+              </span>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mt-3 leading-tight">
+                {title}
+              </h1>
             </div>
             <p className="text-lg text-gray-600 leading-relaxed mt-4">
               {description}
             </p>
             
             <div className="flex flex-wrap gap-4 mt-6">
-              <div className="flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
-                <Timer className="w-4 h-4 text-blue-600" />
+              <div className="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
                 <span className="text-sm font-medium">{docContent.estimatedTime || '10-15 minutes'}</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
-                <BadgeCheck className="w-4 h-4 text-green-600" />
+              <div className="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
                 <span className="text-sm font-medium">Legally Binding</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
-                <Shield className="w-4 h-4 text-purple-600" />
+              <div className="text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
                 <span className="text-sm font-medium">Professional Quality</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-indigo-100 rounded-lg">
-                <BookOpen className="w-5 h-5 text-indigo-600" />
-              </div>
+            <div className="mb-4">
               <h2 className="text-xl font-bold text-gray-900">What is a {title}?</h2>
             </div>
             <p className="text-gray-700 leading-relaxed text-base">
@@ -145,10 +132,7 @@ export default function DocumentInfoLanding({
           </div>
 
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-amber-100 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
-              </div>
+            <div className="mb-4">
               <h2 className="text-xl font-bold text-gray-900">When Should You Use This Document?</h2>
             </div>
             <ul className="space-y-3">
@@ -163,10 +147,7 @@ export default function DocumentInfoLanding({
 
           {docContent.keyProtections && docContent.keyProtections.length > 0 && (
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-green-600 rounded-lg">
-                  <Shield className="w-5 h-5 text-white" />
-                </div>
+              <div className="mb-4">
                 <h2 className="text-xl font-bold text-gray-900">Key Legal Protections</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -182,10 +163,7 @@ export default function DocumentInfoLanding({
 
           {docContent.faqs && docContent.faqs.length > 0 && (
             <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <HelpCircle className="w-5 h-5 text-purple-600" />
-                </div>
+              <div className="mb-6">
                 <h2 className="text-xl font-bold text-gray-900">Frequently Asked Questions</h2>
               </div>
               <FAQAccordion faqs={docContent.faqs} />
@@ -194,10 +172,7 @@ export default function DocumentInfoLanding({
 
           {docContent.whatYouNeed && docContent.whatYouNeed.length > 0 && (
             <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Clipboard className="w-5 h-5 text-blue-600" />
-                </div>
+              <div className="mb-4">
                 <h2 className="text-xl font-bold text-gray-900">What You'll Need to Get Started</h2>
               </div>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -232,25 +207,18 @@ export default function DocumentInfoLanding({
         <div className="lg:col-span-2">
           <div className="sticky top-24 space-y-6">
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-xl">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Lightbulb className="w-6 h-6 text-white" />
-                </div>
+              <div className="mb-6">
                 <h3 className="font-bold text-xl">Quick Guide</h3>
               </div>
 
               <div className="space-y-5">
-                <div className="flex items-center gap-3 bg-white/10 rounded-xl p-4">
-                  <Clock className="w-8 h-8 text-orange-200" />
-                  <div>
-                    <p className="text-orange-100 text-sm">Estimated Time</p>
-                    <p className="font-bold text-lg">{docContent.estimatedTime || '10-15 minutes'}</p>
-                  </div>
+                <div className="bg-white/10 rounded-xl p-4">
+                  <p className="text-orange-100 text-sm">Estimated Time</p>
+                  <p className="font-bold text-lg">{docContent.estimatedTime || '10-15 minutes'}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold text-orange-100 mb-3 flex items-center gap-2">
-                    <Info className="w-4 h-4" />
+                  <h4 className="font-semibold text-orange-100 mb-3">
                     Why This Document Matters
                   </h4>
                   <ul className="space-y-2">
@@ -275,24 +243,18 @@ export default function DocumentInfoLanding({
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/20">
-                <div className="flex items-center gap-2 text-orange-100 text-sm">
-                  <Scale className="w-4 h-4" />
+                <div className="text-orange-100 text-sm">
                   <span>Drafted by legal professionals</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-amber-50 rounded-2xl p-5 border border-amber-200">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
-                <div>
-                  <h4 className="font-semibold text-amber-900 mb-1">Important Notice</h4>
-                  <p className="text-amber-800 text-sm leading-relaxed">
-                    This document is for informational purposes. For complex legal matters, 
-                    consult with a licensed attorney in your jurisdiction.
-                  </p>
-                </div>
-              </div>
+            <div className="bg-amber-50 rounded-2xl p-5 border-l-[4px] border-l-amber-500">
+              <h4 className="font-semibold text-amber-900 mb-1">Important Notice</h4>
+              <p className="text-amber-800 text-sm leading-relaxed">
+                This document is for informational purposes. For complex legal matters,
+                consult with a licensed attorney in your jurisdiction.
+              </p>
             </div>
 
             <div className="lg:hidden">
