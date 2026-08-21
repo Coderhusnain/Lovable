@@ -11,9 +11,6 @@ const PhysicianServicesInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mb-6">
-            <Stethoscope className="w-10 h-10 text-teal-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Physician Services Agreement</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             A written Physician Services Agreement helps reduce misunderstandings and creates a professional structure for medical service arrangements.
@@ -37,7 +34,6 @@ const PhysicianServicesInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Duties</CardTitle>
             </CardHeader>
             <CardContent>
@@ -47,7 +43,6 @@ const PhysicianServicesInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Building className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Compliance</CardTitle>
             </CardHeader>
             <CardContent>
@@ -57,7 +52,6 @@ const PhysicianServicesInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Stethoscope className="w-8 h-8 text-teal-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Insurance</CardTitle>
             </CardHeader>
             <CardContent>

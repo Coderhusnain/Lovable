@@ -11,9 +11,6 @@ const SoftwareLicenseInfo = () => {
 		<Layout>
 			<div className="container mx-auto px-4 py-12 max-w-4xl">
 				<div className="text-center mb-12">
-					<div className="mx-auto w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center mb-6">
-						<Computer className="w-10 h-10 text-sky-700" />
-					</div>
 					<h1 className="text-4xl font-bold text-gray-900 mb-4">Software License Agreement</h1>
 					<p className="text-xl text-gray-600 max-w-2xl mx-auto">
 						Best format Software License Agreement from Legalgram — secure your software business
@@ -41,7 +38,6 @@ const SoftwareLicenseInfo = () => {
 				<div className="grid md:grid-cols-3 gap-6 mb-12">
 					<Card className="text-center">
 						<CardHeader>
-							<ShieldCheck className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
 							<CardTitle className="text-lg">Protect Ownership</CardTitle>
 						</CardHeader>
 						<CardContent>
@@ -51,7 +47,6 @@ const SoftwareLicenseInfo = () => {
 
 					<Card className="text-center">
 						<CardHeader>
-							<Repeat className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
 							<CardTitle className="text-lg">Subscription & Updates</CardTitle>
 						</CardHeader>
 						<CardContent>
@@ -61,7 +56,6 @@ const SoftwareLicenseInfo = () => {
 
 					<Card className="text-center">
 						<CardHeader>
-							<Computer className="w-8 h-8 text-blue-600 mx-auto mb-2" />
 							<CardTitle className="text-lg">Device Limits</CardTitle>
 						</CardHeader>
 						<CardContent>

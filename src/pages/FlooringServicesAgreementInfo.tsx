@@ -80,7 +80,6 @@ export default function FlooringServicesAgreementInfo() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-yellow-600" />
                 What is a Flooring Contract?
               </CardTitle>
             </CardHeader>
@@ -105,7 +104,6 @@ export default function FlooringServicesAgreementInfo() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-emerald-600" />
                 Why You Need a Flooring Contract
               </CardTitle>
             </CardHeader>
@@ -127,7 +125,6 @@ export default function FlooringServicesAgreementInfo() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-yellow-600" />
                 When to Use a Flooring Contract
               </CardTitle>
             </CardHeader>
@@ -147,7 +144,6 @@ export default function FlooringServicesAgreementInfo() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 Key Features of the Best Flooring Contract Format
               </CardTitle>
             </CardHeader>
@@ -166,7 +162,6 @@ export default function FlooringServicesAgreementInfo() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                 How Does a Flooring Contract Work?
               </CardTitle>
             </CardHeader>

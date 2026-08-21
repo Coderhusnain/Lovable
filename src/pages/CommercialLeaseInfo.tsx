@@ -20,7 +20,6 @@ const CommercialLeaseInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Building className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Commercial Lease Agreement</h1>
             <p className="text-lg text-gray-600">
               A comprehensive legal document for leasing commercial properties to businesses
@@ -32,7 +31,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Commercial Lease Agreement?
               </CardTitle>
             </CardHeader>
@@ -55,7 +53,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Key Components
               </CardTitle>
             </CardHeader>
@@ -88,7 +85,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 Who Should Use This Agreement?
               </CardTitle>
             </CardHeader>
@@ -119,7 +115,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Building className="w-5 h-5 mr-2 text-orange-600" />
                 Types of Commercial Properties
               </CardTitle>
             </CardHeader>
@@ -152,7 +147,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
                 Financial Considerations
               </CardTitle>
             </CardHeader>
@@ -185,7 +179,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-blue-600" />
                 Lease Terms & Renewal Options
               </CardTitle>
             </CardHeader>
@@ -219,7 +212,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Important Legal Considerations
               </CardTitle>
             </CardHeader>
@@ -267,7 +259,6 @@ const CommercialLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                 Special Commercial Provisions
               </CardTitle>
             </CardHeader>

@@ -28,7 +28,6 @@ const DemandForMoneyOwedInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-2">
               Demand for Money Owed
             </h1>
@@ -63,7 +62,6 @@ const DemandForMoneyOwedInfo = () => {
           {/* When to use */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When Should You Use a Demand for Money Owed Letter?
               </h2>
@@ -86,7 +84,6 @@ const DemandForMoneyOwedInfo = () => {
           {/* Key features */}
           <section>
             <div className="flex items-center mb-4">
-              <Scale className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Key Features of a Demand for Money Owed Agreement
               </h2>
@@ -135,7 +132,6 @@ const DemandForMoneyOwedInfo = () => {
           {/* Benefits */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Benefits of Using Legalgram’s Demand for Money Owed Agreement
               </h2>
@@ -213,7 +209,6 @@ const DemandForMoneyOwedInfo = () => {
 
           {/* CTA */}
           <section className="text-center bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 text-white p-8 rounded-xl">
-            <AlertTriangle className="w-10 h-10 mx-auto mb-4" />
             <h2 className="text-3xl font-bold mb-3">
               Download Demand for Money Owed
             </h2>

@@ -48,9 +48,6 @@ const RoyaltyAgreementInfo = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header with Icon */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-violet-100 rounded-full mb-6">
-            <Coins className="w-10 h-10 text-violet-600" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">{documentContent.title}</h1>
           <p className="text-xl text-gray-600">License your intellectual property and ensure fair compensation</p>
         </div>
@@ -91,7 +88,6 @@ const RoyaltyAgreementInfo = () => {
           <Card className="border-t-4 border-violet-500">
             <CardHeader>
               <CardTitle className="flex items-center text-base">
-                <Coins className="w-5 h-5 mr-2 text-violet-600" />
                 Fair Compensation
               </CardTitle>
             </CardHeader>
@@ -105,7 +101,6 @@ const RoyaltyAgreementInfo = () => {
           <Card className="border-t-4 border-violet-500">
             <CardHeader>
               <CardTitle className="flex items-center text-base">
-                <BookOpen className="w-5 h-5 mr-2 text-violet-600" />
                 Clear Terms & Conditions
               </CardTitle>
             </CardHeader>
@@ -119,7 +114,6 @@ const RoyaltyAgreementInfo = () => {
           <Card className="border-t-4 border-violet-500">
             <CardHeader>
               <CardTitle className="flex items-center text-base">
-                <Lock className="w-5 h-5 mr-2 text-violet-600" />
                 Protection for Both Parties
               </CardTitle>
             </CardHeader>
@@ -173,7 +167,6 @@ const RoyaltyAgreementInfo = () => {
         <Card className="mb-8 border-l-4 border-amber-500 bg-amber-50">
           <CardHeader>
             <CardTitle className="flex items-center text-amber-900">
-              <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
               Important Notice
             </CardTitle>
           </CardHeader>

@@ -20,7 +20,6 @@ const ComplaintLetterToCompanyInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">
               What Is a Complaint Letter to a Company Agreement?
             </h1>
@@ -63,7 +62,6 @@ const ComplaintLetterToCompanyInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When to Use a Complaint Letter to a Company
               </h2>
@@ -91,7 +89,6 @@ const ComplaintLetterToCompanyInfo = () => {
           {/* Key Elements Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Key Elements of This Agreement
               </h2>
@@ -145,7 +142,6 @@ const ComplaintLetterToCompanyInfo = () => {
           {/* How to Create Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 How to Create a Complaint Letter to a Company
               </h2>
@@ -193,7 +189,6 @@ const ComplaintLetterToCompanyInfo = () => {
           {/* FAQ Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Frequently Asked Questions
               </h2>

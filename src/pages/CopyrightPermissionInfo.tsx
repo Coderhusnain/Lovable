@@ -20,7 +20,6 @@ const CopyrightPermissionInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Copyright className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Copyright Permission Request</h1>
             <p className="text-lg text-gray-600">
               Formally request permission to use copyrighted material in your projects
@@ -32,7 +31,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Copyright Permission Request?
               </CardTitle>
             </CardHeader>
@@ -54,7 +52,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Scale className="w-5 h-5 mr-2 text-green-600" />
                 When Do You Need Permission?
               </CardTitle>
             </CardHeader>
@@ -89,7 +86,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 Who Needs Permission Requests?
               </CardTitle>
             </CardHeader>
@@ -120,7 +116,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-indigo-600" />
                 Key Components of a Permission Request
               </CardTitle>
             </CardHeader>
@@ -154,7 +149,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Mail className="w-5 h-5 mr-2 text-orange-600" />
                 Request Process & Best Practices
               </CardTitle>
             </CardHeader>
@@ -183,7 +177,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-teal-600" />
                 After Sending Your Request
               </CardTitle>
             </CardHeader>
@@ -214,7 +207,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-red-600" />
                 Legal Considerations
               </CardTitle>
             </CardHeader>
@@ -248,7 +240,6 @@ const CopyrightPermissionInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Important Notes
               </CardTitle>
             </CardHeader>

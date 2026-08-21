@@ -47,11 +47,6 @@ const MutualNDAInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center">
-              <Handshake className="w-10 h-10 text-rose-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{documentContent.title}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Bilateral confidentiality protection enabling secure information sharing between two parties
@@ -90,21 +85,18 @@ const MutualNDAInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Handshake className="w-12 h-12 text-rose-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Bilateral Protection</h3>
                 <p className="text-sm text-gray-600">Both parties protect shared information with equal confidentiality obligations and reciprocal enforcement rights</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Lock className="w-12 h-12 text-rose-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Information Security</h3>
                 <p className="text-sm text-gray-600">Comprehensive protection for all shared confidential information including trade secrets and business plans</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Shield className="w-12 h-12 text-rose-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Legal Enforcement</h3>
                 <p className="text-sm text-gray-600">Clear remedies for breach including injunctive relief and damages recovery for both parties</p>
               </CardContent>

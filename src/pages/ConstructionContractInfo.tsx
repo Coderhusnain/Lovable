@@ -86,11 +86,6 @@ const ConstructionContractInfo = () => {
         </Button>
 
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Building2 className="w-8 h-8 text-blue-700" />
-            </div>
-          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Construction Contract Information</h1>
           <p className="text-lg text-gray-600">
             Construction Contract • Construction Agreement • Contractor Agreement
@@ -101,7 +96,6 @@ const ConstructionContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Construction Contract?
               </CardTitle>
             </CardHeader>
@@ -126,7 +120,6 @@ const ConstructionContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-emerald-600" />
                 Why You Need a Construction Contract
               </CardTitle>
             </CardHeader>
@@ -148,7 +141,6 @@ const ConstructionContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-blue-600" />
                 When to Use a Construction Contract
               </CardTitle>
             </CardHeader>
@@ -168,7 +160,6 @@ const ConstructionContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <ClipboardList className="w-5 h-5 mr-2 text-purple-600" />
                 Key Features of the Best Construction Contract Format
               </CardTitle>
             </CardHeader>
@@ -187,7 +178,6 @@ const ConstructionContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                 How Does a Construction Contract Work?
               </CardTitle>
             </CardHeader>

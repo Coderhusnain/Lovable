@@ -5,9 +5,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 const InfoBadge = ({ icon: Icon, title, children, className = "" }) => (
   <div className={`bg-white border border-gray-100 rounded-lg p-4 shadow-sm ${className}`}>
     <div className="flex items-start">
-      <div className="flex-shrink-0 mr-3 mt-0.5">
-        <Icon className="w-6 h-6 text-indigo-600" />
-      </div>
       <div>
         <h4 className="font-semibold text-gray-900">{title}</h4>
         <div className="text-gray-700 text-sm mt-1">{children}</div>
@@ -29,11 +26,6 @@ const MergerAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <Building className="w-8 h-8 text-indigo-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Merger Agreement Information</h1>
             <p className="text-lg text-gray-600">Agreement and Plan of Merger • Merger Agreement Form • Definitive Merger Agreement</p>
@@ -44,7 +36,6 @@ const MergerAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 What Is a Merger Agreement?
               </CardTitle>
             </CardHeader>
@@ -70,29 +61,24 @@ const MergerAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-green-600" />
                 What Does a Draft Merger Agreement Cover?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Assets & Liabilities:</strong> A complete accounting of each company’s assets and liabilities.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Valuation & Ownership:</strong> Valuation of shares and ownership interests in the new or surviving entity.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Operations During Transition:</strong> Rules governing daily business operations and limitations on new contracts during the merger process.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Governance:</strong> Procedures for forming a new board of directors and appointing its members.</p>
                 </div>
 
@@ -104,19 +90,16 @@ const MergerAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-purple-600" />
                 When Should You Use a Merger Agreement?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When you intend to merge another company into your business as the surviving entity to enhance market position.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When you have agreed to dissolve your business into another company through a merger.</p>
                 </div>
 
@@ -128,7 +111,6 @@ const MergerAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-indigo-600" />
                 Why Use a Draft Merger Agreement?
               </CardTitle>
             </CardHeader>
@@ -156,7 +138,6 @@ const MergerAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Download Merger Agreement
               </CardTitle>
             </CardHeader>
@@ -184,22 +165,18 @@ const MergerAgreementInfo = () => {
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Full Due Diligence:</strong> Conduct comprehensive audits of assets, liabilities, contracts, and compliance.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Clear Valuation:</strong> Agree on valuation methods and ownership allocations before closing.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Integration Plan:</strong> Prepare operational and technology integration plans to minimize disruption.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Legal Review:</strong> Have experienced counsel review the agreement and regulatory implications.</p>
                 </div>
               </div>

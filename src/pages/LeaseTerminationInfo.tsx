@@ -20,7 +20,6 @@ const LeaseTerminationInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold">Agreement to Cancel Lease</h1>
             <p className="text-muted-foreground">
               A legal agreement for mutual lease termination between landlord and tenant
@@ -32,7 +31,6 @@ const LeaseTerminationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
                 What is an Agreement to Cancel Lease?
               </CardTitle>
             </CardHeader>
@@ -60,7 +58,6 @@ const LeaseTerminationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2" />
                 Why You Need an Agreement to Cancel Lease
               </CardTitle>
             </CardHeader>
@@ -82,7 +79,6 @@ const LeaseTerminationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Edit3 className="w-5 h-5 mr-2" />
                 When to Use an Agreement to Cancel Lease
               </CardTitle>
             </CardHeader>
@@ -161,7 +157,6 @@ const LeaseTerminationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <HelpCircle className="w-5 h-5 mr-2" />
                 Agreement to Cancel Lease FAQs
               </CardTitle>
             </CardHeader>

@@ -22,7 +22,6 @@ const ChangeOfBeneficiaryInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{docContent.title}</h1>
             <p className="text-xl text-gray-600">Update life insurance and financial policy beneficiaries easily</p>
           </div>
@@ -66,7 +65,6 @@ const ChangeOfBeneficiaryInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <AlertCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use a Change of Beneficiary Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">Use this Change of Beneficiary Letter when:</p>
@@ -82,7 +80,6 @@ const ChangeOfBeneficiaryInfo = () => {
           {/* Why Choose Legalgram Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Why Choose Legalgram?</h2>
             </div>
             <p className="text-gray-700 mb-4">At Legalgram, users can get:</p>
@@ -103,7 +100,6 @@ const ChangeOfBeneficiaryInfo = () => {
           {/* Key Benefits Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Benefits of a Change of Beneficiary Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">A proper Change of Beneficiary Letter helps:</p>
@@ -122,7 +118,6 @@ const ChangeOfBeneficiaryInfo = () => {
           {/* What to Include Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">What to Include in a Change of Beneficiary Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">Your Change of Beneficiary Letter should include:</p>

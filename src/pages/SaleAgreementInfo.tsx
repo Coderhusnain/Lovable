@@ -22,9 +22,6 @@ const SaleAgreementInfo = () => {
 
         <Card className="mb-8">
           <CardHeader className="text-center pb-6">
-            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <HandshakeIcon className="w-8 h-8 text-blue-600" />
-            </div>
             <CardTitle className="text-3xl font-bold text-gray-900">
               Sale Agreement Information
             </CardTitle>
@@ -39,7 +36,6 @@ const SaleAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center text-xl text-blue-600">
-                <FileText className="w-6 h-6 mr-2" />
                 What is a Sales Agreement?
               </CardTitle>
             </CardHeader>
@@ -57,7 +53,6 @@ const SaleAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center text-xl text-blue-600">
-                <Shield className="w-6 h-6 mr-2" />
                 When to Use a Sales Agreement
               </CardTitle>
             </CardHeader>
@@ -169,7 +164,6 @@ const SaleAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center text-xl text-amber-600">
-                <AlertTriangle className="w-6 h-6 mr-2" />
                 Special Cases: Real Estate Sales Agreements
               </CardTitle>
             </CardHeader>
@@ -219,24 +213,20 @@ const SaleAgreementInfo = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-gray-700">Define the scope of the transaction</span>
                   </div>
                   
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-gray-700">Clarify payment and delivery expectations</span>
                   </div>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-gray-700">Reduce the risk of disputes</span>
                   </div>
                   
                   <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
                     <span className="text-gray-700">Provide a clear legal remedy if one party fails to perform</span>
                   </div>
                 </div>

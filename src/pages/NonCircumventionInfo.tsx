@@ -49,11 +49,6 @@ const NonCircumventionInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
-              <Shield className="w-10 h-10 text-emerald-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{documentContent.title}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Protect your business contacts and prevent unauthorized dealings with legally binding protection
@@ -92,21 +87,18 @@ const NonCircumventionInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Shield className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Legal Protection</h3>
                 <p className="text-sm text-gray-600">Legally binding protection against unauthorized bypass of your business relationships and contacts</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Lock className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Contact Security</h3>
                 <p className="text-sm text-gray-600">Secure your valuable client lists and business relationships from unauthorized access or circumvention</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Briefcase className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Business Integrity</h3>
                 <p className="text-sm text-gray-600">Maintain fair competition and business ethics by preventing unfair circumvention practices in partnerships</p>
               </CardContent>

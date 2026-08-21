@@ -64,11 +64,6 @@ const InteriorDesignInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <PenTool className="h-8 w-8 text-blue-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Interior Design Contract Information</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Interior Design Contract • Interior Design Agreement • Design Services Agreement

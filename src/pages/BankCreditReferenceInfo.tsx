@@ -20,7 +20,6 @@ const BankCreditReferenceInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">
               Request for Bank or Credit Reference
             </h1>
@@ -62,7 +61,6 @@ const BankCreditReferenceInfo = () => {
           {/* When to Use */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When Should You Use This Letter?
               </h2>
@@ -91,7 +89,6 @@ const BankCreditReferenceInfo = () => {
           {/* Key Components */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Key Components of the Request
               </h2>
@@ -143,7 +140,6 @@ const BankCreditReferenceInfo = () => {
           {/* How to Use */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 How to Use This Document
               </h2>
@@ -176,7 +172,6 @@ const BankCreditReferenceInfo = () => {
           {/* FAQ */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Frequently Asked Questions
               </h2>

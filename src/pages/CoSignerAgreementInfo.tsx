@@ -75,9 +75,6 @@ export default function CoSignerAgreementInfo() {
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
         <div className="flex items-center gap-4">
-          <div className="p-4 bg-indigo-600 rounded-xl">
-            <UserCheck className="h-10 w-10 text-white" />
-          </div>
           <h1 className="text-4xl font-bold">Co-Signer Agreement</h1>
         </div>
         <p className="text-xl text-gray-300">

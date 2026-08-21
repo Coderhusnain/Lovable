@@ -47,11 +47,6 @@ const ManufacturingLicenseInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center">
-              <Factory className="w-10 h-10 text-purple-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{documentContent.title}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Establish clear production terms and protect both parties with a comprehensive manufacturing agreement
@@ -90,21 +85,18 @@ const ManufacturingLicenseInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Factory className="w-12 h-12 text-purple-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Clear Specifications</h3>
                 <p className="text-sm text-gray-600">Define detailed product specifications, production standards, and quality control requirements upfront</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Timeline Certainty</h3>
                 <p className="text-sm text-gray-600">Establish binding delivery schedules and production timelines with accountability measures</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <AlertTriangle className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Legal Protection</h3>
                 <p className="text-sm text-gray-600">Protect intellectual property, define liability, and establish dispute resolution procedures</p>
               </CardContent>

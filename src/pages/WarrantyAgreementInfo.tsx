@@ -39,9 +39,6 @@ const WarrantyAgreementInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-amber-100 rounded-lg">
-                <Shield className="w-8 h-8 text-amber-700" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">{doc.whatIs}</p>
@@ -80,7 +77,6 @@ const WarrantyAgreementInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <AlertCircle className="w-6 h-6 text-amber-600" />
                 When to Use This Letter
               </h2>
               <ul className="space-y-3">
@@ -96,7 +92,6 @@ const WarrantyAgreementInfo: React.FC = () => {
 
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-amber-600" />
               Common Products Covered
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -179,7 +174,6 @@ const WarrantyAgreementInfo: React.FC = () => {
           {doc.keyProtections && doc.keyProtections.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Shield className="w-6 h-6 text-amber-600" />
                 Key Protections
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
@@ -201,7 +195,6 @@ const WarrantyAgreementInfo: React.FC = () => {
           {doc.whatYouNeed && doc.whatYouNeed.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CheckCircle className="w-6 h-6 text-amber-600" />
                 What You'll Need
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

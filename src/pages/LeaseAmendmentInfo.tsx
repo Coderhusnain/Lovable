@@ -22,7 +22,6 @@ const LeaseAmendmentInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{doc.title}</h1>
             <p className="text-lg text-gray-600">{doc.whatIs}</p>
 
@@ -45,7 +44,6 @@ const LeaseAmendmentInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-blue-600" />
                 What Is a {doc.title}?
               </CardTitle>
             </CardHeader>
@@ -58,7 +56,6 @@ const LeaseAmendmentInfo = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                   When to Use
                 </CardTitle>
               </CardHeader>
@@ -78,7 +75,6 @@ const LeaseAmendmentInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Lock className="w-5 h-5 mr-2 text-green-600" />
                 Key Protections
               </CardTitle>
             </CardHeader>
@@ -97,7 +93,6 @@ const LeaseAmendmentInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 What You Need
               </CardTitle>
             </CardHeader>
@@ -116,7 +111,6 @@ const LeaseAmendmentInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 FAQ
               </CardTitle>
             </CardHeader>

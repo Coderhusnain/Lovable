@@ -20,7 +20,6 @@ const PersonalFinancialStatementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{doc.title || "Personal Financial Statement"}</h1>
             <p className="text-xl text-gray-600">{doc.shortDescription || "A personal financial statement to document assets, liabilities, income, and expenses."}</p>
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -50,7 +49,6 @@ const PersonalFinancialStatementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -65,7 +63,6 @@ const PersonalFinancialStatementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Sample Statement</h2>
             </div>
             <p className="text-gray-700 mb-6 whitespace-pre-line">{doc.sample?.description || "Use this Personal Financial Statement to record assets, liabilities, income, and expenses. Sign to certify accuracy."}</p>

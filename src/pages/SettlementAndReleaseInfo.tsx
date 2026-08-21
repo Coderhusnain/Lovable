@@ -11,9 +11,6 @@ const SettlementAndReleaseInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center mb-6">
-            <FileCheck className="w-10 h-10 text-sky-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Settlement and Release Agreement</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             A written Settlement and Release Agreement helps parties resolve disputes quickly, avoid litigation costs, and record enforceable settlement terms.
@@ -37,7 +34,6 @@ const SettlementAndReleaseInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <Users className="w-8 h-8 text-sky-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Resolve Quickly</CardTitle>
             </CardHeader>
             <CardContent>
@@ -47,7 +43,6 @@ const SettlementAndReleaseInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Gavel className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Legal Finality</CardTitle>
             </CardHeader>
             <CardContent>
@@ -57,7 +52,6 @@ const SettlementAndReleaseInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <FileCheck className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Protect Confidentiality</CardTitle>
             </CardHeader>
             <CardContent>

@@ -30,7 +30,6 @@ const GuarantyAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-2">{doc.title}</h1>
             <p className="text-lg text-gray-600 whitespace-pre-line">{doc.whatIs}</p>
             {doc.otherNames?.length ? (
@@ -59,7 +58,6 @@ const GuarantyAgreementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Types of Guaranty Agreements</h2>
             </div>
             <div className="space-y-4">
@@ -80,7 +78,6 @@ const GuarantyAgreementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">What to Include</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -103,7 +100,6 @@ const GuarantyAgreementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
             </div>
             <div className="space-y-4">

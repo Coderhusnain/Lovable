@@ -13,7 +13,6 @@ const LeaseRenewalInfo = () => {
         <div className="mb-8">
       
           <div className="text-center mb-8">
-            <RefreshCw className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">Lease Renewal Agreement Guide</h1>
             <p className="text-xl text-gray-600">Complete guide to understanding and creating your Lease Renewal Agreement</p>
           </div>
@@ -41,7 +40,6 @@ const LeaseRenewalInfo = () => {
           {/* When to Use Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Clock className="w-6 h-6 text-orange-500 mr-2" />
               When Should You Use a Lease Renewal Agreement?
             </h2>
             
@@ -75,7 +73,6 @@ const LeaseRenewalInfo = () => {
           {/* Key Components Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <FileText className="w-6 h-6 text-blue-500 mr-2" />
               Key Components of a Lease Renewal Agreement
             </h2>
             
@@ -110,7 +107,6 @@ const LeaseRenewalInfo = () => {
           {/* Process Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
               Our Simple 4-Step Process
             </h2>
             
@@ -152,7 +148,6 @@ const LeaseRenewalInfo = () => {
           {/* Legal Benefits Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Shield className="w-6 h-6 text-purple-500 mr-2" />
               Legal Benefits & Protection
             </h2>
             
@@ -182,7 +177,6 @@ const LeaseRenewalInfo = () => {
           {/* Important Considerations */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Users className="w-6 h-6 text-indigo-500 mr-2" />
               Important Considerations
             </h2>
             

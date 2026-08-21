@@ -20,7 +20,6 @@ const CellPhoneInquiryLetterInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <Mail className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">What Is a Cell Phone Inquiry Letter?</h1>
             <p className="text-xl text-gray-600">Complete guide to disputing billing errors and service complaints</p>
           </div>
@@ -53,7 +52,6 @@ const CellPhoneInquiryLetterInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Phone className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use a Cell Phone Inquiry Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">Use this Cell Phone Inquiry Letter when:</p>
@@ -71,7 +69,6 @@ const CellPhoneInquiryLetterInfo = () => {
           {/* Why Choose Legalgram Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Why Choose Legalgram?</h2>
             </div>
             <p className="text-gray-700 mb-4">At Legalgram, users can get:</p>
@@ -92,7 +89,6 @@ const CellPhoneInquiryLetterInfo = () => {
           {/* Key Benefits Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Benefits of a Cell Phone Inquiry Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">A proper Cell Phone Inquiry Letter helps:</p>
@@ -125,7 +121,6 @@ const CellPhoneInquiryLetterInfo = () => {
           {/* What to Include Section */}
           <section>
             <div className="flex items-center mb-4">
-              <AlertCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">What to Include in a Cell Phone Inquiry Letter</h2>
             </div>
             <p className="text-gray-700 mb-4">Your Cell Phone Inquiry Letter should include:</p>

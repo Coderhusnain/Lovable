@@ -20,7 +20,6 @@ const StatementOfClaimAgainstEstateInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">
               What Is a Statement of Claim Against an Estate?
             </h1>
@@ -64,7 +63,6 @@ const StatementOfClaimAgainstEstateInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When to Use a Statement of Claim
               </h2>
@@ -92,7 +90,6 @@ const StatementOfClaimAgainstEstateInfo = () => {
           {/* Key Requirements Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Key Components of the Claim
               </h2>
@@ -148,7 +145,6 @@ const StatementOfClaimAgainstEstateInfo = () => {
           {/* How to Create Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 How to Create a Statement of Claim
               </h2>
@@ -185,7 +181,6 @@ const StatementOfClaimAgainstEstateInfo = () => {
           {/* FAQ Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Frequently Asked Questions
               </h2>

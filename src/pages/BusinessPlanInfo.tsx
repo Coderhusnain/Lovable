@@ -31,7 +31,6 @@ const BusinessPlanInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <Briefcase className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Plan</h1>
             <p className="text-lg text-gray-600">
               Comprehensive roadmap for launching and growing your business venture
@@ -45,7 +44,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 Other Names of Business Plan Agreement
               </CardTitle>
             </CardHeader>
@@ -65,7 +63,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <HelpCircle className="w-5 h-5 mr-2 text-indigo-600" />
                 What is a Business Plan Agreement?
               </CardTitle>
             </CardHeader>
@@ -98,7 +95,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Why You Need a Business Plan Agreement
               </CardTitle>
             </CardHeader>
@@ -134,7 +130,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-orange-600" />
                 When to Use a Business Plan Agreement
               </CardTitle>
             </CardHeader>
@@ -156,7 +151,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Layers className="w-5 h-5 mr-2 text-blue-600" />
                 How to Write a Business Plan Agreement
               </CardTitle>
             </CardHeader>
@@ -212,7 +206,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Key Components of Our Business Plan
               </CardTitle>
             </CardHeader>
@@ -246,7 +239,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Target className="w-5 h-5 mr-2 text-purple-600" />
                 Who Needs a Business Plan?
               </CardTitle>
             </CardHeader>
@@ -272,7 +264,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-orange-600" />
                 Product &amp; Service Strategy
               </CardTitle>
             </CardHeader>
@@ -302,7 +293,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
                 Financial Planning &amp; Investment
               </CardTitle>
             </CardHeader>
@@ -336,7 +326,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BarChart3 className="w-5 h-5 mr-2 text-indigo-600" />
                 Market Analysis &amp; Strategy
               </CardTitle>
             </CardHeader>
@@ -362,7 +351,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-pink-600" />
                 Implementation &amp; Marketing Strategy
               </CardTitle>
             </CardHeader>
@@ -392,7 +380,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Important Considerations
               </CardTitle>
             </CardHeader>
@@ -418,7 +405,6 @@ const BusinessPlanInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-blue-600" />
                 Benefits of a Professional Business Plan
               </CardTitle>
             </CardHeader>

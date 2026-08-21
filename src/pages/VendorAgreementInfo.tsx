@@ -11,9 +11,6 @@ const VendorAgreementInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-            <ShoppingCart className="w-10 h-10 text-amber-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Vendor Agreement</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Use this Vendor Agreement for trade shows, markets, festivals, food stalls, pop-ups, and other events — clearly define booth spaces, fees, insurance and operating rules.
@@ -37,7 +34,6 @@ const VendorAgreementInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <MapPin className="w-8 h-8 text-rose-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Booth & Space</CardTitle>
             </CardHeader>
             <CardContent>
@@ -47,7 +43,6 @@ const VendorAgreementInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <FileText className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Fees & Payment</CardTitle>
             </CardHeader>
             <CardContent>
@@ -57,7 +52,6 @@ const VendorAgreementInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <ShoppingCart className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Insurance & Safety</CardTitle>
             </CardHeader>
             <CardContent>

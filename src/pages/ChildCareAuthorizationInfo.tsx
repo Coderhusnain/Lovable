@@ -22,7 +22,6 @@ const ChildCareAuthorizationInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Heart className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{docContent.title}</h1>
             <p className="text-xl text-gray-600">Grant permission for trusted caregivers to care for your child</p>
           </div>

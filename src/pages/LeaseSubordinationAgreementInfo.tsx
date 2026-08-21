@@ -13,9 +13,6 @@ export default function LeaseSubordinationAgreementInfo() {
         </Button>
 
         <div className="text-center">
-          <div className="inline-flex items-center justify-center p-4 bg-orange-600 rounded-xl mb-4">
-            <ArrowDownUp className="h-10 w-10 text-white" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-3">Lease Subordination Agreement Information</h1>
           <p className="text-gray-600 mb-4">Best format Lease Subordination Agreement from Legalgram</p>
           <div className="flex flex-wrap justify-center gap-2">
@@ -28,7 +25,6 @@ export default function LeaseSubordinationAgreementInfo() {
         <div className="bg-white rounded-xl shadow-lg p-8 space-y-8">
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <FileText className="w-6 h-6 text-blue-600 mr-2" />
               What is a Lease Subordination Agreement?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -49,7 +45,6 @@ export default function LeaseSubordinationAgreementInfo() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Shield className="w-6 h-6 text-purple-600 mr-2" />
               Why You Need a Lease Subordination Agreement
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -67,7 +62,6 @@ export default function LeaseSubordinationAgreementInfo() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Clock className="w-6 h-6 text-orange-600 mr-2" />
               When to Use a Lease Subordination Agreement
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -87,7 +81,6 @@ export default function LeaseSubordinationAgreementInfo() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <FileText className="w-6 h-6 text-blue-600 mr-2" />
               Key Features of the Best Lease Subordination Agreement Format
             </h2>
             <div className="grid gap-4">
@@ -102,7 +95,6 @@ export default function LeaseSubordinationAgreementInfo() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <CheckCircle className="w-6 h-6 text-green-600 mr-2" />
               How Does a Lease Subordination Agreement Work?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -118,7 +110,6 @@ export default function LeaseSubordinationAgreementInfo() {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Users className="w-6 h-6 text-indigo-600 mr-2" />
               Lease Subordination Agreement FAQs
             </h2>
             <div className="space-y-4">

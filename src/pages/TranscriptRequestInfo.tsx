@@ -17,9 +17,6 @@ const TranscriptRequestInfo = () => {
             </Button>
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <GraduationCap className="w-6 h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold">Transcript Request Letter</h1>
               <p className="text-muted-foreground">A formal, professional request for academic records from a school, college, or university.</p>
@@ -31,7 +28,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 What is a Transcript Request Letter?
               </CardTitle>
             </CardHeader>
@@ -56,7 +52,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
                 Why You Need a Transcript Request Letter
               </CardTitle>
             </CardHeader>
@@ -76,7 +71,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
                 When to Use a Transcript Request Letter
               </CardTitle>
             </CardHeader>
@@ -95,7 +89,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="w-5 h-5" />
                 Key Features of the Best Transcript Request Letter Format
               </CardTitle>
             </CardHeader>
@@ -114,7 +107,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
                 Is a Transcript Request Letter Important?
               </CardTitle>
             </CardHeader>
@@ -131,7 +123,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Edit3 className="w-5 h-5" />
                 How to Draft a Transcript Request Letter
               </CardTitle>
             </CardHeader>
@@ -151,7 +142,6 @@ const TranscriptRequestInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <HelpCircle className="w-5 h-5" />
                 Transcript Request Letter FAQs
               </CardTitle>
             </CardHeader>
@@ -178,7 +168,6 @@ const TranscriptRequestInfo = () => {
           <Card className="bg-primary/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5" />
                 Download Transcript Request Letter – Legalgram
               </CardTitle>
             </CardHeader>

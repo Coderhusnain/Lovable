@@ -114,7 +114,6 @@ const SecurityAgreementInfo = () => {
                   {doc.faqs.map((faq, index) => (
                     <div key={index} className="border border-orange-200 rounded-lg p-4">
                       <h3 className="font-semibold text-orange-900 mb-2 flex items-start">
-                        <CheckCircle className="w-5 h-5 text-orange-600 mr-2 mt-0.5 flex-shrink-0" />
                         {faq.q}
                       </h3>
                       <p className="text-gray-700 text-sm ml-7">{faq.a}</p>
@@ -127,7 +126,6 @@ const SecurityAgreementInfo = () => {
             {/* Important Notice */}
             <section className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
               <h3 className="font-semibold text-amber-900 mb-3 flex items-center">
-                <Shield className="w-5 h-5 mr-2" />
                 Important Note
               </h3>
               <p className="text-amber-800 text-sm">

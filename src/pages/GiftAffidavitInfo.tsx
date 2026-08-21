@@ -22,11 +22,6 @@ const GiftAffidavitInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-orange-100 p-3 rounded-full">
-                <FileText className="w-8 h-8 text-orange-600" />
-              </div>
-            </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{doc.title}</h1>
             <p className="text-lg text-gray-600 whitespace-pre-line">{doc.whatIs}</p>
             {doc.otherNames?.length ? (
@@ -45,7 +40,6 @@ const GiftAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Gift Affidavit?
               </CardTitle>
             </CardHeader>
@@ -57,7 +51,6 @@ const GiftAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-green-600" />
                 When is a Gift Affidavit Required?
               </CardTitle>
             </CardHeader>
@@ -65,7 +58,6 @@ const GiftAffidavitInfo = () => {
               <div className="space-y-3 text-gray-700">
                 {doc.whenToUse.map((item) => (
                   <div key={item} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p>{item}</p>
                   </div>
                 ))}
@@ -76,7 +68,6 @@ const GiftAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-purple-600" />
                 Key Elements of a Gift Affidavit
               </CardTitle>
             </CardHeader>
@@ -123,7 +114,6 @@ const GiftAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
                 Important Legal and Tax Considerations
               </CardTitle>
             </CardHeader>
@@ -188,23 +178,18 @@ const GiftAffidavitInfo = () => {
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Be Specific:</strong> Include exact amounts, dates, and detailed descriptions of what is being given.</p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Notarize the Document:</strong> Have the affidavit signed in front of a notary public to increase its legal validity.</p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Keep Bank Records:</strong> Maintain records of the actual transfer, including bank statements and transaction receipts.</p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>File Promptly:</strong> Complete the affidavit close to the time of the gift transfer for accuracy.</p>
                 </div>
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Consult Professionals:</strong> For large gifts or complex situations, consult with tax professionals or attorneys.</p>
                 </div>
               </div>

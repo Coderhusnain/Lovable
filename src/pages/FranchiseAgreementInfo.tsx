@@ -8,9 +8,6 @@ import { documentContent } from "@/data/documentContent";
 const InfoBadge = ({ icon: Icon, title, children, className = "" }) => (
   <div className={`bg-white border border-gray-100 rounded-lg p-4 shadow-sm ${className}`}>
     <div className="flex items-start">
-      <div className="flex-shrink-0 mr-3 mt-0.5">
-        <Icon className="w-6 h-6 text-indigo-600" />
-      </div>
       <div>
         <h4 className="font-semibold text-gray-900">{title}</h4>
         <div className="text-gray-700 text-sm mt-1">{children}</div>
@@ -38,11 +35,6 @@ const FranchiseAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <Store className="w-8 h-8 text-indigo-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{doc.title}</h1>
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -55,7 +47,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 What Is a Franchise Purchase Agreement?
               </CardTitle>
             </CardHeader>
@@ -67,7 +58,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-green-600" />
                 When Should You Use a Franchise Purchase Agreement?
               </CardTitle>
             </CardHeader>
@@ -75,7 +65,6 @@ const FranchiseAgreementInfo = () => {
               <div className="space-y-3 text-gray-700">
                 {doc.whenToUse && doc.whenToUse.map((use: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p>{use}</p>
                   </div>
                 ))}
@@ -86,7 +75,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-purple-600" />
                 Frequently Asked Questions
               </CardTitle>
             </CardHeader>
@@ -119,7 +107,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
                 Key Protections
               </CardTitle>
             </CardHeader>
@@ -127,7 +114,6 @@ const FranchiseAgreementInfo = () => {
               <div className="grid md:grid-cols-2 gap-3">
                 {doc.keyProtections && doc.keyProtections.map((protection: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-gray-600 text-sm">{protection}</p>
                   </div>
                 ))}
@@ -138,7 +124,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-amber-600" />
                 What You'll Need
               </CardTitle>
             </CardHeader>
@@ -146,7 +131,6 @@ const FranchiseAgreementInfo = () => {
               <div className="space-y-2">
                 {doc.whatYouNeed && doc.whatYouNeed.map((need: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-gray-600">{need}</p>
                   </div>
                 ))}
@@ -157,7 +141,6 @@ const FranchiseAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Download Franchise Purchase Agreement
               </CardTitle>
             </CardHeader>

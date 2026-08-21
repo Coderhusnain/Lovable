@@ -22,7 +22,6 @@ const ComplaintLetterInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{docContent.title}</h1>
             <p className="text-xl text-gray-600">File a formal complaint with a company professionally and effectively</p>
           </div>
@@ -65,7 +64,6 @@ const ComplaintLetterInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <AlertCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use a {docContent.title}</h2>
             </div>
             <p className="text-gray-700 mb-4">Use this letter when:</p>
@@ -96,7 +94,6 @@ const ComplaintLetterInfo = () => {
           {/* Key Benefits Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Benefits</h2>
             </div>
             <div className="bg-gradient-to-r from-bright-orange-50 to-bright-orange-100 p-6 rounded-lg">
@@ -154,7 +151,6 @@ const ComplaintLetterInfo = () => {
           {/* Key Benefits Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Benefits</h2>
             </div>
             <div className="bg-gradient-to-r from-bright-orange-50 to-bright-orange-100 p-6 rounded-lg">

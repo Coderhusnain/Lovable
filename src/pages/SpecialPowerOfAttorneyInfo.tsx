@@ -20,7 +20,6 @@ const SpecialPowerOfAttorneyInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Gavel className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">Special Power of Attorney Guide</h1>
             <p className="text-xl text-gray-600">Complete guide to understanding and creating your Special Power of Attorney</p>
           </div>
@@ -48,7 +47,6 @@ const SpecialPowerOfAttorneyInfo = () => {
           {/* When to Use Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Clock className="w-6 h-6 text-orange-500 mr-2" />
               When to Use a Special Power of Attorney
             </h2>
             

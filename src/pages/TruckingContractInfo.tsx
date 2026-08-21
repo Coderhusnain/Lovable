@@ -11,9 +11,6 @@ const TruckingContractInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-            <Truck className="w-10 h-10 text-slate-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Trucking Contract</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Best format Trucking Contract from Legalgram for freight transportation, cargo hauling, and delivery terms.
@@ -40,7 +37,6 @@ const TruckingContractInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <Truck className="w-8 h-8 text-slate-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Delivery Terms</CardTitle>
             </CardHeader>
             <CardContent>
@@ -50,7 +46,6 @@ const TruckingContractInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <ShieldCheck className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Liability & Insurance</CardTitle>
             </CardHeader>
             <CardContent>
@@ -60,7 +55,6 @@ const TruckingContractInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Clock className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Payment Clarity</CardTitle>
             </CardHeader>
             <CardContent>

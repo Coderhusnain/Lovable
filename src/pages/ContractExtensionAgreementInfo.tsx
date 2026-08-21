@@ -7,9 +7,6 @@ import { useNavigate } from "react-router-dom";
 const InfoBadge = ({ icon: Icon, title, children, className = "" }) => (
   <div className={`bg-white border border-gray-100 rounded-lg p-4 shadow-sm ${className}`}>
     <div className="flex items-start">
-      <div className="flex-shrink-0 mr-3 mt-0.5">
-        <Icon className="w-6 h-6 text-indigo-600" />
-      </div>
       <div>
         <h4 className="font-semibold text-gray-900">{title}</h4>
         <div className="text-gray-700 text-sm mt-1">{children}</div>
@@ -31,11 +28,6 @@ const ContractExtensionAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <FileText className="w-8 h-8 text-indigo-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Contract Extension Agreement Information</h1>
             <p className="text-lg text-gray-600">Contract Extension Agreement • Extension of Contract Agreement</p>
@@ -46,7 +38,6 @@ const ContractExtensionAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 What Is a Contract Extension Agreement?
               </CardTitle>
             </CardHeader>
@@ -68,34 +59,28 @@ const ContractExtensionAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-green-600" />
                 What Should a Draft Contract Extension Agreement Include?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Effective Date:</strong> The date the extension takes effect.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Parties & Signatories:</strong> Full names, addresses, and authorized signatories of all parties.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Original Contract Info:</strong> Title and date of the original contract and the original end date.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>New Termination Date:</strong> The updated extended end date for the agreement.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Amendments:</strong> Any specific changes to the original contract provisions, clearly identified.</p>
                 </div>
 
@@ -107,19 +92,16 @@ const ContractExtensionAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 When Should You Use a Contract Extension Agreement?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When an existing contract is nearing expiration and the parties wish to extend the term.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When parties want to set a new termination date and make limited revisions rather than drafting a new agreement.</p>
                 </div>
 
@@ -131,7 +113,6 @@ const ContractExtensionAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-indigo-600" />
                 Why Use a Contract Extension Agreement on Legalgram?
               </CardTitle>
             </CardHeader>
@@ -159,7 +140,6 @@ const ContractExtensionAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Download Contract Extension Agreement
               </CardTitle>
             </CardHeader>
@@ -187,22 +167,18 @@ const ContractExtensionAgreementInfo = () => {
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Be Specific:</strong> Clearly state the new termination date and any precise amendments.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Attach Originals:</strong> Include the original contract for context and record-keeping.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Legal Review:</strong> Consider a lawyer’s review for longer extensions or complex amendments.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Keep Records:</strong> Save a signed copy and any associated documents for future reference.</p>
                 </div>
               </div>

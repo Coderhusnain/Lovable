@@ -11,9 +11,6 @@ const WarrantyDeedInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-            <Home className="w-10 h-10 text-slate-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Warranty Deed</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             A Warranty Deed transfers property ownership with the highest level of seller warranty — ideal for residential, commercial, and trust transfers.
@@ -37,7 +34,6 @@ const WarrantyDeedInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <MapPin className="w-8 h-8 text-rose-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Property Details</CardTitle>
             </CardHeader>
             <CardContent>
@@ -47,7 +43,6 @@ const WarrantyDeedInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <FileText className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Title Warranty</CardTitle>
             </CardHeader>
             <CardContent>
@@ -57,7 +52,6 @@ const WarrantyDeedInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Home className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Recording</CardTitle>
             </CardHeader>
             <CardContent>

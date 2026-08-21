@@ -78,11 +78,6 @@ const DrywallContractInfo = () => {
         </Button>
 
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Wrench className="w-8 h-8 text-blue-700" />
-            </div>
-          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Drywall Contract Information</h1>
           <p className="text-lg text-gray-600">Drywall Services Agreement • Drywall Contract • Drywall Agreement</p>
         </div>
@@ -91,7 +86,6 @@ const DrywallContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Drywall Contract?
               </CardTitle>
             </CardHeader>
@@ -116,7 +110,6 @@ const DrywallContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-emerald-600" />
                 Why You Need a Drywall Contract
               </CardTitle>
             </CardHeader>
@@ -138,7 +131,6 @@ const DrywallContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-blue-600" />
                 When to Use a Drywall Contract
               </CardTitle>
             </CardHeader>
@@ -158,7 +150,6 @@ const DrywallContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Wrench className="w-5 h-5 mr-2 text-purple-600" />
                 Key Features of the Best Drywall Contract Format
               </CardTitle>
             </CardHeader>
@@ -177,7 +168,6 @@ const DrywallContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                 How Does a Drywall Contract Work?
               </CardTitle>
             </CardHeader>

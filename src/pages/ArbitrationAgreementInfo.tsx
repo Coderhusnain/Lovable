@@ -29,11 +29,6 @@ const ArbitrationAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <FileText className="w-8 h-8 text-indigo-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Arbitration Agreement</h1>
             <p className="text-lg text-gray-600">
@@ -46,7 +41,6 @@ const ArbitrationAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 Arbitration Agreement Information
               </CardTitle>
             </CardHeader>
@@ -67,7 +61,6 @@ const ArbitrationAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-green-600" />
                 Use This Arbitration Agreement on Legalgram For:
               </CardTitle>
             </CardHeader>
@@ -87,7 +80,6 @@ const ArbitrationAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-purple-600" />
                 What is an Arbitration Agreement?
               </CardTitle>
             </CardHeader>
@@ -117,7 +109,6 @@ const ArbitrationAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-emerald-600" />
                 Why You Need an Arbitration Agreement
               </CardTitle>
             </CardHeader>
@@ -137,7 +128,6 @@ const ArbitrationAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Best Format Arbitration Agreement from Legalgram
               </CardTitle>
             </CardHeader>

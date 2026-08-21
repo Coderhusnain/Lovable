@@ -20,7 +20,6 @@ const ConfidentialInformationInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Shield className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Confidential Information Agreement</h1>
             <p className="text-lg text-gray-600">
               Protect sensitive business information with legally binding confidentiality terms
@@ -32,7 +31,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 Other Names of Confidentiality Agreement
               </CardTitle>
             </CardHeader>
@@ -50,7 +48,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Confidentiality Agreement?
               </CardTitle>
             </CardHeader>
@@ -67,7 +64,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Lock className="w-5 h-5 mr-2 text-green-600" />
                 What Information is Protected?
               </CardTitle>
             </CardHeader>
@@ -100,7 +96,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-orange-600" />
                 When to Use a Confidentiality Agreement
               </CardTitle>
             </CardHeader>
@@ -129,7 +124,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-indigo-600" />
                 Key Obligations & Protections
               </CardTitle>
             </CardHeader>
@@ -164,7 +158,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Eye className="w-5 h-5 mr-2 text-orange-600" />
                 Information Exclusions
               </CardTitle>
             </CardHeader>
@@ -196,7 +189,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Scale className="w-5 h-5 mr-2 text-red-600" />
                 Legal Protections & Enforcement
               </CardTitle>
             </CardHeader>
@@ -223,7 +215,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-teal-600" />
                 Agreement Management
               </CardTitle>
             </CardHeader>
@@ -248,7 +239,6 @@ const ConfidentialInformationInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <HelpCircle className="w-5 h-5 mr-2 text-purple-600" />
                 Confidentiality Agreement FAQs
               </CardTitle>
             </CardHeader>

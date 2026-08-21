@@ -20,9 +20,6 @@ import { useNavigate } from "react-router-dom";
 const InfoBadge = ({ icon: Icon, title, children, className = "" }) => (
   <div className={`bg-white border border-gray-100 rounded-lg p-4 shadow-sm ${className}`}>
     <div className="flex items-start">
-      <div className="flex-shrink-0 mr-3 mt-0.5">
-        <Icon className="w-6 h-6 text-indigo-600" />
-      </div>
       <div>
         <h4 className="font-semibold text-gray-900">{title}</h4>
         <div className="text-gray-700 text-sm mt-1">{children}</div>
@@ -48,11 +45,6 @@ const ClinicalTrialContractInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-indigo-100 p-3 rounded-full">
-                <FileText className="w-8 h-8 text-indigo-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Clinical Trial Agreement Information</h1>
             <p className="text-lg text-gray-600">Clinical Trial Agreement • Clinical Trial Agreement Form</p>
@@ -63,7 +55,6 @@ const ClinicalTrialContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 What Is a Clinical Trial Agreement?
               </CardTitle>
             </CardHeader>
@@ -87,34 +78,28 @@ const ClinicalTrialContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Hospital className="w-5 h-5 mr-2 text-green-600" />
                 What Does a Draft Clinical Trial Agreement Cover?
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Investigational Product:</strong> The product or investigational drug/device supplied by the sponsor.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Funding:</strong> Any financial support, funding, or reimbursement provided for the trial.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Confidentiality:</strong> Access to proprietary or confidential information and data protection terms.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Institution Responsibilities:</strong> The institution’s obligation to conduct the trial and deliver research data.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Publications & IP:</strong> Rights related to publication of results and future intellectual property development.</p>
                 </div>
               </div>
@@ -134,17 +119,14 @@ const ClinicalTrialContractInfo = () => {
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When a company or sponsor commissions a clinical trial to test a product.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When you represent an institution that conducts clinical trials and need formal agreements.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p>When you developed a product that must undergo clinical testing before commercialization.</p>
                 </div>
               </div>
@@ -154,7 +136,6 @@ const ClinicalTrialContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-indigo-600" />
                 Why Use the Best Format of Clinical Trial Agreement?
               </CardTitle>
             </CardHeader>
@@ -182,7 +163,6 @@ const ClinicalTrialContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Download Clinical Trial Agreement
               </CardTitle>
             </CardHeader>

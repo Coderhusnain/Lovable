@@ -20,7 +20,6 @@ const AffidavitOfResidenceInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Home className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">What Is an Affidavit of Residence?</h1>
             <p className="text-xl text-gray-600">Complete guide to understanding and creating your Affidavit of Residence</p>
           </div>
@@ -45,7 +44,6 @@ const AffidavitOfResidenceInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use an Affidavit of Residence</h2>
             </div>
             <p className="text-gray-700 mb-4">You may need this legal document if:</p>
@@ -63,7 +61,6 @@ const AffidavitOfResidenceInfo = () => {
           {/* Key Information Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Information in an Affidavit of Residence</h2>
             </div>
             <p className="text-gray-700 mb-6">A valid Affidavit of Residence for the US must include the following details:</p>
@@ -111,7 +108,6 @@ const AffidavitOfResidenceInfo = () => {
           {/* Statement Under Oath Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Scale className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Statement Under Oath</h2>
             </div>
             <p className="text-gray-700 mb-4">As part of this legal affidavit, the affiant affirms under oath that:</p>
@@ -146,7 +142,6 @@ const AffidavitOfResidenceInfo = () => {
           {/* How to Write Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">How to Write an Affidavit of Residence</h2>
             </div>
             <p className="text-gray-700 mb-6">To prepare a custom Affidavit of Residence:</p>
@@ -225,7 +220,6 @@ const AffidavitOfResidenceInfo = () => {
           {/* FAQ Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">FAQs about Affidavit of Residence</h2>
             </div>
             

@@ -18,7 +18,6 @@ const DivorceSettlementAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <Scale className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{doc.title} Guide</h1>
             <p className="text-xl text-gray-600">Complete guide to understanding and creating your {doc.title}</p>
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -47,7 +46,6 @@ const DivorceSettlementAgreementInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Clock className="w-6 h-6 mr-2 text-bright-orange-500" />
               When to Use This Document
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">Use this document when:</p>
@@ -60,7 +58,6 @@ const DivorceSettlementAgreementInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <FileText className="w-6 h-6 mr-2 text-bright-orange-500" />
               What is Included?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">A complete {doc.title} usually contains:</p>
@@ -96,7 +93,6 @@ const DivorceSettlementAgreementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Why Use a Separation Agreement?</h2>
             </div>
             <p className="text-gray-700 mb-6">Using a {doc.title} can help:</p>
@@ -111,7 +107,6 @@ const DivorceSettlementAgreementInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
             </div>
             <div className="space-y-6">
@@ -126,7 +121,6 @@ const DivorceSettlementAgreementInfo = () => {
 
           <section className="bg-bright-orange-50 p-6 rounded-xl">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Scale className="w-6 h-6 mr-2 text-bright-orange-500" />
               Create Your {doc.title} Today
             </h2>
             <p className="text-gray-700 leading-relaxed mb-6">

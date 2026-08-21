@@ -29,7 +29,6 @@ const OfficeSpaceLeaseInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Shield className="w-6 h-6 text-blue-600 mr-2" />
               Why You Need an Office Space Lease Agreement
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -47,7 +46,6 @@ const OfficeSpaceLeaseInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Calendar className="w-6 h-6 text-purple-600 mr-2" />
               When to Use an Office Space Lease Agreement
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -64,7 +62,6 @@ const OfficeSpaceLeaseInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <CheckCircle className="w-6 h-6 text-green-600 mr-2" />
               Key Features of the Best Office Space Lease Format
             </h2>
             <div className="grid gap-4">
@@ -79,7 +76,6 @@ const OfficeSpaceLeaseInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <AlertTriangle className="w-6 h-6 text-amber-600 mr-2" />
               Is an Office Rental Agreement Legally Binding?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
@@ -90,7 +86,6 @@ const OfficeSpaceLeaseInfo = () => {
 
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Users className="w-6 h-6 text-indigo-600 mr-2" />
               How to Draft an Office Space Lease Agreement
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">With Legalgram, you can easily:</p>

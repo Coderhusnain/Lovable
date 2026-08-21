@@ -40,11 +40,6 @@ const CollaborationAgreementInfo = () => {
 
         {/* Header Section */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-br from-amber-200 to-orange-200 p-4 rounded-full">
-              <Handshake className="w-8 h-8 text-amber-700" />
-            </div>
-          </div>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-3">{doc.title}</h1>
           
@@ -66,7 +61,6 @@ const CollaborationAgreementInfo = () => {
         <Card className="mb-8 border-amber-200">
           <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
             <CardTitle className="flex items-center gap-2 text-amber-900">
-              <BookOpen className="w-5 h-5" />
               What Is a Collaboration Agreement?
             </CardTitle>
           </CardHeader>
@@ -85,7 +79,6 @@ const CollaborationAgreementInfo = () => {
         <Card className="mb-8 border-amber-200">
           <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
             <CardTitle className="flex items-center gap-2 text-amber-900">
-              <CheckCircle className="w-5 h-5" />
               When to Use This Agreement
             </CardTitle>
           </CardHeader>
@@ -106,7 +99,6 @@ const CollaborationAgreementInfo = () => {
           <Card className="mb-8 border-amber-200">
             <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
               <CardTitle className="flex items-center gap-2 text-amber-900">
-                <FileText className="w-5 h-5" />
                 What You Need to Prepare
               </CardTitle>
             </CardHeader>
@@ -128,7 +120,6 @@ const CollaborationAgreementInfo = () => {
           <Card className="mb-8 border-amber-200">
             <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
               <CardTitle className="flex items-center gap-2 text-amber-900">
-                <Lock className="w-5 h-5" />
                 Key Protections Included
               </CardTitle>
             </CardHeader>
@@ -150,7 +141,6 @@ const CollaborationAgreementInfo = () => {
           <Card className="mb-8 border-amber-200">
             <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
               <CardTitle className="flex items-center gap-2 text-amber-900">
-                <BookOpen className="w-5 h-5" />
                 Frequently Asked Questions
               </CardTitle>
             </CardHeader>
@@ -176,7 +166,6 @@ const CollaborationAgreementInfo = () => {
           <Card className="mb-8 border-red-200 bg-red-50">
             <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-200">
               <CardTitle className="flex items-center gap-2 text-red-900">
-                <FileText className="w-5 h-5" />
                 Important Legal Disclaimer
               </CardTitle>
             </CardHeader>

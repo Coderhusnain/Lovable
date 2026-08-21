@@ -18,9 +18,6 @@ const FinancialSupportAffidavitInfo = () => {
             </Button>
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <DollarSign className="w-6 h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold">Affidavit of Financial Support</h1>
               <p className="text-muted-foreground">Professional legal draft to confirm financial condition and support details</p>
@@ -33,7 +30,6 @@ const FinancialSupportAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 What is an Affidavit of Financial Support?
               </CardTitle>
             </CardHeader>
@@ -89,7 +85,6 @@ const FinancialSupportAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
                 When to Use an Affidavit of Financial Support
               </CardTitle>
             </CardHeader>
@@ -143,7 +138,6 @@ const FinancialSupportAffidavitInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Download className="w-5 h-5" />
                 Download Affidavit of Financial Support
               </CardTitle>
             </CardHeader>

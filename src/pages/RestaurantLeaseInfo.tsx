@@ -21,7 +21,6 @@ const RestaurantLeaseInfo = () => {
         </Button>
 
         <div className="text-center mb-8">
-          <UtensilsCrossed className="w-16 h-16 mx-auto mb-4 text-blue-600" />
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Restaurant Lease Agreement</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             A Restaurant Lease Agreement is a legal contract between a commercial landlord and a tenant for renting property to operate a restaurant.
@@ -32,7 +31,6 @@ const RestaurantLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
                 What is a Restaurant Lease Agreement?
               </CardTitle>
             </CardHeader>
@@ -51,7 +49,6 @@ const RestaurantLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-green-600" />
                 Why You Need a Restaurant Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -69,7 +66,6 @@ const RestaurantLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 When to Use a Restaurant Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -85,7 +81,6 @@ const RestaurantLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Scale className="w-5 h-5 mr-2 text-indigo-600" />
                 Key Features of the Best Restaurant Lease Agreement Format
               </CardTitle>
             </CardHeader>
@@ -104,7 +99,6 @@ const RestaurantLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Is a Restaurant Lease Agreement Legally Binding?
               </CardTitle>
             </CardHeader>

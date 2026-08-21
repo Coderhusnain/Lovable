@@ -89,7 +89,6 @@ const CondominiumLeaseInfo = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Building className="w-5 h-5 mr-2 text-blue-600" />
               What is a Condominium Lease Agreement?
             </CardTitle>
           </CardHeader>
@@ -114,7 +113,6 @@ const CondominiumLeaseInfo = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="w-5 h-5 mr-2 text-emerald-600" />
               Why You Need a Condominium Lease Agreement
             </CardTitle>
           </CardHeader>
@@ -136,7 +134,6 @@ const CondominiumLeaseInfo = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <CheckCircle className="w-5 h-5 mr-2 text-blue-600" />
               When to Use a Condominium Lease Agreement
             </CardTitle>
           </CardHeader>
@@ -156,7 +153,6 @@ const CondominiumLeaseInfo = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Building className="w-5 h-5 mr-2 text-purple-600" />
               Key Features of the Best Condominium Lease Agreement Format
             </CardTitle>
           </CardHeader>
@@ -175,7 +171,6 @@ const CondominiumLeaseInfo = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="w-5 h-5 mr-2 text-indigo-600" />
               How Does a Condominium Lease Agreement Work?
             </CardTitle>
           </CardHeader>

@@ -47,11 +47,6 @@ const MusicLicenseInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-teal-100 flex items-center justify-center">
-              <Music className="w-10 h-10 text-teal-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{documentContent.title}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Define music usage rights, royalty structures, and fair compensation with legally binding terms
@@ -90,21 +85,18 @@ const MusicLicenseInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <DollarSign className="w-12 h-12 text-teal-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Revenue Generation</h3>
                 <p className="text-sm text-gray-600">Earn fair compensation when your music is used in films, ads, streaming, and other media projects worldwide</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Music className="w-12 h-12 text-teal-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Copyright Ownership</h3>
                 <p className="text-sm text-gray-600">Maintain full ownership of your music while controlling how it is used, credited, and modified</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Shield className="w-12 h-12 text-teal-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Legal Protection</h3>
                 <p className="text-sm text-gray-600">Prevent unauthorized usage, protect against copyright infringement, and enforce your music rights professionally</p>
               </CardContent>

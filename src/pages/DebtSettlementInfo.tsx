@@ -17,9 +17,6 @@ const DebtSettlementInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-pink-100 rounded-lg">
-                <Handshake className="w-8 h-8 text-pink-600" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 whitespace-pre-line">{doc.whatIs}</p>
@@ -40,7 +37,6 @@ const DebtSettlementInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-pink-600" />
                 When to Use
               </h2>
               <ul className="space-y-3">
@@ -58,7 +54,6 @@ const DebtSettlementInfo: React.FC = () => {
           {doc.whatYouNeed && doc.whatYouNeed.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-pink-600" />
                 What You Need
               </h2>
               <ul className="space-y-3">
@@ -76,7 +71,6 @@ const DebtSettlementInfo: React.FC = () => {
           {doc.keyProtections && doc.keyProtections.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CheckCircle className="w-6 h-6 text-pink-600" />
                 Key Protections
               </h2>
               <ul className="space-y-3">
@@ -94,7 +88,6 @@ const DebtSettlementInfo: React.FC = () => {
           {doc.faqs && doc.faqs.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-pink-600" />
                 Frequently Asked Questions
               </h2>
               <div className="space-y-6">

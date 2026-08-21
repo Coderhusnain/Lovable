@@ -32,9 +32,6 @@ const IndependentContractorInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-            <Briefcase className="w-10 h-10 text-blue-600" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Independent Contractor Agreement
           </h1>
@@ -76,7 +73,6 @@ const IndependentContractorInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Scope Definition</CardTitle>
             </CardHeader>
             <CardContent>
@@ -87,7 +83,6 @@ const IndependentContractorInfo = () => {
           </Card>
           <Card className="text-center">
             <CardHeader>
-              <Briefcase className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Legal Protection</CardTitle>
             </CardHeader>
             <CardContent>
@@ -98,7 +93,6 @@ const IndependentContractorInfo = () => {
           </Card>
           <Card className="text-center">
             <CardHeader>
-              <AlertTriangle className="w-8 h-8 text-purple-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Regulatory Compliance</CardTitle>
             </CardHeader>
             <CardContent>

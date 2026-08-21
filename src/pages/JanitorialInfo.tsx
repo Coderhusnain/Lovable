@@ -64,11 +64,6 @@ const JanitorialInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Sparkles className="h-8 w-8 text-blue-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Janitorial Contract Information</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Janitorial Contract • Janitorial Services Agreement • Cleaning Services Agreement

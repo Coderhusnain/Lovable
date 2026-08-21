@@ -20,7 +20,6 @@ const BalloonPaymentPromissoryNoteInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
 
             <div className="mb-2 flex justify-center">
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold uppercase tracking-wide">
@@ -66,7 +65,6 @@ const BalloonPaymentPromissoryNoteInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When to Use a Balloon Payment Promissory Note
               </h2>
@@ -94,7 +92,6 @@ const BalloonPaymentPromissoryNoteInfo = () => {
           {/* Key Requirements Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Key Requirements for a Balloon Payment Promissory Note
               </h2>
@@ -152,7 +149,6 @@ const BalloonPaymentPromissoryNoteInfo = () => {
           {/* How to Create Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 How to Create a Balloon Payment Promissory Note for Free
               </h2>
@@ -205,7 +201,6 @@ const BalloonPaymentPromissoryNoteInfo = () => {
           {/* FAQ Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
             </div>
 

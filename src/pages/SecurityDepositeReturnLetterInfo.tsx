@@ -16,7 +16,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Security Deposit Return Letter Information</h1>
             <p className="text-lg text-gray-600">
               A Security Deposit Return Letter is a formal document used by landlords to notify tenants about the return of their security deposit after moving out.
@@ -28,7 +27,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Security Deposit Return Letter?
               </CardTitle>
             </CardHeader>
@@ -48,7 +46,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Why You Need a Security Deposit Return Letter
               </CardTitle>
             </CardHeader>
@@ -67,7 +64,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 When to Use a Security Deposit Return Letter
               </CardTitle>
             </CardHeader>
@@ -85,7 +81,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Scale className="w-5 h-5 mr-2 text-indigo-600" />
                 Key Features of the Best Security Deposit Return Letter Format
               </CardTitle>
             </CardHeader>
@@ -104,7 +99,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Is a Security Deposit Return Letter Important?
               </CardTitle>
             </CardHeader>
@@ -119,7 +113,6 @@ const SecurityDepositeReturnLetterInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 How to Draft a Security Deposit Return Letter
               </CardTitle>
             </CardHeader>

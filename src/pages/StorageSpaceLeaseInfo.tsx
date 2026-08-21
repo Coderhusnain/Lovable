@@ -21,7 +21,6 @@ const StorageSpaceLeaseInfo = () => {
         </Button>
 
         <div className="text-center mb-8">
-          <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Storage Space Lease Agreement</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             A Storage Space Lease Agreement is a legal contract between a storage owner and a tenant for renting space to store personal or business property.
@@ -32,7 +31,6 @@ const StorageSpaceLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Storage Space Lease Agreement?
               </CardTitle>
             </CardHeader>
@@ -52,7 +50,6 @@ const StorageSpaceLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
                 Why You Need a Storage Space Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -71,7 +68,6 @@ const StorageSpaceLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 When to Use a Storage Space Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -91,7 +87,6 @@ const StorageSpaceLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2" />
                 Who Should Use This Agreement
               </CardTitle>
             </CardHeader>
@@ -106,7 +101,6 @@ const StorageSpaceLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Scale className="w-5 h-5 mr-2" />
                 Key Features of the Best Storage Space Lease Agreement Format
               </CardTitle>
             </CardHeader>
@@ -124,7 +118,6 @@ const StorageSpaceLeaseInfo = () => {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2 text-amber-600" />
               Is a Storage Space Lease Agreement Important?
             </CardTitle>
           </CardHeader>

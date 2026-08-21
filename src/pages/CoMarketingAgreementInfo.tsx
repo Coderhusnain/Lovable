@@ -40,11 +40,6 @@ const CoMarketingAgreementInfo = () => {
 
         {/* Header Section */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-br from-fuchsia-200 to-pink-200 p-4 rounded-full">
-              <Megaphone className="w-8 h-8 text-fuchsia-700" />
-            </div>
-          </div>
           
           <h1 className="text-4xl font-bold text-gray-900 mb-3">{doc.title}</h1>
           
@@ -94,9 +89,6 @@ const CoMarketingAgreementInfo = () => {
                 <div className="space-y-3">
                   {doc.whenToUse.map((item, idx) => (
                     <div key={idx} className="flex items-start">
-                      <div className="flex-shrink-0 mr-3 mt-1">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      </div>
                       <p className="text-gray-700">{item}</p>
                     </div>
                   ))}
@@ -174,7 +166,6 @@ const CoMarketingAgreementInfo = () => {
           <Card className="border-0 shadow-lg bg-white">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-fuchsia-700" />
                 Ready to Create Your {doc.title}?
               </CardTitle>
             </CardHeader>

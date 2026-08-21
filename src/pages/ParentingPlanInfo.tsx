@@ -18,7 +18,6 @@ const ParentingPlanInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">{doc.title}</h1>
             <p className="text-xl text-gray-600">A clear family-law plan for custody, visitation, and co-parenting responsibilities</p>
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -42,7 +41,6 @@ const ParentingPlanInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">When to Use a {doc.title}</h2>
             </div>
             <p className="text-gray-700 mb-4">Use this {doc.title} when:</p>
@@ -57,7 +55,6 @@ const ParentingPlanInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Key Benefits of a {doc.title}</h2>
             </div>
             <p className="text-gray-700 mb-6">A proper {doc.title} helps:</p>
@@ -72,7 +69,6 @@ const ParentingPlanInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">What to Include in a {doc.title}</h2>
             </div>
             <p className="text-gray-700 mb-6">Your {doc.title} should include:</p>
@@ -109,7 +105,6 @@ const ParentingPlanInfo = () => {
 
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
             </div>
             <div className="space-y-6">

@@ -47,11 +47,6 @@ const MarketingAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-blue-100 p-3 rounded-full">
-                <FileText className="w-8 h-8 text-blue-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Marketing Agreement Information
@@ -67,7 +62,6 @@ const MarketingAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
                 What Is a Marketing Agreement?
               </CardTitle>
             </CardHeader>
@@ -82,7 +76,6 @@ const MarketingAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertCircle className="w-5 h-5 mr-2 text-orange-600" />
                 When Should You Use a Marketing Agreement?
               </CardTitle>
             </CardHeader>
@@ -102,7 +95,6 @@ const MarketingAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
                 Frequently Asked Questions
               </CardTitle>
               <CardDescription>
@@ -144,7 +136,6 @@ const MarketingAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
                 Key Protections
               </CardTitle>
               <CardDescription>

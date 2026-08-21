@@ -24,11 +24,6 @@ const FeeAgreementInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="bg-amber-100 p-3 rounded-full">
-                <DollarSign className="w-8 h-8 text-amber-700" />
-              </div>
-            </div>
 
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{doc.title}</h1>
             {doc.otherNames && doc.otherNames.length > 0 && (
@@ -41,7 +36,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-sky-600" />
                 What Is a Fee Agreement?
               </CardTitle>
             </CardHeader>
@@ -53,7 +47,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-green-600" />
                 When Should You Use a Fee Agreement?
               </CardTitle>
             </CardHeader>
@@ -61,7 +54,6 @@ const FeeAgreementInfo = () => {
               <div className="space-y-3 text-gray-700">
                 {doc.whenToUse && doc.whenToUse.map((use: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p>{use}</p>
                   </div>
                 ))}
@@ -72,7 +64,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-purple-600" />
                 Frequently Asked Questions
               </CardTitle>
             </CardHeader>
@@ -105,7 +96,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
                 Key Protections
               </CardTitle>
             </CardHeader>
@@ -113,7 +103,6 @@ const FeeAgreementInfo = () => {
               <div className="grid md:grid-cols-2 gap-3">
                 {doc.keyProtections && doc.keyProtections.map((protection: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-gray-600 text-sm">{protection}</p>
                   </div>
                 ))}
@@ -124,7 +113,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <BookOpen className="w-5 h-5 mr-2 text-amber-600" />
                 What You'll Need
               </CardTitle>
             </CardHeader>
@@ -132,7 +120,6 @@ const FeeAgreementInfo = () => {
               <div className="space-y-2">
                 {doc.whatYouNeed && doc.whatYouNeed.map((need: string, idx: number) => (
                   <div key={idx} className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                     <p className="text-gray-600">{need}</p>
                   </div>
                 ))}
@@ -143,7 +130,6 @@ const FeeAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Download className="w-5 h-5 mr-2 text-amber-600" />
                 Download Fee Agreement
               </CardTitle>
             </CardHeader>
@@ -171,27 +157,22 @@ const FeeAgreementInfo = () => {
             <CardContent>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Be Specific:</strong> Clearly outline the exact services to be provided, leaving no room for ambiguity.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Define Compensation:</strong> Specify the fee structure, whether it's a lump sum, hourly rate, or milestone-based payment.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Set Clear Timeline:</strong> Include start and end dates, as well as any project milestones or deadlines.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Payment Terms:</strong> Outline payment schedule, due dates, and accepted payment methods.</p>
                 </div>
 
                 <div className="flex items-start">
-                  <CheckCircle className="w-5 h-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" />
                   <p><strong>Get Legal Advice:</strong> For significant service contracts, have a lawyer review the agreement before signing.</p>
                 </div>
               </div>

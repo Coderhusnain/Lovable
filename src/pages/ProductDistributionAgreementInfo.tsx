@@ -22,9 +22,6 @@ const ProductDistributionAgreementInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Package className="w-8 h-8 text-green-600" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 leading-relaxed whitespace-pre-line">{doc.whatIs}</p>
@@ -45,7 +42,6 @@ const ProductDistributionAgreementInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-green-600" />
                 When to Use
               </h2>
               <ul className="space-y-3">
@@ -63,7 +59,6 @@ const ProductDistributionAgreementInfo: React.FC = () => {
           {doc.keyProtections && doc.keyProtections.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Package className="w-6 h-6 text-green-600" />
                 Key Protections
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
@@ -117,7 +112,6 @@ const ProductDistributionAgreementInfo: React.FC = () => {
           {doc.whatYouNeed && doc.whatYouNeed.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CheckCircle className="w-6 h-6 text-green-600" />
                 What You Need
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -146,7 +140,6 @@ const ProductDistributionAgreementInfo: React.FC = () => {
           {doc.estimatedTime && (
             <div className="mb-12 flex justify-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-200 rounded-full">
-                <Clock className="w-5 h-5 text-green-600" />
                 <span className="text-sm font-medium text-green-700">
                   Estimated completion time: {doc.estimatedTime}
                 </span>

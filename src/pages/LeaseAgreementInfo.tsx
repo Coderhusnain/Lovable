@@ -83,9 +83,6 @@ const LeaseAgreementInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-amber-100 rounded-lg">
-                <Building2 className="w-8 h-8 text-amber-600" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 whitespace-pre-line leading-relaxed">{doc.whatIs}</p>
@@ -106,7 +103,6 @@ const LeaseAgreementInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-amber-600" />
                 When to Use
               </h2>
               <ul className="space-y-3">
@@ -124,7 +120,6 @@ const LeaseAgreementInfo: React.FC = () => {
           {doc.whatYouNeed && doc.whatYouNeed.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-amber-600" />
                 What You Need
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -220,7 +215,6 @@ export default LeaseAgreementInfo;
           {/* When to Use Section */}
           <section>
             <h2 className="text-2xl font-bold mb-4 text-gray-900 flex items-center">
-              <Clock className="w-6 h-6 text-orange-500 mr-2" />
               When Should You Use an Offer to Lease Agreement?
             </h2>
             
@@ -278,7 +272,6 @@ export default LeaseAgreementInfo;
             <div className="space-y-6">
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-3 text-gray-900 flex items-center">
-                  <DollarSign className="w-5 h-5 text-green-600 mr-2" />
                   1. Base Rent
                 </h3>
                 <p className="text-gray-700 mb-2">
@@ -291,7 +284,6 @@ export default LeaseAgreementInfo;
 
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-3 text-gray-900 flex items-center">
-                  <Building2 className="w-5 h-5 text-blue-500 mr-2" />
                   2. Permitted Use
                 </h3>
                 <p className="text-gray-700">
@@ -301,7 +293,6 @@ export default LeaseAgreementInfo;
 
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-3 text-gray-900 flex items-center">
-                  <Clock className="w-5 h-5 text-orange-500 mr-2" />
                   3. Lease Commencement Date
                 </h3>
                 <p className="text-gray-700 mb-2">
@@ -321,7 +312,6 @@ export default LeaseAgreementInfo;
 
               <div className="bg-gray-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold mb-3 text-gray-900 flex items-center">
-                  <Shield className="w-5 h-5 text-red-500 mr-2" />
                   5. Security Deposit
                 </h3>
                 <div className="space-y-2 text-gray-700">
@@ -564,24 +554,20 @@ export default LeaseAgreementInfo;
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-gray-700">Create your Offer to Lease for commercial property</span>
                 </div>
                 
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-gray-700">Use our guided form to draft online for free</span>
                 </div>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-gray-700">Review and have it reviewed by legal counsel</span>
                 </div>
                 
                 <div className="flex items-center space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
                   <span className="text-gray-700">Submit to landlord and negotiate terms</span>
                 </div>
               </div>

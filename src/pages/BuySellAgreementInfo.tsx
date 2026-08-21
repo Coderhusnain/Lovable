@@ -20,7 +20,6 @@ const BuySellAgreementInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <Handshake className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Buy-Sell Agreement</h1>
             <p className="text-lg text-gray-600">
               Essential legal document for business owners to manage ownership transfers and protect business continuity
@@ -32,7 +31,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Buy-Sell Agreement?
               </CardTitle>
             </CardHeader>
@@ -55,7 +53,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 Alternative Names
               </CardTitle>
             </CardHeader>
@@ -73,7 +70,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Why Use a Buy-Sell Agreement?
               </CardTitle>
             </CardHeader>
@@ -108,7 +104,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 When Should You Use This Agreement?
               </CardTitle>
             </CardHeader>
@@ -140,7 +135,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2 text-purple-600" />
                 Key Features
               </CardTitle>
             </CardHeader>
@@ -173,7 +167,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Key Components
               </CardTitle>
             </CardHeader>
@@ -206,7 +199,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 Who Needs a Buy-Sell Agreement?
               </CardTitle>
             </CardHeader>
@@ -237,7 +229,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Building className="w-5 h-5 mr-2 text-orange-600" />
                 Triggering Events for Buy-Sell
               </CardTitle>
             </CardHeader>
@@ -270,7 +261,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-2 text-green-600" />
                 Valuation & Payment Terms
               </CardTitle>
             </CardHeader>
@@ -303,7 +293,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-blue-600" />
                 Transfer Restrictions & Rights
               </CardTitle>
             </CardHeader>
@@ -337,7 +326,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Important Legal Considerations
               </CardTitle>
             </CardHeader>
@@ -378,7 +366,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                 Additional Provisions
               </CardTitle>
             </CardHeader>
@@ -411,7 +398,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Handshake className="w-5 h-5 mr-2 text-purple-600" />
                 Benefits of Buy-Sell Agreements
               </CardTitle>
             </CardHeader>
@@ -444,7 +430,6 @@ const BuySellAgreementInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <HelpCircle className="w-5 h-5 mr-2 text-purple-600" />
                 Frequently Asked Questions
               </CardTitle>
             </CardHeader>

@@ -41,9 +41,6 @@ const EvictionNoticeInfo = () => {
             </Button>
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Home className="w-6 h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold">Eviction Notice Information</h1>
               <p className="text-muted-foreground">Formal notice for lease violations and tenant compliance</p>
@@ -55,7 +52,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 What is an Eviction Notice?
               </CardTitle>
             </CardHeader>
@@ -79,7 +75,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
                 Why You Need an Eviction Notice
               </CardTitle>
             </CardHeader>
@@ -103,7 +98,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5" />
                 When to Use an Eviction Notice
               </CardTitle>
             </CardHeader>
@@ -123,7 +117,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
                 Types of Eviction Notices
               </CardTitle>
             </CardHeader>
@@ -148,7 +141,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
                 Key Features of the Best Eviction Notice Format
               </CardTitle>
             </CardHeader>
@@ -167,7 +159,6 @@ const EvictionNoticeInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Scale className="w-5 h-5" />
                 How Does an Eviction Notice Work?
               </CardTitle>
             </CardHeader>
@@ -264,7 +255,6 @@ const EvictionNoticeInfo = () => {
           <Card className="bg-primary/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
                 Create Your Eviction Notice Now
               </CardTitle>
             </CardHeader>

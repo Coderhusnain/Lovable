@@ -32,9 +32,6 @@ const LicenseAgreementInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-            <FileText className="w-10 h-10 text-orange-600" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             License Agreement
           </h1>
@@ -77,7 +74,6 @@ const LicenseAgreementInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <FileText className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">IP Commercial Protection</CardTitle>
             </CardHeader>
             <CardContent>
@@ -89,7 +85,6 @@ const LicenseAgreementInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Licensing Terms</CardTitle>
             </CardHeader>
             <CardContent>
@@ -101,7 +96,6 @@ const LicenseAgreementInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <AlertTriangle className="w-8 h-8 text-purple-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Legal Enforcement</CardTitle>
             </CardHeader>
             <CardContent>

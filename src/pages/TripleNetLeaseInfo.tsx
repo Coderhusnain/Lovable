@@ -20,7 +20,6 @@ const TripleNetLeaseInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold">Triple Net Lease Agreement</h1>
             <p className="text-muted-foreground">
               A commercial lease where tenants are responsible for property taxes, building insurance, and maintenance expenses
@@ -32,7 +31,6 @@ const TripleNetLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
                 What is a Triple Net Lease Agreement?
               </CardTitle>
             </CardHeader>
@@ -54,7 +52,6 @@ const TripleNetLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Shield className="w-5 h-5 mr-2" />
                 Why Use a Triple Net Lease Agreement?
               </CardTitle>
             </CardHeader>
@@ -76,7 +73,6 @@ const TripleNetLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Edit3 className="w-5 h-5 mr-2" />
                 When to Use a Triple Net Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -150,7 +146,6 @@ const TripleNetLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Edit3 className="w-5 h-5 mr-2" />
                 How to Draft a Triple Net Lease Agreement
               </CardTitle>
             </CardHeader>
@@ -172,7 +167,6 @@ const TripleNetLeaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <HelpCircle className="w-5 h-5 mr-2" />
                 Triple Net Lease Agreement FAQs
               </CardTitle>
             </CardHeader>

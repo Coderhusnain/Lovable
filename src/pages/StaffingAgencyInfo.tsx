@@ -11,9 +11,6 @@ const StaffingAgencyInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
-            <Users className="w-10 h-10 text-emerald-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Staffing Agency Contract</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             A Staffing Agency Contract sets clear expectations for recruitment services, placement fees, and
@@ -41,7 +38,6 @@ const StaffingAgencyInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <Briefcase className="w-8 h-8 text-emerald-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Fees</CardTitle>
             </CardHeader>
             <CardContent>
@@ -51,7 +47,6 @@ const StaffingAgencyInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Clock className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Replacement Guarantee</CardTitle>
             </CardHeader>
             <CardContent>
@@ -61,7 +56,6 @@ const StaffingAgencyInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Users className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Compliance</CardTitle>
             </CardHeader>
             <CardContent>

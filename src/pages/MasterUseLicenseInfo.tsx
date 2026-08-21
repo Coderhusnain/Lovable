@@ -47,11 +47,6 @@ const MasterUseLicenseInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center">
-              <Music className="w-10 h-10 text-indigo-600" />
-            </div>
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">{documentContent.title}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Establish clear music licensing rights with legally binding terms and fair compensation
@@ -90,21 +85,18 @@ const MasterUseLicenseInfo = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Music className="w-12 h-12 text-indigo-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Usage Rights Control</h3>
                 <p className="text-sm text-gray-600">Clearly define exactly how your music can be used, in which formats, and for what duration</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Fair Compensation</h3>
                 <p className="text-sm text-gray-600">Establish clear payment terms and royalty structures for music licensing and use</p>
               </CardContent>
             </Card>
             <Card className="text-center">
               <CardContent className="pt-6">
-                <AlertTriangle className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="font-bold text-gray-900 mb-2">Legal Protection</h3>
                 <p className="text-sm text-gray-600">Protect ownership rights, prevent unauthorized usage, and resolve disputes professionally</p>
               </CardContent>

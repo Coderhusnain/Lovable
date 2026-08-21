@@ -26,7 +26,6 @@ const LotteryPoolContractInfo = () => {
           </Button>
 
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-4">
               {doc.title || "Lottery Pool Agreement"}
             </h1>
@@ -73,7 +72,6 @@ const LotteryPoolContractInfo = () => {
           {/* When to Use Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Clock className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 When to Use a Lottery Pool Contract
               </h2>
@@ -102,7 +100,6 @@ const LotteryPoolContractInfo = () => {
           {/* Key Requirements Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Shield className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Download Lottery Pool Agreement - Legalgram
               </h2>
@@ -124,7 +121,6 @@ const LotteryPoolContractInfo = () => {
           {/* Sample Section */}
           <section>
             <div className="flex items-center mb-4">
-              <CheckCircle className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Sample Lottery Pool Agreement
               </h2>
@@ -145,7 +141,6 @@ const LotteryPoolContractInfo = () => {
           {/* FAQ Section */}
           <section>
             <div className="flex items-center mb-4">
-              <Users className="w-6 h-6 text-bright-orange-500 mr-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Frequently Asked Questions
               </h2>

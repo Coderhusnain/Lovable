@@ -704,7 +704,6 @@ const GeneralPowerOfAttorneyForm = () => {
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           <div className="text-center mb-8">
-            <Scale className="w-16 h-16 text-bright-orange-500 mx-auto mb-4" />
             <h1 className="text-4xl font-bold mb-2">{docInfo.title}</h1>
             <p className="text-gray-600">Complete each step to generate your document</p>
           </div>

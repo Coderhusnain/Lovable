@@ -18,9 +18,6 @@ const ServicesContractInfo = () => {
             </Button>
           </Link>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Briefcase className="w-6 h-6 text-primary" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold">Services Contract</h1>
               <p className="text-muted-foreground">Professional service agreements for business relationships</p>
@@ -33,7 +30,6 @@ const ServicesContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
                 What is a Contract for Services?
               </CardTitle>
             </CardHeader>
@@ -51,7 +47,6 @@ const ServicesContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5" />
                 When Should You Use a Contract for Services?
               </CardTitle>
             </CardHeader>
@@ -146,7 +141,6 @@ const ServicesContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="w-5 h-5" />
                 Essential Elements of a Valid Contract
               </CardTitle>
             </CardHeader>
@@ -208,7 +202,6 @@ const ServicesContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
                 Contract Creation Process
               </CardTitle>
             </CardHeader>
@@ -304,7 +297,6 @@ const ServicesContractInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5" />
                 Why Choose Legalgram for Your Service Contracts?
               </CardTitle>
             </CardHeader>

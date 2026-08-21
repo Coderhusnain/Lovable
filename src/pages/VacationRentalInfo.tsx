@@ -16,9 +16,6 @@ const VacationRentalInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-amber-100 rounded-lg">
-                <Home className="w-8 h-8 text-amber-600" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">Vacation Rental Agreement</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 leading-relaxed">{info.definition}</p>
@@ -45,7 +42,6 @@ const VacationRentalInfo: React.FC = () => {
           {info.whenToUse && info.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-amber-600" />
                 When to Use
               </h2>
               <ul className="space-y-3">
@@ -92,7 +88,6 @@ const VacationRentalInfo: React.FC = () => {
           {info.whatIncludes && info.whatIncludes.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-amber-600" />
                 What's Included
               </h2>
               <div className="space-y-4">

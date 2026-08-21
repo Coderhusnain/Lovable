@@ -13,9 +13,6 @@ const GeneralContractInfo = () => {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-6">
-            <Package className="w-10 h-10 text-orange-600" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             General Contract for Products
           </h1>
@@ -62,7 +59,6 @@ const GeneralContractInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <FileText className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Transaction Terms</CardTitle>
             </CardHeader>
             <CardContent>
@@ -74,7 +70,6 @@ const GeneralContractInfo = () => {
           
           <Card className="text-center">
             <CardHeader>
-              <Truck className="w-8 h-8 text-green-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Delivery Protection</CardTitle>
             </CardHeader>
             <CardContent>
@@ -86,7 +81,6 @@ const GeneralContractInfo = () => {
           
           <Card className="text-center">
             <CardHeader>
-              <Shield className="w-8 h-8 text-purple-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Legal Protection</CardTitle>
             </CardHeader>
             <CardContent>
@@ -186,7 +180,6 @@ const GeneralContractInfo = () => {
         <Card className="mb-8 border-amber-200 bg-amber-50">
           <CardHeader>
             <CardTitle className="text-xl text-amber-800 flex items-center">
-              <AlertTriangle className="w-6 h-6 mr-2" />
               Important Legal Considerations
             </CardTitle>
           </CardHeader>

@@ -15,9 +15,6 @@ const LimousineInfo: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-gray-100 rounded-lg">
-                <Car className="w-8 h-8 text-gray-700" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 whitespace-pre-line leading-relaxed">{doc.whatIs}</p>
@@ -36,7 +33,6 @@ const LimousineInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-gray-700" />
                 When to Use
               </h2>
               <ul className="space-y-3">

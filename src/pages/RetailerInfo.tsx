@@ -11,9 +11,6 @@ const RetailerInfo = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mx-auto w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-6">
-            <ShoppingCart className="w-10 h-10 text-amber-700" />
-          </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Retailer Agreement</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             A written Retailer Agreement helps wholesalers and retailers stay aligned on products, payments, and commercial expectations.
@@ -37,7 +34,6 @@ const RetailerInfo = () => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader>
-              <Truck className="w-8 h-8 text-amber-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Reliable Supply</CardTitle>
             </CardHeader>
             <CardContent>
@@ -47,7 +43,6 @@ const RetailerInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <Building className="w-8 h-8 text-indigo-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Clear Pricing</CardTitle>
             </CardHeader>
             <CardContent>
@@ -57,7 +52,6 @@ const RetailerInfo = () => {
 
           <Card className="text-center">
             <CardHeader>
-              <ShoppingCart className="w-8 h-8 text-blue-600 mx-auto mb-2" />
               <CardTitle className="text-lg">Brand Protection</CardTitle>
             </CardHeader>
             <CardContent>

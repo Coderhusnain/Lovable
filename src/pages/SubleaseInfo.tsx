@@ -20,7 +20,6 @@ const SubleaseInfo = () => {
           </Button>
           
           <div className="text-center mb-8">
-            <FileText className="w-16 h-16 mx-auto mb-4 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Sublease Agreement</h1>
             <p className="text-lg text-gray-600">
               A professionally written Sublease Agreement helps tenants and subtenants clearly define responsibilities and avoid disputes.
@@ -32,7 +31,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2 text-blue-600" />
                 What is a Sublease Agreement?
               </CardTitle>
             </CardHeader>
@@ -53,7 +51,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 Why You Need a Sublease Agreement
               </CardTitle>
             </CardHeader>
@@ -73,7 +70,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2 text-purple-600" />
                 When to Use a Sublease Agreement
               </CardTitle>
             </CardHeader>
@@ -92,7 +88,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-orange-600" />
                 Key Features of the Best Sublease Agreement Format
               </CardTitle>
             </CardHeader>
@@ -112,7 +107,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
                 Is a Sublease Agreement Legally Binding?
               </CardTitle>
             </CardHeader>
@@ -125,7 +119,6 @@ const SubleaseInfo = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Edit3 className="w-5 h-5 mr-2 text-indigo-600" />
                 How to Draft a Sublease Agreement
               </CardTitle>
             </CardHeader>
@@ -146,7 +139,6 @@ const SubleaseInfo = () => {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Scale className="w-5 h-5 mr-2 text-blue-600" />
               Sublease Agreement FAQs
             </CardTitle>
           </CardHeader>

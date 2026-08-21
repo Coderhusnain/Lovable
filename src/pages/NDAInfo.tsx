@@ -17,9 +17,6 @@ const NDAInfo: React.FC = () => {
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Shield className="w-8 h-8 text-blue-600" />
-              </div>
               <h1 className="text-4xl font-bold text-gray-900">{doc.title}</h1>
             </div>
             <p className="text-lg text-gray-700 mb-6 whitespace-pre-line">{doc.whatIs}</p>
@@ -49,7 +46,6 @@ const NDAInfo: React.FC = () => {
           {doc.whenToUse && doc.whenToUse.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-blue-600" />
                 When Should You Use This Agreement?
               </h2>
               <ul className="space-y-3">
@@ -67,7 +63,6 @@ const NDAInfo: React.FC = () => {
           {doc.keyProtections && doc.keyProtections.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-green-600" />
                 Key Protections
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -108,7 +103,6 @@ const NDAInfo: React.FC = () => {
           {doc.faqs && doc.faqs.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <HelpCircle className="w-6 h-6 text-purple-600" />
                 Frequently Asked Questions
               </h2>
               <div className="space-y-4">
