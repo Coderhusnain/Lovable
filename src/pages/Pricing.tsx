@@ -6,7 +6,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check, Star, Lock, MousePointerClick, FileCheck, Receipt, ArrowRight } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import { OPEN_GRAM_AI_EVENT } from "@/components/chat/ChatWidget";
 
 const fadeUp = {
@@ -111,10 +111,10 @@ const plans: PlanDef[] = [
 ];
 
 const trustStrip = [
-  { icon: FileCheck, text: "Attorney-drafted, state-specific templates" },
-  { icon: Lock, text: "Bank-level encryption on every document" },
-  { icon: MousePointerClick, text: "One-click cancellation" },
-  { icon: Receipt, text: "No hidden fees, no auto-billed add-ons" }
+  { text: "Attorney-drafted, state-specific templates" },
+  { text: "Bank-level encryption on every document" },
+  { text: "One-click cancellation" },
+  { text: "No hidden fees, no auto-billed add-ons" }
 ];
 
 type Cell = string | boolean;
@@ -313,7 +313,7 @@ const Pricing = () => {
                 >
                   {plan.popular && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 px-4 py-1.5 text-xs font-semibold text-white shadow-lg whitespace-nowrap">
-                      <Star className="h-3.5 w-3.5 fill-current" /> Most Popular
+                      Most Popular
                     </div>
                   )}
 
@@ -369,7 +369,7 @@ const Pricing = () => {
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
             {trustStrip.map((t) => (
               <span key={t.text} className="inline-flex items-center gap-2 text-sm text-gray-700">
-                <t.icon className="h-4 w-4 text-bright-orange-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-bright-orange-500 shrink-0" />
                 {t.text}
               </span>
             ))}
@@ -406,7 +406,7 @@ const Pricing = () => {
                           p.popular ? "text-bright-orange-600" : "text-gray-900"
                         )}
                       >
-                        {p.popular && <Star className="inline h-4 w-4 fill-current -mt-1 mr-1" />}
+                        
                         {p.name}
                       </span>
                     </th>
