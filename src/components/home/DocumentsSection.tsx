@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, ScrollText, Briefcase, FileLock2, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { memo } from "react";
 
 const documents = [
   {
-    icon: Home,
     number: "1",
     title: "Residential Lease Agreement",
     description:
@@ -14,7 +13,6 @@ const documents = [
     to: "/documents/lease-agreement"
   },
   {
-    icon: ScrollText,
     number: "2",
     title: "Last Will and Testament",
     description:
@@ -23,7 +21,6 @@ const documents = [
     to: "/documents/lastwill"
   },
   {
-    icon: Briefcase,
     number: "3",
     title: "Independent Contractor Agreement",
     description:
@@ -32,7 +29,6 @@ const documents = [
     to: "/documents/independent-contractor"
   },
   {
-    icon: FileLock2,
     number: "4",
     title: "Non-Disclosure Agreement (NDA)",
     description:
@@ -62,17 +58,10 @@ const DocumentsSection = () => {
           {documents.map((doc) => (
             <div
               key={doc.title}
-              className="flex flex-col bg-white rounded-2xl p-7 border border-gray-200 hover:border-bright-orange-300 hover:shadow-xl transition-all duration-300"
+              className="flex flex-col bg-white rounded-2xl pt-6 px-7 pb-7 border border-gray-200 border-t-[3px] border-t-bright-orange-500 hover:border-bright-orange-300 hover:shadow-xl transition-all duration-300"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="relative">
-                  <div className="bg-bright-orange-100 rounded-xl w-12 h-12 flex items-center justify-center">
-                    <doc.icon className="h-6 w-6 text-bright-orange-500" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 bg-bright-orange-500 text-white text-xs font-bold h-5 w-5 rounded-full flex items-center justify-center">
-                    {doc.number}
-                  </span>
-                </div>
+              <div className="flex items-baseline gap-3 mb-4">
+                <span className="text-3xl font-extrabold text-bright-orange-500 leading-none">0{doc.number}</span>
                 <h3 className="text-lg font-bold text-gray-900 leading-snug">{doc.title}</h3>
               </div>
               <p className="text-gray-600 leading-relaxed mb-5 flex-grow">{doc.description}</p>

@@ -1,5 +1,4 @@
 import { memo, useState, useEffect, useRef } from "react";
-import { FileText, Map, Clock, ShieldCheck, Scale } from "lucide-react";
 
 // Animated counter hook
 const useCountUp = (end: number, duration: number = 2000) => {
@@ -53,21 +52,17 @@ const useCountUp = (end: number, duration: number = 2000) => {
 };
 
 const StatItem = ({ stat, index }: { stat: any, index: number }) => {
-  const Icon = stat.icon;
   const { count, elementRef } = useCountUp(stat.value, 2000 + (index * 200));
-  
+
   return (
-    <div 
+    <div
       ref={elementRef}
-      className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10 hover:transform hover:-translate-y-2 transition-all duration-300"
+      className="text-center bg-white/5 backdrop-blur-sm rounded-xl pt-7 px-6 pb-8 border border-white/15 border-t-[3px] border-t-white/70 hover:transform hover:-translate-y-2 transition-all duration-300"
     >
-      <div className="mx-auto bg-gradient-to-br from-bright-orange-400 to-bright-orange-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-bright-orange-500/20">
-        <Icon className="h-8 w-8 text-white" />
-      </div>
-      <h3 className="text-4xl md:text-5xl font-bold mb-2 text-white">
+      <h3 className="text-5xl md:text-6xl font-extrabold mb-3 text-white leading-none">
         {count}{stat.suffix}
       </h3>
-      <p className="text-xl font-medium mb-2 text-white">{stat.label}</p>
+      <p className="text-lg font-bold mb-2 text-white">{stat.label}</p>
       <p className="text-sm text-white/70">{stat.description}</p>
     </div>
   );
@@ -76,35 +71,30 @@ const StatItem = ({ stat, index }: { stat: any, index: number }) => {
 const StatsSection = () => {
   const stats = [
     {
-      icon: FileText,
       value: 100,
       suffix: "+",
       label: "Legal Documents",
       description: "Ready-to-use templates drafted by qualified lawyers"
     },
     {
-      icon: Map,
       value: 50,
       suffix: " States",
       label: "Nationwide Coverage",
       description: "Every document reviewed for US jurisdictional compliance"
     },
     {
-      icon: Clock,
       value: 24,
       suffix: "/7",
       label: "AI-Powered Access",
       description: "Draft documents and review contracts anytime"
     },
     {
-      icon: ShieldCheck,
       value: 100,
       suffix: "%",
       label: "Money-Back Guarantee",
       description: "Not satisfied? Full refund, no questions"
     },
     {
-      icon: Scale,
       value: 9,
       suffix: "+",
       label: "Practice Areas",

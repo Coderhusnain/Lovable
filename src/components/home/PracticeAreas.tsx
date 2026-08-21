@@ -1,17 +1,6 @@
 import { memo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Building2,
-  Rocket,
-  HeartHandshake,
-  ScrollText,
-  Briefcase,
-  Gavel,
-  FileSignature,
-  Lightbulb,
-  GraduationCap,
-  ArrowRight
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const PracticeAreas = () => {
@@ -49,15 +38,15 @@ const PracticeAreas = () => {
   };
 
   const areas = [
-    { icon: Building2, name: "Real Estate", path: "/documents?search=lease", color: "from-blue-500 to-blue-600" },
-    { icon: Rocket, name: "Business Formation", path: "/documents?search=business+formation", color: "from-amber-500 to-amber-600" },
-    { icon: HeartHandshake, name: "Family Law", path: "/documents?search=family", color: "from-green-500 to-green-600" },
-    { icon: ScrollText, name: "Estate Planning", path: "/documents?search=estate", color: "from-purple-500 to-purple-600" },
-    { icon: Briefcase, name: "Employment", path: "/documents?search=employment", color: "from-rose-500 to-rose-600" },
-    { icon: Gavel, name: "Civil Litigation", path: "/documents?search=dispute", color: "from-indigo-500 to-indigo-600" },
-    { icon: FileSignature, name: "Contracts", path: "/documents?search=contract", color: "from-cyan-500 to-cyan-600" },
-    { icon: Lightbulb, name: "Intellectual Property", path: "/documents?search=intellectual+property", color: "from-red-500 to-red-600" },
-    { icon: GraduationCap, name: "Education Law", path: "/documents?search=education", color: "from-emerald-500 to-emerald-600" }
+    { name: "Real Estate", path: "/documents?search=lease", color: "from-blue-500 to-blue-600" },
+    { name: "Business Formation", path: "/documents?search=business+formation", color: "from-amber-500 to-amber-600" },
+    { name: "Family Law", path: "/documents?search=family", color: "from-green-500 to-green-600" },
+    { name: "Estate Planning", path: "/documents?search=estate", color: "from-purple-500 to-purple-600" },
+    { name: "Employment", path: "/documents?search=employment", color: "from-rose-500 to-rose-600" },
+    { name: "Civil Litigation", path: "/documents?search=dispute", color: "from-indigo-500 to-indigo-600" },
+    { name: "Contracts", path: "/documents?search=contract", color: "from-cyan-500 to-cyan-600" },
+    { name: "Intellectual Property", path: "/documents?search=intellectual+property", color: "from-red-500 to-red-600" },
+    { name: "Education Law", path: "/documents?search=education", color: "from-emerald-500 to-emerald-600" }
   ];
 
   return (
@@ -75,23 +64,20 @@ const PracticeAreas = () => {
         
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8">
           {areas.map((area, index) => {
-            const Icon = area.icon;
             const isVisible = visibleItems.includes(index);
-            
+
             return (
-              <Link 
-                to={area.path} 
+              <Link
+                to={area.path}
                 key={index}
                 data-index={index}
-                className={`practice-area-item flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-500 text-center group ${
+                className={`practice-area-item flex items-center justify-between gap-3 pt-5 px-6 pb-5 bg-white rounded-xl shadow-lg border border-gray-100 border-l-[4px] border-l-bright-orange-500 hover:shadow-xl hover:border-l-bright-orange-600 transition-all duration-500 group ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className={`bg-gradient-to-r ${area.color} p-4 rounded-xl mb-5 text-white transform group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="h-7 w-7" />
-                </div>
-                <h3 className="text-lg font-semibold text-black">{area.name}</h3>
+                <h3 className="text-lg font-bold text-black group-hover:text-bright-orange-600 transition-colors">{area.name}</h3>
+                <ArrowRight className="h-4 w-4 text-bright-orange-500 shrink-0 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             );
           })}

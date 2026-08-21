@@ -1,6 +1,14 @@
 
 import { memo } from "react";
-import { Shield, Award, Clock, Lock, ShieldCheck, BadgeDollarSign, Scale } from "lucide-react";
+
+const badges = [
+  "100% Secure & Confidential",
+  "Attorney Reviewed Documents",
+  "5+ Years of Experience",
+  "Money Back Guarantee",
+];
+
+const chips = ["SSL Encrypted", "Your Data Stays Private", "Attorney Reviewed Templates"];
 
 const TrustBadges = () => {
   return (
@@ -11,39 +19,21 @@ const TrustBadges = () => {
             Trusted legal documents, built with attorney expertise
           </p>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Shield className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">100% Secure & Confidential</span>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Scale className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Attorney Reviewed Documents</span>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <Clock className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">5+ Years of Experience</span>
-          </div>
-          
-          <div className="flex flex-col items-center gap-2 p-3 border border-rocket-gray-100 rounded-lg bg-rocket-gray-50">
-            <BadgeDollarSign className="w-6 h-6 text-[#F18F01]" />
-            <span className="text-xs md:text-sm font-medium text-black text-center">Money Back Guarantee</span>
-          </div>
+          {badges.map((b) => (
+            <div key={b} className="p-4 border border-rocket-gray-100 border-l-[3px] border-l-bright-orange-500 rounded-lg bg-rocket-gray-50 text-center">
+              <span className="text-xs md:text-sm font-semibold text-black">{b}</span>
+            </div>
+          ))}
         </div>
-        
+
         <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
-            <Lock className="h-3.5 w-3.5 text-[#F18F01]" /> SSL Encrypted
-          </span>
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
-            <ShieldCheck className="h-3.5 w-3.5 text-[#F18F01]" /> Your Data Stays Private
-          </span>
-          <span className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
-            <Award className="h-3.5 w-3.5 text-[#F18F01]" /> Attorney Reviewed Templates
-          </span>
+          {chips.map((c) => (
+            <span key={c} className="inline-flex items-center gap-2 text-xs font-medium text-rocket-gray-600 bg-rocket-gray-50 border border-rocket-gray-100 rounded-full px-4 py-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-bright-orange-500" /> {c}
+            </span>
+          ))}
         </div>
       </div>
     </section>
