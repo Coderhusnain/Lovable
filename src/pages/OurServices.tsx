@@ -165,9 +165,6 @@ const OurServices = () => {
       <section className="py-8 md:py-12 bg-white">
         <div className="container-custom max-w-4xl mx-auto">
           <motion.div className="flex items-center gap-4 mb-6" {...fadeUp}>
-            <div className="w-12 h-12 rounded-xl bg-bright-orange-50 flex items-center justify-center shrink-0">
-              <FileSignature className="w-6 h-6 text-bright-orange-500" />
-            </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">1. Contract and Agreement Drafting Services</h2>
           </motion.div>
           <motion.div className="text-gray-600 leading-relaxed space-y-4 mb-8" {...fadeUp}>
@@ -212,9 +209,6 @@ const OurServices = () => {
       <section className="py-8 md:py-12 bg-rocket-gray-50">
         <div className="container-custom max-w-4xl mx-auto">
           <motion.div className="flex items-center gap-4 mb-6" {...fadeUp}>
-            <div className="w-12 h-12 rounded-xl bg-bright-orange-50 flex items-center justify-center shrink-0">
-              <MessageSquare className="w-6 h-6 text-bright-orange-500" />
-            </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">2. Online Legal Advice and Legal Q&A</h2>
           </motion.div>
           <motion.div className="text-gray-600 leading-relaxed space-y-4 mb-6" {...fadeUp}>
@@ -246,9 +240,6 @@ const OurServices = () => {
       <section className="py-8 md:py-12 bg-white">
         <div className="container-custom max-w-4xl mx-auto">
           <motion.div className="flex items-center gap-4 mb-6" {...fadeUp}>
-            <div className="w-12 h-12 rounded-xl bg-bright-orange-50 flex items-center justify-center shrink-0">
-              <Building2 className="w-6 h-6 text-bright-orange-500" />
-            </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">3. Business Registration and LLC Formation Services</h2>
           </motion.div>
           <motion.div className="text-gray-600 leading-relaxed space-y-4 mb-8" {...fadeUp}>
@@ -294,9 +285,6 @@ const OurServices = () => {
       <section className="py-8 md:py-12 bg-rocket-gray-50">
         <div className="container-custom max-w-4xl mx-auto">
           <motion.div className="flex items-center gap-4 mb-6" {...fadeUp}>
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 flex items-center justify-center shrink-0">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">4. GramAI: Your AI Legal Assistant for Drafting and Contract Review</h2>
           </motion.div>
           <motion.div className="text-gray-600 leading-relaxed space-y-4 mb-8" {...fadeUp}>
@@ -367,9 +355,6 @@ const OurServices = () => {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <div className="w-11 h-11 rounded-xl bg-bright-orange-50 flex items-center justify-center mb-4">
-                  <w.icon className="w-5 h-5 text-bright-orange-500" />
-                </div>
                 <h3 className="font-bold text-gray-900 mb-2">{w.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{w.text}</p>
               </motion.div>

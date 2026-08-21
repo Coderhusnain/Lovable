@@ -180,9 +180,6 @@ const VisionMission = () => {
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <div className="w-12 h-12 rounded-xl bg-bright-orange-50 flex items-center justify-center mb-4">
-                  <c.icon className="w-6 h-6 text-bright-orange-500" />
-                </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 leading-snug">{c.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{c.text}</p>
               </motion.div>
@@ -207,9 +204,6 @@ const VisionMission = () => {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
               >
-                <div className="w-11 h-11 shrink-0 rounded-xl bg-bright-orange-50 flex items-center justify-center">
-                  <v.icon className="w-5 h-5 text-bright-orange-500" />
-                </div>
                 <div>
                   <h3 className="font-bold text-gray-900 mb-1">{v.title}</h3>
                   <p className="text-gray-600 leading-relaxed">{v.text}</p>

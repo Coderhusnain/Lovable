@@ -87,15 +87,12 @@ const HowItWorks = () => {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="flex gap-5 bg-white rounded-2xl border border-gray-100 shadow-md p-6 md:p-8"
+                className="flex gap-5 bg-white rounded-2xl border border-gray-100 border-l-[4px] border-l-bright-orange-500 shadow-md p-6 md:p-8"
               >
-                <div className="flex flex-col items-center">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-bright-orange-500 to-bright-orange-600 text-white shadow-md">
-                    <step.icon className="h-6 w-6" />
+                <div className="shrink-0">
+                  <div className="text-4xl md:text-5xl font-extrabold text-bright-orange-500 leading-none">
+                    0{index + 1}
                   </div>
-                  <span className="mt-3 text-sm font-semibold text-bright-orange-500">
-                    Step {index + 1}
-                  </span>
                 </div>
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
@@ -119,12 +116,9 @@ const HowItWorks = () => {
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center"
+                className="bg-white rounded-2xl border border-gray-100 border-t-[3px] border-t-bright-orange-500 shadow-sm pt-6 px-6 pb-6 text-center"
               >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-bright-orange-100">
-                  <benefit.icon className="h-6 w-6 text-bright-orange-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{benefit.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">{benefit.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{benefit.description}</p>
               </div>
             ))}

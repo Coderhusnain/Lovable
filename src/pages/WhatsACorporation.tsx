@@ -1,4 +1,4 @@
-import { Building2, Shield, DollarSign, Users, CheckCircle, ArrowRight, FileText, Clock, Award, TrendingUp, Scale, Briefcase } from "lucide-react";
+import { CheckCircle, ArrowRight, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -57,8 +57,7 @@ const WhatsACorporation = () => {
               Why Choose a Corporation? Key Benefits
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Shield className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Limited Liability Protection
                 </h3>
@@ -67,8 +66,7 @@ const WhatsACorporation = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <DollarSign className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Tax Benefits & Planning
                 </h3>
@@ -77,8 +75,7 @@ const WhatsACorporation = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <TrendingUp className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Access to Capital
                 </h3>
@@ -87,8 +84,7 @@ const WhatsACorporation = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Building2 className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Enhanced Credibility
                 </h3>
@@ -97,8 +93,7 @@ const WhatsACorporation = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Clock className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Business Continuity
                 </h3>
@@ -107,8 +102,7 @@ const WhatsACorporation = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Briefcase className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Employee Benefits
                 </h3>
@@ -449,7 +443,7 @@ const WhatsACorporation = () => {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <DollarSign className="h-8 w-8 text-green-500 mt-1 flex-shrink-0" />
+                  <span className="mt-2 w-2 h-2 rounded-full bg-bright-orange-500 shrink-0" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Business Deductions</h3>
                     <p className="text-gray-600">
@@ -459,7 +453,7 @@ const WhatsACorporation = () => {
                 </div>
                 
                 <div className="flex items-start gap-4">
-                  <TrendingUp className="h-8 w-8 text-green-500 mt-1 flex-shrink-0" />
+                  <span className="mt-2 w-2 h-2 rounded-full bg-bright-orange-500 shrink-0" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Tax Strategy Flexibility</h3>
                     <p className="text-gray-600">
@@ -471,7 +465,7 @@ const WhatsACorporation = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <Building2 className="h-8 w-8 text-green-500 mt-1 flex-shrink-0" />
+                  <span className="mt-2 w-2 h-2 rounded-full bg-bright-orange-500 shrink-0" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">Profit Reinvestment</h3>
                     <p className="text-gray-600">
@@ -481,7 +475,7 @@ const WhatsACorporation = () => {
                 </div>
                 
                 <div className="flex items-start gap-4">
-                  <Shield className="h-8 w-8 text-green-500 mt-1 flex-shrink-0" />
+                  <span className="mt-2 w-2 h-2 rounded-full bg-bright-orange-500 shrink-0" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">S-Corp Tax Benefits</h3>
                     <p className="text-gray-600">

@@ -1,8 +1,4 @@
-import {
-  Building2, DollarSign, CheckCircle,
-  AlertTriangle, FileText, Calculator,
-  ArrowLeft, Star, TrendingUp, Clock
-} from "lucide-react";
+import { CheckCircle, AlertTriangle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -22,16 +18,14 @@ const WhatsAnSCorp = () => {
       <section className="bg-gradient-to-br from-blue-50 to-indigo-100 pt-24 pb-10">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              className="flex justify-center mb-6"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <motion.p
+              className="text-[11px] font-bold uppercase tracking-[0.18em] text-blue-600 mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="bg-blue-600 p-4 rounded-full">
-                <Building2 className="w-12 h-12 text-white" />
-              </div>
-            </motion.div>
+              Business Structures
+            </motion.p>
             <motion.h1
               className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
               initial={{ opacity: 0, y: 20 }}
@@ -91,16 +85,11 @@ const WhatsAnSCorp = () => {
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                   When you elect S-Corp status, your business becomes a "pass-through" entity for tax purposes, meaning the business itself doesn't pay federal income taxes. Instead, profits and losses pass through to your personal tax return.
                 </p>
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <div className="flex items-start">
-                    <Calculator className="w-6 h-6 text-blue-600 mt-1 mr-3 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Tax Savings Example</h3>
-                      <p className="text-gray-700">
-                        A business owner making $100,000 could potentially save $1,500-$3,000 annually in self-employment taxes with S-Corp election.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-blue-50 p-6 rounded-lg border-l-[4px] border-l-blue-600">
+                  <h3 className="font-semibold text-gray-900 mb-2">Tax Savings Example</h3>
+                  <p className="text-gray-700">
+                    A business owner making $100,000 could potentially save $1,500-$3,000 annually in self-employment taxes with S-Corp election.
+                  </p>
                 </div>
               </motion.div>
               <motion.div
@@ -145,38 +134,30 @@ const WhatsAnSCorp = () => {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  icon: FileText,
-                  iconBg: "bg-green-100",
-                  iconColor: "text-green-600",
-                  title: "1. File Form 2553",
+                  num: "01",
+                  title: "File Form 2553",
                   text: "Submit Form 2553 to the IRS to elect S-Corporation tax treatment for your existing LLC or Corporation."
                 },
                 {
-                  icon: DollarSign,
-                  iconBg: "bg-blue-100",
-                  iconColor: "text-blue-600",
-                  title: "2. Pay Reasonable Salary",
+                  num: "02",
+                  title: "Pay Reasonable Salary",
                   text: "As an owner-employee, you must pay yourself a reasonable salary subject to payroll taxes."
                 },
                 {
-                  icon: TrendingUp,
-                  iconBg: "bg-purple-100",
-                  iconColor: "text-purple-600",
-                  title: "3. Take Distributions",
+                  num: "03",
+                  title: "Take Distributions",
                   text: "Additional profits can be distributed to owners without self-employment tax."
                 }
               ].map((step, index) => (
                 <motion.div
                   key={step.title}
-                  className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow"
+                  className="bg-white p-6 rounded-lg border-t-[3px] border-t-blue-500 shadow-sm hover:shadow-lg transition-shadow"
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
                 >
-                  <div className={`${step.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
-                    <step.icon className={`w-6 h-6 ${step.iconColor}`} />
-                  </div>
+                  <div className="text-4xl font-extrabold text-blue-500 leading-none mb-3">{step.num}</div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900">{step.title}</h3>
                   <p className="text-gray-700">{step.text}</p>
                 </motion.div>
@@ -250,39 +231,33 @@ const WhatsAnSCorp = () => {
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  icon: Star,
-                  iconBg: "bg-green-100",
-                  iconColor: "text-green-600",
+                  bar: "border-t-green-500",
+                  label: "text-green-600",
                   title: "Great For",
                   items: ["Profitable businesses ($60K+ annually)", "Service-based companies", "Businesses with active owners", "Companies wanting tax savings"]
                 },
                 {
-                  icon: Clock,
-                  iconBg: "bg-amber-100",
-                  iconColor: "text-amber-600",
+                  bar: "border-t-amber-500",
+                  label: "text-amber-600",
                   title: "Consider Timing",
                   items: ["New businesses (wait for profitability)", "Seasonal businesses", "Businesses with irregular income", "Companies planning major investments"]
                 },
                 {
-                  icon: AlertTriangle,
-                  iconBg: "bg-red-100",
-                  iconColor: "text-red-600",
+                  bar: "border-t-red-500",
+                  label: "text-red-600",
                   title: "May Not Be Ideal",
                   items: ["Low-profit businesses", "Passive investment companies", "Businesses with losses", "Complex ownership structures"]
                 }
               ].map((card, index) => (
                 <motion.div
                   key={card.title}
-                  className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow"
+                  className={`bg-white p-6 rounded-lg border-t-[3px] ${card.bar} shadow-sm hover:shadow-lg transition-shadow text-left`}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
                 >
-                  <div className={`${card.iconBg} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
-                    <card.icon className={`w-8 h-8 ${card.iconColor}`} />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">{card.title}</h3>
+                  <p className={`text-[11px] font-bold uppercase tracking-[0.16em] ${card.label} mb-2`}>{card.title}</p>
                   <ul className="text-sm text-gray-600 space-y-1 text-left">
                     {card.items.map((item) => (
                       <li key={item}>• {item}</li>

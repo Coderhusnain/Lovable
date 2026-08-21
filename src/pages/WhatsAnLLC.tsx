@@ -1,4 +1,4 @@
-import { Building2, Shield, DollarSign, Users, CheckCircle, ArrowRight, FileText, Clock, Award } from "lucide-react";
+import { CheckCircle, ArrowRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -54,8 +54,7 @@ const WhatsAnLLC = () => {
               Why Choose an LLC? Key Benefits
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Shield className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Personal Asset Protection
                 </h3>
@@ -64,8 +63,7 @@ const WhatsAnLLC = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <DollarSign className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Tax Flexibility
                 </h3>
@@ -74,8 +72,7 @@ const WhatsAnLLC = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Users className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Operational Flexibility
                 </h3>
@@ -84,8 +81,7 @@ const WhatsAnLLC = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Building2 className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Professional Credibility
                 </h3>
@@ -94,8 +90,7 @@ const WhatsAnLLC = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Clock className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Perpetual Existence
                 </h3>
@@ -104,8 +99,7 @@ const WhatsAnLLC = () => {
                 </p>
               </div>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <Award className="h-12 w-12 text-bright-orange-500 mb-4" />
+              <div className="bg-white p-6 rounded-lg border-t-[3px] border-t-bright-orange-500 shadow-sm">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Easy to Maintain
                 </h3>

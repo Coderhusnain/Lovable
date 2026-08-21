@@ -123,17 +123,13 @@ const DocumentCategories = () => {
       </div>
       <div className="grid md:grid-cols-3 gap-6">
         {filteredCategories.map((category) => {
-          const IconComponent = category.icon;
           const isExpanded = expandedCategories.includes(category.id);
           return (
             <Card key={category.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-              <div className={`bg-gradient-to-r ${category.color} p-6 cursor-pointer`} onClick={() => handleCategorySelect(category.id)}>
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white/20 rounded-xl"><IconComponent className="h-8 w-8 text-white" /></div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white">{category.title}</h3>
-                    <p className="text-white/80 text-sm">{category.documents.length} documents</p>
-                  </div>
+              <div className="bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 p-6 cursor-pointer" onClick={() => handleCategorySelect(category.id)}>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white">{category.title}</h3>
+                  <p className="text-white/80 text-sm">{category.documents.length} documents</p>
                 </div>
               </div>
               <CardContent className="p-4">
@@ -177,7 +173,6 @@ const DocumentCategories = () => {
 
   const renderDocumentsView = () => {
     if (!activeCategory) return null;
-    const IconComponent = activeCategory.icon;
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4 mb-6">
@@ -185,14 +180,9 @@ const DocumentCategories = () => {
             <ArrowLeft className="h-5 w-5" /> Back to Categories
           </Button>
         </div>
-        <div className={`bg-gradient-to-r ${activeCategory.color} rounded-2xl p-6 md:p-8`}>
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-white/20 rounded-xl"><IconComponent className="h-10 w-10 text-white" /></div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white">{activeCategory.title}</h1>
-              <p className="text-white/80">{filteredDocuments.length} of {activeCategory.documents.length} documents</p>
-            </div>
-          </div>
+        <div className="bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 rounded-2xl p-6 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">{activeCategory.title}</h1>
+          <p className="text-white/80">{filteredDocuments.length} of {activeCategory.documents.length} documents</p>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">

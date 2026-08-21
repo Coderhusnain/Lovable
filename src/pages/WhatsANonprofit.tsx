@@ -1,7 +1,4 @@
-import {
-  Heart, CheckCircle, AlertTriangle, FileText,
-  ArrowLeft, Star, Clock, HandHeart, Landmark, Users
-} from "lucide-react";
+import { CheckCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -21,16 +18,14 @@ const WhatsANonprofit = () => {
       <section className="bg-gradient-to-br from-emerald-50 to-teal-100 pt-24 pb-10">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              className="flex justify-center mb-6"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <motion.p
+              className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600 mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="bg-emerald-600 p-4 rounded-full">
-                <Heart className="w-12 h-12 text-white" />
-              </div>
-            </motion.div>
+              Business Structures
+            </motion.p>
             <motion.h1
               className="text-4xl md:text-5xl font-bold text-gray-900 mb-6"
               initial={{ opacity: 0, y: 20 }}
@@ -90,16 +85,11 @@ const WhatsANonprofit = () => {
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                   Once your nonprofit is formed and approved by the IRS as a 501(c)(3) organization, it becomes exempt from federal income tax, and donations made to it are tax deductible for your donors.
                 </p>
-                <div className="bg-emerald-50 p-6 rounded-lg">
-                  <div className="flex items-start">
-                    <HandHeart className="w-6 h-6 text-emerald-600 mt-1 mr-3 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Built for Your Mission</h3>
-                      <p className="text-gray-700">
-                        Charities, foundations, religious groups, educational programs and community organizations all use the nonprofit structure to serve their communities.
-                      </p>
-                    </div>
-                  </div>
+                <div className="bg-emerald-50 p-6 rounded-lg border-l-[4px] border-l-emerald-600">
+                  <h3 className="font-semibold text-gray-900 mb-2">Built for Your Mission</h3>
+                  <p className="text-gray-700">
+                    Charities, foundations, religious groups, educational programs and community organizations all use the nonprofit structure to serve their communities.
+                  </p>
                 </div>
               </motion.div>
               <motion.div
@@ -144,38 +134,30 @@ const WhatsANonprofit = () => {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  icon: FileText,
-                  iconBg: "bg-emerald-100",
-                  iconColor: "text-emerald-600",
-                  title: "1. Incorporate Your Nonprofit",
+                  num: "01",
+                  title: "Incorporate Your Nonprofit",
                   text: "File articles of incorporation with your state and adopt bylaws that govern how your organization operates."
                 },
                 {
-                  icon: Landmark,
-                  iconBg: "bg-blue-100",
-                  iconColor: "text-blue-600",
-                  title: "2. Apply for Tax Exemption",
+                  num: "02",
+                  title: "Apply for Tax Exemption",
                   text: "Submit IRS Form 1023 or 1023-EZ to receive 501(c)(3) tax exempt status for your organization."
                 },
                 {
-                  icon: Users,
-                  iconBg: "bg-purple-100",
-                  iconColor: "text-purple-600",
-                  title: "3. Build Your Board and Serve",
+                  num: "03",
+                  title: "Build Your Board and Serve",
                   text: "Appoint a board of directors, follow your bylaws and start pursuing your mission with full legal protection."
                 }
               ].map((step, index) => (
                 <motion.div
                   key={step.title}
-                  className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow"
+                  className="bg-white p-6 rounded-lg border-t-[3px] border-t-emerald-500 shadow-sm hover:shadow-lg transition-shadow"
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
                 >
-                  <div className={`${step.iconBg} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
-                    <step.icon className={`w-6 h-6 ${step.iconColor}`} />
-                  </div>
+                  <div className="text-4xl font-extrabold text-emerald-500 leading-none mb-3">{step.num}</div>
                   <h3 className="text-xl font-semibold mb-3 text-gray-900">{step.title}</h3>
                   <p className="text-gray-700">{step.text}</p>
                 </motion.div>
@@ -195,39 +177,33 @@ const WhatsANonprofit = () => {
             <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
-                  icon: Star,
-                  iconBg: "bg-green-100",
-                  iconColor: "text-green-600",
+                  bar: "border-t-green-500",
+                  label: "text-green-600",
                   title: "Great For",
                   items: ["Charitable and community missions", "Educational and religious programs", "Organizations seeking grants", "Groups relying on donations"]
                 },
                 {
-                  icon: Clock,
-                  iconBg: "bg-amber-100",
-                  iconColor: "text-amber-600",
+                  bar: "border-t-amber-500",
+                  label: "text-amber-600",
                   title: "Plan Ahead For",
                   items: ["IRS application processing time", "Annual reporting requirements", "Board governance duties", "Fundraising compliance rules"]
                 },
                 {
-                  icon: AlertTriangle,
-                  iconBg: "bg-red-100",
-                  iconColor: "text-red-600",
+                  bar: "border-t-red-500",
+                  label: "text-red-600",
                   title: "May Not Be Ideal",
                   items: ["Businesses seeking owner profit", "Ventures needing investors", "Projects without a public mission", "Short-term initiatives"]
                 }
               ].map((card, index) => (
                 <motion.div
                   key={card.title}
-                  className="bg-white p-6 rounded-lg shadow-sm hover:shadow-lg transition-shadow"
+                  className={`bg-white p-6 rounded-lg border-t-[3px] ${card.bar} shadow-sm hover:shadow-lg transition-shadow text-left`}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.5, delay: index * 0.15 }}
                 >
-                  <div className={`${card.iconBg} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
-                    <card.icon className={`w-8 h-8 ${card.iconColor}`} />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">{card.title}</h3>
+                  <p className={`text-[11px] font-bold uppercase tracking-[0.16em] ${card.label} mb-2`}>{card.title}</p>
                   <ul className="text-sm text-gray-600 space-y-1 text-left">
                     {card.items.map((item) => (
                       <li key={item}>• {item}</li>
