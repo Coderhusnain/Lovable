@@ -36,8 +36,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+                <CardTitle>
                   Make Documents
                 </CardTitle>
                 <CardDescription>
@@ -55,8 +54,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5 text-primary" />
+                <CardTitle>
                   Start Business
                 </CardTitle>
                 <CardDescription>
@@ -75,8 +73,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+                <CardTitle>
                   Ask Legal Advice
                 </CardTitle>
                 <CardDescription>

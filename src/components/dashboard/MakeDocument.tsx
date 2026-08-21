@@ -955,12 +955,10 @@ const MakeDocument = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredDocuments.length > 0 ? (
             filteredDocuments.map((docType) => {
-              const IconComponent = docType.icon;
               return (
                 <Card key={docType.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <IconComponent className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg">
                       {docType.title}
                     </CardTitle>
                     <CardDescription>{docType.description}</CardDescription>

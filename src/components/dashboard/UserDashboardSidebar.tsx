@@ -1,15 +1,5 @@
 
 import React from 'react';
-import { 
-  FileText, 
-  User, 
-  CreditCard, 
-  Home,
-  LogOut,
-  Building,
-  MessageSquare,
-  Gift
-} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -35,13 +25,13 @@ const UserDashboardSidebar: React.FC<UserDashboardSidebarProps> = ({
   setActiveTab 
 }) => {
   const sidebarItems = [
-    { icon: Home, label: "Dashboard", onClick: () => setActiveTab("dashboard") },
-    { icon: Gift, label: "Member Benefits", onClick: () => setActiveTab("member-benefits") },
-    { icon: FileText, label: "Make Documents", onClick: () => setActiveTab("documents") },
-    { icon: Building, label: "Start Business", onClick: () => setActiveTab("business") },
-    { icon: MessageSquare, label: "Ask Legal Advice", onClick: () => setActiveTab("legal-advice") },
-    { icon: User, label: "Profile", onClick: () => setActiveTab("profile") },
-    { icon: CreditCard, label: "Payment", onClick: () => setActiveTab("payment") },
+    { label: "Dashboard", onClick: () => setActiveTab("dashboard") },
+    { label: "Member Benefits", onClick: () => setActiveTab("member-benefits") },
+    { label: "Make Documents", onClick: () => setActiveTab("documents") },
+    { label: "Start Business", onClick: () => setActiveTab("business") },
+    { label: "Ask Legal Advice", onClick: () => setActiveTab("legal-advice") },
+    { label: "Profile", onClick: () => setActiveTab("profile") },
+    { label: "Payment", onClick: () => setActiveTab("payment") },
   ];
 
   return (
@@ -59,12 +49,11 @@ const UserDashboardSidebar: React.FC<UserDashboardSidebarProps> = ({
         <SidebarMenu>
           {sidebarItems.map((item) => (
             <SidebarMenuItem key={item.label}>
-              <SidebarMenuButton 
-                onClick={item.onClick} 
+              <SidebarMenuButton
+                onClick={item.onClick}
                 isActive={activeTab === item.label.toLowerCase()}
-                className="h-11 w-full justify-start gap-3 px-4 hover:bg-muted"
+                className="h-11 w-full justify-start px-4 hover:bg-muted"
               >
-                <item.icon className="h-5 w-5" />
                 <span className="text-base">{item.label}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -73,12 +62,11 @@ const UserDashboardSidebar: React.FC<UserDashboardSidebarProps> = ({
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={handleLogout}
-          className="w-full justify-start gap-3 hover:bg-destructive/10 text-destructive hover:text-destructive"
+          className="w-full justify-start hover:bg-destructive/10 text-destructive hover:text-destructive"
         >
-          <LogOut className="h-5 w-5" />
           <span>Logout</span>
         </Button>
       </SidebarFooter>
