@@ -83,8 +83,7 @@ const StartABusiness = () => {
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <Building2 className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">
                 Business Registrations
               </h3>
@@ -110,8 +109,7 @@ const StartABusiness = () => {
               </Link>
             </div>
 
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <BriefcaseBusiness className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">
                 Business Services
               </h3>
@@ -137,8 +135,7 @@ const StartABusiness = () => {
               </Link>
             </div>
 
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <FileLock className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">
                 Business Property
               </h3>
@@ -397,8 +394,7 @@ const StartABusiness = () => {
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <ShieldCheck className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">Expert Legal Review</h3>
               <p className="text-gray-600 mb-4">All documents reviewed by licensed attorneys</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -408,8 +404,7 @@ const StartABusiness = () => {
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <Clock className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">Fast & Efficient</h3>
               <p className="text-gray-600 mb-4">Get your business documents in minutes, not days</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -419,8 +414,7 @@ const StartABusiness = () => {
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <DollarSign className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">Affordable Pricing</h3>
               <p className="text-gray-600 mb-4">Professional legal services at a fraction of the cost</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -430,8 +424,7 @@ const StartABusiness = () => {
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <Users className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">Dedicated Support</h3>
               <p className="text-gray-600 mb-4">Expert guidance every step of the way</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -441,8 +434,7 @@ const StartABusiness = () => {
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <CheckCircle className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">Compliance Guaranteed</h3>
               <p className="text-gray-600 mb-4">Stay compliant with all state and federal requirements</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -452,8 +444,7 @@ const StartABusiness = () => {
               </ul>
             </div>
             
-            <div className="p-6 rounded-xl border border-black/10 hover:shadow-lg transition-shadow">
-              <Rocket className="h-10 w-10 text-bright-orange-500 mb-4" />
+            <div className="p-6 pt-7 rounded-xl border border-black/10 border-t-[3px] border-t-bright-orange-500 hover:shadow-lg transition-shadow">
               <h3 className="text-xl font-semibold text-black mb-3">All-in-One Platform</h3>
               <p className="text-gray-600 mb-4">Everything you need to start and run your business</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -475,30 +466,24 @@ const StartABusiness = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-bright-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileText className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-4">1. Choose Your Structure</h3>
+              <div className="text-5xl font-extrabold text-bright-orange-500 mb-4 leading-none">01</div>
+              <h3 className="text-xl font-semibold text-black mb-4">Choose Your Structure</h3>
               <p className="text-gray-600">
                 Select the business structure that best fits your needs. Our experts will guide you through the options.
               </p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-bright-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <ClipboardCheck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-4">2. Complete the Forms</h3>
+              <div className="text-5xl font-extrabold text-bright-orange-500 mb-4 leading-none">02</div>
+              <h3 className="text-xl font-semibold text-black mb-4">Complete the Forms</h3>
               <p className="text-gray-600">
                 Fill out our simple questionnaire. We'll handle all the paperwork and legal requirements for you.
               </p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-bright-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BadgeCheck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-black mb-4">3. Get Your Documents</h3>
+              <div className="text-5xl font-extrabold text-bright-orange-500 mb-4 leading-none">03</div>
+              <h3 className="text-xl font-semibold text-black mb-4">Get Your Documents</h3>
               <p className="text-gray-600">
                 Receive your completed legal documents and business registration. You're ready to start operating!
               </p>
