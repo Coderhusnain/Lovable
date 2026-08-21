@@ -1,19 +1,17 @@
 import { memo } from "react";
-import { BadgeIcon, SecureIcon, HeartIcon, BrandIconTile } from "@/components/icons/BrandIcons";
-
 const promises = [
   {
-    icon: BadgeIcon,
+    kicker: "Quality",
     title: "Drafted or reviewed by qualified lawyers.",
     text: "Every template on our platform was built by attorneys with real practice experience, not scraped from the internet."
   },
   {
-    icon: SecureIcon,
+    kicker: "On Your Side",
     title: "Written to protect you.",
     text: "Our documents are drafted to favor the person or business using them, not to be \"neutral\" in a way that quietly favors the other side."
   },
   {
-    icon: HeartIcon,
+    kicker: "Transparency",
     title: "Honest scope.",
     text: "If your matter needs a licensed attorney in your state, we tell you plainly and help you find one. No overselling."
   }
@@ -34,11 +32,9 @@ const Testimonials = () => {
           {promises.map((p) => (
             <div
               key={p.title}
-              className="bg-white rounded-2xl p-7 shadow-md hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-2xl pt-6 px-7 pb-7 shadow-md hover:shadow-xl transition-shadow duration-300 border-t-[3px] border-t-bright-orange-500"
             >
-              <BrandIconTile size="lg" className="mb-4">
-                <p.icon size={32} />
-              </BrandIconTile>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-2">{p.kicker}</p>
               <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
               <p className="text-gray-600 leading-relaxed">{p.text}</p>
             </div>

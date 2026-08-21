@@ -1,6 +1,5 @@
 
 import { memo } from "react";
-import { Heart, Briefcase, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -10,7 +9,6 @@ const LegalConcernsSection = () => {
       title: "Family Protection",
       description: "Secure your family's future with wills, trusts, and estate planning documents.",
       image: "/lovable-uploads/bbae67ec-7fdd-49d8-adfd-ca2a1c8a05a1.png",
-      icon: Heart,
       link: "/family-law",
       gradient: "from-blue-500/20 to-blue-600/20"
     },
@@ -18,7 +16,6 @@ const LegalConcernsSection = () => {
       title: "Business Security",
       description: "Protect your business with contracts, agreements, and legal compliance documents.",
       image: "/lovable-uploads/c9d521b5-31e5-47a0-9d04-c2539ddd886e.png",
-      icon: Briefcase,
       link: "/business-law",
       gradient: "from-orange-500/20 to-orange-600/20"
     },
@@ -26,7 +23,6 @@ const LegalConcernsSection = () => {
       title: "Property Matters",
       description: "Handle real estate transactions and property disputes with proper legal documentation.",
       image: "/lovable-uploads/f71dcb3e-44f6-47f2-a368-b65778dfe4da.png",
-      icon: Building2,
       link: "/property-law",
       gradient: "from-green-500/20 to-green-600/20"
     }
@@ -62,9 +58,7 @@ const LegalConcernsSection = () => {
                 <div className={`absolute inset-0 bg-gradient-to-t ${concern.gradient} backdrop-blur-[2px] opacity-60 group-hover:opacity-70 transition-opacity duration-300`}>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <div className="mb-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg inline-block transform group-hover:scale-110 transition-transform duration-300">
-                        <concern.icon className="h-6 w-6 text-white" />
-                      </div>
+                      <div className="h-1 w-10 bg-bright-orange-500 rounded-full mb-4"></div>
                       <h3 className="text-2xl font-bold text-white mb-2 group-hover:translate-x-1 transition-transform duration-300">
                         {concern.title}
                       </h3>

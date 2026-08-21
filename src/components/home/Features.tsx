@@ -1,27 +1,23 @@
 
 import { useState, useEffect, memo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { motion } from "framer-motion";
-import { DocIcon, BusinessIcon, ResourcesIcon, PlanIcon, JusticeIcon, BrandIconTile } from "@/components/icons/BrandIcons";
 
-const FeatureCard = memo(({ 
-  icon: Icon, 
-  title, 
-  description, 
-  linkText, 
-  linkTo, 
+const FeatureCard = memo(({
+  kicker,
+  title,
+  description,
+  linkText,
+  linkTo,
   delay,
-  gradient
-}: { 
-  icon: React.ElementType; 
-  title: string; 
+}: {
+  kicker: string;
+  title: string;
   description: string;
   linkText: string;
   linkTo: string;
   delay: number;
-  gradient: string;
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   
@@ -41,12 +37,9 @@ const FeatureCard = memo(({
       style={{ transitionDelay: `${delay * 150}ms` }}
     >
       <Link to={linkTo} className="block h-full">
-        <Card className="h-full overflow-hidden group border border-gray-200 hover:border-bright-orange-300 shadow-sm hover:shadow-xl transition-all duration-500 relative cursor-pointer">
-          <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${gradient}`}></div>
-          <CardContent className="p-8">
-            <BrandIconTile size="lg" className="mb-6 transform group-hover:scale-110 transition-transform duration-500">
-              <Icon size={32} />
-            </BrandIconTile>
+        <Card className="h-full overflow-hidden group border border-gray-200 border-t-[3px] border-t-bright-orange-500 hover:border-bright-orange-300 shadow-sm hover:shadow-xl transition-all duration-500 relative cursor-pointer">
+          <CardContent className="pt-7 px-8 pb-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-3">{kicker}</p>
             <h3 className="text-xl md:text-2xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors duration-300">{title}</h3>
             <p className="text-gray-600 mb-4 transition-colors duration-300">{description}</p>
           </CardContent>
@@ -93,7 +86,7 @@ const Features = () => {
 
   const features = [
     {
-      icon: DocIcon,
+      kicker: "Documents",
       title: "Legal Documents",
       description: "Create customized legal documents in minutes with our easy to use templates.",
       linkText: "Browse documents",
@@ -101,7 +94,7 @@ const Features = () => {
       gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
-      icon: BusinessIcon,
+      kicker: "Formation",
       title: "Business Formation",
       description: "Start your business the right way with our LLC and incorporation services.",
       linkText: "Start a business",
@@ -109,7 +102,7 @@ const Features = () => {
       gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
-      icon: ResourcesIcon,
+      kicker: "Resources",
       title: "Legal Resources",
       description: "Access free articles and guides covering a wide range of legal topics.",
       linkText: "Explore resources",
@@ -117,7 +110,7 @@ const Features = () => {
       gradient: "from-bright-orange-500 to-bright-orange-600"
     },
     {
-      icon: PlanIcon,
+      kicker: "Membership",
       title: "Legal Plans",
       description: "Get ongoing legal protection for your family or business with our subscription plans.",
       linkText: "View plans",
@@ -149,17 +142,10 @@ const Features = () => {
 
         {/* Feature highlight */}
         <div className={`mb-16 transform transition-all duration-700 ${visibleSection ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <div className="bg-gradient-to-r from-bright-orange-50 to-amber-50 rounded-3xl p-6 md:p-10 relative overflow-hidden border border-bright-orange-100">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10">
-              <Sparkles className="h-32 w-32 text-bright-orange-200 opacity-50" />
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
-              <div className="flex-shrink-0">
-                <BrandIconTile size="lg" className="w-20 h-20 shadow-md">
-                  <JusticeIcon size={40} />
-                </BrandIconTile>
-              </div>
+          <div className="bg-gradient-to-r from-bright-orange-50 to-amber-50 rounded-3xl p-6 md:p-10 relative overflow-hidden border border-bright-orange-100 border-l-[4px] border-l-bright-orange-500">
+            <div className="flex flex-col md:flex-row items-start gap-6 md:gap-10">
               <div className="flex-1">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-2">Attorney Trusted</p>
                 <h3 className="text-2xl md:text-3xl font-bold mb-3 text-black">Protected by Legal Experts</h3>
                 <p className="text-lg text-gray-600 mb-4">
                   All our documents and services are reviewed by qualified attorneys to ensure legal compliance and protection.
@@ -188,13 +174,12 @@ const Features = () => {
           {features.map((feature, index) => (
             <FeatureCard
               key={index}
-              icon={feature.icon}
+              kicker={feature.kicker}
               title={feature.title}
               description={feature.description}
               linkText={feature.linkText}
               linkTo={feature.linkTo}
               delay={index}
-              gradient={feature.gradient}
             />
           ))}
         </div>

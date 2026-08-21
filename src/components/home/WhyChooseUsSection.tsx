@@ -2,7 +2,6 @@
 import { useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { SecureIcon, TimeIcon, BadgeIcon, JusticeIcon, SupportIcon, NationwideIcon, BrandIconTile } from "@/components/icons/BrandIcons";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -29,37 +28,37 @@ const WhyChooseUsSection = () => {
 
   const reasons = [
     {
-      icon: SecureIcon,
+      kicker: "Secure & Private",
       title: "Secure & Confidential",
       description: "Your legal documents and personal information are protected with enterprise-grade security and encryption.",
       gradient: "from-blue-500/20 via-blue-400/10 to-transparent"
     },
     {
-      icon: TimeIcon,
+      kicker: "Fast & Simple",
       title: "Save Time",
       description: "Create attorney drafted legal documents online in minutes with no appointments and no paperwork.",
       gradient: "from-emerald-500/20 via-emerald-400/10 to-transparent"
     },
     {
-      icon: BadgeIcon,
+      kicker: "Attorney Quality",
       title: "Attorney Reviewed",
       description: "Every legal form and contract template is drafted and reviewed by licensed and experienced attorneys.",
       gradient: "from-purple-500/20 via-purple-400/10 to-transparent"
     },
     {
-      icon: JusticeIcon,
+      kicker: "Always Current",
       title: "Legal Compliance",
       description: "Our legal documents are continuously updated to comply with the latest state and federal laws.",
       gradient: "from-pink-500/20 via-pink-400/10 to-transparent"
     },
     {
-      icon: SupportIcon,
+      kicker: "Real Support",
       title: "Expert Support",
       description: "Get affordable legal help and guidance from our team of legal professionals whenever you need it.",
       gradient: "from-amber-500/20 via-amber-400/10 to-transparent"
     },
     {
-      icon: NationwideIcon,
+      kicker: "50 States",
       title: "Trusted Nationwide",
       description: "Join individuals and businesses nationwide who rely on Legalgram for fast online legal services.",
       gradient: "from-cyan-500/20 via-cyan-400/10 to-transparent"
@@ -114,27 +113,19 @@ const WhyChooseUsSection = () => {
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <div className="relative overflow-hidden h-full flex flex-col bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100">
-                <div className={`absolute inset-0 bg-gradient-to-br ${reason.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
-                
+              <div className="relative overflow-hidden h-full flex flex-col bg-white pt-7 px-8 pb-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 border-t-[3px] border-t-bright-orange-500">
                 <div className="relative z-10">
-                  <div className="mb-6 transform transition-transform duration-300 group-hover:scale-110">
-                    <BrandIconTile size="lg">
-                      <reason.icon size={34} />
-                    </BrandIconTile>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-3">
+                    {reason.kicker}
+                  </p>
+                  <h3 className="text-2xl font-bold mb-3 text-black group-hover:text-bright-orange-600 transition-colors">
                     {reason.title}
                   </h3>
-                  
-                  <p className="text-black text-opacity-80 group-hover:text-opacity-100 transition-colors">
+                  <p className="text-gray-600 leading-relaxed">
                     {reason.description}
                   </p>
                 </div>
-                
                 <div className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r from-bright-orange-500 to-bright-orange-300 transition-all duration-300 ${hoveredIndex === index ? 'w-full' : 'w-0'}`}></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               </div>
             </motion.div>
           ))}

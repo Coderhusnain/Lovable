@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { SearchDocIcon, EditDocIcon, SignIcon } from "@/components/icons/BrandIcons";
 
 const LegalSolutionsSection = () => {
   return (
@@ -27,44 +26,17 @@ const LegalSolutionsSection = () => {
         </div>
         
         <div className="grid md:grid-cols-3 gap-8 md:gap-8">
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-100/70 ring-1 ring-bright-orange-200 shadow-sm h-20 w-20 rounded-2xl flex items-center justify-center mx-auto mb-6 relative">
-              <SearchDocIcon size={40} />
-              <span className="absolute -top-2 -right-2 bg-white text-bright-orange-600 border-2 border-bright-orange-500 h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
-                1
-              </span>
+          {[
+            { n: "01", t: "Select Your Document", d: "Choose from hundreds of legal documents designed for personal and business needs." },
+            { n: "02", t: "Customize It", d: "Answer simple questions to create your personalized legal document." },
+            { n: "03", t: "Sign & Share", d: "Save, print, download, or share your legal document instantly." },
+          ].map((s) => (
+            <div key={s.n} className="bg-white/90 backdrop-blur-sm rounded-xl pt-7 px-8 pb-8 shadow-lg border border-gray-100 border-t-[3px] border-t-bright-orange-500 transform transition-transform hover:-translate-y-2 duration-300">
+              <div className="text-5xl font-extrabold text-bright-orange-500 mb-3 leading-none">{s.n}</div>
+              <h3 className="text-2xl font-bold mb-3 text-black">{s.t}</h3>
+              <p className="text-gray-600">{s.d}</p>
             </div>
-            <h3 className="text-2xl font-bold mb-4 text-black">Select Your Document</h3>
-            <p className="text-gray-600">
-              Choose from hundreds of legal documents designed for personal and business needs.
-            </p>
-          </div>
-          
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-100/70 ring-1 ring-bright-orange-200 shadow-sm h-20 w-20 rounded-2xl flex items-center justify-center mx-auto mb-6 relative">
-              <EditDocIcon size={40} />
-              <span className="absolute -top-2 -right-2 bg-white text-bright-orange-600 border-2 border-bright-orange-500 h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
-                2
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4 text-black">Customize It</h3>
-            <p className="text-gray-600">
-              Answer simple questions to create your personalized legal document.
-            </p>
-          </div>
-          
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 text-center shadow-lg border border-gray-100 transform transition-transform hover:-translate-y-2 duration-300">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-100/70 ring-1 ring-bright-orange-200 shadow-sm h-20 w-20 rounded-2xl flex items-center justify-center mx-auto mb-6 relative">
-              <SignIcon size={40} />
-              <span className="absolute -top-2 -right-2 bg-white text-bright-orange-600 border-2 border-bright-orange-500 h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
-                3
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4 text-black">Sign & Share</h3>
-            <p className="text-gray-600">
-              Save, print, download, or share your legal document instantly.
-            </p>
-          </div>
+          ))}
         </div>
         
         <div className="mt-12 text-center">

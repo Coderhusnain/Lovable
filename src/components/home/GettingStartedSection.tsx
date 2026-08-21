@@ -3,7 +3,6 @@ import { useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { UserIcon, DocIcon, DownloadIcon } from "@/components/icons/BrandIcons";
 
 const GettingStartedSection = () => {
   const [inView, setInView] = useState(false);
@@ -40,21 +39,18 @@ const GettingStartedSection = () => {
 
   const steps = [
     {
-      icon: UserIcon,
       title: "Create Your Account",
       description: "Sign up in less than 2 minutes with your email or social accounts",
       linkText: "Sign up now",
       linkTo: "/signup"
     },
     {
-      icon: DocIcon,
       title: "Select Your Document",
       description: "Browse our library of professional legal documents and templates",
       linkText: "Browse documents",
       linkTo: "/documents"
     },
     {
-      icon: DownloadIcon,
       title: "Complete & Download",
       description: "Answer a few questions and your document is ready to use",
       linkText: "See how it works",
@@ -108,25 +104,16 @@ const GettingStartedSection = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
-                className={`bg-white rounded-xl p-8 shadow-lg border transition-all duration-500 ${
-                  activeStep === index 
-                    ? 'border-bright-orange-300 shadow-xl transform -translate-y-2' 
+                className={`bg-white rounded-xl pt-7 px-8 pb-8 shadow-lg border border-t-[3px] border-t-bright-orange-500 transition-all duration-500 ${
+                  activeStep === index
+                    ? 'border-bright-orange-300 shadow-xl transform -translate-y-2'
                     : 'border-gray-100'
                 }`}
                 onMouseEnter={() => setActiveStep(index)}
                 onMouseLeave={() => setActiveStep(null)}
               >
-                <div className="mb-6 relative">
-                  <div className={`w-20 h-20 rounded-2xl transition-all duration-300 flex items-center justify-center mx-auto ring-1 shadow-sm ${
-                    activeStep === index
-                      ? 'bg-gradient-to-br from-orange-100 to-amber-200/80 ring-bright-orange-300 scale-105'
-                      : 'bg-gradient-to-br from-orange-50 to-amber-100/70 ring-bright-orange-200'
-                  }`}>
-                    <step.icon size={38} />
-                  </div>
-                  <div className="absolute -top-4 -right-4 bg-rocket-blue-600 text-white h-8 w-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg">
-                    {index + 1}
-                  </div>
+                <div className={`text-5xl font-extrabold mb-3 leading-none transition-colors ${activeStep === index ? 'text-bright-orange-600' : 'text-bright-orange-500'}`}>
+                  0{index + 1}
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-black">{step.title}</h3>
                 <p className="text-black mb-6">{step.description}</p>

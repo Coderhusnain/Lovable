@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { memo } from "react";
-import { JusticeIcon, MoneyIcon, CalendarIcon, BrandIconTile } from "@/components/icons/BrandIcons";
 
 const trustPoints = [
   {
-    icon: JusticeIcon,
+    kicker: "Expertise",
     title: "Built by qualified lawyers",
     text: "Every document and workflow is designed by attorneys with real practice experience, not generic templates."
   },
   {
-    icon: MoneyIcon,
+    kicker: "Affordable",
     title: "Affordable legal help",
     text: "Get contracts drafted and reviewed at a fraction of the cost of a traditional law firm."
   },
   {
-    icon: CalendarIcon,
+    kicker: "Flexible",
     title: "Cancel anytime",
     text: "No long-term commitments. No hidden fees. No fine print you'll wish you had read."
   }
@@ -36,11 +35,9 @@ const CTASection = () => {
 
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
           {trustPoints.map((t) => (
-            <div key={t.title} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
-              <BrandIconTile size="lg" className="mx-auto mb-4">
-                <t.icon size={32} />
-              </BrandIconTile>
-              <h3 className="font-bold text-white mb-2">{t.title}</h3>
+            <div key={t.title} className="bg-white/5 border border-white/10 border-t-[3px] border-t-bright-orange-500 rounded-2xl pt-5 px-6 pb-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-400 mb-2">{t.kicker}</p>
+              <h3 className="font-bold text-white mb-2 text-lg">{t.title}</h3>
               <p className="text-sm text-gray-300 leading-relaxed">{t.text}</p>
             </div>
           ))}
