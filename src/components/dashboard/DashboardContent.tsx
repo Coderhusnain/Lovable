@@ -34,7 +34,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           
           <h3 className="text-xl font-medium mt-8 mb-4">Quick Access</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="border-t-[3px] border-t-bright-orange-500 hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>
                   Make Documents
@@ -52,7 +52,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               </CardFooter>
             </Card>
             
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="border-t-[3px] border-t-bright-orange-500 hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>
                   Start Business
@@ -71,7 +71,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               </CardFooter>
             </Card>
             
-            <Card className="hover:shadow-md transition-shadow">
+            <Card className="border-t-[3px] border-t-bright-orange-500 hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>
                   Ask Legal Advice

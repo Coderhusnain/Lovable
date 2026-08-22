@@ -956,12 +956,14 @@ const MakeDocument = () => {
           {filteredDocuments.length > 0 ? (
             filteredDocuments.map((docType) => {
               return (
-                <Card key={docType.id} className="hover:shadow-md transition-shadow">
+                <Card key={docType.id} className="border-t-[3px] border-t-bright-orange-500 hover:shadow-md transition-shadow">
                   <CardHeader className="pb-2">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-1">
+                      {docType.description}
+                    </p>
                     <CardTitle className="text-lg">
                       {docType.title}
                     </CardTitle>
-                    <CardDescription>{docType.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="text-sm">
                     {docType.content}
