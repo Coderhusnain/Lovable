@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { FileText, Users, ShoppingCart, Briefcase, Heart, Building2, DollarSign, Home, Scale, UserCheck, MapPin, Gavel, GraduationCap, Shield, ArrowLeft, TrendingUp, Handshake, Factory, UtensilsCrossed, Fuel, Search, FileSignature, Calculator, FilePlus, ShieldCheck } from "lucide-react";
 import LegalConcernsSection from "@/components/LegalConcernsSection";
+import DocumentPreview from "@/components/documents/DocumentPreview";
 //import DemandForDeliveryForm from '../DemandForDeliveryForm';
 import { Description } from '@radix-ui/react-toast';
 
@@ -956,8 +957,14 @@ const MakeDocument = () => {
           {filteredDocuments.length > 0 ? (
             filteredDocuments.map((docType) => {
               return (
-                <Card key={docType.id} className="border-t-[3px] border-t-bright-orange-500 hover:shadow-md transition-shadow">
+                <Card
+                  key={docType.id}
+                  className="group flex flex-col bg-white border border-gray-200 hover:border-bright-orange-300 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                >
                   <CardHeader className="pb-2">
+                    <div className="rounded-xl bg-gradient-to-b from-slate-50 via-slate-100/80 to-slate-200/60 border border-slate-100 py-5 mb-4 overflow-hidden">
+                      <DocumentPreview title={docType.title} />
+                    </div>
                     <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bright-orange-600 mb-1">
                       {docType.description}
                     </p>
@@ -965,12 +972,12 @@ const MakeDocument = () => {
                       {docType.title}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="text-sm">
+                  <CardContent className="text-sm flex-1">
                     {docType.content}
                   </CardContent>
                   <CardFooter>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full"
                       onClick={() => setSelectedDocument(docType.id)}
                     >
