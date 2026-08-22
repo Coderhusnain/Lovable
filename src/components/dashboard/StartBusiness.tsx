@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Building, Check } from "lucide-react";
 
 const businessTypes = [
   { value: "llc", label: "Limited Liability Company (LLC)" },
@@ -63,9 +62,7 @@ const StartBusiness = () => {
   if (isSubmitted) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-          <Check className="h-8 w-8 text-green-600" />
-        </div>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-green-600 mb-3">Request Received</p>
         <h1 className="text-2xl font-bold mb-2">Submission Successful</h1>
         <p className="text-center text-muted-foreground mb-6 max-w-md">
           Your business formation request has been submitted. Our legal team will review your information and contact you within 1-2 business days.
@@ -84,8 +81,7 @@ const StartBusiness = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Building className="h-5 w-5 text-primary" />
+          <CardTitle>
             Business Formation Form
           </CardTitle>
           <CardDescription>

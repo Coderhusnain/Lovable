@@ -2,36 +2,29 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Scale, MessageSquare, FileText, FileSignature, Building, Calculator } from "lucide-react";
-
 const benefitCards = [
   {
-    icon: FileText,
     title: "Make legal documents",
     description: "Personalize, print, download, and defend unlimited legal docs.",
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    icon: FileSignature,
     title: "Sign legal documents",
     description: "Sign your documents quickly and securely",
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    icon: MessageSquare,
     title: "Ask legal questions",
     description: "Ask any legal question and get a quick answer online or consult live.",
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    icon: Scale,
     title: "Retain a Legal Pro",
     description: "Get legal help from an experienced pro at a discounted rate.",
     price: "$149.99/15 mins",
     upgradeText: "Upgrade for up to HALF OFF*",
   },
   {
-    icon: Building,
     title: "Register your business",
     description: "Register an LLC, Corp, or Nonprofit.",
     price: "$99.99",
@@ -39,7 +32,6 @@ const benefitCards = [
     upgradeText: "Upgrade to get your first business FREE",
   },
   {
-    icon: Calculator,
     title: "Book a Tax Pro Consult",
     description: "Plan ahead with a Tax Pro and keep more of your money at tax time.",
     price: "$199.99",
@@ -69,16 +61,11 @@ const MemberBenefits = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {benefitCards.map((card, index) => (
-          <Card key={index} className="overflow-hidden">
+          <Card key={index} className="overflow-hidden border-t-[3px] border-t-bright-orange-500">
             <CardContent className="p-6 space-y-4">
-              <div className="flex items-start space-x-4">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <card.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <h3 className="font-semibold text-lg">{card.title}</h3>
-                  <p className="text-muted-foreground">{card.description}</p>
-                </div>
+              <div className="space-y-1">
+                <h3 className="font-semibold text-lg">{card.title}</h3>
+                <p className="text-muted-foreground">{card.description}</p>
               </div>
               
               {card.plans ? (
