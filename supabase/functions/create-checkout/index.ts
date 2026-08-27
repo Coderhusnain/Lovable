@@ -86,6 +86,37 @@ serve(async (req: Request) => {
     }
   }
 
+  // ── One-time DIY Nonprofit formation payment ($59, mode: payment) ──
+  if ((body.product || "").toLowerCase() === "nonprofit_formation") {
+    const p = new URLSearchParams();
+    p.set("mode", "payment");
+    p.set("success_url", `${originClean}/form-my-nonprofit?payment=success`);
+    p.set("cancel_url", `${originClean}/form-my-nonprofit?payment=cancelled`);
+    p.set("allow_promotion_codes", "true");
+    if (body.email) p.set("customer_email", body.email);
+    p.set("line_items[0][quantity]", "1");
+    p.set("line_items[0][price_data][currency]", "usd");
+    p.set("line_items[0][price_data][product_data][name]", "Legalgram DIY Nonprofit Formation");
+    p.set("line_items[0][price_data][product_data][description]", "Prepares your Bylaws, Conflict of Interest Policy, Board Minutes, EIN Worksheet, and your state's Articles + Filing Checklist.");
+    p.set("line_items[0][price_data][unit_amount]", "5900");
+    try {
+      const resp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${STRIPE_SECRET_KEY}`, "Content-Type": "application/x-www-form-urlencoded" },
+        body: p.toString(),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        console.error("Stripe error (nonprofit):", resp.status, JSON.stringify(data?.error || data));
+        return new Response(JSON.stringify({ error: "Could not start checkout. Please try again.", detail: data?.error?.message ?? null }), { status: 502, headers });
+      }
+      return new Response(JSON.stringify({ url: data.url }), { status: 200, headers });
+    } catch (error) {
+      console.error("create-checkout nonprofit error:", error);
+      return new Response(JSON.stringify({ error: "Unexpected error starting checkout." }), { status: 500, headers });
+    }
+  }
+
   const plan = PLANS[(body.plan || "").toLowerCase()];
   const cycle: Cycle = body.cycle === "annually" ? "annually" : "monthly";
   if (!plan) {

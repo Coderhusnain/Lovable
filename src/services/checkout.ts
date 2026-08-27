@@ -25,6 +25,28 @@ export async function startLlcCheckout(
   }
 }
 
+/**
+ * Starts the one-time $59 DIY Nonprofit formation checkout and redirects to Stripe.
+ * NOTE: do not link this from live UI until the nonprofit attorney review is
+ * signed off and the doc-generation pipeline is wired (see nonprofitMerge.ts).
+ */
+export async function startNonprofitCheckout(
+  opts: { email?: string; origin?: string } = {},
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase.functions.invoke("create-checkout", {
+      body: { product: "nonprofit_formation", email: opts.email, origin: opts.origin ?? window.location.origin },
+    });
+    if (error) return { ok: false, error: "Couldn't reach the payment service. Please try again." };
+    if (data?.error) return { ok: false, error: data.error as string };
+    if (!data?.url) return { ok: false, error: "No checkout URL returned. Please try again." };
+    window.location.href = data.url as string;
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Something went wrong starting checkout. Please try again." };
+  }
+}
+
 export async function startCheckout(
   plan: "starter" | "premium",
   cycle: "monthly" | "annually",
