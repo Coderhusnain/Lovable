@@ -264,7 +264,7 @@ const StartABusiness = () => {
                   className="bg-bright-orange-500 hover:bg-bright-orange-600"
                   asChild
                 >
-                  <Link to="/documents/nonprofit-formation">Get Started</Link>
+                  <Link to="/form-my-nonprofit">Get Started</Link>
                 </Button>
                 <Button 
                   variant="outline" 

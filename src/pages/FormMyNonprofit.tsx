@@ -155,10 +155,10 @@ const FormMyNonprofit = () => {
           <div className="container-custom max-w-2xl text-center">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-green-600 mb-3">Payment Received</p>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your nonprofit documents are ready</h1>
-            <p className="text-gray-600 mb-2">We've prepared your 6-document package for <strong>{data.nameFirstChoice} {data.designator}</strong> ({rules?.name}).</p>
-            <p className="text-gray-600 mb-8">Bylaws, Conflict of Interest Policy, Initial Board Meeting Minutes, EIN Worksheet, your state's {rules?.articlesLabel}, and your state Filing Checklist.</p>
+            <p className="text-gray-600 mb-2">We've prepared your document package for <strong>{data.nameFirstChoice} {data.designator}</strong> ({rules?.name}).</p>
+            <p className="text-gray-600 mb-8">Bylaws, Conflict of Interest Policy, Initial Board Meeting Minutes, EIN Worksheet, your state's {rules?.articlesLabel}, your state Filing Checklist, and a Form 1023 Next-Steps Guide.</p>
             <Button variant="orange" onClick={downloadDocuments} disabled={downloading} className="px-6">
-              {downloading ? "Preparing documents…" : "Download My 6 Documents"}
+              {downloading ? "Preparing documents…" : "Download My Documents"}
             </Button>
             <div className="mt-8 text-left bg-amber-50 border-l-[4px] border-l-amber-500 rounded-lg p-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-700 mb-1">Important</p>
@@ -377,7 +377,7 @@ const FormMyNonprofit = () => {
         return (
           <div>
             <div className="rounded-lg border border-gray-200 p-5 mb-5">
-              <p className="text-sm text-gray-700 mb-3">Your package includes <strong>6 documents</strong>: Bylaws, Conflict of Interest Policy, Initial Board Meeting Minutes, EIN Application Worksheet, your state's {rules?.articlesLabel}, and your state Filing Checklist.</p>
+              <p className="text-sm text-gray-700 mb-3">Your package includes <strong>7 documents</strong>: Bylaws, Conflict of Interest Policy, Initial Board Meeting Minutes, EIN Application Worksheet, your state's {rules?.articlesLabel}, your state Filing Checklist, and a Form 1023 Next-Steps Guide.</p>
               <p className="text-sm text-gray-700">Meeting-related dates are left blank for you to fill after you hold your initial board meeting.</p>
             </div>
             {rules?.filingNote && <div className="rounded-lg bg-blue-50 border-l-[4px] border-l-blue-500 p-4 mb-5 text-sm text-blue-900">{rules.filingNote}</div>}

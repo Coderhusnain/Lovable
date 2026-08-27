@@ -578,6 +578,50 @@ export function buildStateChecklist(m: MergeData, code: NpStateCode): jsPDF {
   return bld.finish();
 }
 
+/* ════════════════ COMMON DOC — FORM 1023 NEXT-STEPS GUIDE ════════════════ */
+export function buildForm1023Guide(m: MergeData): jsPDF {
+  const bld = new DocBuilder("Form 1023 Next-Steps Guide");
+  const org = s(m, "org_name");
+  bld.titleBlock("Form 1023 Next-Steps Guide", org || "the Corporation", "Applying to the IRS for 501(c)(3) Recognition");
+
+  bld.noteBox(
+    "Two separate steps",
+    "You have formed a nonprofit corporation with your state. To become tax-exempt and let donors deduct their gifts, you must separately apply to the IRS for recognition of exemption under Section 501(c)(3). This guide explains that next step. Legalgram is not a law firm and does not provide legal or tax advice.",
+    "orange",
+  );
+
+  bld.articleHeading("Section 1", "Form 1023 vs. Form 1023-EZ");
+  bld.para("There are two application forms. Most small organizations can use the shorter Form 1023-EZ if they meet the eligibility requirements in the Form 1023-EZ Eligibility Worksheet (found in the form instructions) — generally, projected annual gross receipts of $50,000 or less for each of the next three years, total assets of $250,000 or less, and formation as a domestic corporation. Organizations that do not qualify must file the full Form 1023. Churches, schools, and hospitals generally file the full Form 1023.");
+
+  bld.articleHeading("Section 2", "Your Filing Deadline (27 Months)");
+  bld.para("To have your 501(c)(3) status recognized retroactively to your date of formation, you must file Form 1023 (or 1023-EZ) within 27 months of the end of the month in which your Corporation was legally formed. If you miss this window, your exempt status generally begins only from the date the IRS receives your application — meaning donations received before that date may not be tax-deductible. Calendar this deadline now.");
+
+  bld.articleHeading("Section 3", "What You'll Need");
+  bld.bullet("Your Employer Identification Number (EIN) — see the EIN Application Worksheet in this package.");
+  bld.bullet("Your file-stamped Articles/Certificate of Incorporation, including the IRS-required 501(c)(3) provisions.");
+  bld.bullet("Your adopted Bylaws and your Conflict of Interest Policy.");
+  bld.bullet("A clear description of your past, present, and planned activities (your mission and programs).");
+  bld.bullet("Financial data: actual figures if you have them, plus a good-faith budget/projection for the current and next two years.");
+  bld.bullet("The name and information of your responsible party (typically the President).");
+  bld.bullet("An NTEE code that best describes your organization (from the Form 1023 instructions).");
+
+  bld.articleHeading("Section 4", "How to File");
+  bld.bullet("Create an account at pay.gov — both Form 1023 and Form 1023-EZ are filed electronically at pay.gov.");
+  bld.bullet("Search for the form (\"1023\" or \"1023-EZ\"), complete every field, and attach the required documents (full Form 1023).");
+  bld.bullet("Pay the IRS user fee at submission. Confirm the current user fee amount at irs.gov before you file — fees change and are not listed here.");
+  bld.bullet("Keep a copy of your complete submission and confirmation for your corporate records book.");
+
+  bld.articleHeading("Section 5", "After You File");
+  bld.para("The IRS will review your application and, if approved, send a Determination Letter recognizing your 501(c)(3) status. Keep this letter permanently — banks, grantmakers, and state agencies will ask for it. After you receive it, complete the state-level exemptions and charitable-registration steps listed in your State Filing Checklist (for example, state income/franchise tax exemption and charitable-solicitation registration before you fundraise).");
+
+  bld.noteBox(
+    "Need help?",
+    "Form 1023 can be detailed. If your organization is complex (schools, hospitals, churches, or purposes requiring state pre-approval), consider working with a nonprofit attorney or a Form 1023 specialist. Legalgram's Form 1023 preparation service is coming soon.",
+    "navy",
+  );
+  return bld.finish();
+}
+
 /* ════════════════ ZIP PACKAGE ════════════════ */
 export async function generateNonprofitZip(m: MergeData, code: NpStateCode): Promise<Blob> {
   const r = getNpStateRules(code);
@@ -590,5 +634,6 @@ export async function generateNonprofitZip(m: MergeData, code: NpStateCode): Pro
   zip.file(`04_${safe}_EIN_Application_Worksheet.pdf`, buildEinWorksheet(m).output("blob"));
   zip.file(`05_${safe}_${r.articlesLabel.replace(/[^\w]/g, "_")}.pdf`, buildStateArticles(m, code).output("blob"));
   zip.file(`06_${safe}_${code}_Filing_Checklist.pdf`, buildStateChecklist(m, code).output("blob"));
+  zip.file(`07_${safe}_Form_1023_Next_Steps_Guide.pdf`, buildForm1023Guide(m).output("blob"));
   return zip.generateAsync({ type: "blob" });
 }
