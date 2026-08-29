@@ -47,6 +47,27 @@ export async function startNonprofitCheckout(
   }
 }
 
+/**
+ * Opens the Stripe Customer Portal for the signed-in customer (manage payment
+ * methods, invoices, subscriptions). Returns a status the UI can act on.
+ */
+export async function openBillingPortal(
+  email: string,
+): Promise<{ ok: boolean; noCustomer?: boolean; needsConfig?: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase.functions.invoke("customer-portal", {
+      body: { email, origin: window.location.origin },
+    });
+    if (error) return { ok: false, error: "Couldn't reach the billing service. Please try again." };
+    if (data?.url) { window.location.href = data.url as string; return { ok: true }; }
+    if (data?.noCustomer) return { ok: false, noCustomer: true };
+    if (data?.needsConfig) return { ok: false, needsConfig: true };
+    return { ok: false, error: (data?.error as string) || "Billing is not available yet." };
+  } catch {
+    return { ok: false, error: "Something went wrong opening billing. Please try again." };
+  }
+}
+
 export async function startCheckout(
   plan: "starter" | "premium",
   cycle: "monthly" | "annually",
