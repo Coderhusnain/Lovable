@@ -9,20 +9,9 @@ const benefitCards = [
     plans: ["Legalgram", "Legalgram+"],
   },
   {
-    title: "Sign legal documents",
-    description: "Sign your documents quickly and securely",
-    plans: ["Legalgram", "Legalgram+"],
-  },
-  {
     title: "Ask legal questions",
     description: "Ask any legal question and get a quick answer online or consult live.",
     plans: ["Legalgram", "Legalgram+"],
-  },
-  {
-    title: "Retain a Legal Pro",
-    description: "Get legal help from an experienced pro at a discounted rate.",
-    price: "$149.99/15 mins",
-    upgradeText: "Upgrade for up to HALF OFF*",
   },
   {
     title: "Register your business",
@@ -31,12 +20,6 @@ const benefitCards = [
     priceNote: "(excluding state fees)",
     upgradeText: "Upgrade to get your first business FREE",
   },
-  {
-    title: "Book a Tax Pro Consult",
-    description: "Plan ahead with a Tax Pro and keep more of your money at tax time.",
-    price: "$199.99",
-    upgradeText: "Upgrade for HALF OFF",
-  }
 ];
 
 const MemberBenefits = () => {
@@ -47,9 +30,9 @@ const MemberBenefits = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-semibold">Get more from your membership</h2>
           <p className="text-muted-foreground text-lg">
-            With a Legalgram+ membership, you could get up to{" "}
-            <span className="text-emerald-500 font-semibold">HALF OFF</span>{" "}
-            Pro Services and get exclusive access to partner offers. Upgrade your membership to unlock.
+            With a Legalgram+ membership you get{" "}
+            <span className="text-emerald-500 font-semibold">unlimited</span>{" "}
+            legal documents and GramAI legal Q&amp;A, plus your first business formation free. Upgrade your membership to unlock.
           </p>
           <Button 
             className="w-full md:w-auto px-8 py-6 text-lg bg-orange-500 hover:bg-orange-600"
