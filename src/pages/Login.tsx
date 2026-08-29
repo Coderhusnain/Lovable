@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, InfoIcon, Mail, Lock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
+import { startPlanCheckout } from "@/services/checkout";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
@@ -26,6 +27,9 @@ const Login = () => {
   const redirectTo = urlParams.get('redirect');
   const redirectStep = urlParams.get('step');
 
+  const planKey = (urlParams.get('plan') || '').toLowerCase();
+  const planCycle = (urlParams.get('cycle') === 'monthly' ? 'monthly' : 'annually') as 'monthly' | 'annually';
+
   const getRedirectPath = () => {
     if (redirectTo === 'ask-legal-advice' && redirectStep) {
       return `/ask-legal-advice?step=${redirectStep}`;
@@ -33,12 +37,21 @@ const Login = () => {
     return "/user-dashboard";
   };
 
+  // After login, continue to the chosen plan's checkout (if any), else the redirect path.
+  const proceedAfterAuth = async (userEmail: string) => {
+    if (planKey && planKey !== 'free') {
+      const res = await startPlanCheckout(planKey, planCycle, { email: userEmail });
+      if (res.ok && !res.free) return; // redirected to Stripe
+    }
+    navigate(getRedirectPath());
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data, error } = await supabase.auth.getSession();
         if (data.session) {
-          navigate(getRedirectPath());
+          void proceedAfterAuth(data.session.user?.email || "");
         }
       } catch (error) {
         console.error("Session check error:", error);
@@ -95,7 +108,7 @@ const Login = () => {
       }
 
       toast.success("Welcome back!");
-      navigate(getRedirectPath());
+      await proceedAfterAuth(data.user?.email || email);
     } catch (error) {
       console.error("Login exception:", error);
       console.error("Error details:", {

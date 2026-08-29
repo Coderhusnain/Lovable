@@ -27,9 +27,13 @@ const STRIPE_SECRET_KEY = (Deno.env.get("STRIPE_SECRET_KEY") ?? "").replace(
 type Cycle = "monthly" | "annually";
 
 // Per-MONTH price (USD) for each plan — mirrors src/pages/Pricing.tsx.
+// Per-MONTH price (USD) for each subscription plan — mirrors src/pages/Pricing.tsx.
+// For annual plans the yearly total is (annually × 12): Essentials $149/yr, Business $309/yr.
 const PLANS: Record<string, { name: string; monthly: number; annually: number }> = {
   starter: { name: "Starter", monthly: 39.99, annually: 29.99 },
   premium: { name: "Premium", monthly: 49.99, annually: 39.99 },
+  essentials: { name: "Essentials", monthly: 19, annually: 149 / 12 },
+  business: { name: "Business", monthly: 39, annually: 309 / 12 },
 };
 
 serve(async (req: Request) => {
@@ -113,6 +117,37 @@ serve(async (req: Request) => {
       return new Response(JSON.stringify({ url: data.url }), { status: 200, headers });
     } catch (error) {
       console.error("create-checkout nonprofit error:", error);
+      return new Response(JSON.stringify({ error: "Unexpected error starting checkout." }), { status: 500, headers });
+    }
+  }
+
+  // ── One-time Single Document purchase ($39, mode: payment) ──
+  if ((body.product || "").toLowerCase() === "single_document") {
+    const sp = new URLSearchParams();
+    sp.set("mode", "payment");
+    sp.set("success_url", `${originClean}/user-dashboard?checkout=success`);
+    sp.set("cancel_url", `${originClean}/pricing?checkout=cancelled`);
+    sp.set("allow_promotion_codes", "true");
+    if (body.email) sp.set("customer_email", body.email);
+    sp.set("line_items[0][quantity]", "1");
+    sp.set("line_items[0][price_data][currency]", "usd");
+    sp.set("line_items[0][price_data][product_data][name]", "Legalgram Single Document");
+    sp.set("line_items[0][price_data][product_data][description]", "One attorney-prepared document with 30 days of edits and e-signature.");
+    sp.set("line_items[0][price_data][unit_amount]", "3900");
+    try {
+      const resp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${STRIPE_SECRET_KEY}`, "Content-Type": "application/x-www-form-urlencoded" },
+        body: sp.toString(),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        console.error("Stripe error (single_document):", resp.status, JSON.stringify(data?.error || data));
+        return new Response(JSON.stringify({ error: "Could not start checkout. Please try again.", detail: data?.error?.message ?? null }), { status: 502, headers });
+      }
+      return new Response(JSON.stringify({ url: data.url }), { status: 200, headers });
+    } catch (error) {
+      console.error("create-checkout single_document error:", error);
       return new Response(JSON.stringify({ error: "Unexpected error starting checkout." }), { status: 500, headers });
     }
   }

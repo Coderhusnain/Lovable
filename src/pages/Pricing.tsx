@@ -1,13 +1,24 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import { OPEN_GRAM_AI_EVENT } from "@/components/chat/ChatWidget";
+import { supabase } from "@/integrations/supabase/client";
+import { startPlanCheckout } from "@/services/checkout";
+import { toast } from "sonner";
+
+/** Map a plan's display name to the checkout key. */
+const PLAN_KEY: Record<string, string> = {
+  Free: "free",
+  "Single Document": "single_document",
+  Essentials: "essentials",
+  Business: "business",
+};
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -221,6 +232,34 @@ const comparePlanHeaders = [
 
 const Pricing = () => {
   const [billing, setBilling] = useState<Billing>("annual");
+  const [session, setSession] = useState<import("@supabase/supabase-js").Session | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  /**
+   * Auth-aware plan CTA. Signed in → straight to the plan's Stripe checkout
+   * (Free → dashboard). Signed out → to signup, carrying the chosen plan and
+   * cycle so it is NOT lost — after signup the user continues to that plan.
+   */
+  const choosePlan = async (planName: string) => {
+    const key = PLAN_KEY[planName] || "free";
+    const cycle: "monthly" | "annually" = billing === "annual" ? "annually" : "monthly";
+    if (!session) {
+      navigate(`/signup?plan=${key}&cycle=${cycle}`);
+      return;
+    }
+    if (key === "free") { navigate("/user-dashboard"); return; }
+    setPendingPlan(planName);
+    const res = await startPlanCheckout(key, cycle, { email: session.user?.email || undefined });
+    if (!res.ok) { setPendingPlan(null); toast.error(res.error || "Couldn't start checkout."); }
+    else if (res.free) { navigate("/user-dashboard"); }
+  };
   const openGramAi = () => window.dispatchEvent(new CustomEvent(OPEN_GRAM_AI_EVENT));
 
   return (
@@ -335,9 +374,10 @@ const Pricing = () => {
                         ? "bg-gradient-to-r from-bright-orange-500 to-bright-orange-600 hover:from-bright-orange-600 hover:to-bright-orange-700 text-white shadow-md"
                         : "bg-bright-orange-50 hover:bg-bright-orange-100 text-bright-orange-700"
                     )}
-                    asChild
+                    onClick={() => choosePlan(plan.name)}
+                    disabled={pendingPlan === plan.name}
                   >
-                    <Link to={plan.ctaTo}>{plan.cta}</Link>
+                    {pendingPlan === plan.name ? "Starting…" : plan.cta}
                   </Button>
                   {plan.ctaNote && (
                     <p className="text-xs text-gray-500 italic mb-5 min-h-[28px]">{plan.ctaNote}</p>

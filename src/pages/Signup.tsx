@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,15 @@ import { toast } from "sonner";
 import { Eye, EyeOff, InfoIcon, Mail, Lock, Phone } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
+import { startPlanCheckout } from "@/services/checkout";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
+const PLAN_LABEL: Record<string, string> = {
+  free: "Free",
+  single_document: "Single Document",
+  essentials: "Essentials",
+  business: "Business",
+};
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -29,6 +37,27 @@ const Signup = () => {
   const urlParams = new URLSearchParams(location.search);
   const redirectTo = urlParams.get('redirect');
   const redirectStep = urlParams.get('step');
+  const planKey = (urlParams.get('plan') || '').toLowerCase();
+  const planCycle = (urlParams.get('cycle') === 'monthly' ? 'monthly' : 'annually') as 'monthly' | 'annually';
+  const planLabel = PLAN_LABEL[planKey];
+
+  // After the account exists, continue to the chosen plan (or the dashboard).
+  const continueToPlan = async (userEmail: string) => {
+    if (planKey && planKey !== 'free') {
+      const res = await startPlanCheckout(planKey, planCycle, { email: userEmail });
+      if (res.ok && !res.free) return; // redirected to Stripe checkout
+    }
+    if (redirectTo === 'ask-legal-advice' && redirectStep) navigate(`/ask-legal-advice?step=${redirectStep}`);
+    else navigate('/user-dashboard');
+  };
+
+  // Already signed in and arrived here to pick a plan → skip the form.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) void continueToPlan(data.session.user.email || '');
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,23 +122,20 @@ const Signup = () => {
       if (data.session) {
         // Email confirmation is disabled, the user is already signed in
         toast.success("Account created successfully! Welcome to Legalgram.");
-        if (redirectTo === 'ask-legal-advice' && redirectStep) {
-          navigate(`/ask-legal-advice?step=${redirectStep}`);
-        } else {
-          navigate("/user-dashboard");
-        }
+        await continueToPlan(data.session.user?.email || email);
         return;
       }
 
-      // Email confirmation is required before the account can be used
+      // Email confirmation is required before the account can be used.
       toast.success("Account created! Please check your email to confirm your account, then log in.");
 
-      // Redirect to login with the same redirect parameters
-      if (redirectTo && redirectStep) {
-        navigate(`/login?redirect=${redirectTo}&step=${redirectStep}`);
-      } else {
-        navigate("/login");
-      }
+      // Redirect to login, carrying the chosen plan / redirect so it isn't lost.
+      const loginParams = new URLSearchParams();
+      if (redirectTo) loginParams.set("redirect", redirectTo);
+      if (redirectStep) loginParams.set("step", redirectStep);
+      if (planKey) { loginParams.set("plan", planKey); loginParams.set("cycle", planCycle); }
+      const qs = loginParams.toString();
+      navigate(qs ? `/login?${qs}` : "/login");
 
     } catch (error) {
       console.error("Signup exception:", error);
@@ -139,9 +165,17 @@ const Signup = () => {
         <div className="w-full max-w-md px-4 relative z-10">
           <div className="text-center mb-8 animate-fade-in">
             <h1 className="text-3xl font-bold mb-2 text-white">Create Your Account</h1>
-            <p className="text-white/90 font-medium">
-              Sign up to access legal documents and advice.
-            </p>
+            {planLabel && planKey !== 'free' ? (
+              <p className="text-white/90 font-medium">
+                Just one step — create your account to continue to the{" "}
+                <span className="font-bold text-bright-orange-300">{planLabel}</span> plan
+                {" "}({planCycle === 'annually' ? 'annual' : 'monthly'}). You'll go straight to secure checkout next.
+              </p>
+            ) : (
+              <p className="text-white/90 font-medium">
+                Sign up to access legal documents and advice.
+              </p>
+            )}
           </div>
 
           <div className="glass-card rounded-xl shadow-xl border border-white/10 p-8 animate-scale-in backdrop-blur-lg bg-white/10">

@@ -68,6 +68,36 @@ export async function openBillingPortal(
   }
 }
 
+/**
+ * Routes a chosen Pricing plan to the right Stripe checkout.
+ *  - "free"            → no charge (caller sends the user to the dashboard)
+ *  - "single_document" → one-time $39
+ *  - "essentials"/"business" → subscription at the given cycle
+ */
+export async function startPlanCheckout(
+  planKey: string,
+  cycle: "monthly" | "annually",
+  opts: { email?: string } = {},
+): Promise<{ ok: boolean; free?: boolean; error?: string }> {
+  const key = (planKey || "").toLowerCase();
+  if (key === "free") return { ok: true, free: true };
+
+  const body =
+    key === "single_document"
+      ? { product: "single_document", email: opts.email, origin: window.location.origin }
+      : { plan: key, cycle, email: opts.email, origin: window.location.origin };
+  try {
+    const { data, error } = await supabase.functions.invoke("create-checkout", { body });
+    if (error) return { ok: false, error: "Couldn't reach the payment service. Please try again." };
+    if (data?.error) return { ok: false, error: data.error as string };
+    if (!data?.url) return { ok: false, error: "No checkout URL returned. Please try again." };
+    window.location.href = data.url as string;
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Something went wrong starting checkout. Please try again." };
+  }
+}
+
 export async function startCheckout(
   plan: "starter" | "premium",
   cycle: "monthly" | "annually",
